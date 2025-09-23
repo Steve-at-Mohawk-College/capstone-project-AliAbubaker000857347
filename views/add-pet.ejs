@@ -1,0 +1,147 @@
+<%- include('partials/header', {title: 'Add New Pet'}) %>
+
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card card-custom">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-4 text-center">Add a Pet</h1>
+        
+        <% if (typeof message !== 'undefined' && message) { %>
+          <div class="alert alert-info"><%= message %></div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <form id="petForm" action="/pets" method="POST" novalidate>
+          <div class="mb-3">
+            <label for="name" class="form-label">Pet Name *</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+            <div class="invalid-feedback">Please provide a pet name.</div>
+          </div>
+          <div class="mb-3">
+            <label for="species" class="form-label">Species *</label>
+            <input type="text" class="form-control" id="species" name="species" placeholder="Dog, Cat, etc." required>
+          </div>
+          <div class="mb-3">
+            <label for="breed" class="form-label">Breed *</label>
+            <input type="text" class="form-control" id="breed" name="breed" required>
+          </div>
+          <div class="mb-3">
+            <label for="age" class="form-label">Age (years) *</label>
+            <input type="number" class="form-control" id="age" name="age" min="0.1" step="0.1" required 
+                   oninput="validateAge(this)">
+            <div class="invalid-feedback">Age must be greater than 0 and can only have one decimal place (e.g., 0.5, 1.5).</div>
+            <small class="form-text text-muted">Enter age in years. Use one decimal place for fractions (e.g., 0.5 for 6 months).</small>
+          </div>
+          <div class="mb-3">
+            <label for="gender" class="form-label">Gender *</label>
+            <select class="form-select" id="gender" name="gender" required>
+              <option value="">-- Select Gender --</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="invalid-feedback">Please select a gender.</div>
+          </div>
+          <div class="mb-4">
+            <label for="weight" class="form-label">Weight (kg) *</label>
+            <input type="number" step="0.1" class="form-control" id="weight" name="weight" min="0" required>
+            <div class="invalid-feedback">Weight cannot be negative.</div>
+          </div>
+          <button type="submit" class="btn btn-custom w-100 btn-lg">Save Pet</button>
+          
+        </form>
+
+        <div class="mt-4 text-center">
+          <a href="/dashboard">← Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('petForm');
+  const ageInput = document.getElementById('age');
+  const genderSelect = document.getElementById('gender');
+  const weightInput = document.getElementById('weight');
+
+  // Validate age input to ensure only one decimal place
+  function validateAge(input) {
+    const value = input.value;
+    if (value.includes('.')) {
+      const decimalPart = value.split('.')[1];
+      if (decimalPart && decimalPart.length > 1) {
+        input.value = parseFloat(value).toFixed(1);
+      }
+    }
+    if (value > 0) {
+      input.setCustomValidity('');
+      input.classList.remove('is-invalid');
+    }
+  }
+
+  // Validate gender selection
+  function validateGender() {
+    if (genderSelect.value === '') {
+      genderSelect.setCustomValidity('Please select a gender');
+      genderSelect.classList.add('is-invalid');
+      return false;
+    } else {
+      genderSelect.setCustomValidity('');
+      genderSelect.classList.remove('is-invalid');
+      return true;
+    }
+  }
+
+  form.addEventListener('submit', function(event) {
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Age validation
+    const ageValue = parseFloat(ageInput.value);
+    if (isNaN(ageValue) || ageValue <= 0) {
+      ageInput.setCustomValidity('Age must be greater than 0');
+      ageInput.classList.add('is-invalid');
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      ageInput.value = ageValue.toFixed(1);
+      ageInput.setCustomValidity('');
+    }
+
+    // Gender validation
+    validateGender();
+
+    // Weight validation
+    const weightValue = parseFloat(weightInput.value);
+    if (isNaN(weightValue) || weightValue < 0) {
+      weightInput.setCustomValidity('Weight cannot be negative');
+      weightInput.classList.add('is-invalid');
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      weightInput.setCustomValidity('');
+    }
+
+    form.classList.add('was-validated');
+  });
+
+  // Clear validation on input
+  ageInput.addEventListener('input', () => validateAge(ageInput));
+  genderSelect.addEventListener('change', validateGender);
+  weightInput.addEventListener('input', () => {
+    if (weightInput.value >= 0) {
+      weightInput.setCustomValidity('');
+      weightInput.classList.remove('is-invalid');
+    }
+  });
+});
+</script>
+
+
+<%- include('partials/footer') %>

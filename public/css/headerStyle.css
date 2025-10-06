@@ -1,0 +1,102 @@
+ body {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Navbar Styling */
+    .navbar-custom {
+      background: linear-gradient(135deg, #2E7D32, #43A047);
+      padding: 0.6rem 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #fff !important;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-brand i {
+      font-size: 1.5rem;
+      margin-right: 0.4rem;
+    }
+
+    .nav-link {
+      font-weight: 500;
+      color: rgba(255,255,255,0.9) !important;
+      transition: background 0.2s ease, color 0.2s ease;
+      border-radius: 8px;
+      padding: 0.5rem 0.8rem !important;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus,
+    .nav-link.active {
+      color: #fff !important;
+      background: rgba(255,255,255,0.2);
+      outline: none;
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+      border: none;
+      border-radius: 10px;
+      padding: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .dropdown-item {
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+      background: #f0f0f0;
+      outline: none;
+    }
+
+    /* Profile Avatar */
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    /* Buttons */
+    .btn-auth {
+      font-weight: 500;
+      border-radius: 20px;
+      padding: 0.35rem 1rem;
+      font-size: 0.9rem;
+      transition: transform 0.2s;
+    }
+    .btn-auth:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Accessibility: focus outlines */
+    a:focus, button:focus {
+      outline: 3px solid #FFD54F !important;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 991.98px) {
+      .navbar-nav .nav-link {
+        text-align: center;
+        padding: 0.6rem 1rem !important;
+      }
+    }

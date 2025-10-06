@@ -1,3 +1,191 @@
+/* Dashboard Specific Styles */
+.task-description {
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 3px solid #ffc107;
+}
+
+/* Session Timeout Modal Styles */
+#sessionTimeoutModal .modal-header {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #000;
+}
+
+#sessionTimeoutModal .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+#sessionTimeoutModal #countdown {
+    font-weight: bold;
+    color: #dc3545;
+    font-size: 1.2em;
+}
+
+#sessionTimeoutModal .btn-primary {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border: none;
+}
+
+#sessionTimeoutModal .btn-primary:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-1px);
+}
+
+#sessionTimeoutModal .btn-secondary {
+    background: #6c757d;
+    border: none;
+}
+
+.toggle-description {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.toggle-description:hover {
+    color: #495057;
+}
+
+/* Make remove buttons always visible */
+.remove-btn {
+    border-width: 1px;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 1;
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+}
+
+.remove-btn:hover {
+    background-color: #bb2d3b !important;
+    border-color: #b02a37 !important;
+    transform: scale(1.05);
+}
+
+/* Edit button styles */
+.edit-btn {
+    border-width: 1px;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.edit-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Ensure proper spacing for buttons */
+.flex-shrink-0 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Make sure list items don't block clicks */
+.list-group-item {
+    position: relative;
+    z-index: 0;
+}
+
+/* Make sure badges and buttons are properly aligned */
+.badge {
+    padding: 0.35em 0.65em;
+}
+
+/* Edit form styles */
+.edit-form {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.edit-field {
+    margin-bottom: 10px;
+}
+
+/* Task Edit Form Styles */
+.edit-task-form {
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #0d6efd;
+}
+
+.edit-task-form .form-label {
+    font-weight: 500;
+}
+
+.edit-task-form .form-control-sm,
+.edit-task-form .form-select-sm {
+    font-size: 0.875rem;
+}
+
+/* Filter Styles */
+.filter-section {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #dee2e6;
+}
+
+.filter-row {
+    align-items: end;
+}
+
+.filter-group {
+    margin-bottom: 0;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-badge {
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.pet-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.pet-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.no-pets-message {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.filter-results {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Alert Styles */
+.alert-dashboard {
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    min-width: 300px;
+}
+
 :root {
   --primary-color: #4CAF50;
   --secondary-color: #2c3e50;

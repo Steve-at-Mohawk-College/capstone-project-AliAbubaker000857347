@@ -1,137 +1,4 @@
 
-<style>
-  /* Additional styles for task descriptions */
-  .task-description {
-    background-color: #f8f9fa;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border-left: 3px solid #ffc107;
-  }
-
-  /* Session Timeout Modal Styles */
-#sessionTimeoutModal .modal-header {
-    background: linear-gradient(135deg, #ffc107, #ff9800);
-    color: #000;
-}
-
-#sessionTimeoutModal .modal-content {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-#sessionTimeoutModal #countdown {
-    font-weight: bold;
-    color: #dc3545;
-    font-size: 1.2em;
-}
-
-#sessionTimeoutModal .btn-primary {
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    border: none;
-}
-
-#sessionTimeoutModal .btn-primary:hover {
-    background: linear-gradient(135deg, #45a049, #3d8b40);
-    transform: translateY(-1px);
-}
-
-#sessionTimeoutModal .btn-secondary {
-    background: #6c757d;
-    border: none;
-}
-  
-  .toggle-description {
-    color: #6c757d;
-    text-decoration: none;
-  }
-  
-  .toggle-description:hover {
-    color: #495057;
-  }
-
-  /* Make remove buttons always visible */
-  .remove-btn {
-    border-width: 1px;
-    padding: 0.25rem 0.5rem;
-    transition: all 0.2s ease;
-    position: relative;
-    z-index: 1;
-    background-color: #dc3545 !important;
-    color: white !important;
-    border-color: #dc3545 !important;
-  }
-
-  .remove-btn:hover {
-    background-color: #bb2d3b !important;
-    border-color: #b02a37 !important;
-    transform: scale(1.05);
-  }
-
-  /* Edit button styles */
-  .edit-btn {
-    border-width: 1px;
-    padding: 0.25rem 0.5rem;
-    transition: all 0.2s ease;
-    position: relative;
-    z-index: 1;
-  }
-
-  .edit-btn:hover {
-    transform: scale(1.05);
-  }
-
-  /* Ensure proper spacing for buttons */
-  .flex-shrink-0 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Make sure list items don't block clicks */
-  .list-group-item {
-    position: relative;
-    z-index: 0;
-  }
-
-  /* Make sure badges and buttons are properly aligned */
-  .badge {
-    padding: 0.35em 0.65em;
-  }
-
-  /* Edit form styles */
-  .edit-form {
-    display: none;
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-  }
-
-  .edit-field {
-    margin-bottom: 10px;
-  }
-
-  /* Task Edit Form Styles */
-.edit-task-form {
-    background-color: #f8f9fa;
-    padding: 12px;
-    border-radius: 6px;
-    border-left: 3px solid #0d6efd;
-}
-
-.edit-task-form .form-label {
-    font-weight: 500;
-}
-
-.edit-task-form .form-control-sm,
-.edit-task-form .form-select-sm {
-    font-size: 0.875rem;
-}
-</style>
-
 <%- include('partials/header', {title: 'Pet Dashboard' }) %>
 
 <div class="row">
@@ -153,6 +20,88 @@
   </div>
 </div>
 
+<!-- Professional Filter Section -->
+<div class="filter-section">
+  <div class="row align-items-center mb-3">
+    <div class="col">
+      <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Filter Pets</h5>
+      <p class="text-muted mb-0 small">Refine your pet list by specific criteria</p>
+    </div>
+    <div class="col-auto">
+      <span class="badge bg-primary filter-results" id="filterResults">
+        Showing all <%= pets ? pets.length : 0 %> pets
+      </span>
+    </div>
+  </div>
+  
+  <form id="petFilterForm">
+    <div class="row filter-row g-3">
+      <!-- Species Filter -->
+      <div class="col-md-3 filter-group">
+        <label class="form-label small fw-semibold">Species</label>
+        <select class="form-select" id="filterSpecies">
+          <option value="">All Species</option>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+          <option value="bird">Bird</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <!-- Age Range Filter -->
+      <div class="col-md-3 filter-group">
+        <label class="form-label small fw-semibold">Age Range (years)</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="filterAgeMin" placeholder="Min" min="0" step="0.1">
+          <span class="input-group-text">-</span>
+          <input type="number" class="form-control" id="filterAgeMax" placeholder="Max" min="0" step="0.1">
+        </div>
+      </div>
+
+      <!-- Weight Range Filter -->
+      <div class="col-md-3 filter-group">
+        <label class="form-label small fw-semibold">Weight Range (kg)</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="filterWeightMin" placeholder="Min" min="0" step="0.1">
+          <span class="input-group-text">-</span>
+          <input type="number" class="form-control" id="filterWeightMax" placeholder="Max" min="0" step="0.1">
+        </div>
+      </div>
+
+      <!-- Gender Filter -->
+      <div class="col-md-2 filter-group">
+        <label class="form-label small fw-semibold">Gender</label>
+        <select class="form-select" id="filterGender">
+          <option value="">All Genders</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <!-- Filter Actions -->
+      <div class="col-md-1 filter-group">
+        <label class="form-label small fw-semibold invisible">Actions</label>
+        <div class="filter-actions">
+          <button type="button" class="btn btn-primary" id="applyFilters">
+            <i class="bi bi-funnel"></i>
+          </button>
+          <button type="button" class="btn btn-outline-secondary" id="clearFilters" title="Clear all filters">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filters Display -->
+    <div class="row mt-3">
+      <div class="col-12">
+        <div id="activeFilters" class="d-flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+  </form>
+</div>
+
 <!-- Stats Overview -->
 <div class="row mb-4">
   <div class="col-md-4 mb-3">
@@ -163,10 +112,10 @@
             <i class="bi bi-heart-fill text-primary" style="font-size: 1.5rem;"></i>
           </div>
           <div>
-            <h3 class="h2 mb-0">
+            <h3 class="h2 mb-0" id="totalPetsCount">
               <%= pets ? pets.length : 0 %>
             </h3>
-            <p class="text-muted mb-0">Pets</p>
+            <p class="text-muted mb-0">Total Pets</p>
           </div>
         </div>
       </div>
@@ -214,121 +163,130 @@
     <div class="card card-custom h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h2 class="h5 mb-0">Your Pets</h2>
-        <a href="/pets/add" class="btn btn-sm btn-outline-custom">
-          <i class="bi bi-plus"></i> Add
-        </a>
+        <div>
+          <a href="/pets/add" class="btn btn-sm btn-outline-custom">
+            <i class="bi bi-plus"></i> Add
+          </a>
+        </div>
       </div>
       <div class="card-body">
-        <% if (pets && pets.length> 0) { %>
-          <div class="list-group list-group-flush">
-            <% pets.forEach(pet=> { %>
-              <div class="list-group-item border-0 px-0 py-3">
-                <div class="d-flex align-items-center">
-                  <div class="flex-shrink-0">
-                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
-                      <i class="bi bi-heart-fill text-primary"></i>
+        <div id="petsListContainer">
+          <% if (pets && pets.length> 0) { %>
+            <div class="list-group list-group-flush" id="petsList">
+              <% pets.forEach(pet=> { %>
+                <div class="list-group-item border-0 px-0 py-3 pet-card" 
+                     data-species="<%= pet.species || '' %>" 
+                     data-age="<%= pet.age || 0 %>" 
+                     data-weight="<%= pet.weight || 0 %>" 
+                     data-gender="<%= pet.gender || '' %>">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                        <i class="bi bi-heart-fill text-primary"></i>
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex-grow-1 ms-3">
-                    <h5 class="mb-1">
-                      <%= pet.name %>
-                    </h5>
-                    <p class="text-muted mb-0 small">
-                      <%= pet.breed || 'Unknown breed' %> •
-                      <!-- Enhanced age display -->
-                      <% if (pet.age !== null && pet.age !== undefined) { %>
-                        <%
-                          const ageValue = parseFloat(pet.age);
-                          let ageDisplay;
-                          
-                          if (ageValue < 1) {
-                            // Show months for values less than 1 year
-                            const months = Math.round(ageValue * 12);
-                            ageDisplay = months + ' month' + (months !== 1 ? 's' : '');
-                          } else if (Number.isInteger(ageValue)) {
-                            // Whole number - show without decimals
-                            ageDisplay = ageValue + ' years';
-                          } else {
-                            // Decimal value 1 or greater - show with one decimal place
-                            ageDisplay = ageValue.toFixed(1) + ' years';
-                          }
-                        %>
-                        <span id="age-display-<%= pet.pet_id %>"><%= ageDisplay %></span>
-                      <% } else { %>
-                        <span id="age-display-<%= pet.pet_id %>">Age unknown</span>
-                      <% } %> •
-                      <span id="weight-display-<%= pet.pet_id %>">
-                        <%= pet.weight ? pet.weight + ' kg' : 'Weight unknown' %>
-                      </span> •
-                      <%= pet.species || 'Unknown' %>
-                    </p>
+                    <div class="flex-grow-1 ms-3">
+                      <h5 class="mb-1">
+                        <%= pet.name %>
+                      </h5>
+                      <p class="text-muted mb-0 small">
+                        <%= pet.breed || 'Unknown breed' %> •
+                        <!-- Enhanced age display -->
+                        <% if (pet.age !== null && pet.age !== undefined) { %>
+                          <%
+                            const ageValue = parseFloat(pet.age);
+                            let ageDisplay;
+                            
+                            if (ageValue < 1) {
+                              // Show months for values less than 1 year
+                              const months = Math.round(ageValue * 12);
+                              ageDisplay = months + ' month' + (months !== 1 ? 's' : '');
+                            } else if (Number.isInteger(ageValue)) {
+                              // Whole number - show without decimals
+                              ageDisplay = ageValue + ' years';
+                            } else {
+                              // Decimal value 1 or greater - show with one decimal place
+                              ageDisplay = ageValue.toFixed(1) + ' years';
+                            }
+                          %>
+                          <span class="pet-age"><%= ageDisplay %></span>
+                        <% } else { %>
+                          <span class="pet-age">Age unknown</span>
+                        <% } %> •
+                        <span class="pet-weight">
+                          <%= pet.weight ? pet.weight + ' kg' : 'Weight unknown' %>
+                        </span> •
+                        <span class="pet-species"><%= pet.species || 'Unknown' %></span>
+                      </p>
 
-                    <!-- Edit Form (Hidden by default) -->
-                    <div class="edit-form" id="edit-form-<%= pet.pet_id %>">
-                      <h6 class="mb-2">Edit Pet Details</h6>
-                      <div class="row">
-                        <div class="col-md-6 edit-field">
-                          <label for="edit-age-<%= pet.pet_id %>" class="form-label small">Age (years)</label>
-                          <input type="number" class="form-control form-control-sm" 
-                                 id="edit-age-<%= pet.pet_id %>" 
-                                 value="<%= pet.age || '' %>" 
-                                 min="0.1" step="0.1">
+                      <!-- Edit Form (Hidden by default) -->
+                      <div class="edit-form" id="edit-form-<%= pet.pet_id %>">
+                        <h6 class="mb-2">Edit Pet Details</h6>
+                        <div class="row">
+                          <div class="col-md-6 edit-field">
+                            <label for="edit-age-<%= pet.pet_id %>" class="form-label small">Age (years)</label>
+                            <input type="number" class="form-control form-control-sm" 
+                                   id="edit-age-<%= pet.pet_id %>" 
+                                   value="<%= pet.age || '' %>" 
+                                   min="0.1" step="0.1">
+                          </div>
+                          <div class="col-md-6 edit-field">
+                            <label for="edit-weight-<%= pet.pet_id %>" class="form-label small">Weight (kg)</label>
+                            <input type="number" class="form-control form-control-sm" 
+                                   id="edit-weight-<%= pet.pet_id %>" 
+                                   value="<%= pet.weight || '' %>" 
+                                   min="0" step="0.1">
+                          </div>
                         </div>
-                        <div class="col-md-6 edit-field">
-                          <label for="edit-weight-<%= pet.pet_id %>" class="form-label small">Weight (kg)</label>
-                          <input type="number" class="form-control form-control-sm" 
-                                 id="edit-weight-<%= pet.pet_id %>" 
-                                 value="<%= pet.weight || '' %>" 
-                                 min="0" step="0.1">
+                        <div class="d-flex gap-2 mt-2">
+                          <button class="btn btn-sm btn-success save-edit-btn" 
+                                  data-pet-id="<%= pet.pet_id %>">
+                            <i class="bi bi-check"></i> Save
+                          </button>
+                          <button class="btn btn-sm btn-secondary cancel-edit-btn" 
+                                  data-pet-id="<%= pet.pet_id %>">
+                            <i class="bi bi-x"></i> Cancel
+                          </button>
                         </div>
-                      </div>
-                      <div class="d-flex gap-2 mt-2">
-                        <button class="btn btn-sm btn-success save-edit-btn" 
-                                data-pet-id="<%= pet.pet_id %>">
-                          <i class="bi bi-check"></i> Save
-                        </button>
-                        <button class="btn btn-sm btn-secondary cancel-edit-btn" 
-                                data-pet-id="<%= pet.pet_id %>">
-                          <i class="bi bi-x"></i> Cancel
-                        </button>
                       </div>
                     </div>
-                  </div>
-                  <div class="flex-shrink-0">
-                    <span class="badge bg-light text-dark me-2">
-                      <%= pet.gender || 'Unknown' %>
-                    </span>
-                    <!-- Edit Pet Button -->
-                    <button class="btn btn-sm btn-outline-primary edit-btn me-2" 
-                            data-pet-id="<%= pet.pet_id %>">
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <!-- Remove Pet Button -->
-                    <button class="btn btn-sm btn-outline-danger remove-btn" 
-                            data-type="pet" data-id="<%= pet.pet_id %>" 
-                            data-name="<%= pet.name %>">
-                      <i class="bi bi-trash"></i>
-                    </button>
+                    <div class="flex-shrink-0">
+                      <span class="badge bg-light text-dark me-2 pet-gender">
+                        <%= pet.gender || 'Unknown' %>
+                      </span>
+                      <!-- Edit Pet Button -->
+                      <button class="btn btn-sm btn-outline-primary edit-btn me-2" 
+                              data-pet-id="<%= pet.pet_id %>">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <!-- Remove Pet Button -->
+                      <button class="btn btn-sm btn-outline-danger remove-btn" 
+                              data-type="pet" data-id="<%= pet.pet_id %>" 
+                              data-name="<%= pet.name %>">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            <% }); %>
-          </div>
-        <% } else { %>
-          <div class="text-center py-4">
-            <div class="bg-light rounded-circle p-4 d-inline-block mb-3">
-              <i class="bi bi-heart text-muted" style="font-size: 2rem;"></i>
+              <% }); %>
             </div>
-            <h5 class="text-muted">No pets yet</h5>
-            <p class="text-muted mb-3">Add your first pet to get started</p>
-            <a href="/pets/add" class="btn btn-custom">Add Your First Pet</a>
-          </div>
-        <% } %>
+          <% } else { %>
+            <div class="text-center py-4 no-pets-message">
+              <div class="bg-light rounded-circle p-4 d-inline-block mb-3">
+                <i class="bi bi-heart text-muted" style="font-size: 2rem;"></i>
+              </div>
+              <h5 class="text-muted">No pets yet</h5>
+              <p class="text-muted mb-3">Add your first pet to get started</p>
+              <a href="/pets/add" class="btn btn-custom">Add Your First Pet</a>
+            </div>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
-<!-- Tasks Section -->
-<div class="col-lg-6 mb-4">
+
+  <!-- Tasks Section -->
+  <div class="col-lg-6 mb-4">
     <div class="card card-custom h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h2 class="h5 mb-0">Upcoming Tasks</h2>
@@ -445,386 +403,72 @@
             <% } %>
         </div>
     </div>
+  </div>
 </div>
 
-  <!-- Quick Actions -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card card-custom">
-        <div class="card-header">
-          <h2 class="h5 mb-0">Quick Actions</h2>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-sm-6 col-md-3 mb-3">
-              <a href="/pets/add" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-                <i class="bi bi-plus-circle mb-2" style="font-size: 1.5rem;"></i>
-                <span>Add Pet</span>
-              </a>
-            </div>
-            <div class="col-sm-6 col-md-3 mb-3">
-              <a href="/schedule-task" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-                <i class="bi bi-calendar-plus mb-2" style="font-size: 1.5rem;"></i>
-                <span>Schedule Task</span>
-              </a>
-            </div>
-            <div class="col-sm-6 col-md-3 mb-3">
-              <a href="/health" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-                <i class="bi bi-heart-pulse mb-2" style="font-size: 1.5rem;"></i>
-                <span>Health Tracker</span>
-              </a>
-            </div>
-            <div class="col-sm-6 col-md-3 mb-3">
-              <a href="/community" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-                <i class="bi bi-people mb-2" style="font-size: 1.5rem;"></i>
-                <span>Community</span>
-              </a>
-            </div>
+<!-- Quick Actions -->
+<div class="row">
+  <div class="col-12">
+    <div class="card card-custom">
+      <div class="card-header">
+        <h2 class="h5 mb-0">Quick Actions</h2>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6 col-md-3 mb-3">
+            <a href="/pets/add" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
+              <i class="bi bi-plus-circle mb-2" style="font-size: 1.5rem;"></i>
+              <span>Add Pet</span>
+            </a>
+          </div>
+          <div class="col-sm-6 col-md-3 mb-3">
+            <a href="/schedule-task" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
+              <i class="bi bi-calendar-plus mb-2" style="font-size: 1.5rem;"></i>
+              <span>Schedule Task</span>
+            </a>
+          </div>
+          <div class="col-sm-6 col-md-3 mb-3">
+            <a href="/health" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
+              <i class="bi bi-heart-pulse mb-2" style="font-size: 1.5rem;"></i>
+              <span>Health Tracker</span>
+            </a>
+          </div>
+          <div class="col-sm-6 col-md-3 mb-3">
+            <a href="/community" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
+              <i class="bi bi-people mb-2" style="font-size: 1.5rem;"></i>
+              <span>Community</span>
+            </a>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Confirmation Modal -->
-  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirm Removal</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p id="confirmationMessage">Are you sure you want to remove this item?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" id="confirmRemoveBtn">Remove</button>
-        </div>
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Removal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmationMessage">Are you sure you want to remove this item?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmRemoveBtn">Remove</button>
       </div>
     </div>
   </div>
+</div>
+
+<script src="/js/dashboard.js"></script>
 
 
-  <script src="/js/dashboard.js"></script>
+<script src="/js/dashboard-filters.js"></script>
 
-  
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-
-   // Initialize session timeout
-    if (typeof SessionTimeout !== 'undefined') {
-        window.sessionTimeout = new SessionTimeout();
-    }
-    
-    // Reset timer on any user interaction with pet/task management
-    const interactiveElements = document.querySelectorAll(
-        '.edit-btn, .save-edit-btn, .remove-btn, .toggle-description, .edit-task-btn, .save-task-edit-btn'
-    );
-    
-    interactiveElements.forEach(element => {
-        element.addEventListener('click', function() {
-            if (window.resetSessionTimer) {
-                window.resetSessionTimer();
-            }
-        });
-    });
-});
-
-  document.querySelectorAll('.due-date').forEach(element => {
-        const dueDate = new Date(element.getAttribute('data-due-date'));
-        element.textContent = dueDate.toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    });
-  // Toggle task descriptions
- 
-            document.querySelectorAll('.toggle-description').forEach(button => {
-                button.addEventListener('click', function() {
-                    const taskId = this.getAttribute('data-task-id');
-                    const descriptionDiv = document.getElementById('description-' + taskId);
-                    const icon = this.querySelector('i');
-                    
-                    if (descriptionDiv.style.display === 'none') {
-                        descriptionDiv.style.display = 'block';
-                        icon.classList.remove('bi-chevron-down');
-                        icon.classList.add('bi-chevron-up');
-                    } else {
-                        descriptionDiv.style.display = 'none';
-                        icon.classList.remove('bi-chevron-up');
-                        icon.classList.add('bi-chevron-down');
-                    }
-                });
-            });
-  // Edit button functionality
-  document.querySelectorAll('.edit-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const petId = this.getAttribute('data-pet-id');
-      const editForm = document.getElementById(`edit-form-${petId}`);
-      
-      // Hide all other edit forms
-      document.querySelectorAll('.edit-form').forEach(form => {
-        if (form.id !== `edit-form-${petId}`) {
-          form.style.display = 'none';
-        }
-      });
-      
-      // Toggle current edit form
-      if (editForm.style.display === 'block') {
-        editForm.style.display = 'none';
-      } else {
-        editForm.style.display = 'block';
-      }
-    });
-  });
-
-  // Cancel edit button
-  document.querySelectorAll('.cancel-edit-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const petId = this.getAttribute('data-pet-id');
-      document.getElementById(`edit-form-${petId}`).style.display = 'none';
-    });
-  });
-
-  // Save edit button
-  document.querySelectorAll('.save-edit-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const petId = this.getAttribute('data-pet-id');
-      const ageInput = document.getElementById(`edit-age-${petId}`);
-      const weightInput = document.getElementById(`edit-weight-${petId}`);
-      
-      const newAge = parseFloat(ageInput.value);
-      const newWeight = parseFloat(weightInput.value);
-      
-      // Validation
-      if (isNaN(newAge) || newAge <= 0) {
-        alert('Age must be greater than 0');
-        return;
-      }
-      
-      if (isNaN(newWeight) || newWeight < 0) {
-        alert('Weight cannot be negative');
-        return;
-      }
-      
-      // Show loading state
-      const originalText = this.innerHTML;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-      this.disabled = true;
-      
-      // Send update request
-      fetch(`/pets/${petId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          age: newAge,
-          weight: newWeight
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.ok) {
-          // Update display values
-          let ageDisplay;
-          if (newAge < 1) {
-            const months = Math.round(newAge * 12);
-            ageDisplay = months + ' month' + (months !== 1 ? 's' : '');
-          } else if (Number.isInteger(newAge)) {
-            ageDisplay = newAge + ' years';
-          } else {
-            ageDisplay = newAge.toFixed(1) + ' years';
-          }
-          
-          document.getElementById(`age-display-${petId}`).textContent = ageDisplay;
-          document.getElementById(`weight-display-${petId}`).textContent = newWeight + ' kg';
-          
-          // Hide edit form
-          document.getElementById(`edit-form-${petId}`).style.display = 'none';
-          
-          // Show success message
-          showAlert('Pet details updated successfully!', 'success');
-        } else {
-          alert('Error updating pet: ' + (data.error || 'Unknown error'));
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error updating pet details');
-      })
-      .finally(() => {
-        // Restore button state
-        this.innerHTML = originalText;
-        this.disabled = false;
-      });
-    });
-  });
-
-  // Task Edit button functionality
-document.querySelectorAll('.edit-task-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const taskId = this.getAttribute('data-task-id');
-        const editForm = document.getElementById(`edit-task-form-${taskId}`);
-        
-        // Hide all other task edit forms
-        document.querySelectorAll('.edit-task-form').forEach(form => {
-            if (form.id !== `edit-task-form-${taskId}`) {
-                form.style.display = 'none';
-            }
-        });
-        
-        // Toggle current task edit form
-        if (editForm.style.display === 'block') {
-            editForm.style.display = 'none';
-        } else {
-            editForm.style.display = 'block';
-        }
-    });
-});
-
-// Cancel task edit button
-document.querySelectorAll('.cancel-task-edit-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const taskId = this.getAttribute('data-task-id');
-        document.getElementById(`edit-task-form-${taskId}`).style.display = 'none';
-    });
-});
-
-// Save task edit button
-document.querySelectorAll('.save-task-edit-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const taskId = this.getAttribute('data-task-id');
-        const titleInput = document.getElementById(`edit-task-title-${taskId}`);
-        const descriptionInput = document.getElementById(`edit-task-description-${taskId}`);
-        const dueDateInput = document.getElementById(`edit-task-due-date-${taskId}`);
-        const prioritySelect = document.getElementById(`edit-task-priority-${taskId}`);
-        
-        const newTitle = titleInput.value.trim();
-        const newDescription = descriptionInput.value.trim();
-        const newDueDate = dueDateInput.value;
-        const newPriority = prioritySelect.value;
-        
-        // Validation
-        if (!newTitle) {
-            alert('Title is required');
-            return;
-        }
-        
-        if (!newDueDate) {
-            alert('Due date is required');
-            return;
-        }
-        
-        const dueDate = new Date(newDueDate);
-        const now = new Date();
-        
-        if (dueDate < now) {
-            alert('Due date cannot be in the past');
-            return;
-        }
-        
-        // Show loading state
-        const originalText = this.innerHTML;
-        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-        this.disabled = true;
-        
-        // Send update request
-        fetch(`/tasks/${taskId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                title: newTitle,
-                description: newDescription,
-                due_date: newDueDate,
-                priority: newPriority
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.ok) {
-                // Update display values
-                const taskElement = this.closest('.list-group-item');
-                
-                // Update title
-                const titleElement = taskElement.querySelector('h5.mb-1');
-                titleElement.firstChild.textContent = newTitle;
-                
-                // Update priority badge
-                const priorityBadge = taskElement.querySelector('.badge');
-                priorityBadge.textContent = newPriority;
-                priorityBadge.className = `badge bg-${newPriority === 'high' ? 'danger' : newPriority === 'medium' ? 'warning' : 'info'} me-2`;
-                
-                // Update due date (will be refreshed by the due-date formatting function)
-                const dueDateSpan = taskElement.querySelector('.due-date');
-                dueDateSpan.setAttribute('data-due-date', new Date(newDueDate).toISOString());
-                dueDateSpan.textContent = 'Loading...';
-                
-                // Re-format due dates
-                document.querySelectorAll('.due-date').forEach(element => {
-                    const dueDate = new Date(element.getAttribute('data-due-date'));
-                    element.textContent = dueDate.toLocaleString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                });
-                
-                // Hide edit form
-                document.getElementById(`edit-task-form-${taskId}`).style.display = 'none';
-                
-                // Show success message
-                showAlert('Task updated successfully!', 'success');
-            } else {
-                alert('Error updating task: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error updating task details');
-        })
-        .finally(() => {
-            // Restore button state
-            this.innerHTML = originalText;
-            this.disabled = false;
-        });
-    });
-});
-
-  function showAlert(message, type) {
-    // Remove existing alerts
-    const existingAlerts = document.querySelectorAll('.alert-dashboard');
-    existingAlerts.forEach(alert => alert.remove());
-    
-    // Create new alert
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dashboard alert-dismissible fade show position-fixed`;
-    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
-    alertDiv.innerHTML = `
-      <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    document.body.appendChild(alertDiv);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      if (alertDiv.parentNode) {
-        alertDiv.remove();
-      }
-    }, 5000);
-  }
-;
-</script>
 
 <%- include('partials/footer') %>
 

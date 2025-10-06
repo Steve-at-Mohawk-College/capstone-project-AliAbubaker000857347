@@ -1,5 +1,5 @@
-const express = require('express');
-const path = require('path');
+
+
 const helmet = require('helmet');
 const cors = require('cors');
 const compression = require('compression');
@@ -7,6 +7,14 @@ const rateLimit = require('express-rate-limit');
 const session = require('express-session');
 const fs = require('fs');
 require('dotenv').config();
+
+const express = require('express');
+const path = require('path');
+
+
+
+
+
 
 // Database
 const { testConnection, query } = require('./config/database');
@@ -32,20 +40,25 @@ const app = express();
 // Trust Heroku proxy
 app.set('trust proxy', 1);
 
+
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-for-development',
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 10 * 60 * 1000, // 10 minutes in milliseconds
+      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      httpOnly: true, // prevents JavaScript access
+      sameSite: "strict", // stronger CSRF protection
+      maxAge: 5 * 60 * 1000 // 5 minutes
     },
-    store: session.MemoryStore() // Consider using a proper store for production
+    store: session.MemoryStore() // for production, use Redis or MySQL store
   })
 );
+
+
+
 
 // Add session timeout middleware
 app.use((req, res, next) => {
@@ -56,6 +69,33 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+
+let cachedBreeds = [];
+
+async function fetchDogBreeds() {
+  try {
+    const response = await fetch('https://api.thedogapi.com/v1/breeds', {
+      headers: {
+        'x-api-key': process.env.DOG_API_KEY || 'live_SmpGn4uvVTI39zXc1crTEnTvEGwXcI0iJweo8q9C6NDNW3eV0J2UugAgWt60436Q'
+      }
+    });
+    cachedBreeds = await response.json();
+    console.log('✅ Dog breeds cached successfully:', cachedBreeds.length);
+  } catch (err) {
+    console.error('❌ Failed to fetch dog breeds', err);
+  }
+}
+
+// Fetch once at startup, then refresh daily
+fetchDogBreeds();
+setInterval(fetchDogBreeds, 24 * 60 * 60 * 1000); // every 24 hours
+
+// Route to serve cached breeds
+app.get('/api/dog-breeds', (req, res) => {
+  res.json(cachedBreeds);
+});
+
 
 // app.use('/health', healthRoutes);
 // // ===== Custom Middleware (AFTER session) =====
@@ -241,6 +281,25 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     });
   }
 });
+
+
+
+
+app.get('/api/dog-breeds', async (req, res) => {
+  try {
+    const response = await fetch('https://api.thedogapi.com/v1/breeds', {
+      headers: {
+        'x-api-key': 'live_SmpGn4uvVTI39zXc1crTEnTvEGwXcI0iJweo8q9C6NDNW3eV0J2UugAgWt60436Q'
+      }
+    });
+    const breeds = await response.json();
+    res.json(breeds);
+  } catch (err) {
+    console.error('Error fetching Dog API:', err);
+    res.status(500).json({ error: 'Failed to fetch dog breeds' });
+  }
+});
+
 
 // Add pet form
 app.get('/pets/add', requireAuth, (req, res) => {

@@ -89,7 +89,12 @@ async function fetchDogBreeds() {
 
 // Fetch once at startup, then refresh daily
 fetchDogBreeds();
-setInterval(fetchDogBreeds, 24 * 60 * 60 * 1000); // every 24 hours
+
+// Only set interval in production/development, not in test
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(fetchDogBreeds, 24 * 60 * 60 * 1000); // every 24 hours
+}
+
 
 // Route to serve cached breeds
 app.get('/api/dog-breeds', (req, res) => {
@@ -585,12 +590,15 @@ async function initializeApp() {
       process.exit(1);
     }
 
-    app.listen(PORT, () => {
-      console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📊 Health check: http://localhost:${PORT}/health-check`);
-      console.log(`🔗 Login page: http://localhost:${PORT}/login`);
-      console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-    });
+    // Only start server if not in test environment and this is the main module
+    if (process.env.NODE_ENV !== 'test' && require.main === module) {
+      app.listen(PORT, () => {
+        console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+        console.log(`📊 Health check: http://localhost:${PORT}/health-check`);
+        console.log(`🔗 Login page: http://localhost:${PORT}/login`);
+        console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+      });
+    }
   } catch (error) {
     console.error('Failed to initialize app:', error);
     process.exit(1);
@@ -608,8 +616,10 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-
-
-initializeApp();
-
+// Export app for testing
 module.exports = app;
+
+// Only initialize if this is the main module (not required by tests)
+if (require.main === module) {
+  initializeApp();
+}

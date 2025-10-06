@@ -243,49 +243,64 @@ class DashboardManager {
     }
 
     async savePetEdit(petId, buttonElement) {
-        const ageInput = document.getElementById(`edit-age-${petId}`);
-        const weightInput = document.getElementById(`edit-weight-${petId}`);
-        
-        const newAge = parseFloat(ageInput.value);
-        const newWeight = parseFloat(weightInput.value);
-        
-        // Validation
-        if (isNaN(newAge) || newAge <= 0) {
-            alert('Age must be greater than 0');
-            return;
-        }
-        
-        if (isNaN(newWeight) || newWeight < 0) {
-            alert('Weight cannot be negative');
-            return;
-        }
-        
-        // Show loading state
-        this.setButtonLoading(buttonElement, true);
-        
-        try {
-            const response = await fetch(`/pets/${petId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ age: newAge, weight: newWeight })
-            });
-            
-            const data = await response.json();
-            
-            if (data.ok) {
-                this.updatePetDisplay(petId, newAge, newWeight);
-                this.hideEditForm(petId, 'edit-form');
-                this.showAlert('Pet details updated successfully!', 'success');
-            } else {
-                throw new Error(data.error || 'Unknown error');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            this.showAlert('Error updating pet details', 'danger');
-        } finally {
-            this.setButtonLoading(buttonElement, false);
-        }
+    console.log('💾 Saving pet edit for ID:', petId);
+    
+    const ageInput = document.getElementById(`edit-age-${petId}`);
+    const weightInput = document.getElementById(`edit-weight-${petId}`);
+    
+    const newAge = parseFloat(ageInput.value);
+    const newWeight = parseFloat(weightInput.value);
+    
+    console.log('📊 New values:', { newAge, newWeight });
+    
+    // Validation
+    if (isNaN(newAge) || newAge <= 0) {
+        this.showAlert('Age must be greater than 0', 'danger');
+        return;
     }
+    
+    if (isNaN(newWeight) || newWeight < 0) {
+        this.showAlert('Weight cannot be negative', 'danger');
+        return;
+    }
+    
+    // Show loading state
+    this.setButtonLoading(buttonElement, true);
+    
+    try {
+        console.log('📤 Sending update request...');
+        const response = await fetch(`/pets/${petId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ age: newAge, weight: newWeight })
+        });
+        
+        console.log('📥 Response received, status:', response.status);
+        const data = await response.json();
+        console.log('📦 Response data:', data);
+        
+        if (response.ok && data.ok) {
+            console.log('✅ Update successful, updating display...');
+            this.updatePetDisplay(petId, newAge, newWeight);
+            this.hideEditForm(petId, 'edit-form');
+            this.showAlert('Pet details updated successfully!', 'success');
+            
+            // Optional: Reload the page to ensure all data is fresh
+            setTimeout(() => {
+                console.log('🔄 Reloading page to refresh data...');
+                window.location.reload();
+            }, 1000);
+            
+        } else {
+            throw new Error(data.error || 'Unknown error from server');
+        }
+    } catch (error) {
+        console.error('❌ Error updating pet:', error);
+        this.showAlert('Error updating pet details: ' + error.message, 'danger');
+    } finally {
+        this.setButtonLoading(buttonElement, false);
+    }
+}
 
     async saveTaskEdit(taskId, buttonElement) {
         const titleInput = document.getElementById(`edit-task-title-${taskId}`);
@@ -360,6 +375,9 @@ class DashboardManager {
     }
 
     updatePetDisplay(petId, newAge, newWeight) {
+    console.log('🔄 Updating pet display for pet ID:', petId);
+    
+    try {
         let ageDisplay;
         if (newAge < 1) {
             const months = Math.round(newAge * 12);
@@ -370,9 +388,29 @@ class DashboardManager {
             ageDisplay = newAge.toFixed(1) + ' years';
         }
         
-        document.getElementById(`age-display-${petId}`).textContent = ageDisplay;
-        document.getElementById(`weight-display-${petId}`).textContent = newWeight + ' kg';
+        // Update age display - check if element exists first
+        const ageElement = document.getElementById(`age-display-${petId}`);
+        if (ageElement) {
+            ageElement.textContent = ageDisplay;
+            console.log('✅ Updated age display:', ageDisplay);
+        } else {
+            console.warn('⚠️ Age display element not found for pet ID:', petId);
+        }
+        
+        // Update weight display - check if element exists first
+        const weightElement = document.getElementById(`weight-display-${petId}`);
+        if (weightElement) {
+            weightElement.textContent = newWeight + ' kg';
+            console.log('✅ Updated weight display:', newWeight + ' kg');
+        } else {
+            console.warn('⚠️ Weight display element not found for pet ID:', petId);
+        }
+        
+    } catch (error) {
+        console.error('❌ Error updating pet display:', error);
+        // Don't throw the error, just log it
     }
+}
 
     updateTaskDisplay(taskId, newTitle, newDescription, newDueDate, newPriority) {
         const taskElement = document.querySelector(`[data-task-id="${taskId}"]`).closest('.list-group-item');

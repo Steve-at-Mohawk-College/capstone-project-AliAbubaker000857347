@@ -92,6 +92,8 @@ async function createPet(userId, { name, breed, age, species, gender, weight }) 
 }
 
 async function updatePet(petId, { name, breed, age, species, gender, weight }) {
+    console.log('📝 updatePet called with:', { petId, name, breed, age, species, gender, weight });
+    
     // Validate provided fields (only validate fields that are being updated)
     if (name !== undefined && !validatePetName(name)) {
         throw new Error('Pet name must be 2-50 letters long (letters, spaces, apostrophes, hyphens allowed)');
@@ -117,20 +119,56 @@ async function updatePet(petId, { name, breed, age, species, gender, weight }) {
         throw new Error('Please select a valid gender (male, female, other)');
     }
 
-    // Handle undefined values by converting them to null for SQL
-    const safeName = name !== undefined ? name.trim() : null;
-    const safeBreed = breed !== undefined ? breed.trim() : null;
-    const safeAge = age !== undefined ? Math.round(parseFloat(age) * 10) / 10 : null;
-    const safeSpecies = species !== undefined ? species.trim() : null;
-    const safeGender = gender !== undefined ? gender : null;
-    const safeWeight = weight !== undefined ? Math.round(parseFloat(weight) * 10) / 10 : null;
+    // Build dynamic SQL query based on provided fields
+    const updates = [];
+    const params = [];
     
-    const sql = `
-        UPDATE pets SET name=?, breed=?, age=?, species=?, gender=?, weight=? 
-        WHERE pet_id=?
-    `;
+    if (name !== undefined) {
+        updates.push('name = ?');
+        params.push(name.trim());
+    }
     
-    const result = await query(sql, [safeName, safeBreed, safeAge, safeSpecies, safeGender, safeWeight, petId]);
+    if (breed !== undefined) {
+        updates.push('breed = ?');
+        params.push(breed.trim());
+    }
+    
+    if (age !== undefined) {
+        updates.push('age = ?');
+        params.push(Math.round(parseFloat(age) * 10) / 10);
+    }
+    
+    if (species !== undefined) {
+        updates.push('species = ?');
+        params.push(species.trim());
+    }
+    
+    if (gender !== undefined) {
+        updates.push('gender = ?');
+        params.push(gender);
+    }
+    
+    if (weight !== undefined) {
+        updates.push('weight = ?');
+        params.push(Math.round(parseFloat(weight) * 10) / 10);
+    }
+    
+    // If no fields to update, throw error
+    if (updates.length === 0) {
+        throw new Error('No fields provided for update');
+    }
+    
+    // Add pet_id to params
+    params.push(petId);
+    
+    const sql = `UPDATE pets SET ${updates.join(', ')} WHERE pet_id = ?`;
+    
+    console.log('🚀 Executing SQL:', sql);
+    console.log('📋 With params:', params);
+    
+    const result = await query(sql, params);
+    
+    console.log('✅ SQL result:', result);
     
     // Check if any rows were affected (pet exists)
     if (result.affectedRows === 0) {
@@ -140,6 +178,8 @@ async function updatePet(petId, { name, breed, age, species, gender, weight }) {
     return result;
 }
 
+
+// Delete pet by ID
 async function deletePet(petId) {
     const result = await query(`DELETE FROM pets WHERE pet_id = ?`, [petId]);
     

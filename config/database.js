@@ -62,6 +62,16 @@ async function testConnection() {
   }
 }
 
+// Add this function to close the pool
+async function closePool() {
+  if (pool && pool.end) {
+    await pool.end();
+    console.log('✅ Database pool closed');
+  }
+}
+
+module.exports = { query, testConnection, pool, closePool };
+
 // Query helpers with proper connection management
 async function query(sql, params) {
   let connection;

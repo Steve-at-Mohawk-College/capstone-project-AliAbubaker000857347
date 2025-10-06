@@ -6,10 +6,36 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "setup-admin": "node scripts/createAdmin.js",
-    "test": "jest",
-    "db:setup": "node database/setup.js",
-    "db:migrate": "node database/migrate.js"
+
+   
+
+
+    "test": "node tests/test-runner.js",
+    "test:auth": "node -e \"const AuthTests = require('./tests/auth-tests'); const TestSummary = require('./tests/test-summary'); const tests = new AuthTests(new TestSummary()); tests.runAllTests().then(() => tests.cleanup());\"",
+    "test:pets": "node -e \"console.log('Run npm test instead - pet tests need a valid user from auth tests'); process.exit(1);\"",
+
+
+
+   
+        "test:basic": "jest tests/backend/basic.test.js --verbose --detectOpenHandles --forceExit",
+        "test:public": "jest tests/backend/public-routes.test.js --verbose --detectOpenHandles --forceExit",
+        "test:frontend": "jest tests/frontend/public-pages.test.js --verbose --testTimeout=30000 --detectOpenHandles --forceExit",
+        "test:integration": "jest tests/integration/navigation.test.js --verbose --testTimeout=30000 --detectOpenHandles --forceExit",
+        "test:summary": "jest tests/final-summary.test.js --verbose --detectOpenHandles --forceExit",
+        "test:all": "npm run test:basic && npm run test:public && npm run test:frontend && npm run test:integration && npm run test:summary",
+        "test:coverage": "jest --coverage --verbose --testTimeout=30000 --detectOpenHandles --forceExit",
+       
+        "test:frontend:public": "jest tests/frontend/public-pages.test.js --verbose --testTimeout=30000 --detectOpenHandles --forceExit",
+        "test:all:public": "npm run test:public && npm run test:frontend:public",
+        "test:watch": "jest --watch --verbose",
+    "test:backend": "jest tests/backend/ --verbose",
+   
+    "test:frontend:dev": "jest tests/frontend/ --watch --verbose --testTimeout=30000",
+   
+    "test:debug": "jest --verbose --detectOpenHandles --no-cache",
+    
+    "test:navigation": "jest tests/integration/navigation.test.js --verbose --testTimeout=30000",
+    "kill-port": "npx kill-port 3000"
   },
   "keywords": [
     "pet",
@@ -38,7 +64,10 @@
     "sharp": "^0.34.3"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "puppeteer": "^21.11.0",
+    "supertest": "^6.3.4"
   },
   "engines": {
     "node": ">=16.0.0",

@@ -126,17 +126,22 @@ app.use((req, res, next) => {
   next();
 });
 
-// ===== Security Middleware =====
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
+      styleSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "https://cdn.jsdelivr.net", 
+        "https://fonts.googleapis.com",
+        "https://cdnjs.cloudflare.com"
+      ],
       scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
-      scriptSrcAttr: ["'self'", "'unsafe-inline'"], // Add this line
+      scriptSrcAttr: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       fontSrc: ["'self'", "https://cdn.jsdelivr.net", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'"]
+      connectSrc: ["'self'", "https://cdn.jsdelivr.net", "https://api.thedogapi.com"] // Add both
     }
   }
 }));

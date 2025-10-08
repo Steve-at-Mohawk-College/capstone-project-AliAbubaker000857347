@@ -295,6 +295,8 @@ app.get('/dashboard', requireAuth, async (req, res) => {
 
 
 
+
+
 app.get('/api/dog-breeds', async (req, res) => {
   try {
     const response = await fetch('https://api.thedogapi.com/v1/breeds', {

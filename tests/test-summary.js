@@ -7,7 +7,7 @@ class TestSummary {
 
     startTestSuite() {
         this.startTime = new Date();
-        console.log('🚀 STARTING TEST SUITE');
+        console.log(' STARTING TEST SUITE');
         console.log('='.repeat(50));
     }
 
@@ -29,7 +29,7 @@ class TestSummary {
         const total = this.results.length;
 
         console.log('\n' + '='.repeat(50));
-        console.log('📊 FINAL TEST SUMMARY');
+        console.log(' FINAL TEST SUMMARY');
         console.log('='.repeat(50));
         
         // Group results by test type
@@ -37,9 +37,9 @@ class TestSummary {
         const petTests = this.results.filter(r => r.testCase.includes('Pet'));
 
         if (authTests.length > 0) {
-            console.log('\n🔐 AUTHENTICATION RESULTS:');
+            console.log('\n AUTHENTICATION RESULTS:');
             authTests.forEach((result, index) => {
-                const icon = result.status === 'PASS' ? '✅' : '❌';
+                const icon = result.status === 'PASS' ? 'Pass' : 'Fail';
                 console.log(`  ${icon} ${result.testCase}`);
                 if (result.status === 'PASS' && typeof result.details === 'object') {
                     console.log(`     User ID: ${result.details.userId}, Username: ${result.details.username}`);
@@ -52,7 +52,7 @@ class TestSummary {
         if (petTests.length > 0) {
             console.log('\n🐾 PET CRUD RESULTS:');
             petTests.forEach((result, index) => {
-                const icon = result.status === 'PASS' ? '✅' : '❌';
+                const icon = result.status === 'PASS' ? 'Pass' : 'Fail';
                 console.log(`  ${icon} ${result.testCase}`);
                 if (result.status === 'PASS' && typeof result.details === 'object') {
                     if (result.details.petId) {
@@ -68,9 +68,9 @@ class TestSummary {
         }
 
         console.log('\n' + '='.repeat(50));
-        console.log(`📈 SUMMARY: ${passed} passed, ${failed} failed, ${total} total`);
-        console.log(`⏱️  DURATION: ${duration}ms`);
-        console.log(`🎯 STATUS: ${failed === 0 ? 'ALL TESTS PASSED 🎉' : 'SOME TESTS FAILED ⚠️'}`);
+        console.log(` SUMMARY: ${passed} passed, ${failed} failed, ${total} total`);
+        console.log(`⏱  DURATION: ${duration}ms`);
+        console.log(` STATUS: ${failed === 0 ? 'ALL TESTS PASSED ' : 'SOME TESTS FAILED '}`);
         console.log('='.repeat(50));
 
         return {

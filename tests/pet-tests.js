@@ -12,7 +12,7 @@ class PetTests {
         console.log('='.repeat(50));
         
         if (!this.testUserId) {
-            console.log('❌ SKIP: No user ID provided for pet tests');
+            console.log(' SKIP: No user ID provided for pet tests');
             this.testSummary.addResult('All Pet Tests', 'SKIP', 'No user ID available - run auth tests first');
             return;
         }
@@ -33,7 +33,7 @@ class PetTests {
 
     async testCreatePet() {
         const testCase = 'Create New Pet - Valid Data';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             const petData = {
@@ -60,7 +60,7 @@ class PetTests {
 
             this.testPet = createdPet;
 
-            console.log('✅ PASS: Pet created successfully');
+            console.log(' PASS: Pet created successfully');
             console.log('   Details:', {
                 petId: createdPet.pet_id,
                 name: createdPet.name,
@@ -78,7 +78,7 @@ class PetTests {
             });
 
         } catch (error) {
-            console.log('❌ FAIL: Pet creation failed');
+            console.log(' FAIL: Pet creation failed');
             console.log('   Error:', error.message);
             this.testSummary.addResult(testCase, 'FAIL', error.message);
         }
@@ -86,7 +86,7 @@ class PetTests {
 
     async testCreatePetInvalidName() {
         const testCase = 'Create Pet - Invalid Name (Should Fail)';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             const invalidPetData = {
@@ -104,12 +104,12 @@ class PetTests {
             await createPet(this.testUserId, invalidPetData);
             
             // If we reach here, the test failed (should have thrown an error)
-            console.log('❌ FAIL: Invalid pet name was accepted');
+            console.log(' FAIL: Invalid pet name was accepted');
             this.testSummary.addResult(testCase, 'FAIL', 'Invalid pet name was accepted without validation');
 
         } catch (error) {
             // Expected behavior - invalid name should cause an error
-            console.log('✅ PASS: Correctly rejected invalid pet name');
+            console.log(' PASS: Correctly rejected invalid pet name');
             console.log('   Details:', { 
                 input: 'F1uffy@',
                 error: error.message 
@@ -120,7 +120,7 @@ class PetTests {
 
     async testCreatePetInvalidAge() {
         const testCase = 'Create Pet - Invalid Age (Should Fail)';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             const invalidPetData = {
@@ -138,7 +138,7 @@ class PetTests {
             await createPet(this.testUserId, invalidPetData);
             
             // If we reach here, the test failed (should have thrown an error)
-            console.log('❌ FAIL: Invalid age was accepted');
+            console.log(' FAIL: Invalid age was accepted');
             this.testSummary.addResult(testCase, 'FAIL', 'Negative age was accepted without validation');
 
         } catch (error) {
@@ -172,12 +172,12 @@ class PetTests {
             await createPet(this.testUserId, invalidPetData);
             
             // If we reach here, the test failed (should have thrown an error)
-            console.log('❌ FAIL: Invalid weight was accepted');
+            console.log(' FAIL: Invalid weight was accepted');
             this.testSummary.addResult(testCase, 'FAIL', 'Zero weight was accepted without validation');
 
         } catch (error) {
             // Expected behavior - invalid weight should cause an error
-            console.log('✅ PASS: Correctly rejected invalid weight');
+            console.log(' PASS: Correctly rejected invalid weight');
             console.log('   Details:', { 
                 input: 0,
                 error: error.message 
@@ -188,7 +188,7 @@ class PetTests {
 
     async testCreatePetMissingRequired() {
         const testCase = 'Create Pet - Missing Required Fields (Should Fail)';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             const incompletePetData = {
@@ -203,12 +203,12 @@ class PetTests {
             await createPet(this.testUserId, incompletePetData);
             
             // If we reach here, the test failed (should have thrown an error)
-            console.log('❌ FAIL: Incomplete pet data was accepted');
+            console.log(' FAIL: Incomplete pet data was accepted');
             this.testSummary.addResult(testCase, 'FAIL', 'Missing required fields were accepted');
 
         } catch (error) {
             // Expected behavior - missing fields should cause an error
-            console.log('✅ PASS: Correctly rejected incomplete pet data');
+            console.log(' PASS: Correctly rejected incomplete pet data');
             console.log('   Details:', { 
                 error: error.message 
             });
@@ -218,7 +218,7 @@ class PetTests {
 
     async testUpdatePet() {
         const testCase = 'Update Existing Pet - Valid Data';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             if (!this.testPet) {
@@ -243,7 +243,7 @@ class PetTests {
                 throw new Error('Pet not found after update');
             }
 
-            console.log('✅ PASS: Pet updated successfully');
+            console.log(' PASS: Pet updated successfully');
             console.log('   Details:', {
                 petId: updatedPet.pet_id,
                 changes: {
@@ -262,7 +262,7 @@ class PetTests {
             this.testPet = updatedPet;
 
         } catch (error) {
-            console.log('❌ FAIL: Pet update failed');
+            console.log(' FAIL: Pet update failed');
             console.log('   Error:', error.message);
             this.testSummary.addResult(testCase, 'FAIL', error.message);
         }
@@ -270,7 +270,7 @@ class PetTests {
 
     async testUpdatePetInvalidData() {
         const testCase = 'Update Pet - Invalid Data (Should Fail)';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             if (!this.testPet) {
@@ -289,12 +289,12 @@ class PetTests {
             await updatePet(this.testPet.pet_id, invalidUpdates);
             
             // If we reach here, the test failed (should have thrown an error)
-            console.log('❌ FAIL: Invalid update data was accepted');
+            console.log(' FAIL: Invalid update data was accepted');
             this.testSummary.addResult(testCase, 'FAIL', 'Invalid update data was accepted without validation');
 
         } catch (error) {
             // Expected behavior - invalid data should cause an error
-            console.log('✅ PASS: Correctly rejected invalid update data');
+            console.log(' PASS: Correctly rejected invalid update data');
             console.log('   Details:', { 
                 error: error.message 
             });
@@ -304,7 +304,7 @@ class PetTests {
 
     async testUpdateNonExistentPet() {
         const testCase = 'Update Non-Existent Pet (Should Fail)';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             const nonExistentPetId = 99999; // ID that doesn't exist
@@ -319,12 +319,12 @@ class PetTests {
             await updatePet(nonExistentPetId, updates);
             
             // If we reach here, the test failed (should have thrown an error)
-            console.log('❌ FAIL: Update on non-existent pet was accepted');
+            console.log(' FAIL: Update on non-existent pet was accepted');
             this.testSummary.addResult(testCase, 'FAIL', 'Update on non-existent pet was accepted');
 
         } catch (error) {
             // Expected behavior - non-existent pet should cause an error
-            console.log('✅ PASS: Correctly rejected update on non-existent pet');
+            console.log(' PASS: Correctly rejected update on non-existent pet');
             console.log('   Details:', { 
                 error: error.message 
             });
@@ -334,7 +334,7 @@ class PetTests {
 
     async testDeletePet() {
         const testCase = 'Delete Existing Pet';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             if (!this.testPet) {
@@ -354,7 +354,7 @@ class PetTests {
                 throw new Error('Pet still exists after deletion');
             }
 
-            console.log('✅ PASS: Pet deleted successfully');
+            console.log(' PASS: Pet deleted successfully');
             console.log('   Details:', {
                 deletedPetId: petId,
                 name: this.testPet.name
@@ -369,7 +369,7 @@ class PetTests {
             this.testPet = null;
 
         } catch (error) {
-            console.log('❌ FAIL: Pet deletion failed');
+            console.log(' FAIL: Pet deletion failed');
             console.log('   Error:', error.message);
             this.testSummary.addResult(testCase, 'FAIL', error.message);
         }
@@ -380,9 +380,9 @@ class PetTests {
         if (this.testPet) {
             try {
                 await deletePet(this.testPet.pet_id);
-                console.log('🧹 Cleaned up test pet data');
+                console.log(' Cleaned up test pet data');
             } catch (error) {
-                console.log('⚠️  Cleanup warning:', error.message);
+                console.log('  Cleanup warning:', error.message);
             }
         }
     }

@@ -14,7 +14,7 @@ class TestRunner {
             this.testSummary.startTestSuite();
 
             // Run authentication tests first to get a valid user
-            console.log('\n🔐 RUNNING AUTHENTICATION TESTS');
+            console.log('\n RUNNING AUTHENTICATION TESTS');
             console.log('='.repeat(40));
             await this.authTests.runAllTests();
             
@@ -25,7 +25,7 @@ class TestRunner {
                 this.petTests = new PetTests(this.testSummary, this.authTests.testUser.user_id);
                 await this.petTests.runAllTests();
             } else {
-                console.log('\n⚠️  Skipping pet tests - no user created in auth tests');
+                console.log('\n  Skipping pet tests - no user created in auth tests');
                 this.testSummary.addResult('Pet Tests', 'SKIP', 'No user available from auth tests');
             }
 
@@ -38,14 +38,14 @@ class TestRunner {
             return summary;
 
         } catch (error) {
-            console.error('❌ Test runner error:', error);
+            console.error('Fail Test runner error:', error);
             await this.cleanup();
             process.exit(1);
         }
     }
 
     async cleanup() {
-        console.log('\n🧹 Cleaning up test data...');
+        console.log('\n Cleaning up test data...');
         await this.authTests.cleanup();
         if (this.petTests) {
             await this.petTests.cleanup();

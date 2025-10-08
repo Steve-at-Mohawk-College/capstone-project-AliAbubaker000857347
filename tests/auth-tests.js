@@ -9,7 +9,7 @@ class AuthTests {
     }
 
     async runAllTests() {
-        console.log('\n🔐 AUTHENTICATION TESTS');
+        console.log('\n AUTHENTICATION TESTS');
         console.log('='.repeat(50));
         
         await this.testUserRegistration();
@@ -19,7 +19,7 @@ class AuthTests {
 
     async testUserRegistration() {
         const testCase = 'User Registration - Valid Data';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             const userData = {
@@ -51,7 +51,7 @@ class AuthTests {
 
             this.testUser = dbUser;
 
-            console.log('✅ PASS: User created successfully');
+            console.log(' PASS: User created successfully');
             console.log('   Details:', {
                 userId: dbUser.user_id,
                 username: dbUser.username,
@@ -66,7 +66,7 @@ class AuthTests {
             });
 
         } catch (error) {
-            console.log('❌ FAIL: User registration failed');
+            console.log(' FAIL: User registration failed');
             console.log('   Error:', error.message);
             this.testSummary.addResult(testCase, 'FAIL', error.message);
         }
@@ -74,7 +74,7 @@ class AuthTests {
 
     async testDuplicateEmail() {
         const testCase = 'User Registration - Duplicate Email';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             if (!this.testUser) {
@@ -94,12 +94,12 @@ class AuthTests {
             await createUser(duplicateData.username, duplicateData.email, passwordHash, verificationToken);
             
             // If we reach here, the test failed (should have thrown an error)
-            console.log('❌ FAIL: Duplicate email was accepted');
+            console.log(' FAIL: Duplicate email was accepted');
             this.testSummary.addResult(testCase, 'FAIL', 'Duplicate email was accepted without error');
 
         } catch (error) {
             // Expected behavior - duplicate email should cause an error
-            console.log('✅ PASS: Correctly rejected duplicate email');
+            console.log(' PASS: Correctly rejected duplicate email');
             console.log('   Details:', { error: error.message });
             this.testSummary.addResult(testCase, 'PASS', error.message);
         }
@@ -107,7 +107,7 @@ class AuthTests {
 
     async testUserLogin() {
         const testCase = 'User Login - Valid Credentials';
-        console.log(`\n📝 Test: ${testCase}`);
+        console.log(`\n Test: ${testCase}`);
         
         try {
             if (!this.testUser) {
@@ -130,7 +130,7 @@ class AuthTests {
                 throw new Error('Password validation failed');
             }
 
-            console.log('✅ PASS: User login successful');
+            console.log(' PASS: User login successful');
             console.log('   Details:', {
                 userId: user.user_id,
                 username: user.username,
@@ -143,7 +143,7 @@ class AuthTests {
             });
 
         } catch (error) {
-            console.log('❌ FAIL: User login failed');
+            console.log(' FAIL: User login failed');
             console.log('   Error:', error.message);
             this.testSummary.addResult(testCase, 'FAIL', error.message);
         }
@@ -154,9 +154,9 @@ class AuthTests {
         if (this.testUser) {
             try {
                 await query('DELETE FROM users WHERE user_id = ?', [this.testUser.user_id]);
-                console.log('🧹 Cleaned up test user data');
+                console.log(' Cleaned up test user data');
             } catch (error) {
-                console.log('⚠️  Cleanup warning:', error.message);
+                console.log('  Cleanup warning:', error.message);
             }
         }
     }

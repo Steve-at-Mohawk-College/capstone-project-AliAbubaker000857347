@@ -36,8 +36,8 @@ if (process.env.JAWSDB_URL) {
     queueLimit: 0,
     charset: 'utf8mb4',
     timezone: '+00:00',
-    acquireTimeout: 10000,
-    timeout: 60000
+    // acquireTimeout: 10000,
+    // timeout: 60000
   };
 
   console.log('✅ Using local MySQL connection');
@@ -88,6 +88,7 @@ async function query(sql, params) {
     }
   }
 }
+
 
 async function queryOne(sql, params) {
   const rows = await query(sql, params);

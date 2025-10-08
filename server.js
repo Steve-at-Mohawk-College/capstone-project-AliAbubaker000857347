@@ -22,7 +22,7 @@ const { testConnection, query } = require('./config/database');
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const petRoutes = require('./routes/petRoutes');
-//const taskRoutes = require('./routes/taskRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 // In your main server file
 // const healthRoutes = require('./routes/healthRoutes');
 // const communityRoutes = require('./routes/communityRoutes');
@@ -201,7 +201,7 @@ app.get('/db-status', async (req, res) => {
 // ===== Main Routes =====
 app.use('/auth', authRoutes);
 app.use('/pets', requireAuth, petRoutes);
-//app.use('/tasks', requireAuth, taskRoutes);
+app.use('/tasks', requireAuth, taskRoutes);
 //app.use('/health', requireAuth, healthRoutes);
 // app.use('/community', requireAuth, communityRoutes);
 // app.use('/profile', requireAuth, profileRoutes);
@@ -553,17 +553,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// // Serve theme CSS
-// app.get('/css/theme.css', (req, res) => {
-//   res.setHeader('Content-Type', 'text/css');
-//   res.sendFile(path.join(__dirname, 'public/css/theme.css'));
-// });
+// Serve theme CSS
+app.get('/css/theme.css', (req, res) => {
+  res.setHeader('Content-Type', 'text/css');
+  res.sendFile(path.join(__dirname, 'public/css/theme.css'));
+});
 
-// // Serve theme JS
-// app.get('/js/theme.js', (req, res) => {
-//   res.setHeader('Content-Type', 'application/javascript');
-//   res.sendFile(path.join(__dirname, 'public/js/theme.js'));
-// });
+// Serve theme JS
+app.get('/js/theme.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(path.join(__dirname, 'public/js/theme.js'));
+});
 
 // ===== Error Handling =====
 app.use((err, req, res, next) => {

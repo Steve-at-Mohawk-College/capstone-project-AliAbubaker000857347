@@ -1,0 +1,192 @@
+<%- include('partials/header', {title: 'Schedule Task'}) %>
+
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card card-custom">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-4 text-center">Schedule Task</h1>
+        
+        <% if (typeof message !== 'undefined' && message) { %>
+          <div class="alert alert-info"><%- message %></div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger"><%- error %></div>
+        <% } %>
+
+        <% if (pets.length === 0) { %>
+          <div class="alert alert-warning">
+            No pets available. Please <a href="/pets/add">add a pet</a> first.
+          </div>
+        <% } else { %>
+          <form id="taskForm" action="/tasks" method="POST" novalidate>
+            <!-- CSRF Protection -->
+            <% if (typeof csrfToken !== 'undefined') { %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <% } %>
+
+            <div class="mb-3">
+              <label for="pet_id" class="form-label">Pet *</label>
+              <select class="form-select" id="pet_id" name="pet_id" required>
+                <option value="">Select a Pet</option>
+                <% pets.forEach(pet => { %>
+                  <option value="<%= pet.pet_id %>" 
+                    <%= (typeof preservedPetId !== 'undefined' && preservedPetId == pet.pet_id) ? 'selected' : '' %>>
+                    <%- pet.name %> (<%- pet.species %>)
+                  </option>
+                <% }); %>
+              </select>
+              <div class="invalid-feedback">Please select a valid pet.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="task_type" class="form-label">Task Type *</label>
+              <select class="form-select" id="task_type" name="task_type" required>
+                <option value="">Select Task Type</option>
+                <option value="feeding" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'feeding') ? 'selected' : '' %>>Feeding</option>
+                <option value="cleaning" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'cleaning') ? 'selected' : '' %>>Cleaning</option>
+                <option value="vaccination" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'vaccination') ? 'selected' : '' %>>Vaccination</option>
+                <option value="medication" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'medication') ? 'selected' : '' %>>Medication</option>
+                <option value="grooming" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'grooming') ? 'selected' : '' %>>Grooming</option>
+                <option value="vet_visit" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'vet_visit') ? 'selected' : '' %>>Vet Visit</option>
+                <option value="exercise" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'exercise') ? 'selected' : '' %>>Exercise</option>
+                <option value="other" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'other') ? 'selected' : '' %>>Other</option>
+              </select>
+              <div class="invalid-feedback">Please select a valid task type.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="title" class="form-label">Title *</label>
+              <input type="text" class="form-control" id="title" name="title" 
+                     required maxlength="100" pattern="^[a-zA-Z0-9\s\-_,.!()]+$"
+                     value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
+              <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers, spaces, and basic punctuation.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" name="description" rows="3" maxlength="500"><%= typeof preservedDescription !== 'undefined' ? preservedDescription : '' %></textarea>
+              <small class="form-text text-muted"><span id="charCount">0</span>/500 characters</small>
+            </div>
+
+            <div class="mb-3">
+              <label for="due_date" class="form-label">Due Date *</label>
+              <%
+                const now = new Date();
+                const maxDate = new Date();
+                maxDate.setFullYear(now.getFullYear() + 1);
+                
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const maxYear = maxDate.getFullYear();
+                const maxMonth = String(maxDate.getMonth() + 1).padStart(2, '0');
+                const maxDay = String(maxDate.getDate()).padStart(2, '0');
+                
+                const localMin = `${year}-${month}-${day}T${hours}:${minutes}`;
+                const localMax = `${maxYear}-${maxMonth}-${maxDay}T23:59`;
+              %>
+              <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
+                     required min="<%= localMin %>" max="<%= localMax %>"
+                     value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>">
+              <div class="invalid-feedback">Due date must be within the next year and cannot be in the past.</div>
+              <small class="form-text text-muted">Select a future date and time (within 1 year).</small>
+            </div>
+
+            <div class="mb-4">
+              <label for="priority" class="form-label">Priority</label>
+              <select class="form-select" id="priority" name="priority">
+                <option value="low" <%= (typeof preservedPriority !== 'undefined' && preservedPriority === 'low') ? 'selected' : '' %>>Low</option>
+                <option value="medium" <%= (typeof preservedPriority !== 'undefined' && preservedPriority === 'medium') || true ? 'selected' : '' %>>Medium</option>
+                <option value="high" <%= (typeof preservedPriority !== 'undefined' && preservedPriority === 'high') ? 'selected' : '' %>>High</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-custom w-100 btn-lg">Save Task</button>
+          </form>
+        <% } %>
+
+        <div class="mt-4 text-center">
+          <a href="/dashboard">← Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('taskForm');
+  const dueDateInput = document.getElementById('due_date');
+  const descriptionInput = document.getElementById('description');
+  const charCount = document.getElementById('charCount');
+  const titleInput = document.getElementById('title');
+
+  // Character counter for description
+  descriptionInput.addEventListener('input', function() {
+    charCount.textContent = this.value.length;
+  });
+  charCount.textContent = descriptionInput.value.length;
+
+  // Input sanitization for title
+  titleInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^a-zA-Z0-9\s\-_,.!()]/g, '');
+  });
+
+  // Enhanced due date validation
+  function validateDueDate() {
+    const dueDate = new Date(dueDateInput.value);
+    const now = new Date();
+    const maxDate = new Date();
+    maxDate.setFullYear(now.getFullYear() + 1);
+
+    if (dueDate < now) {
+      dueDateInput.setCustomValidity('Due date cannot be in the past');
+      dueDateInput.classList.add('is-invalid');
+      return false;
+    } else if (dueDate > maxDate) {
+      dueDateInput.setCustomValidity('Due date cannot be more than 1 year in the future');
+      dueDateInput.classList.add('is-invalid');
+      return false;
+    } else {
+      dueDateInput.setCustomValidity('');
+      dueDateInput.classList.remove('is-invalid');
+      return true;
+    }
+  }
+
+  // Real-time validation
+  dueDateInput.addEventListener('change', validateDueDate);
+  
+  // Form submission with comprehensive validation
+  form.addEventListener('submit', function(event) {
+    let isValid = true;
+
+    // Validate due date
+    if (!validateDueDate()) {
+      isValid = false;
+    }
+
+    // Validate title pattern
+    const titlePattern = /^[a-zA-Z0-9\s\-_,.!()]+$/;
+    if (!titlePattern.test(titleInput.value.trim())) {
+      titleInput.classList.add('is-invalid');
+      isValid = false;
+    } else {
+      titleInput.classList.remove('is-invalid');
+    }
+
+    if (!form.checkValidity() || !isValid) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    form.classList.add('was-validated');
+  });
+});
+</script>
+
+<%- include('partials/footer') %>

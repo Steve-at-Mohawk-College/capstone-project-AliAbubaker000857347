@@ -1,0 +1,13 @@
+# Backup original package.json
+copy package.json package-backup.json
+
+# Replace with optimized version
+copy package-heroku.json package.json
+
+# Deploy
+git add .
+git commit -m "Deploy with optimized dependencies"
+git push heroku main
+
+# Restore original package.json (after deployment)
+copy package-backup.json package.json

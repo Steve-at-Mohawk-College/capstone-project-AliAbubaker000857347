@@ -1,0 +1,510 @@
+<%- include('partials/header', {title: 'Task Overview'}) %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Left side: Back button -->
+        <a href="/dashboard" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+        </a>
+        
+        <!-- Center: Title -->
+        <h1 class="h3 mb-0 text-center flex-grow-1 mx-3">
+          <i class="bi bi-list-check me-2"></i>Task Overview
+        </h1>
+        
+        <!-- Right side: Add button -->
+        <a href="/schedule-task" class="btn btn-custom">
+          <i class="bi bi-plus-circle me-1"></i>Add New Task
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- Stats Overview -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <div class="card card-custom text-center">
+            <div class="card-body">
+              <h3 class="h2 mb-0 text-danger" id="overdueCount">0</h3>
+              <p class="text-muted mb-0">Overdue</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card card-custom text-center">
+            <div class="card-body">
+              <h3 class="h2 mb-0 text-warning" id="todayCount">0</h3>
+              <p class="text-muted mb-0">Today</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card card-custom text-center">
+            <div class="card-body">
+              <h3 class="h2 mb-0 text-info" id="tomorrowCount">0</h3>
+              <p class="text-muted mb-0">Tomorrow</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card card-custom text-center">
+            <div class="card-body">
+              <h3 class="h2 mb-0 text-success" id="completedCount">0</h3>
+              <p class="text-muted mb-0">Completed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-tabs mb-4" id="taskTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overdue-tab" data-bs-toggle="tab" data-bs-target="#overdue" type="button" role="tab">
+            <i class="bi bi-exclamation-triangle me-1"></i>Overdue
+            <span class="badge bg-danger ms-1" id="overdueBadge">0</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="today-tab" data-bs-toggle="tab" data-bs-target="#today" type="button" role="tab">
+            <i class="bi bi-sun me-1"></i>Today
+            <span class="badge bg-warning ms-1" id="todayBadge">0</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tomorrow-tab" data-bs-toggle="tab" data-bs-target="#tomorrow" type="button" role="tab">
+            <i class="bi bi-calendar me-1"></i>Tomorrow
+            <span class="badge bg-info ms-1" id="tomorrowBadge">0</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
+            <i class="bi bi-check-circle me-1"></i>Completed
+            <span class="badge bg-success ms-1" id="completedBadge">0</span>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="taskTabsContent">
+        
+        <!-- Overdue Tasks -->
+        <div class="tab-pane fade show active" id="overdue" role="tabpanel">
+          <div class="card card-custom">
+            <div class="card-header">
+              <h5 class="mb-0 text-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>Overdue Tasks
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="overdueTasks">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-danger" role="status"></div>
+                  <p class="mt-2 text-muted">Loading overdue tasks...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Tasks -->
+        <div class="tab-pane fade" id="today" role="tabpanel">
+          <div class="card card-custom">
+            <div class="card-header">
+              <h5 class="mb-0 text-warning">
+                <i class="bi bi-sun me-2"></i>Today's Tasks
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="todayTasks">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-warning" role="status"></div>
+                  <p class="mt-2 text-muted">Loading today's tasks...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tomorrow's Tasks -->
+        <div class="tab-pane fade" id="tomorrow" role="tabpanel">
+          <div class="card card-custom">
+            <div class="card-header">
+              <h5 class="mb-0 text-info">
+                <i class="bi bi-calendar me-2"></i>Tomorrow's Tasks
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="tomorrowTasks">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-info" role="status"></div>
+                  <p class="mt-2 text-muted">Loading tomorrow's tasks...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completed Tasks -->
+        <div class="tab-pane fade" id="completed" role="tabpanel">
+          <div class="card card-custom">
+            <div class="card-header">
+              <h5 class="mb-0 text-success">
+                <i class="bi bi-check-circle me-2"></i>Completed Tasks
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="completedTasks">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-success" role="status"></div>
+                  <p class="mt-2 text-muted">Loading completed tasks...</p>
+                </div>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Task Details Modal -->
+<div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="taskModalTitle">Task Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="taskModalBody">
+        <!-- Content will be loaded dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" id="markCompleteBtn">Mark as Complete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class TaskOverview {
+  constructor() {
+    this.currentTaskId = null;
+    this.init();
+  }
+
+  async init() {
+    await this.loadAllTasks();
+    this.setupEventListeners();
+    
+    // Refresh data every 30 seconds
+    setInterval(() => {
+      this.loadAllTasks();
+    }, 30000);
+  }
+
+  async loadAllTasks() {
+    try {
+      console.log('🔄 Loading tasks overview from /api/tasks/overview...');
+      
+      // Show loading state
+      this.showLoading();
+      
+      const response = await fetch('/tasks/api/tasks/overview');
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Tasks overview loaded successfully:', data);
+      
+      this.updateStats(data.stats);
+      this.renderTasks('overdue', data.overdue);
+      this.renderTasks('today', data.today);
+      this.renderTasks('tomorrow', data.tomorrow);
+      this.renderTasks('completed', data.completed);
+      
+    } catch (error) {
+      console.error('❌ Error loading tasks:', error);
+      this.showError(`Failed to load tasks: ${error.message}`);
+      
+      // Also log to console for debugging
+      console.error('Full error details:', {
+        message: error.message,
+        stack: error.stack
+      });
+    }
+  }
+
+  showLoading() {
+    const containers = ['overdueTasks', 'todayTasks', 'tomorrowTasks', 'completedTasks'];
+    containers.forEach(containerId => {
+      const container = document.getElementById(containerId);
+      if (container) {
+        container.innerHTML = `
+          <div class="text-center py-4">
+            <div class="spinner-border" role="status"></div>
+            <p class="mt-2 text-muted">Loading tasks...</p>
+          </div>
+        `;
+      }
+    });
+  }
+
+  showError(message) {
+    const containers = ['overdueTasks', 'todayTasks', 'tomorrowTasks', 'completedTasks'];
+    containers.forEach(containerId => {
+      const container = document.getElementById(containerId);
+      if (container) {
+        container.innerHTML = `
+          <div class="alert alert-danger m-3">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            ${message}
+            <br>
+            <small class="mt-1">
+              Check the browser console (F12) for details.
+              <br>
+              <a href="/debug/tasks-overview" target="_blank" class="text-danger">Click here for debug info</a>
+            </small>
+          </div>
+        `;
+      }
+    });
+  }
+
+  updateStats(stats) {
+    document.getElementById('overdueCount').textContent = stats.overdue;
+    document.getElementById('todayCount').textContent = stats.today;
+    document.getElementById('tomorrowCount').textContent = stats.tomorrow;
+    document.getElementById('completedCount').textContent = stats.completed;
+    
+    document.getElementById('overdueBadge').textContent = stats.overdue;
+    document.getElementById('todayBadge').textContent = stats.today;
+    document.getElementById('tomorrowBadge').textContent = stats.tomorrow;
+    document.getElementById('completedBadge').textContent = stats.completed;
+  }
+
+  renderTasks(type, tasks) {
+    const container = document.getElementById(`${type}Tasks`);
+    
+    if (tasks.length === 0) {
+      const messages = {
+        overdue: 'No overdue tasks. Great job! 🎉',
+        today: 'No tasks for today. Enjoy your day! 😊',
+        tomorrow: 'No tasks scheduled for tomorrow.',
+        completed: 'No completed tasks yet.'
+      };
+      
+      container.innerHTML = `
+        <div class="text-center py-5">
+          <i class="bi bi-${this.getIcon(type)} text-muted" style="font-size: 3rem;"></i>
+          <h5 class="mt-3 text-muted">${messages[type]}</h5>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = tasks.map(task => `
+      <div class="task-item border-bottom p-3 ${task.completed ? 'bg-light' : ''}">
+        <div class="d-flex align-items-center">
+          <div class="flex-grow-1">
+            <div class="d-flex align-items-center mb-1">
+              <h6 class="mb-0 ${task.completed ? 'text-decoration-line-through text-muted' : ''}">
+                ${task.title}
+                ${task.priority === 'high' ? '<span class="badge bg-danger ms-2">High</span>' : ''}
+                ${task.priority === 'medium' ? '<span class="badge bg-warning ms-2">Medium</span>' : ''}
+              </h6>
+            </div>
+            <p class="mb-1 small text-muted">
+              <i class="bi bi-heart me-1"></i>${task.pet_name}
+              <i class="bi bi-clock ms-3 me-1"></i>${new Date(task.due_date).toLocaleString()}
+              ${task.completed ? `<i class="bi bi-check-circle ms-3 me-1 text-success"></i>Completed` : ''}
+            </p>
+            ${task.description ? `<p class="mb-0 small">${task.description}</p>` : ''}
+          </div>
+          <div class="flex-shrink-0 ms-3">
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-primary view-task-btn" data-task-id="${task.task_id}">
+                <i class="bi bi-eye"></i>
+              </button>
+              ${!task.completed ? `
+                <button class="btn btn-outline-success complete-task-btn" data-task-id="${task.task_id}">
+                  <i class="bi bi-check"></i>
+                </button>
+              ` : `
+                <button class="btn btn-outline-secondary" disabled>
+                  <i class="bi bi-check-lg"></i>
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    this.setupTaskEvents(type);
+  }
+
+  getIcon(type) {
+    const icons = {
+      overdue: 'exclamation-triangle',
+      today: 'sun',
+      tomorrow: 'calendar',
+      completed: 'check-circle'
+    };
+    return icons[type];
+  }
+
+  setupTaskEvents(type) {
+    // View task buttons
+    document.querySelectorAll('.view-task-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.viewTaskDetails(btn.dataset.taskId);
+      });
+    });
+
+    // Complete task buttons
+    document.querySelectorAll('.complete-task-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.completeTask(btn.dataset.taskId);
+      });
+    });
+  }
+
+  setupEventListeners() {
+    // Mark complete button in modal
+    document.getElementById('markCompleteBtn').addEventListener('click', () => {
+      if (this.currentTaskId) {
+        this.completeTask(this.currentTaskId);
+      }
+    });
+
+    // Auto-refresh when switching tabs
+    document.querySelectorAll('#taskTabs button').forEach(tab => {
+      tab.addEventListener('shown.bs.tab', () => {
+        this.loadAllTasks();
+      });
+    });
+  }
+
+  async viewTaskDetails(taskId) {
+    try {
+      const response = await fetch(`/tasks/${taskId}`);
+      const task = await response.json();
+      
+      this.currentTaskId = taskId;
+      
+      document.getElementById('taskModalTitle').textContent = task.title;
+      document.getElementById('taskModalBody').innerHTML = `
+        <div class="mb-3">
+          <strong>Pet:</strong> ${task.pet_name}
+        </div>
+        <div class="mb-3">
+          <strong>Due Date:</strong> ${new Date(task.due_date).toLocaleString()}
+        </div>
+        <div class="mb-3">
+          <strong>Priority:</strong> 
+          <span class="badge bg-${task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'info'}">
+            ${task.priority}
+          </span>
+        </div>
+        ${task.description ? `
+          <div class="mb-3">
+            <strong>Description:</strong>
+            <p class="mt-1">${task.description}</p>
+          </div>
+        ` : ''}
+        <div class="mb-3">
+          <strong>Status:</strong> 
+          <span class="badge ${task.completed ? 'bg-success' : 'bg-warning'}">
+            ${task.completed ? 'Completed' : 'Pending'}
+          </span>
+        </div>
+       
+
+        ${task.completed ? `
+  <div class="mb-3">
+    <strong>Completed At:</strong> ${task.completed_at ? new Date(task.completed_at).toLocaleString() : 'Recently'}
+  </div>
+` : ''}
+      `;
+      
+      // Show/hide complete button based on task status
+      document.getElementById('markCompleteBtn').style.display = task.completed ? 'none' : 'block';
+      
+      const modal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
+      modal.show();
+      
+    } catch (error) {
+      console.error('Error loading task details:', error);
+      alert('Failed to load task details');
+    }
+  }
+
+  async completeTask(taskId) {
+    if (!confirm('Are you sure you want to mark this task as complete?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/tasks/${taskId}/complete`, {
+        method: 'PUT'
+      });
+      
+      if (response.ok) {
+        // Close modal if open
+        const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailsModal'));
+        if (modal) {
+          modal.hide();
+        }
+        
+        // Show success message
+        this.showSuccess('Task marked as complete!');
+        
+        // Reload tasks
+        await this.loadAllTasks();
+        
+        // Reload notifications
+        if (window.notificationSystem) {
+          window.notificationSystem.loadNotifications();
+        }
+      } else {
+        throw new Error('Failed to complete task');
+      }
+    } catch (error) {
+      console.error('Error completing task:', error);
+      this.showError('Failed to mark task as complete');
+    }
+  }
+
+  showSuccess(message) {
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+    toast.style.zIndex = '1060';
+    toast.innerHTML = `
+      <i class="bi bi-check-circle me-2"></i>
+      ${message}
+    `;
+    document.body.appendChild(toast);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new TaskOverview();
+});
+</script>
+
+<%- include('partials/footer') %>

@@ -6,8 +6,12 @@ const {
   createTask, 
   updateTask, 
   deleteTask,
-  getTaskById
+  getTaskById,
+  completeTask
 } = require('../models/taskModel');
+
+// ADD THIS IMPORT - this was missing!
+const { query } = require('../config/database');
 
 const router = express.Router();
 
@@ -238,6 +242,116 @@ router.get('/:taskId', requireAuth, async (req, res) => {
     console.error('Get task error:', error);
     res.status(500).json({ 
       error: 'Error fetching task.' 
+    });
+  }
+});
+
+// Alternative version - simpler timezone handling
+router.get('/api/tasks/overview', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    console.log('🔍 Fetching task overview for user:', userId);
+    
+    // Get all tasks first for debugging
+    const allTasks = await query(`
+      SELECT t.*, p.name as pet_name 
+      FROM tasks t
+      JOIN pets p ON t.pet_id = p.pet_id
+      WHERE t.user_id = ?
+      ORDER BY t.due_date ASC
+    `, [userId]);
+    
+    console.log('🔍 All tasks for user:', allTasks.length);
+    allTasks.forEach(task => {
+      console.log(`- ${task.title}: due=${task.due_date}, completed=${task.completed}`);
+    });
+
+    // Get overdue tasks (simpler approach)
+    const overdueTasks = await query(`
+      SELECT t.*, p.name as pet_name 
+      FROM tasks t
+      JOIN pets p ON t.pet_id = p.pet_id
+      WHERE t.user_id = ? 
+      AND t.completed = false
+      AND DATE(t.due_date) < CURDATE()
+      ORDER BY t.due_date ASC
+    `, [userId]);
+
+    // Get today's tasks
+    const todayTasks = await query(`
+      SELECT t.*, p.name as pet_name 
+      FROM tasks t
+      JOIN pets p ON t.pet_id = p.pet_id
+      WHERE t.user_id = ? 
+      AND t.completed = false
+      AND DATE(t.due_date) = CURDATE()
+      ORDER BY t.due_date ASC
+    `, [userId]);
+
+    // Get tomorrow's tasks
+    const tomorrowTasks = await query(`
+      SELECT t.*, p.name as pet_name 
+      FROM tasks t
+      JOIN pets p ON t.pet_id = p.pet_id
+      WHERE t.user_id = ? 
+      AND t.completed = false
+      AND DATE(t.due_date) = DATE(DATE_ADD(CURDATE(), INTERVAL 1 DAY))
+      ORDER BY t.due_date ASC
+    `, [userId]);
+
+    // Get completed tasks
+    const completedTasks = await query(`
+  SELECT t.*, p.name as pet_name 
+  FROM tasks t
+  JOIN pets p ON t.pet_id = p.pet_id
+  WHERE t.user_id = ? 
+  AND t.completed = true
+  ORDER BY t.updated_at DESC, t.due_date DESC
+  LIMIT 50
+`, [userId]);
+
+    console.log('📊 Task overview results:', {
+      overdue: overdueTasks.length,
+      today: todayTasks.length,
+      tomorrow: tomorrowTasks.length,
+      completed: completedTasks.length
+    });
+
+    res.json({
+      stats: {
+        overdue: overdueTasks.length,
+        today: todayTasks.length,
+        tomorrow: tomorrowTasks.length,
+        completed: completedTasks.length
+      },
+      overdue: overdueTasks,
+      today: todayTasks,
+      tomorrow: tomorrowTasks,
+      completed: completedTasks
+    });
+  } catch (error) {
+    console.error('❌ Get tasks overview error:', error);
+    res.status(500).json({ 
+      error: 'Error fetching tasks overview: ' + error.message 
+    });
+  }
+});
+
+// PUT /tasks/:taskId/complete - Mark task as complete
+router.put('/:taskId/complete', requireAuth, async (req, res) => {
+  try {
+    await completeTask(req.params.taskId, req.session.userId);
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Complete task error:', error);
+    
+    let errorMessage = 'Error completing task.';
+    if (error.message.includes('not found') || error.message.includes('access denied')) {
+      errorMessage = 'Task not found or access denied.';
+    }
+    
+    res.status(500).json({ 
+      error: errorMessage 
     });
   }
 });

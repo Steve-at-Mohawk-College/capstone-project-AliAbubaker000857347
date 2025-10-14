@@ -315,11 +315,18 @@
                                         <% } %>
                                     </h5>
                                     <p class="text-muted mb-0 small">
-                                        For: <%= task.pet_name %> • 
-                                        Due: <span class="due-date" data-due-date="<%= new Date(task.due_date).toISOString() %>">
-                                                Loading...
-                                             </span>
-                                    </p>
+    For: <%= task.pet_name %> • 
+    Due: <span class="due-date" data-due-date="<%= task.due_date %>">
+        <%= new Date(task.due_date).toLocaleString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
+        }) %>
+    </span>
+</p>
                                     <% if (task.description) { %>
                                         <div class="task-description mt-2" id="description-<%= task.task_id %>" style="display: none;">
                                             <p class="text-muted mb-0 small">
@@ -428,7 +435,7 @@
             </a>
           </div>
           <div class="col-sm-6 col-md-3 mb-3">
-            <a href="/health" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
+            <a href="/health-tracker/add" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
               <i class="bi bi-heart-pulse mb-2" style="font-size: 1.5rem;"></i>
               <span>Health Tracker</span>
             </a>
@@ -439,6 +446,12 @@
               <span>Community</span>
             </a>
           </div>
+          <div class="col-sm-6 col-md-3 mb-3">
+  <a href="/task-overview" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
+    <i class="bi bi-list-check mb-2" style="font-size: 1.5rem;"></i>
+    <span>Task Overview</span>
+  </a>
+</div>
         </div>
       </div>
     </div>
@@ -464,10 +477,193 @@
   </div>
 </div>
 
+
+<!-- Notifications Bell -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+  <div class="dropdown">
+    <button class="btn btn-light btn-sm position-relative dropdown-toggle" 
+            id="notificationDropdown" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false">
+      <i class="bi bi-bell"></i>
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+            id="notificationBadge" style="display: none;">
+        0
+      </span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" style="width: 350px; max-height: 400px; overflow-y: auto;">
+      <li class="dropdown-header d-flex justify-content-between align-items-center">
+        <span>Notifications</span>
+        <button class="btn btn-sm btn-outline-secondary" id="markAllReadBtn">
+          Mark all read
+        </button>
+      </li>
+      <li><hr class="dropdown-divider"></li>
+      <div id="notificationsList">
+        <li class="px-3 py-2 text-center text-muted">
+          <div class="spinner-border spinner-border-sm" role="status"></div>
+          <span class="ms-2">Loading notifications...</span>
+        </li>
+      </div>
+      <li><hr class="dropdown-divider"></li>
+      <li>
+        <a class="dropdown-item text-center" href="/notifications">
+          <i class="bi bi-list"></i> View all notifications
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
 <script src="/js/dashboard.js"></script>
 
 
 <script src="/js/dashboard-filters.js"></script>
+
+<script>
+// Notification system
+class NotificationSystem {
+  constructor() {
+    this.checkInterval = null;
+    this.init();
+  }
+
+  init() {
+    this.loadNotifications();
+    this.setupEventListeners();
+    
+    // Check for new notifications every 30 seconds
+    this.checkInterval = setInterval(() => {
+      this.loadNotifications();
+    }, 30000);
+  }
+
+  async loadNotifications() {
+    try {
+      const response = await fetch('/notifications?limit=10');
+      const notifications = await response.json();
+      
+      this.updateNotificationBadge(notifications);
+      this.renderNotifications(notifications);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  }
+
+  updateNotificationBadge(notifications) {
+    const badge = document.getElementById('notificationBadge');
+    const unreadCount = notifications.filter(n => !n.is_read).length;
+    
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  renderNotifications(notifications) {
+    const container = document.getElementById('notificationsList');
+    
+    if (notifications.length === 0) {
+      container.innerHTML = `
+        <li class="px-3 py-3 text-center text-muted">
+          <i class="bi bi-bell-slash" style="font-size: 1.5rem;"></i>
+          <div class="mt-2">No notifications</div>
+        </li>
+      `;
+      return;
+    }
+
+    container.innerHTML = notifications.map(notification => `
+      <li class="dropdown-item ${notification.is_read ? '' : 'bg-light'} p-3 border-bottom">
+        <div class="d-flex align-items-start">
+          <div class="flex-grow-1">
+            <h6 class="mb-1 ${notification.is_read ? '' : 'fw-bold'}">${notification.title}</h6>
+            <p class="mb-1 small">${notification.message}</p>
+            <small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
+          </div>
+          <div class="flex-shrink-0 ms-2">
+            ${!notification.is_read ? `
+              <button class="btn btn-sm btn-outline-primary mark-read-btn" 
+                      data-id="${notification.notification_id}" 
+                      title="Mark as read">
+                <i class="bi bi-check"></i>
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      </li>
+    `).join('');
+
+    // Add event listeners to mark-as-read buttons
+    container.querySelectorAll('.mark-read-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.markAsRead(btn.dataset.id);
+      });
+    });
+  }
+
+  async markAsRead(notificationId) {
+    try {
+      await fetch(`/notifications/${notificationId}/read`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      // Reload notifications
+      this.loadNotifications();
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  }
+
+  async markAllAsRead() {
+    try {
+      await fetch('/notifications/read-all', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      this.loadNotifications();
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
+  }
+
+  setupEventListeners() {
+    document.getElementById('markAllReadBtn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.markAllAsRead();
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('notificationDropdown');
+      if (!dropdown.contains(e.target)) {
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        dropdownMenu.classList.remove('show');
+      }
+    });
+  }
+
+  destroy() {
+    if (this.checkInterval) {
+      clearInterval(this.checkInterval);
+    }
+  }
+}
+
+// Initialize notification system when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  window.notificationSystem = new NotificationSystem();
+});
+</script>
 
 
 <%- include('partials/footer') %>

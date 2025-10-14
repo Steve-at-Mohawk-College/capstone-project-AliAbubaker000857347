@@ -20,16 +20,25 @@ const validationRules = {
   },
   
   validateDueDate: (dueDate) => {
-    const date = new Date(dueDate);
-    const now = new Date();
-    const maxDate = new Date();
-    maxDate.setFullYear(now.getFullYear() + 1);
-    
-    return date instanceof Date && 
-           !isNaN(date) && 
-           date > now && 
-           date <= maxDate;
+  // Handle both local datetime and ISO strings
+  let date;
+  if (dueDate && !dueDate.includes('Z') && !dueDate.includes('+')) {
+    // This is a datetime-local input (no timezone)
+    date = new Date(dueDate);
+  } else {
+    // This is already an ISO string with timezone
+    date = new Date(dueDate);
   }
+  
+  const now = new Date();
+  const maxDate = new Date();
+  maxDate.setFullYear(now.getFullYear() + 1);
+  
+  return date instanceof Date && 
+         !isNaN(date) && 
+         date > now && 
+         date <= maxDate;
+}
 };
 
 async function getTasksByUser(userId) {
@@ -75,6 +84,12 @@ async function createTask(userId, taskData) {
     throw new Error('Pet not found or access denied');
   }
 
+  let dueDate = taskData.due_date;
+// Remove the if block that converts to ISO string
+// Just use the dueDate as provided by the form
+
+console.log('📅 Due date stored as:', dueDate);
+
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, priority)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -86,12 +101,15 @@ async function createTask(userId, taskData) {
     taskData.task_type, 
     taskData.title.trim(),
     taskData.description ? taskData.description.trim() : null,
-    taskData.due_date,
+    dueDate,  // Use the processed due date with timezone
     taskData.priority
   ]);
   
   return result;
 }
+
+
+
 
 async function updateTask(taskId, userId, taskData) {
   // First verify task ownership
@@ -121,6 +139,15 @@ async function updateTask(taskId, userId, taskData) {
     throw new Error('Invalid priority');
   }
 
+  // Handle timezone for due_date - FIX ADDED HERE
+  let dueDate = taskData.due_date;
+  
+  if (dueDate && !dueDate.includes('Z') && !dueDate.includes('+')) {
+    const localDate = new Date(dueDate);
+    dueDate = localDate.toISOString();
+    console.log('🕒 Timezone conversion (update):', taskData.due_date, '→', dueDate);
+  }
+
   const sql = `
     UPDATE tasks SET title=?, description=?, due_date=?, priority=?
     WHERE task_id=? AND user_id=?
@@ -129,12 +156,37 @@ async function updateTask(taskId, userId, taskData) {
   return query(sql, [
     taskData.title.trim(),
     taskData.description ? taskData.description.trim() : null,
-    taskData.due_date,
+    dueDate,  // Use the processed due date
     taskData.priority,
     taskId,
     userId
   ]);
 }
+
+
+// Add this method to your taskModel.js
+async function completeTask(taskId, userId) {
+  // Verify ownership
+  const taskCheck = await query(
+    'SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?',
+    [taskId, userId]
+  );
+  
+  if (taskCheck.length === 0) {
+    throw new Error('Task not found or access denied');
+  }
+
+  // Remove completed_at from the query since the column doesn't exist
+  const sql = `
+    UPDATE tasks 
+    SET completed = true, completed_at = NOW(), notification_sent = true
+    WHERE task_id = ? AND user_id = ?
+  `;
+  
+  return query(sql, [taskId, userId]);
+}
+
+
 
 async function deleteTask(taskId, userId) {
   // Verify ownership before deletion
@@ -168,5 +220,6 @@ module.exports = {
   updateTask, 
   deleteTask, 
   getTaskById,
-  validationRules 
+  validationRules,
+  completeTask 
 };

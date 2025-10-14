@@ -1,0 +1,85 @@
+<%- include('partials/header', {title: 'Health Tracker'}) %>
+
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">Record Pet Health</h1>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-8">
+    <div class="card card-custom">
+      <div class="card-body p-4">
+        
+        <% if (typeof message !== 'undefined' && message) { %>
+          <div class="alert alert-info"><%= message %></div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <form action="/health" method="POST">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="pet_id" class="form-label">Pet ID *</label>
+                <input type="number" class="form-control" id="pet_id" name="pet_id" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="weight" class="form-label">Weight (kg)</label>
+                <input type="number" step="0.1" class="form-control" id="weight" name="weight">
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="diet" class="form-label">Diet</label>
+            <input type="text" class="form-control" id="diet" name="diet" placeholder="Kibble, Wet food, etc.">
+          </div>
+
+          <div class="mb-3">
+            <label for="medical_notes" class="form-label">Medical Notes</label>
+            <textarea class="form-control" id="medical_notes" name="medical_notes" rows="3"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="vet_visit_date" class="form-label">Vet Visit Date</label>
+                <input type="date" class="form-control" id="vet_visit_date" name="vet_visit_date">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="vaccination_date" class="form-label">Vaccination Date</label>
+                <input type="date" class="form-control" id="vaccination_date" name="vaccination_date">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="next_vaccination_date" class="form-label">Next Vaccination Date</label>
+                <input type="date" class="form-control" id="next_vaccination_date" name="next_vaccination_date">
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="date_recorded" class="form-label">Record Date *</label>
+            <input type="date" class="form-control" id="date_recorded" name="date_recorded" required>
+          </div>
+
+          <button type="submit" class="btn btn-custom w-100 btn-lg">Save Record</button>
+        </form>
+
+        <div class="mt-4 text-center">
+          <a href="/dashboard">← Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

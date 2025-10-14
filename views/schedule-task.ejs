@@ -89,6 +89,11 @@
                 const localMin = `${year}-${month}-${day}T${hours}:${minutes}`;
                 const localMax = `${maxYear}-${maxMonth}-${maxDay}T23:59`;
               %>
+
+              
+
+              
+              
               <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
                      required min="<%= localMin %>" max="<%= localMax %>"
                      value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>">

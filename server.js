@@ -1,5 +1,8 @@
 
 
+
+const express = require('express');
+const path = require('path');
 const helmet = require('helmet');
 const cors = require('cors');
 const compression = require('compression');
@@ -7,10 +10,6 @@ const rateLimit = require('express-rate-limit');
 const session = require('express-session');
 const fs = require('fs');
 require('dotenv').config();
-
-const express = require('express');
-const path = require('path');
-
 
 
 
@@ -24,7 +23,7 @@ const authRoutes = require('./routes/authRoutes');
 const petRoutes = require('./routes/petRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 // In your main server file
-// const healthRoutes = require('./routes/healthRoutes');
+ const healthRoutes = require('./routes/healthRoutes');
 // const communityRoutes = require('./routes/communityRoutes');
 // const profileRoutes = require('./routes/profileRoutes');
 // const adminRoutes = require('./routes/adminRoutes');
@@ -102,23 +101,23 @@ app.get('/api/dog-breeds', (req, res) => {
 });
 
 
-// app.use('/health', healthRoutes);
-// // ===== Custom Middleware (AFTER session) =====
-// // Make profile picture and username available to all views
-// app.use((req, res, next) => {
-//   if (req.session && req.session.userId) {
-//     res.locals.profilePicture = req.session.profilePicture || null;
-//     res.locals.username = req.session.username || null;
-//     res.locals.userId = req.session.userId;
-//     res.locals.role = req.session.role;
-//   } else {
-//     res.locals.profilePicture = null;
-//     res.locals.username = null;
-//     res.locals.userId = null;
-//     res.locals.role = null;
-//   }
-//   next();
-// });
+app.use('/health', healthRoutes);
+// ===== Custom Middleware (AFTER session) =====
+// Make profile picture and username available to all views
+app.use((req, res, next) => {
+  if (req.session && req.session.userId) {
+    res.locals.profilePicture = req.session.profilePicture || null;
+    res.locals.username = req.session.username || null;
+    res.locals.userId = req.session.userId;
+    res.locals.role = req.session.role;
+  } else {
+    res.locals.profilePicture = null;
+    res.locals.username = null;
+    res.locals.userId = null;
+    res.locals.role = null;
+  }
+  next();
+});
 
 // Debug middleware
 app.use((req, res, next) => {
@@ -202,7 +201,7 @@ app.get('/db-status', async (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/pets', requireAuth, petRoutes);
 app.use('/tasks', requireAuth, taskRoutes);
-//app.use('/health', requireAuth, healthRoutes);
+app.use('/health', requireAuth, healthRoutes);
 // app.use('/community', requireAuth, communityRoutes);
 // app.use('/profile', requireAuth, profileRoutes);
 // app.use('/admin', adminRoutes);
@@ -322,6 +321,153 @@ app.get('/pets/add', requireAuth, (req, res) => {
 app.get('/health', requireAuth, (req, res) => {
   res.render('health-tracker', { title: 'Health Tracker' });
 });
+
+
+
+
+
+app.get('/debug/tasks', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    
+    // Get all tasks for this user
+    const allTasks = await query(`
+      SELECT t.*, p.name as pet_name 
+      FROM tasks t
+      JOIN pets p ON t.pet_id = p.pet_id
+      WHERE t.user_id = ?
+      ORDER BY t.due_date ASC
+    `, [userId]);
+    
+    res.json({
+      totalTasks: allTasks.length,
+      tasks: allTasks,
+      userId: userId
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Update the debug endpoint in server.js
+app.get('/debug/tasks-overview', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    
+    console.log('🔍 Debug: Fetching ALL tasks for user:', userId);
+    
+    // Get all tasks for debugging
+    const allTasks = await query(`
+      SELECT t.*, p.name as pet_name 
+      FROM tasks t
+      JOIN pets p ON t.pet_id = p.pet_id
+      WHERE t.user_id = ?
+      ORDER BY t.due_date ASC
+    `, [userId]);
+    
+    // Get overdue tasks with different methods to test
+    const overdueMethod1 = await query(`
+      SELECT COUNT(*) as count 
+      FROM tasks 
+      WHERE user_id = ? 
+      AND completed = false
+      AND due_date < NOW()
+    `, [userId]);
+    
+    const overdueMethod2 = await query(`
+      SELECT COUNT(*) as count 
+      FROM tasks 
+      WHERE user_id = ? 
+      AND completed = false
+      AND DATE(due_date) < CURDATE()
+    `, [userId]);
+
+    res.json({
+      userId: userId,
+      totalTasks: allTasks.length,
+      allTasks: allTasks.map(t => ({
+        id: t.task_id,
+        title: t.title,
+        due_date: t.due_date,
+        completed: t.completed,
+        pet: t.pet_name
+      })),
+      overdueMethod1: overdueMethod1[0].count,
+      overdueMethod2: overdueMethod2[0].count,
+      currentTime: new Date(),
+      currentDate: new Date().toDateString()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+// Add after your other imports
+const notificationWorker = require('./workers/notificationWorker');
+const notificationRoutes = require('./routes/notificationRoutes');
+
+// Add after your other route registrations
+app.use('/notifications', requireAuth, notificationRoutes);
+
+// Start notification worker (after database connection)
+async function initializeApp() {
+  try {
+    const dbConnected = await testConnection();
+    if (!dbConnected) {
+      console.error('❌ Failed to connect to database. Exiting...');
+      process.exit(1);
+    }
+
+    // Start notification worker
+    if (process.env.NODE_ENV !== 'test') {
+      const notificationWorker = require('./workers/notificationWorker');
+      notificationWorker.start();
+    }
+
+    // Only start server if not in test environment and this is the main module
+    if (process.env.NODE_ENV !== 'test' && require.main === module) {
+      app.listen(PORT, () => {
+        console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+        console.log(`📋 Notification worker: ${notificationWorker.isRunning ? 'RUNNING' : 'STOPPED'}`);
+        console.log(`📊 Health check: http://localhost:${PORT}/health-check`);
+        console.log(`🔗 Login page: http://localhost:${PORT}/login`);
+        console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+      });
+    }
+  } catch (error) {
+    console.error('Failed to initialize app:', error);
+    process.exit(1);
+  }
+}
+
+// Add manual check endpoint for testing
+app.get('/admin/notifications/check', requireAuth, async (req, res) => {
+  if (req.session.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  
+  try {
+    const result = await notificationWorker.manualCheck();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
 
 
 // In your server.js, add this middleware after your session middleware

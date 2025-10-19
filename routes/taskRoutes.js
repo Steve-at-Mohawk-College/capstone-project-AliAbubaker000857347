@@ -7,7 +7,8 @@ const {
   updateTask, 
   deleteTask,
   getTaskById,
-  completeTask
+  completeTask,
+    getUpcomingTasks
 } = require('../models/taskModel');
 
 // ADD THIS IMPORT - this was missing!
@@ -26,6 +27,22 @@ function requireAuth(req, res, next) {
   if (req.session?.userId) return next();
   return res.redirect('/login');
 }
+
+// GET /tasks/upcoming - Get tasks due in the next X days
+router.get('/upcoming', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const days = parseInt(req.query.days) || 3;
+    
+    // Use the new function from taskModel
+    const tasks = await getUpcomingTasks(userId, days);
+    
+    res.json(tasks);
+  } catch (error) {
+    console.error('Get upcoming tasks error:', error);
+    res.status(500).json({ error: 'Error fetching upcoming tasks' });
+  }
+});
 
 // Validation middleware
 const validateTask = [

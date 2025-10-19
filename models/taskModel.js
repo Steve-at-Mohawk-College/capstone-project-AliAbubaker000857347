@@ -41,6 +41,25 @@ const validationRules = {
 }
 };
 
+// Add this function to your taskModel.js
+async function getUpcomingTasks(userId, days = 3) {
+  const now = new Date();
+  const futureDate = new Date();
+  futureDate.setDate(now.getDate() + days);
+  
+  const sql = `
+    SELECT t.*, p.name as pet_name 
+    FROM tasks t
+    JOIN pets p ON t.pet_id = p.pet_id
+    WHERE t.user_id = ? 
+    AND t.completed = false
+    AND t.due_date BETWEEN ? AND ?
+    ORDER BY t.due_date ASC
+  `;
+  
+  return query(sql, [userId, now, futureDate]);
+}
+
 async function getTasksByUser(userId) {
   const sql = `
     SELECT t.*, p.name as pet_name 
@@ -220,6 +239,7 @@ module.exports = {
   updateTask, 
   deleteTask, 
   getTaskById,
+  getUpcomingTasks, // Add this line
   validationRules,
   completeTask 
 };

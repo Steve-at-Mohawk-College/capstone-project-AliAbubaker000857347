@@ -257,39 +257,6 @@ app.get('/verify', (req, res) => {
   res.render('verify', { title: 'Email Verified - Pet Care' });
 });
 
-// In your dashboard route (server.js)
-app.get('/dashboard', requireAuth, async (req, res) => {
-  try {
-    const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
-    
-    // Fixed query to include all of today's tasks regardless of current time
-    const tasks = await query(
-      `SELECT t.*, p.name as pet_name 
-       FROM tasks t 
-       JOIN pets p ON t.pet_id = p.pet_id 
-       WHERE t.user_id = ? 
-       AND t.completed = false 
-       AND DATE(t.due_date) >= CURDATE()
-       ORDER BY t.due_date 
-       LIMIT 5`,
-      [req.session.userId]
-    );
-
-    res.render('dashboard', {
-      title: 'Pet Dashboard',
-      username: req.session.username,
-      pets,
-      tasks,
-    });
-  } catch (err) {
-    console.error('Dashboard error:', err);
-    res.status(500).render('error', {
-      title: 'Error',
-      message: 'Error loading dashboard.',
-      error: process.env.NODE_ENV === 'development' ? err : {}
-    });
-  }
-});
 
 
 
@@ -576,6 +543,283 @@ app.get('/health-tracker-history', requireAuth, async (req, res) => {
   }
 });
 
+// In your server.js - REPLACE the dashboard route with this:
+
+app.get('/dashboard', requireAuth, async (req, res) => {
+  try {
+    console.log('📊 Dashboard route called - checking variables being passed');
+    
+    const userId = req.session.userId;
+    
+    // Get pagination parameters
+    const petPage = Math.max(1, parseInt(req.query.petPage) || 1);
+    const taskPage = Math.max(1, parseInt(req.query.taskPage) || 1);
+    const itemsPerPage = 5; // Fixed to 5 items per page
+    
+    // Calculate offsets
+    const petOffset = (petPage - 1) * itemsPerPage;
+    const taskOffset = (taskPage - 1) * itemsPerPage;
+
+    console.log('🔢 Pagination parameters:', {
+      userId, petPage, taskPage, itemsPerPage, petOffset, taskOffset
+    });
+
+    // Use the new queryPaginated function
+    const { queryPaginated, query } = require('./config/database');
+    
+    // Get paginated pets - ONLY 5 PER PAGE
+    const pets = await queryPaginated(
+      `SELECT * FROM pets WHERE user_id = ? ORDER BY name`,
+      [userId],
+      itemsPerPage,
+      petOffset
+    );
+    
+    // Get total pet count
+    const totalPetsResult = await query(
+      `SELECT COUNT(*) as count FROM pets WHERE user_id = ?`,
+      [userId]
+    );
+    const totalPets = totalPetsResult[0].count;
+    const totalPetPages = Math.max(1, Math.ceil(totalPets / itemsPerPage));
+
+    // Get paginated tasks - ONLY 5 PER PAGE
+    const tasks = await queryPaginated(
+      `SELECT t.*, p.name as pet_name 
+       FROM tasks t 
+       JOIN pets p ON t.pet_id = p.pet_id 
+       WHERE p.user_id = ? 
+       ORDER BY t.due_date ASC`,
+      [userId],
+      itemsPerPage,
+      taskOffset
+    );
+    
+    // Get total task count
+    const totalTasksResult = await query(
+      `SELECT COUNT(*) as count 
+       FROM tasks t 
+       JOIN pets p ON t.pet_id = p.pet_id 
+       WHERE p.user_id = ?`,
+      [userId]
+    );
+    const totalTasks = totalTasksResult[0].count;
+    const totalTaskPages = Math.max(1, Math.ceil(totalTasks / itemsPerPage));
+
+    console.log('📈 Pagination results:', {
+      totalPets,
+      totalTasks,
+      petsCount: pets.length, // Should be 5 or less
+      tasksCount: tasks.length, // Should be 5 or less
+      totalPetPages,
+      totalTaskPages
+    });
+
+    // DEBUG: Verify pagination is working
+    if (pets.length > itemsPerPage) {
+      console.error('❌ PAGINATION ERROR: Got', pets.length, 'pets but should only get', itemsPerPage);
+    } else {
+      console.log('✅ Pagination working correctly - showing', pets.length, 'pets');
+    }
+
+    res.render('dashboard', {
+      title: 'Pet Dashboard',
+      username: req.session.username,
+      pets: pets,
+      tasks: tasks,
+      petPagination: {
+        currentPage: petPage,
+        totalPages: totalPetPages,
+        hasNext: petPage < totalPetPages,
+        hasPrev: petPage > 1
+      },
+      taskPagination: {
+        currentPage: taskPage,
+        totalPages: totalTaskPages,
+        hasNext: taskPage < totalTaskPages,
+        hasPrev: taskPage > 1
+      },
+      totalPets: totalPets,
+      totalTasks: totalTasks,
+      itemsPerPage: itemsPerPage
+    });
+
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    
+    // Fallback without pagination
+    try {
+      console.log('🔄 Trying fallback query without pagination...');
+      const { query } = require('./config/database');
+      const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
+      const tasks = await query(
+        `SELECT t.*, p.name as pet_name 
+         FROM tasks t 
+         JOIN pets p ON t.pet_id = p.pet_id 
+         WHERE p.user_id = ? 
+         ORDER BY t.due_date ASC`,
+        [req.session.userId]
+      );
+
+      res.render('dashboard', {
+        title: 'Pet Dashboard',
+        username: req.session.username,
+        pets: pets,
+        tasks: tasks,
+        petPagination: { currentPage: 1, totalPages: 1, hasNext: false, hasPrev: false },
+        taskPagination: { currentPage: 1, totalPages: 1, hasNext: false, hasPrev: false },
+        totalPets: pets.length,
+        totalTasks: tasks.length,
+        itemsPerPage: 5,
+        error: 'Pagination temporarily disabled'
+      });
+    } catch (fallbackError) {
+      console.error('Fallback also failed:', fallbackError);
+      res.status(500).render('dashboard', {
+        title: 'Pet Dashboard',
+        username: req.session.username,
+        pets: [],
+        tasks: [],
+        petPagination: { currentPage: 1, totalPages: 1, hasNext: false, hasPrev: false },
+        taskPagination: { currentPage: 1, totalPages: 1, hasNext: false, hasPrev: false },
+        totalPets: 0,
+        totalTasks: 0,
+        itemsPerPage: 5,
+        error: 'Error loading dashboard'
+      });
+    }
+  }
+});
+
+
+// Add this route to your server.js file
+// app.get('/tasks/upcoming', requireAuth, async (req, res) => {
+//   try {
+//     const userId = req.session.userId;
+//     const days = parseInt(req.query.days) || 3;
+    
+//     // Calculate date range
+//     const now = new Date();
+//     const futureDate = new Date();
+//     futureDate.setDate(now.getDate() + days);
+    
+//     const sql = `
+//       SELECT t.*, p.name as pet_name 
+//       FROM tasks t
+//       JOIN pets p ON t.pet_id = p.pet_id
+//       WHERE t.user_id = ? 
+//       AND t.completed = false
+//       AND t.due_date BETWEEN ? AND ?
+//       ORDER BY t.due_date ASC
+//     `;
+    
+//     const tasks = await query(sql, [userId, now, futureDate]);
+    
+//     res.json(tasks);
+//   } catch (error) {
+//     console.error('Error fetching upcoming tasks:', error);
+//     res.status(500).json({ error: 'Error fetching upcoming tasks' });
+//   }
+// });
+// Update the test route in server.js
+app.get('/test-pagination', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const offset = (page - 1) * limit;
+    
+    const { queryPaginated } = require('./config/database');
+    
+    const pets = await queryPaginated(
+      'SELECT * FROM pets WHERE user_id = ? ORDER BY name',
+      [userId],
+      limit,
+      offset
+    );
+    
+    const totalResult = await query(
+      'SELECT COUNT(*) as count FROM pets WHERE user_id = ?',
+      [userId]
+    );
+    
+    res.json({
+      success: true,
+      page: page,
+      limit: limit,
+      offset: offset,
+      petsReturned: pets.length,
+      totalPets: totalResult[0].count,
+      pets: pets.map(p => p.name)
+    });
+    
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+// Add this debug route to see all registered routes
+app.get('/debug/routes', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      routes.push({
+        path: middleware.route.path,
+        methods: Object.keys(middleware.route.methods)
+      });
+    }
+  });
+  res.json(routes);
+});
+
+// TEMPORARY: Quick route to add multiple test pets
+app.post('/debug/add-test-pets', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const testPets = [
+      { name: "Buddy", breed: "Golden Retriever", age: 3, species: "dog", gender: "male", weight: 30 },
+      { name: "Mittens", breed: "Siamese", age: 2, species: "cat", gender: "female", weight: 4 },
+      { name: "Charlie", breed: "Labrador", age: 4, species: "dog", gender: "male", weight: 28 },
+      { name: "Luna", breed: "Persian", age: 1, species: "cat", gender: "female", weight: 3.5 },
+      { name: "Max", breed: "Beagle", age: 5, species: "dog", gender: "male", weight: 12 },
+      { name: "Bella", breed: "Poodle", age: 2, species: "dog", gender: "female", weight: 8 },
+      { name: "Simba", breed: "Maine Coon", age: 3, species: "cat", gender: "male", weight: 6 },
+      { name: "Daisy", breed: "Bulldog", age: 4, species: "dog", gender: "female", weight: 22 }
+    ];
+
+    let addedCount = 0;
+    
+    for (const petData of testPets) {
+      try {
+        await query(
+          `INSERT INTO pets (user_id, name, breed, age, species, gender, weight) 
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [userId, petData.name, petData.breed, petData.age, petData.species, petData.gender, petData.weight]
+        );
+        addedCount++;
+      } catch (err) {
+        console.log(`Pet ${petData.name} might already exist`);
+      }
+    }
+
+    res.json({ 
+      success: true, 
+      message: `Added ${addedCount} test pets`,
+      totalPets: await getPetCount(userId)
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Helper function to count pets
+async function getPetCount(userId) {
+  const result = await query('SELECT COUNT(*) as count FROM pets WHERE user_id = ?', [userId]);
+  return result[0].count;
+}
 // Add health record form
 app.get('/health-tracker/add', requireAuth, async (req, res) => {
   try {

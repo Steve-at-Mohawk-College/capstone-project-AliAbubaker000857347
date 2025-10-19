@@ -595,6 +595,7 @@ async saveTaskEdit(taskId, buttonElement) {
     }
 }
 
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     window.dashboardManager = new DashboardManager();

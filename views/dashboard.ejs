@@ -1,487 +1,984 @@
+<%- include('partials/header', {title: 'Pet Dashboard - Professional' }) %>
+<style>
+/* Professional Dark Theme */
+:root {
+  --dark-bg: #0f172a;
+  --dark-card: #1e293b;
+  --dark-card-hover: #334155;
+  --dark-border: #475569;
+  --dark-text: #f1f5f9;
+  --dark-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #06b6d4;
+}
 
-<%- include('partials/header', {title: 'Pet Dashboard' }) %>
+body {
+  background: #599767;
+  color: var(--dark-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+}
 
-<div class="row">
-  <div class="col-12">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1 class="h3 mb-1">Welcome, <%= username %>!</h1>
-        <p class="text-muted mb-0">🐾 Here's your pet dashboard</p>
-      </div>
-      <div class="d-flex">
-        <a href="/pets/add" class="btn btn-custom me-2">
-          <i class="bi bi-plus-circle"></i> Add Pet
-        </a>
-        <a href="/schedule-task" class="btn btn-outline-custom">
-          <i class="bi bi-plus-circle"></i> Add Task
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+.dashboard-dark {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
 
-<!-- Professional Filter Section -->
-<div class="filter-section">
-  <div class="row align-items-center mb-3">
-    <div class="col">
-      <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Filter Pets</h5>
-      <p class="text-muted mb-0 small">Refine your pet list by specific criteria</p>
-    </div>
-    <div class="col-auto">
-      <span class="badge bg-primary filter-results" id="filterResults">
-        Showing all <%= pets ? pets.length : 0 %> pets
-      </span>
-    </div>
-  </div>
+/* Header Styles */
+.dark-header {
+  background: #000000;
+  border: 1px solid var(--dark-border);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Debug styles to ensure edit forms are visible */
+.edit-form[style*="display: block"],
+.edit-task-form[style*="display: block"] {
+    border: 2px solid #10b981 !important;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { border-color: #10b981; }
+    50% { border-color: #14f100; }
+    100% { border-color: #10b981; }
+}
+
+/* Ensure forms are properly styled when visible */
+.edit-form,
+.edit-task-form {
+    transition: all 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+}
+
+.edit-form[style*="display: block"],
+.edit-task-form[style*="display: block"] {
+    max-height: 500px;
+    overflow: visible;
+}
+
+.header-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--accent), #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-subtitle {
+  color: var(--dark-muted);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+/* Stats Grid */
+.stats-grid-dark {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card-dark {
+  background: #000000;
+  border: 1px solid var(--dark-border);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--info));
+}
+
+.stat-card-dark:hover {
+  background: var(--dark-card-hover);
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+.stat-icon-dark {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--accent);
+}
+
+.stat-number-dark {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--dark-text);
+}
+
+.stat-label-dark {
+  color: var(--dark-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Content Grid */
+.content-grid-dark {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-card-dark {
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.section-header-dark {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--dark-border);
+}
+
+.section-title-dark {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--dark-text);
+}
+
+/* Pet & Task Items */
+.pet-item-dark, .task-item-dark {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--dark-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-left: 4px solid var(--accent);
+}
+
+.pet-item-dark:hover, .task-item-dark:hover {
+  background: var(--dark-card-hover);
+  border-color: var(--accent);
+  transform: translateX(5px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.pet-avatar-dark, .task-icon-dark {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--info));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.pet-info-dark, .task-info-dark {
+  flex: 1;
+}
+
+.pet-name-dark, .task-title-dark {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--dark-text);
+}
+
+.pet-details-dark, .task-details-dark {
+  margin: 0;
+  color: var(--dark-muted);
+  font-size: 0.9rem;
+}
+
+.pet-actions-dark, .task-actions-dark {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.btn-dark {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(0, 233, 19, 0.3);
+  color: var(--accent);
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-dark:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.btn-dark-primary {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: white;
+}
+
+.btn-dark-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-sm-dark {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+}
+
+/* Quick Actions */
+.quick-actions-dark {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.action-btn-dark {
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  color: var(--dark-text);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.action-btn-dark:hover {
+  background: var(--dark-card-hover);
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  color: var(--dark-text);
+  text-decoration: none;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.action-icon-dark {
+  font-size: 2.25rem;
+  color: var(--accent);
+}
+
+.action-label-dark {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Pagination */
+.pagination-dark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--dark-border);
+}
+
+.pagination-btn-dark {
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  color: var(--dark-text);
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-btn-dark:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.pagination-btn-dark:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--dark-card);
+}
+
+.pagination-info-dark {
+  color: var(--dark-muted);
+  font-size: 0.9rem;
+}
+
+/* Badges */
+.badge-dark {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+.badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); border-color: rgba(245, 158, 11, 0.3); }
+.badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+
+/* Empty States */
+.empty-state-dark {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--dark-muted);
+}
+
+.empty-icon-dark {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+  color: var(--dark-muted);
+}
+
+/* Notification Bell */
+.notification-bell-dark {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dark-text);
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.notification-bell-dark:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-dark {
+    padding: 1rem 0.5rem;
+  }
   
-  <form id="petFilterForm">
-    <div class="row filter-row g-3">
-      <!-- Species Filter -->
-      <div class="col-md-3 filter-group">
-        <label class="form-label small fw-semibold">Species</label>
-        <select class="form-select" id="filterSpecies">
-          <option value="">All Species</option>
-          <option value="dog">Dog</option>
-          <option value="cat">Cat</option>
-          <option value="bird">Bird</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
+  .dark-header {
+    padding: 2rem 1.5rem;
+    margin: 0 0.5rem 1.5rem 0.5rem;
+  }
+  
+  .header-title {
+    font-size: 1.75rem;
+  }
+  
+  .content-grid-dark {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .section-card-dark {
+    padding: 1.5rem;
+    margin: 0 0.5rem;
+  }
+  
+  .stats-grid-dark {
+    grid-template-columns: 1fr;
+  }
+  
+  .pet-item-dark, .task-item-dark {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .pet-actions-dark, .task-actions-dark {
+    justify-content: center;
+  }
+  
+  .quick-actions-dark {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .notification-bell-dark {
+    top: 1rem;
+    right: 1rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
+  }
+}
 
-      <!-- Age Range Filter -->
-      <div class="col-md-3 filter-group">
-        <label class="form-label small fw-semibold">Age Range (years)</label>
-        <div class="input-group">
-          <input type="number" class="form-control" id="filterAgeMin" placeholder="Min" min="0" step="0.1">
-          <span class="input-group-text">-</span>
-          <input type="number" class="form-control" id="filterAgeMax" placeholder="Max" min="0" step="0.1">
+/* Animation */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+/* Debug Info */
+.debug-info-dark {
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: var(--dark-muted);
+  font-size: 0.875rem;
+}
+
+/* Edit Form Styles */
+.edit-form, .edit-task-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  border-radius: 8px;
+}
+
+.edit-form-content {
+  background: var(--dark-card);
+}
+</style>
+
+<div class="dashboard-dark">
+  <!-- Notification Bell -->
+  <button class="notification-bell-dark" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-bell"></i>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+          id="notificationBadge" style="display: none;">0</span>
+  </button>
+
+  <div class="container-fluid">
+    <!-- Header Section -->
+    <div class="dark-header slide-in-right">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="header-title">Welcome, <%= username %>! 🐾</h1>
+          <p class="header-subtitle">Professional pet care management at your fingertips</p>
         </div>
-      </div>
-
-      <!-- Weight Range Filter -->
-      <div class="col-md-3 filter-group">
-        <label class="form-label small fw-semibold">Weight Range (kg)</label>
-        <div class="input-group">
-          <input type="number" class="form-control" id="filterWeightMin" placeholder="Min" min="0" step="0.1">
-          <span class="input-group-text">-</span>
-          <input type="number" class="form-control" id="filterWeightMax" placeholder="Max" min="0" step="0.1">
-        </div>
-      </div>
-
-      <!-- Gender Filter -->
-      <div class="col-md-2 filter-group">
-        <label class="form-label small fw-semibold">Gender</label>
-        <select class="form-select" id="filterGender">
-          <option value="">All Genders</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <!-- Filter Actions -->
-      <div class="col-md-1 filter-group">
-        <label class="form-label small fw-semibold invisible">Actions</label>
-        <div class="filter-actions">
-          <button type="button" class="btn btn-primary" id="applyFilters">
-            <i class="bi bi-funnel"></i>
-          </button>
-          <button type="button" class="btn btn-outline-secondary" id="clearFilters" title="Clear all filters">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Active Filters Display -->
-    <div class="row mt-3">
-      <div class="col-12">
-        <div id="activeFilters" class="d-flex flex-wrap gap-2"></div>
-      </div>
-    </div>
-  </form>
-</div>
-
-<!-- Stats Overview -->
-<div class="row mb-4">
-  <div class="col-md-4 mb-3">
-    <div class="card card-custom h-100">
-      <div class="card-body text-center">
-        <div class="d-flex align-items-center justify-content-center">
-          <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
-            <i class="bi bi-heart-fill text-primary" style="font-size: 1.5rem;"></i>
-          </div>
-          <div>
-            <h3 class="h2 mb-0" id="totalPetsCount">
-              <%= pets ? pets.length : 0 %>
-            </h3>
-            <p class="text-muted mb-0">Total Pets</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-4 mb-3">
-    <div class="card card-custom h-100">
-      <div class="card-body text-center">
-        <div class="d-flex align-items-center justify-content-center">
-          <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
-            <i class="bi bi-list-check text-warning" style="font-size: 1.5rem;"></i>
-          </div>
-          <div>
-            <h3 class="h2 mb-0">
-              <%= tasks ? tasks.length : 0 %>
-            </h3>
-            <p class="text-muted mb-0">Tasks Due</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-4 mb-3">
-    <div class="card card-custom h-100">
-      <div class="card-body text-center">
-        <div class="d-flex align-items-center justify-content-center">
-          <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
-            <i class="bi bi-people-fill text-success" style="font-size: 1.5rem;"></i>
-          </div>
-          <div>
-            <h3 class="h2 mb-0">1</h3>
-            <p class="text-muted mb-0">Owner</p>
+        <div class="col-lg-4 text-lg-end">
+          <div class="d-flex flex-column flex-sm-row gap-2 justify-content-lg-end">
+            <a href="/pets/add" class="btn btn-dark btn-dark-primary">
+              <i class="bi bi-plus-circle"></i>Add Pet
+            </a>
+            <a href="/schedule-task" class="btn btn-dark">
+              <i class="bi bi-calendar-plus"></i>Add Task
+            </a>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="row">
-  <!-- Pets Section -->
-  <div class="col-lg-6 mb-4">
-    <div class="card card-custom h-100">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h2 class="h5 mb-0">Your Pets</h2>
-        <div>
-          <a href="/pets/add" class="btn btn-sm btn-outline-custom">
-            <i class="bi bi-plus"></i> Add
+
+    <!-- Stats Overview -->
+    <div class="stats-grid-dark">
+      <div class="stat-card-dark slide-in-right" style="animation-delay: 0.1s">
+        <div class="stat-icon-dark">
+          <i class="bi bi-heart-pulse"></i>
+        </div>
+        <div class="stat-number-dark"><%= totalPets || 0 %></div>
+        <div class="stat-label-dark">Total Pets</div>
+      </div>
+      
+      <div class="stat-card-dark slide-in-right" style="animation-delay: 0.2s">
+        <div class="stat-icon-dark">
+          <i class="bi bi-list-task"></i>
+        </div>
+        <div class="stat-number-dark"><%= totalTasks || 0 %></div>
+        <div class="stat-label-dark">Tasks Due</div>
+      </div>
+      
+      <div class="stat-card-dark slide-in-right" style="animation-delay: 0.3s">
+        <div class="stat-icon-dark">
+          <i class="bi bi-person-gear"></i>
+        </div>
+        <div class="stat-number-dark">1</div>
+        <div class="stat-label-dark">Active Owner</div>
+      </div>
+    </div>
+
+    <!-- Modern Filter System -->
+    <div class="section-card-dark slide-in-right" style="animation-delay: 0.4s">
+      <div class="section-header-dark">
+        <h3 class="section-title-dark">
+          <i class="bi bi-funnel"></i>
+          Advanced Filters
+        </h3>
+        <button class="btn btn-dark btn-sm-dark" id="clearAllFilters">
+          <i class="bi bi-arrow-clockwise"></i> Reset
+        </button>
+      </div>
+
+      <div class="row g-3">
+        <!-- Pet Filters -->
+        <div class="col-lg-6">
+          <h6 class="text-light mb-3"><i class="bi bi-heart me-2"></i>Pet Filters</h6>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label text-light small">Species</label>
+              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterSpecies">
+                <option value="">All Species</option>
+                <option value="dog">Dog</option>
+                <option value="cat">Cat</option>
+                <option value="bird">Bird</option>
+                <option value="rabbit">Rabbit</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light small">Gender</label>
+              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterGender">
+                <option value="">All Genders</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light small">Min Age</label>
+              <input type="number" step="0.1" min="0" max="50" 
+                     class="form-control form-control-sm bg-dark text-light border-secondary" 
+                     id="filterAgeMin" placeholder="0">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light small">Max Age</label>
+              <input type="number" step="0.1" min="0" max="50" 
+                     class="form-control form-control-sm bg-dark text-light border-secondary" 
+                     id="filterAgeMax" placeholder="50">
+            </div>
+          </div>
+        </div>
+
+        <!-- Task Filters -->
+        <div class="col-lg-6">
+          <h6 class="text-light mb-3"><i class="bi bi-list-task me-2"></i>Task Filters</h6>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label text-light small">Priority</label>
+              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterPriority">
+                <option value="">All Priorities</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light small">Task Type</label>
+              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterTaskType">
+                <option value="">All Types</option>
+                <option value="feeding">Feeding</option>
+                <option value="cleaning">Cleaning</option>
+                <option value="vaccination">Vaccination</option>
+                <option value="medication">Medication</option>
+                <option value="grooming">Grooming</option>
+                <option value="vet_visit">Vet Visit</option>
+                <option value="exercise">Exercise</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light small">Due Date From</label>
+              <input type="date" class="form-control form-control-sm bg-dark text-light border-secondary" 
+                     id="filterDueDateFrom">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light small">Due Date To</label>
+              <input type="date" class="form-control form-control-sm bg-dark text-light border-secondary" 
+                     id="filterDueDateTo">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filters Display -->
+      <div class="mt-3" id="activeFiltersContainer" style="display: none;">
+        <div class="d-flex align-items-center mb-2">
+          <small class="text-muted me-2">Active Filters:</small>
+          <div id="activeFilters" class="d-flex flex-wrap gap-1"></div>
+        </div>
+      </div>
+
+      <!-- Results Counter -->
+      <div class="mt-3">
+        <small class="text-muted" id="resultsCounter">
+          Showing all pets and tasks
+        </small>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid-dark">
+      <!-- Pets Section -->
+      <div class="section-card-dark slide-in-right" style="animation-delay: 0.5s">
+        <div class="section-header-dark">
+          <h3 class="section-title-dark">
+            <i class="bi bi-heart-fill text-danger"></i>
+            Your Pets
+          </h3>
+          <a href="/pets/add" class="btn btn-dark btn-sm-dark">
+            <i class="bi bi-plus"></i>Add
           </a>
         </div>
-      </div>
-      <div class="card-body">
-        <div id="petsListContainer">
-          <% if (pets && pets.length> 0) { %>
-            <div class="list-group list-group-flush" id="petsList">
-              <% pets.forEach(pet=> { %>
-                <div class="list-group-item border-0 px-0 py-3 pet-card" 
-                     data-species="<%= pet.species || '' %>" 
-                     data-age="<%= pet.age || 0 %>" 
-                     data-weight="<%= pet.weight || 0 %>" 
-                     data-gender="<%= pet.gender || '' %>">
-                  <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                      <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
-                        <i class="bi bi-heart-fill text-primary"></i>
-                      </div>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                      <h5 class="mb-1">
-                        <%= pet.name %>
-                      </h5>
-                      <p class="text-muted mb-0 small">
-                        <%= pet.breed || 'Unknown breed' %> •
-                        <!-- Enhanced age display -->
-                        <% if (pet.age !== null && pet.age !== undefined) { %>
-                          <%
-                            const ageValue = parseFloat(pet.age);
-                            let ageDisplay;
-                            
-                            if (ageValue < 1) {
-                              // Show months for values less than 1 year
-                              const months = Math.round(ageValue * 12);
-                              ageDisplay = months + ' month' + (months !== 1 ? 's' : '');
-                            } else if (Number.isInteger(ageValue)) {
-                              // Whole number - show without decimals
-                              ageDisplay = ageValue + ' years';
-                            } else {
-                              // Decimal value 1 or greater - show with one decimal place
-                              ageDisplay = ageValue.toFixed(1) + ' years';
-                            }
-                          %>
-                          <span class="pet-age"><%= ageDisplay %></span>
-                        <% } else { %>
-                          <span class="pet-age">Age unknown</span>
-                        <% } %> •
-                        <span class="pet-weight">
-                          <%= pet.weight ? pet.weight + ' kg' : 'Weight unknown' %>
-                        </span> •
-                        <span class="pet-species"><%= pet.species || 'Unknown' %></span>
-                      </p>
 
-                      <!-- Edit Form (Hidden by default) -->
-                      <div class="edit-form" id="edit-form-<%= pet.pet_id %>">
-                        <h6 class="mb-2">Edit Pet Details</h6>
-                        <div class="row">
-                          <div class="col-md-6 edit-field">
-                            <label for="edit-age-<%= pet.pet_id %>" class="form-label small">Age (years)</label>
-                            <input type="number" class="form-control form-control-sm" 
-                                   id="edit-age-<%= pet.pet_id %>" 
-                                   value="<%= pet.age || '' %>" 
-                                   min="0.1" step="0.1">
-                          </div>
-                          <div class="col-md-6 edit-field">
-                            <label for="edit-weight-<%= pet.pet_id %>" class="form-label small">Weight (kg)</label>
-                            <input type="number" class="form-control form-control-sm" 
-                                   id="edit-weight-<%= pet.pet_id %>" 
-                                   value="<%= pet.weight || '' %>" 
-                                   min="0" step="0.1">
-                          </div>
-                        </div>
-                        <div class="d-flex gap-2 mt-2">
-                          <button class="btn btn-sm btn-success save-edit-btn" 
-                                  data-pet-id="<%= pet.pet_id %>">
-                            <i class="bi bi-check"></i> Save
-                          </button>
-                          <button class="btn btn-sm btn-secondary cancel-edit-btn" 
-                                  data-pet-id="<%= pet.pet_id %>">
-                            <i class="bi bi-x"></i> Cancel
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="flex-shrink-0">
-                      <span class="badge bg-light text-dark me-2 pet-gender">
-                        <%= pet.gender || 'Unknown' %>
-                      </span>
-                      <!-- Edit Pet Button -->
-                      <button class="btn btn-sm btn-outline-primary edit-btn me-2" 
-                              data-pet-id="<%= pet.pet_id %>">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <!-- Remove Pet Button -->
-                      <button class="btn btn-sm btn-outline-danger remove-btn" 
-                              data-type="pet" data-id="<%= pet.pet_id %>" 
-                              data-name="<%= pet.name %>">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </div>
+        <div id="petsListContainer">
+          <% if (pets && pets.length > 0) { %>
+            <% pets.forEach((pet, index) => { %>
+              <!-- Pet Item -->
+              <div class="pet-item-dark slide-in-right" 
+                   data-species="<%= pet.species %>" 
+                   data-gender="<%= pet.gender %>" 
+                   data-age="<%= pet.age %>"
+                   style="animation-delay: <%= 0.6 + (index * 0.1) %>s">
+                <div class="pet-avatar-dark">
+                  <i class="bi bi-<%= pet.species === 'dog' ? 'heart' : pet.species === 'cat' ? 'star' : 'circle' %>-fill"></i>
                 </div>
-              <% }); %>
-            </div>
-          <% } else { %>
-            <div class="text-center py-4 no-pets-message">
-              <div class="bg-light rounded-circle p-4 d-inline-block mb-3">
-                <i class="bi bi-heart text-muted" style="font-size: 2rem;"></i>
+                <div class="pet-info-dark">
+                  <h4 class="pet-name-dark"><%= pet.name %></h4>
+                  <p class="pet-details-dark">
+                    <%= pet.breed || 'Unknown breed' %> • 
+                    <% if (pet.age) { %>
+                      <span id="age-display-<%= pet.pet_id %>"><%= pet.age %> years</span> • 
+                    <% } %>
+                    <% if (pet.weight) { %>
+                      <span id="weight-display-<%= pet.pet_id %>"><%= pet.weight %> kg</span>
+                    <% } %>
+                  </p>
+                </div>
+                <div class="pet-actions-dark">
+                  <span class="badge-dark me-2"><%= pet.gender || 'Unknown' %></span>
+                  <button class="btn btn-dark btn-sm-dark edit-btn" data-pet-id="<%= pet.pet_id %>">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-dark btn-sm-dark remove-btn" 
+                          data-type="pet" data-id="<%= pet.pet_id %>" data-name="<%= pet.name %>">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
               </div>
-              <h5 class="text-muted">No pets yet</h5>
-              <p class="text-muted mb-3">Add your first pet to get started</p>
-              <a href="/pets/add" class="btn btn-custom">Add Your First Pet</a>
+
+              <!-- Edit Form for Pet - INSIDE THE LOOP -->
+              <div id="edit-form-<%= pet.pet_id %>" class="edit-form" style="display: none;">
+                <div class="edit-form-content p-3 bg-dark rounded border">
+                  <h5 class="text-light mb-3">Edit <%= pet.name %></h5>
+                  <form class="row g-2">
+                    <div class="col-md-6">
+                      <label class="form-label text-light small">Age (years)</label>
+                      <input type="number" step="0.1" min="0" max="50" 
+                             class="form-control form-control-sm bg-dark text-light border-secondary" 
+                             id="edit-age-<%= pet.pet_id %>" value="<%= pet.age %>">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label text-light small">Weight (kg)</label>
+                      <input type="number" step="0.1" min="0" max="200" 
+                             class="form-control form-control-sm bg-dark text-light border-secondary" 
+                             id="edit-weight-<%= pet.pet_id %>" value="<%= pet.weight %>">
+                    </div>
+                    <div class="col-12 mt-2">
+                      <button type="button" class="btn btn-sm btn-success save-edit-btn" 
+                              data-pet-id="<%= pet.pet_id %>">
+                        <i class="bi bi-check"></i> Save
+                      </button>
+                      <button type="button" class="btn btn-sm btn-secondary cancel-edit-btn" 
+                              data-pet-id="<%= pet.pet_id %>">
+                        <i class="bi bi-x"></i> Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            <% }); %>
+
+            <!-- Pets Pagination -->
+            <% if (petPagination && petPagination.totalPages > 1) { %>
+              <div class="pagination-dark">
+                <% if (petPagination.hasPrev) { %>
+                  <a href="?petPage=<%= petPagination.currentPage - 1 %>&taskPage=<%= taskPagination.currentPage %>" 
+                     class="pagination-btn-dark">
+                    <i class="bi bi-chevron-left"></i>Previous
+                  </a>
+                <% } else { %>
+                  <button class="pagination-btn-dark" disabled>
+                    <i class="bi bi-chevron-left"></i>Previous
+                  </button>
+                <% } %>
+                
+                <span class="pagination-info-dark">
+                  Page <%= petPagination.currentPage %> of <%= petPagination.totalPages %>
+                </span>
+                
+                <% if (petPagination.hasNext) { %>
+                  <a href="?petPage=<%= petPagination.currentPage + 1 %>&taskPage=<%= taskPagination.currentPage %>" 
+                     class="pagination-btn-dark">
+                    Next<i class="bi bi-chevron-right"></i>
+                  </a>
+                <% } else { %>
+                  <button class="pagination-btn-dark" disabled>
+                    Next<i class="bi bi-chevron-right"></i>
+                  </button>
+                <% } %>
+              </div>
+            <% } %>
+
+          <% } else { %>
+            <div class="empty-state-dark">
+              <div class="empty-icon-dark">
+                <i class="bi bi-heart"></i>
+              </div>
+              <h4>No Pets Registered</h4>
+              <p class="mb-3">Begin by adding your first pet to the system</p>
+              <a href="/pets/add" class="btn btn-dark btn-dark-primary">
+                <i class="bi bi-plus-circle me-2"></i>Register First Pet
+              </a>
             </div>
           <% } %>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Tasks Section -->
-  <div class="col-lg-6 mb-4">
-    <div class="card card-custom h-100">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h2 class="h5 mb-0">Upcoming Tasks</h2>
-            <a href="/schedule-task" class="btn btn-sm btn-outline-custom">
-                <i class="bi bi-plus"></i> Add
+      <!-- Tasks Section -->
+      <div class="section-card-dark slide-in-right" style="animation-delay: 0.6s">
+        <div class="section-header-dark">
+          <h3 class="section-title-dark">
+            <i class="bi bi-calendar-check text-warning"></i>
+            Upcoming Tasks
+          </h3>
+          <a href="/schedule-task" class="btn btn-dark btn-sm-dark">
+            <i class="bi bi-plus"></i>Add
+          </a>
+        </div>
+
+        <% if (tasks && tasks.length > 0) { %>
+          <% tasks.forEach((task, index) => { %>
+            <!-- Task Item -->
+            <div class="task-item-dark slide-in-right" 
+                 data-priority="<%= task.priority %>"
+                 data-task-type="<%= task.task_type %>"
+                 data-due-date="<%= task.due_date %>"
+                 style="animation-delay: <%= 0.7 + (index * 0.1) %>s">
+              <div class="task-icon-dark">
+                <i class="bi bi-<%= task.priority === 'high' ? 'exclamation-triangle' : 'calendar-check' %>"></i>
+              </div>
+              <div class="task-info-dark">
+                <h4 class="task-title-dark"><%= task.title %></h4>
+                <p class="task-details-dark">
+                  For: <strong><%= task.pet_name %></strong> • 
+                  Due: <span class="due-date" data-due-date="<%= task.due_date %>">
+                    <%= new Date(task.due_date).toLocaleDateString() %>
+                  </span>
+                </p>
+                <% if (task.description) { %>
+                  <small class="task-description text-muted"><%= task.description %></small>
+                <% } %>
+              </div>
+              <div class="task-actions-dark">
+                <span class="badge-dark badge-<%= task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success' %> me-2">
+                  <%= task.priority %>
+                </span>
+                <button class="btn btn-dark btn-sm-dark edit-task-btn" data-task-id="<%= task.task_id %>">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-dark btn-sm-dark remove-btn" 
+                        data-type="task" data-id="<%= task.task_id %>" data-name="<%= task.title %>">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Edit Form for Task - INSIDE THE LOOP -->
+            <div id="edit-task-form-<%= task.task_id %>" class="edit-task-form" style="display: none;">
+              <div class="edit-form-content p-3 bg-dark rounded border">
+                <h5 class="text-light mb-3">Edit Task</h5>
+                <form class="row g-2">
+                  <div class="col-12">
+                    <label class="form-label text-light small">Title</label>
+                    <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary" 
+                           id="edit-task-title-<%= task.task_id %>" value="<%= task.title %>">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label text-light small">Description</label>
+                    <textarea class="form-control form-control-sm bg-dark text-light border-secondary" 
+                              id="edit-task-description-<%= task.task_id %>" rows="2"><%= task.description %></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label text-light small">Due Date</label>
+                    <input type="datetime-local" class="form-control form-control-sm bg-dark text-light border-secondary" 
+                           id="edit-task-due-date-<%= task.task_id %>" 
+                           value="<%= new Date(task.due_date).toISOString().slice(0, 16) %>">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label text-light small">Priority</label>
+                    <select class="form-select form-select-sm bg-dark text-light border-secondary" 
+                            id="edit-task-priority-<%= task.task_id %>">
+                      <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
+                      <option value="medium" <%= task.priority === 'medium' ? 'selected' : '' %>>Medium</option>
+                      <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
+                    </select>
+                  </div>
+                  <div class="col-12 mt-2">
+                    <button type="button" class="btn btn-sm btn-success save-task-edit-btn" 
+                            data-task-id="<%= task.task_id %>">
+                      <i class="bi bi-check"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary cancel-task-edit-btn" 
+                            data-task-id="<%= task.task_id %>">
+                      <i class="bi bi-x"></i> Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          <% }); %>
+
+          <!-- Tasks Pagination -->
+          <% if (taskPagination && taskPagination.totalPages > 1) { %>
+            <div class="pagination-dark">
+              <% if (taskPagination.hasPrev) { %>
+                <a href="?petPage=<%= petPagination.currentPage %>&taskPage=<%= taskPagination.currentPage - 1 %>" 
+                   class="pagination-btn-dark">
+                  <i class="bi bi-chevron-left"></i>Previous
+                </a>
+              <% } else { %>
+                <button class="pagination-btn-dark" disabled>
+                  <i class="bi bi-chevron-left"></i>Previous
+                </button>
+              <% } %>
+              
+              <span class="pagination-info-dark">
+                Page <%= taskPagination.currentPage %> of <%= taskPagination.totalPages %>
+              </span>
+              
+              <% if (taskPagination.hasNext) { %>
+                <a href="?petPage=<%= petPagination.currentPage %>&taskPage=<%= taskPagination.currentPage + 1 %>" 
+                   class="pagination-btn-dark">
+                  Next<i class="bi bi-chevron-right"></i>
+                </a>
+              <% } else { %>
+                <button class="pagination-btn-dark" disabled>
+                  Next<i class="bi bi-chevron-right"></i>
+                </button>
+              <% } %>
+            </div>
+          <% } %>
+
+        <% } else { %>
+          <div class="empty-state-dark">
+            <div class="empty-icon-dark">
+              <i class="bi bi-calendar-x"></i>
+            </div>
+            <h4>No Tasks Scheduled</h4>
+            <p class="mb-3">Create your first care schedule</p>
+            <a href="/schedule-task" class="btn btn-dark btn-dark-primary">
+              <i class="bi bi-calendar-plus me-2"></i>Schedule Task
             </a>
-        </div>
-        <div class="card-body">
-            <% if (tasks && tasks.length > 0) { %>
-                <div class="list-group list-group-flush">
-                    <% tasks.forEach(task => { %>
-                        <div class="list-group-item border-0 px-0 py-3">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
-                                        <i class="bi bi-list-check text-warning"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="mb-1">
-                                        <%= task.title %>
-                                        <% if (task.description) { %>
-                                            <button class="btn btn-sm btn-link p-0 ms-1 toggle-description" data-task-id="<%= task.task_id %>" title="Toggle description">
-                                                <i class="bi bi-chevron-down"></i>
-                                            </button>
-                                        <% } %>
-                                    </h5>
-                                    <p class="text-muted mb-0 small">
-    For: <%= task.pet_name %> • 
-    Due: <span class="due-date" data-due-date="<%= task.due_date %>">
-        <%= new Date(task.due_date).toLocaleString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZoneName: 'short'
-        }) %>
-    </span>
-</p>
-                                    <% if (task.description) { %>
-                                        <div class="task-description mt-2" id="description-<%= task.task_id %>" style="display: none;">
-                                            <p class="text-muted mb-0 small">
-                                                <i class="bi bi-chat-text"></i> <%= task.description %>
-                                            </p>
-                                        </div>
-                                    <% } %>
-
-                                    <!-- Task Edit Form (Hidden by default) -->
-                                    <div class="edit-task-form mt-3" id="edit-task-form-<%= task.task_id %>" style="display: none;">
-                                        <h6 class="mb-2">Edit Task</h6>
-                                        <div class="row">
-                                            <div class="col-md-6 edit-field">
-                                                <label for="edit-task-title-<%= task.task_id %>" class="form-label small">Title *</label>
-                                                <input type="text" class="form-control form-control-sm" 
-                                                       id="edit-task-title-<%= task.task_id %>" 
-                                                       value="<%= task.title %>" required>
-                                            </div>
-                                            <div class="col-md-6 edit-field">
-                                                <label for="edit-task-priority-<%= task.task_id %>" class="form-label small">Priority</label>
-                                                <select class="form-select form-select-sm" id="edit-task-priority-<%= task.task_id %>">
-                                                    <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
-                                                    <option value="medium" <%= task.priority === 'medium' ? 'selected' : '' %>>Medium</option>
-                                                    <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="edit-field">
-                                            <label for="edit-task-description-<%= task.task_id %>" class="form-label small">Description</label>
-                                            <textarea class="form-control form-control-sm" 
-                                                      id="edit-task-description-<%= task.task_id %>" 
-                                                      rows="2"><%= task.description || '' %></textarea>
-                                        </div>
-                                        <div class="edit-field">
-                                            <label for="edit-task-due-date-<%= task.task_id %>" class="form-label small">Due Date *</label>
-                                            <input type="datetime-local" class="form-control form-control-sm" 
-                                                   id="edit-task-due-date-<%= task.task_id %>" 
-                                                   value="<%= new Date(task.due_date).toISOString().slice(0, 16) %>" required>
-                                        </div>
-                                        <div class="d-flex gap-2 mt-2">
-                                            <button class="btn btn-sm btn-success save-task-edit-btn" 
-                                                    data-task-id="<%= task.task_id %>">
-                                                <i class="bi bi-check"></i> Save
-                                            </button>
-                                            <button class="btn btn-sm btn-secondary cancel-task-edit-btn" 
-                                                    data-task-id="<%= task.task_id %>">
-                                                <i class="bi bi-x"></i> Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <span class="badge bg-<%= task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'info' %> me-2">
-                                        <%= task.priority %>
-                                    </span>
-                                    <!-- Edit Task Button -->
-                                    <button class="btn btn-sm btn-outline-primary edit-task-btn me-2" 
-                                            data-task-id="<%= task.task_id %>">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <!-- Remove Task Button -->
-                                    <button class="btn btn-sm btn-outline-danger remove-btn" 
-                                            data-type="task" data-id="<%= task.task_id %>" 
-                                            data-name="<%= task.title %>">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
-            <% } else { %>
-                <div class="text-center py-4">
-                    <div class="bg-light rounded-circle p-4 d-inline-block mb-3">
-                        <i class="bi bi-list-check text-muted" style="font-size: 2rem;"></i>
-                    </div>
-                    <h5 class="text-muted">No upcoming tasks</h5>
-                    <p class="text-muted mb-3">Schedule your first task</p>
-                    <a href="/schedule-task" class="btn btn-custom">Schedule a Task</a>
-                </div>
-            <% } %>
-        </div>
-    </div>
-  </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="row">
-  <div class="col-12">
-    <div class="card card-custom">
-      <div class="card-header">
-        <h2 class="h5 mb-0">Quick Actions</h2>
+          </div>
+        <% } %>
       </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-6 col-md-3 mb-3">
-            <a href="/pets/add" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-              <i class="bi bi-plus-circle mb-2" style="font-size: 1.5rem;"></i>
-              <span>Add Pet</span>
-            </a>
-          </div>
-          <div class="col-sm-6 col-md-3 mb-3">
-            <a href="/schedule-task" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-              <i class="bi bi-calendar-plus mb-2" style="font-size: 1.5rem;"></i>
-              <span>Schedule Task</span>
-            </a>
-          </div>
-          <div class="col-sm-6 col-md-3 mb-3">
-            <a href="/health-tracker/add" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-              <i class="bi bi-heart-pulse mb-2" style="font-size: 1.5rem;"></i>
-              <span>Health Tracker</span>
-            </a>
-          </div>
-          <div class="col-sm-6 col-md-3 mb-3">
-            <a href="/community" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-              <i class="bi bi-people mb-2" style="font-size: 1.5rem;"></i>
-              <span>Community</span>
-            </a>
-          </div>
-          <div class="col-sm-6 col-md-3 mb-3">
-  <a href="/task-overview" class="btn btn-outline-custom w-100 d-flex flex-column align-items-center py-3">
-    <i class="bi bi-list-check mb-2" style="font-size: 1.5rem;"></i>
-    <span>Task Overview</span>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-card-dark slide-in-right" style="animation-delay: 0.8s">
+      <h3 class="section-title-dark mb-4">
+        <i class="bi bi-lightning-charge text-info"></i>
+        Quick Actions
+      </h3>
+      <div class="quick-actions-dark">
+        <a href="/pets/add" class="action-btn-dark">
+          <i class="bi bi-plus-circle action-icon-dark"></i>
+          <span class="action-label-dark">Add Pet</span>
+        </a>
+        <a href="/schedule-task" class="action-btn-dark">
+          <i class="bi bi-calendar-plus action-icon-dark"></i>
+          <span class="action-label-dark">Schedule Task</span>
+        </a>
+        <a href="/health-tracker/add" class="action-btn-dark">
+          <i class="bi bi-heart-pulse action-icon-dark"></i>
+          <span class="action-label-dark">Health Tracker</span>
+        </a>
+        <a href="/task-overview" class="action-btn-dark">
+          <i class="bi bi-clipboard-data action-icon-dark"></i>
+          <span class="action-label-dark">Task Overview</span>
+        </a>
+        <a href="/views/notifications" class="action-btn-dark">
+    <i class="bi bi-bell action-icon-dark"></i>
+    <span class="action-label-dark">Notifications</span>
   </a>
-</div>
-        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Confirmation Modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Confirm Removal</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p id="confirmationMessage">Are you sure you want to remove this item?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmRemoveBtn">Remove</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- Notifications Bell -->
+<!-- Notification Bell -->
 <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
   <div class="dropdown">
-    <button class="btn btn-light btn-sm position-relative dropdown-toggle" 
+    <button class="notification-bell-dark dropdown-toggle" 
             id="notificationDropdown" 
             data-bs-toggle="dropdown" 
             aria-expanded="false">
@@ -491,39 +988,56 @@
         0
       </span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-end" style="width: 350px; max-height: 400px; overflow-y: auto;">
-      <li class="dropdown-header d-flex justify-content-between align-items-center">
+
+    <!-- Your new design dropdown menu - moved inside the dropdown div -->
+    <div class="dropdown-menu dropdown-menu-end" style="width: 380px; max-height: 500px; overflow-y: auto; background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--dark-text);" aria-labelledby="notificationDropdown">
+      <div class="dropdown-header d-flex justify-content-between align-items-center border-bottom border-dark">
         <span>Notifications</span>
-        <button class="btn btn-sm btn-outline-secondary" id="markAllReadBtn">
+        <button class="btn btn-dark btn-sm-dark" id="markAllReadBtn">
           Mark all read
-        </button>
-      </li>
-      <li><hr class="dropdown-divider"></li>
+      </button>
+      </div>
+      <div class="dropdown-divider"></div>
       <div id="notificationsList">
-        <li class="px-3 py-2 text-center text-muted">
+        <div class="px-3 py-3 text-center text-muted">
           <div class="spinner-border spinner-border-sm" role="status"></div>
           <span class="ms-2">Loading notifications...</span>
-        </li>
+        </div>
       </div>
-      <li><hr class="dropdown-divider"></li>
-      <li>
-        <a class="dropdown-item text-center" href="/notifications">
-          <i class="bi bi-list"></i> View all notifications
-        </a>
-      </li>
-    </ul>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item text-center" href="/notifications" style="color: var(--dark-text);">
+        <i class="bi bi-list me-2"></i>View all notifications
+      </a>
+    </div>
   </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--dark-text);">
+      <div class="modal-header border-bottom border-dark">
+        <h5 class="modal-title">Confirm Removal</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmationMessage">Are you sure you want to remove this item?</p>
+      </div>
+      <div class="modal-footer border-top border-dark">
+        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-dark btn-dark-primary" id="confirmRemoveBtn">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <script src="/js/dashboard.js"></script>
+<script src="/js/dashboard-pagination.js"></script> -->
+<script src="/js/dashboard-filters-enhanced.js"></script>
+<script src="/js/dashboard-enhanced.js"></script>
 
 
-<script src="/js/dashboard.js"></script>
-
-
-<script src="/js/dashboard-filters.js"></script>
-
-<script>
-// Notification system
+<script>// Enhanced Notification system
 class NotificationSystem {
   constructor() {
     this.checkInterval = null;
@@ -534,71 +1048,164 @@ class NotificationSystem {
     this.loadNotifications();
     this.setupEventListeners();
     
-    // Check for new notifications every 30 seconds
     this.checkInterval = setInterval(() => {
       this.loadNotifications();
-    }, 30000);
+    }, 30000); // Check every 30 seconds
   }
 
   async loadNotifications() {
     try {
-      const response = await fetch('/notifications?limit=10');
-      const notifications = await response.json();
+      // Load both regular notifications and upcoming tasks
+      const [notifications, upcomingTasks] = await Promise.all([
+        this.fetchNotifications(),
+        this.fetchUpcomingTasks()
+      ]);
       
-      this.updateNotificationBadge(notifications);
-      this.renderNotifications(notifications);
+      this.updateNotificationBadge(notifications, upcomingTasks);
+      this.renderNotifications(notifications, upcomingTasks);
     } catch (error) {
       console.error('Error loading notifications:', error);
     }
   }
 
-  updateNotificationBadge(notifications) {
+  async fetchNotifications() {
+    try {
+      const response = await fetch('/notifications?limit=10');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      return [];
+    }
+  }
+
+  async fetchUpcomingTasks() {
+    try {
+      const response = await fetch('/tasks/upcoming?days=3');
+      if (response.ok) {
+        return await response.json();
+      }
+      return [];
+    } catch (error) {
+      console.error('Error fetching upcoming tasks:', error);
+      return [];
+    }
+  }
+
+  updateNotificationBadge(notifications, upcomingTasks) {
     const badge = document.getElementById('notificationBadge');
-    const unreadCount = notifications.filter(n => !n.is_read).length;
+    const unreadNotifications = notifications.filter(n => !n.is_read).length;
+    const upcomingTasksCount = upcomingTasks.length;
+    const totalCount = unreadNotifications + upcomingTasksCount;
     
-    if (unreadCount > 0) {
-      badge.textContent = unreadCount;
+    if (totalCount > 0) {
+      badge.textContent = totalCount;
       badge.style.display = 'block';
     } else {
       badge.style.display = 'none';
     }
   }
 
-  renderNotifications(notifications) {
+  renderNotifications(notifications, upcomingTasks) {
     const container = document.getElementById('notificationsList');
     
-    if (notifications.length === 0) {
+    if (notifications.length === 0 && upcomingTasks.length === 0) {
       container.innerHTML = `
-        <li class="px-3 py-3 text-center text-muted">
+        <div class="px-3 py-3 text-center text-muted">
           <i class="bi bi-bell-slash" style="font-size: 1.5rem;"></i>
           <div class="mt-2">No notifications</div>
-        </li>
+        </div>
       `;
       return;
     }
 
-    container.innerHTML = notifications.map(notification => `
-      <li class="dropdown-item ${notification.is_read ? '' : 'bg-light'} p-3 border-bottom">
-        <div class="d-flex align-items-start">
-          <div class="flex-grow-1">
-            <h6 class="mb-1 ${notification.is_read ? '' : 'fw-bold'}">${notification.title}</h6>
-            <p class="mb-1 small">${notification.message}</p>
-            <small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
+    let html = '';
+
+    // Show upcoming tasks first
+    if (upcomingTasks.length > 0) {
+      html += `
+        <div class="px-3 py-2 border-bottom border-warning">
+          <small class="text-warning fw-bold">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            Upcoming Tasks (Next 3 Days)
+          </small>
+        </div>
+      `;
+      
+      upcomingTasks.forEach(task => {
+        const dueDate = new Date(task.due_date);
+        const now = new Date();
+        const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+        
+        let urgencyClass = '';
+        let urgencyIcon = '';
+        
+        if (daysUntilDue <= 0) {
+          urgencyClass = 'text-danger';
+          urgencyIcon = 'bi-exclamation-triangle-fill';
+        } else if (daysUntilDue === 1) {
+          urgencyClass = 'text-warning';
+          urgencyIcon = 'bi-exclamation-circle';
+        } else {
+          urgencyClass = 'text-info';
+          urgencyIcon = 'bi-calendar-event';
+        }
+        
+        html += `
+          <div class="dropdown-item p-3 border-bottom">
+            <div class="d-flex align-items-start">
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center mb-1">
+                  <i class="bi ${urgencyIcon} ${urgencyClass} me-2"></i>
+                  <h6 class="mb-0 fw-bold">${task.title}</h6>
+                </div>
+                <p class="mb-1 small">
+                  <strong>For:</strong> ${task.pet_name}<br>
+                  <strong>Due:</strong> ${dueDate.toLocaleDateString()} 
+                  <span class="${urgencyClass}">(${daysUntilDue <= 0 ? 'TODAY' : `${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''} left`})</span>
+                </p>
+                ${task.description ? `<p class="mb-1 small text-muted">${task.description}</p>` : ''}
+                <span class="badge ${this.getPriorityBadgeClass(task.priority)} me-1">
+                  ${task.priority}
+                </span>
+                <small class="text-muted">${task.task_type}</small>
+              </div>
+            </div>
           </div>
-          <div class="flex-shrink-0 ms-2">
-            ${!notification.is_read ? `
-              <button class="btn btn-sm btn-outline-primary mark-read-btn" 
-                      data-id="${notification.notification_id}" 
-                      title="Mark as read">
-                <i class="bi bi-check"></i>
-              </button>
-            ` : ''}
+        `;
+      });
+    }
+
+    // Show regular notifications
+    if (notifications.length > 0) {
+      if (upcomingTasks.length > 0) {
+        html += `<div class="dropdown-divider"></div>`;
+      }
+      
+      html += notifications.map(notification => `
+        <div class="dropdown-item ${notification.is_read ? '' : 'bg-light'} p-3 border-bottom">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h6 class="mb-1 ${notification.is_read ? '' : 'fw-bold'}">${notification.title}</h6>
+              <p class="mb-1 small">${notification.message}</p>
+              <small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
+            </div>
+            <div class="flex-shrink-0 ms-2">
+              ${!notification.is_read ? `
+                <button class="btn btn-sm btn-outline-primary mark-read-btn" 
+                        data-id="${notification.notification_id}" 
+                        title="Mark as read">
+                  <i class="bi bi-check"></i>
+                </button>
+              ` : ''}
+            </div>
           </div>
         </div>
-      </li>
-    `).join('');
+      `).join('');
+    }
 
-    // Add event listeners to mark-as-read buttons
+    container.innerHTML = html;
+
+    // Re-attach event listeners
     container.querySelectorAll('.mark-read-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -608,6 +1215,15 @@ class NotificationSystem {
     });
   }
 
+  getPriorityBadgeClass(priority) {
+    const classes = {
+      'high': 'bg-danger',
+      'medium': 'bg-warning',
+      'low': 'bg-success'
+    };
+    return classes[priority] || 'bg-secondary';
+  }
+
   async markAsRead(notificationId) {
     try {
       await fetch(`/notifications/${notificationId}/read`, {
@@ -615,7 +1231,6 @@ class NotificationSystem {
         headers: { 'Content-Type': 'application/json' }
       });
       
-      // Reload notifications
       this.loadNotifications();
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -642,7 +1257,6 @@ class NotificationSystem {
       this.markAllAsRead();
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       const dropdown = document.getElementById('notificationDropdown');
       if (!dropdown.contains(e.target)) {
@@ -665,10 +1279,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-
 <%- include('partials/footer') %>
 
-
-
-    <!-- Add Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<!-- Add Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">

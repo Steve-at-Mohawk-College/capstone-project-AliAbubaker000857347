@@ -150,7 +150,13 @@ body {
   gap: 2rem;
   margin-bottom: 2rem;
 }
-
+/* Improved Notification Bell Styles */
+.notification-container {
+  position: fixed !important;
+  top: 2rem !important;
+  right: 2rem !important;
+  z-index: 1050 !important;
+}
 .section-card-dark {
   background: var(--dark-card);
   border: 1px solid var(--dark-border);
@@ -382,6 +388,8 @@ body {
   color: var(--dark-muted);
 }
 
+
+
 .empty-icon-dark {
   font-size: 4rem;
   margin-bottom: 1.5rem;
@@ -389,16 +397,15 @@ body {
   color: var(--dark-muted);
 }
 
-/* Notification Bell */
 .notification-bell-dark {
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
-  z-index: 1000;
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  width: 56px;
-  height: 56px;
+  position: fixed !important; /* Changed from relative to fixed */
+  top: 5rem !important; /* Distance from top */
+  right: 2rem !important; /* Distance from right */
+  z-index: 1050 !important; /* High z-index to stay above everything */
+  background: green;
+  border: 2px solid red;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -406,15 +413,114 @@ body {
   color: var(--dark-text);
   font-size: 1.25rem;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 25px rgba(224, 7, 7, 0.3);
 }
 
 .notification-bell-dark:hover {
-  background: var(--accent);
+  background: rgb(221, 0, 0);
   border-color: var(--accent);
-  color: white;
+  color: rgb(40, 241, 0);
   transform: scale(1.1);
 }
+
+
+/* Change notification text color to red */
+.dropdown-header span,
+.dropdown-item,
+
+.dropdown-item p,
+.dropdown-item small,
+.dropdown-item .text-muted {
+  color: #00ff2a !important; /* Using your --danger color variable */
+  
+}
+
+
+
+/* Specifically target notification content */
+#notificationsList,
+#notificationsList * {
+  color: #fafafa !important;
+}
+
+#notificationsList:hover {
+  color: rgb(255, 140, 0);
+  
+}
+/* Notification dropdown hover styles */
+.dropdown-item:hover {
+  background-color: #000000 !important; /* Black background on hover */
+  color: #ffffff !important; /* White text on hover */
+}
+
+/* Ensure all text inside hovered notification items turns white */
+.dropdown-item:hover *:not(.btn):not(.badge) {
+  color: #ffffff !important;
+}
+
+/* Specific styles for notification items */
+.dropdown-item {
+  transition: all 0.3s ease;
+  border: none !important;
+}
+
+/* Keep badge colors consistent on hover */
+.dropdown-item:hover .badge {
+  color: white !important;
+}
+
+/* Button styles within notifications on hover */
+.dropdown-item:hover .btn {
+  background-color: #333333 !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+/* Ensure the dropdown menu itself maintains its style */
+.dropdown-menu {
+  background: var(--dark-card) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+/* Header should not change on hover */
+.dropdown-header:hover {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* View all link hover */
+.dropdown-item.text-center:hover {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+
+/* Keep the "View all notifications" link red too */
+.dropdown-item.text-center {
+  color: #ef4444 !important;
+}
+
+.notification-icon {
+  position: relative;
+  color: rgb(255, 0, 0); /* change icon color */
+}
+.notification-icon .notification-count {
+  color: yellow !important;
+}
+
+.notification-icon .notification-count {
+  color: yellow; /* change number color */
+  font-weight: bold;
+}
+
+.notification-bell-dark:hover {
+  background: rgb(221, 0, 0);
+  border-color: var(--accent);
+  color: rgb(40, 241, 0);
+  transform: scale(1.1);
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -454,19 +560,43 @@ body {
   .pet-actions-dark, .task-actions-dark {
     justify-content: center;
   }
+   .notification-bell-dark {
+    top: 5rem !important;
+    right: 1rem !important;
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+  }
   
   .quick-actions-dark {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .notification-bell-dark {
-    top: 1rem;
-    right: 1rem;
-    width: 48px;
-    height: 48px;
-    font-size: 1.1rem;
-  }
+
 }
+
+@media (min-width: 1024px) {
+  .dashboard-dark {
+    padding: 1rem 2rem;
+  }
+
+  .dark-header {
+    padding: 2rem 2rem;
+    margin: 0 2rem 2rem 2rem;
+  }
+
+  .header-title {
+    font-size: 2.5rem;
+  }
+
+  .content-grid-dark {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+ 
+}
+
 
 /* Animation */
 @keyframes slideInRight {
@@ -511,11 +641,11 @@ body {
 
 <div class="dashboard-dark">
   <!-- Notification Bell -->
-  <button class="notification-bell-dark" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+  <!-- <button class="notification-bell-dark" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
     <i class="bi bi-bell"></i>
     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
           id="notificationBadge" style="display: none;">0</span>
-  </button>
+  </button> -->
 
   <div class="container-fluid">
     <!-- Header Section -->
@@ -975,40 +1105,37 @@ body {
   </div>
 </div>
 
-<!-- Notification Bell -->
-<div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-  <div class="dropdown">
-    <button class="notification-bell-dark dropdown-toggle" 
-            id="notificationDropdown" 
-            data-bs-toggle="dropdown" 
-            aria-expanded="false">
-      <i class="bi bi-bell"></i>
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-            id="notificationBadge" style="display: none;">
-        0
-      </span>
-    </button>
+<!-- Fixed Notification Bell -->
+<div class="dropdown" style="position: fixed; top: 2rem; right: 2rem; z-index: 1050;">
+  <button class="notification-bell-dark dropdown-toggle" 
+          id="notificationDropdown" 
+          data-bs-toggle="dropdown" 
+          aria-expanded="false">
+    <i class="bi bi-bell"></i>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+          id="notificationBadge" style="display: none;">
+      0
+    </span>
+  </button>
 
-    <!-- Your new design dropdown menu - moved inside the dropdown div -->
-    <div class="dropdown-menu dropdown-menu-end" style="width: 380px; max-height: 500px; overflow-y: auto; background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--dark-text);" aria-labelledby="notificationDropdown">
-      <div class="dropdown-header d-flex justify-content-between align-items-center border-bottom border-dark">
-        <span>Notifications</span>
-        <button class="btn btn-dark btn-sm-dark" id="markAllReadBtn">
-          Mark all read
+  <div class="dropdown-menu dropdown-menu-end" style="width: 380px; max-height: 500px; overflow-y: auto; background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--dark-text);" aria-labelledby="notificationDropdown">
+    <div class="dropdown-header d-flex justify-content-between align-items-center border-bottom border-dark">
+      <span>Notifications</span>
+      <button class="btn btn-dark btn-sm-dark" id="markAllReadBtn">
+        Mark all read
       </button>
-      </div>
-      <div class="dropdown-divider"></div>
-      <div id="notificationsList">
-        <div class="px-3 py-3 text-center text-muted">
-          <div class="spinner-border spinner-border-sm" role="status"></div>
-          <span class="ms-2">Loading notifications...</span>
-        </div>
-      </div>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item text-center" href="/notifications" style="color: var(--dark-text);">
-        <i class="bi bi-list me-2"></i>View all notifications
-      </a>
     </div>
+    <div class="dropdown-divider"></div>
+    <div id="notificationsList">
+      <div class="px-3 py-3 text-center text-muted">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+        <span class="ms-2">Loading notifications...</span>
+      </div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item text-center" href="/notifications" style="color: var(--dark-text);">
+      <i class="bi bi-list me-2"></i>View all notifications
+    </a>
   </div>
 </div>
 

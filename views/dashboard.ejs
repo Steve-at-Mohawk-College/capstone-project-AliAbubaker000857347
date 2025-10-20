@@ -1,6 +1,6 @@
 <%- include('partials/header', {title: 'Pet Dashboard - Professional' }) %>
 <style>
-/* Professional Dark Theme */
+  /* Professional Dark Theme */
 :root {
   --dark-bg: #0f172a;
   --dark-card: #1e293b;
@@ -16,11 +16,14 @@
   --info: #06b6d4;
 }
 
+/* Base Styles */
 body {
-  background: #599767;
+  background: #66a9b4;
   color: var(--dark-text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .dashboard-dark {
@@ -29,7 +32,7 @@ body {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
-/* Header Styles */
+/* Header Section */
 .dark-header {
   background: #000000;
   border: 1px solid var(--dark-border);
@@ -37,33 +40,6 @@ body {
   padding: 2.5rem;
   margin-bottom: 2rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-/* Debug styles to ensure edit forms are visible */
-.edit-form[style*="display: block"],
-.edit-task-form[style*="display: block"] {
-    border: 2px solid #10b981 !important;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { border-color: #10b981; }
-    50% { border-color: #14f100; }
-    100% { border-color: #10b981; }
-}
-
-/* Ensure forms are properly styled when visible */
-.edit-form,
-.edit-task-form {
-    transition: all 0.3s ease;
-    max-height: 0;
-    overflow: hidden;
-}
-
-.edit-form[style*="display: block"],
-.edit-task-form[style*="display: block"] {
-    max-height: 500px;
-    overflow: visible;
 }
 
 .header-title {
@@ -150,13 +126,7 @@ body {
   gap: 2rem;
   margin-bottom: 2rem;
 }
-/* Improved Notification Bell Styles */
-.notification-container {
-  position: fixed !important;
-  top: 2rem !important;
-  right: 2rem !important;
-  z-index: 1050 !important;
-}
+
 .section-card-dark {
   background: var(--dark-card);
   border: 1px solid var(--dark-border);
@@ -254,6 +224,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
 }
 
 .btn-dark:hover {
@@ -377,9 +348,23 @@ body {
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-.badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
-.badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); border-color: rgba(245, 158, 11, 0.3); }
-.badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+.badge-success { 
+  background: rgba(16, 185, 129, 0.1); 
+  color: var(--success); 
+  border-color: rgba(16, 185, 129, 0.3); 
+}
+
+.badge-warning { 
+  background: rgba(245, 158, 11, 0.1); 
+  color: var(--warning); 
+  border-color: rgba(245, 158, 11, 0.3); 
+}
+
+.badge-danger { 
+  background: rgba(239, 68, 68, 0.1); 
+  color: var(--danger); 
+  border-color: rgba(239, 68, 68, 0.3); 
+}
 
 /* Empty States */
 .empty-state-dark {
@@ -388,8 +373,6 @@ body {
   color: var(--dark-muted);
 }
 
-
-
 .empty-icon-dark {
   font-size: 4rem;
   margin-bottom: 1.5rem;
@@ -397,23 +380,28 @@ body {
   color: var(--dark-muted);
 }
 
+/* Fixed Notification Bell */
+.notification-container {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 9999;
+}
+
 .notification-bell-dark {
-  position: fixed !important; /* Changed from relative to fixed */
-  top: 5rem !important; /* Distance from top */
-  right: 2rem !important; /* Distance from right */
-  z-index: 1050 !important; /* High z-index to stay above everything */
   background: green;
   border: 2px solid red;
-  width: 45px;
-  height: 45px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--dark-text);
+  color: white;
   font-size: 1.25rem;
   transition: all 0.3s ease;
   box-shadow: 0 8px 25px rgba(224, 7, 7, 0.3);
+  cursor: pointer;
 }
 
 .notification-bell-dark:hover {
@@ -423,104 +411,115 @@ body {
   transform: scale(1.1);
 }
 
-
-/* Change notification text color to red */
-.dropdown-header span,
-.dropdown-item,
-
-.dropdown-item p,
-.dropdown-item small,
-.dropdown-item .text-muted {
-  color: #00ff2a !important; /* Using your --danger color variable */
-  
+/* Notification Dropdown */
+.dropdown-menu {
+  background: var(--dark-card) !important;
+  border: 1px solid var(--dark-border) !important;
+  color: var(--dark-text) !important;
 }
 
-
-
-/* Specifically target notification content */
-#notificationsList,
-#notificationsList * {
-  color: #fafafa !important;
+.dropdown-header {
+  color: var(--dark-text) !important;
+  border-bottom-color: var(--dark-border) !important;
 }
 
-#notificationsList:hover {
-  color: rgb(255, 140, 0);
-  
+.dropdown-item {
+  color: #00ff2a !important;
+  transition: all 0.3s ease;
 }
-/* Notification dropdown hover styles */
+
 .dropdown-item:hover {
-  background-color: #000000 !important; /* Black background on hover */
-  color: #ffffff !important; /* White text on hover */
+  background-color: #000000 !important;
+  color: #ffffff !important;
 }
 
-/* Ensure all text inside hovered notification items turns white */
 .dropdown-item:hover *:not(.btn):not(.badge) {
   color: #ffffff !important;
 }
 
-/* Specific styles for notification items */
-.dropdown-item {
-  transition: all 0.3s ease;
-  border: none !important;
+.dropdown-item.text-center {
+  color: #ef4444 !important;
 }
 
-/* Keep badge colors consistent on hover */
-.dropdown-item:hover .badge {
-  color: white !important;
-}
-
-/* Button styles within notifications on hover */
-.dropdown-item:hover .btn {
-  background-color: #333333 !important;
-  border-color: #555555 !important;
-  color: #ffffff !important;
-}
-
-/* Ensure the dropdown menu itself maintains its style */
-.dropdown-menu {
-  background: var(--dark-card) !important;
-  border: 1px solid var(--dark-border) !important;
-}
-
-/* Header should not change on hover */
-.dropdown-header:hover {
-  background-color: transparent !important;
-  color: inherit !important;
-}
-
-/* View all link hover */
 .dropdown-item.text-center:hover {
   background-color: #000000 !important;
   color: #ffffff !important;
 }
 
-
-/* Keep the "View all notifications" link red too */
-.dropdown-item.text-center {
-  color: #ef4444 !important;
+/* Form Elements */
+.form-control, .form-select {
+  background-color: #2d2d2d;
+  border-color: #3d3d3d;
+  color: #e9ecef;
 }
 
-.notification-icon {
-  position: relative;
-  color: rgb(255, 0, 0); /* change icon color */
-}
-.notification-icon .notification-count {
-  color: yellow !important;
-}
-
-.notification-icon .notification-count {
-  color: yellow; /* change number color */
-  font-weight: bold;
+.form-control:focus, .form-select:focus {
+  background-color: #2d2d2d;
+  border-color: #4CAF50;
+  color: #e9ecef;
+  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
 }
 
-.notification-bell-dark:hover {
-  background: rgb(221, 0, 0);
-  border-color: var(--accent);
-  color: rgb(40, 241, 0);
-  transform: scale(1.1);
+.form-label {
+  color: var(--dark-text);
 }
 
+/* Edit Forms */
+.edit-form, .edit-task-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+}
 
+.edit-form[style*="display: block"],
+.edit-task-form[style*="display: block"] {
+  max-height: 500px;
+  overflow: visible;
+  border: 2px solid #10b981 !important;
+  animation: pulse 2s infinite;
+}
+
+.edit-form-content {
+  background: var(--dark-card);
+}
+
+@keyframes pulse {
+  0% { border-color: #10b981; }
+  50% { border-color: #14f100; }
+  100% { border-color: #10b981; }
+}
+
+/* Modal Styles */
+.modal-content {
+  background: var(--dark-card);
+  border: 1px solid var(--dark-border);
+  color: var(--dark-text);
+}
+
+.modal-header, .modal-footer {
+  border-color: var(--dark-border);
+}
+
+/* Animation */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -560,19 +559,21 @@ body {
   .pet-actions-dark, .task-actions-dark {
     justify-content: center;
   }
-   .notification-bell-dark {
-    top: 5rem !important;
-    right: 1rem !important;
-    width: 48px;
-    height: 48px;
+  
+  .notification-container {
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .notification-bell-dark {
+    width: 50px;
+    height: 50px;
     font-size: 1rem;
   }
   
   .quick-actions-dark {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-
 }
 
 @media (min-width: 1024px) {
@@ -593,28 +594,9 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
   }
-
- 
 }
 
-
-/* Animation */
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.slide-in-right {
-  animation: slideInRight 0.6s ease-out;
-}
-
-/* Debug Info */
+/* Utility Classes */
 .debug-info-dark {
   background: var(--dark-card);
   border: 1px solid var(--dark-border);
@@ -625,17 +607,20 @@ body {
   font-size: 0.875rem;
 }
 
-/* Edit Form Styles */
-.edit-form, .edit-task-form {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  border-radius: 8px;
+.text-light {
+  color: var(--dark-text) !important;
 }
 
-.edit-form-content {
-  background: var(--dark-card);
+.text-muted {
+  color: var(--dark-muted) !important;
+}
+
+.bg-dark {
+  background-color: var(--dark-card) !important;
+}
+
+.border-secondary {
+  border-color: var(--dark-border) !important;
 }
 </style>
 
@@ -1104,41 +1089,6 @@ body {
     </div>
   </div>
 </div>
-
-<!-- Fixed Notification Bell -->
-<div class="dropdown" style="position: fixed; top: 2rem; right: 2rem; z-index: 1050;">
-  <button class="notification-bell-dark dropdown-toggle" 
-          id="notificationDropdown" 
-          data-bs-toggle="dropdown" 
-          aria-expanded="false">
-    <i class="bi bi-bell"></i>
-    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-          id="notificationBadge" style="display: none;">
-      0
-    </span>
-  </button>
-
-  <div class="dropdown-menu dropdown-menu-end" style="width: 380px; max-height: 500px; overflow-y: auto; background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--dark-text);" aria-labelledby="notificationDropdown">
-    <div class="dropdown-header d-flex justify-content-between align-items-center border-bottom border-dark">
-      <span>Notifications</span>
-      <button class="btn btn-dark btn-sm-dark" id="markAllReadBtn">
-        Mark all read
-      </button>
-    </div>
-    <div class="dropdown-divider"></div>
-    <div id="notificationsList">
-      <div class="px-3 py-3 text-center text-muted">
-        <div class="spinner-border spinner-border-sm" role="status"></div>
-        <span class="ms-2">Loading notifications...</span>
-      </div>
-    </div>
-    <div class="dropdown-divider"></div>
-    <a class="dropdown-item text-center" href="/notifications" style="color: var(--dark-text);">
-      <i class="bi bi-list me-2"></i>View all notifications
-    </a>
-  </div>
-</div>
-
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -1163,248 +1113,6 @@ body {
 <script src="/js/dashboard-filters-enhanced.js"></script>
 <script src="/js/dashboard-enhanced.js"></script>
 
-
-<script>// Enhanced Notification system
-class NotificationSystem {
-  constructor() {
-    this.checkInterval = null;
-    this.init();
-  }
-
-  init() {
-    this.loadNotifications();
-    this.setupEventListeners();
-    
-    this.checkInterval = setInterval(() => {
-      this.loadNotifications();
-    }, 30000); // Check every 30 seconds
-  }
-
-  async loadNotifications() {
-    try {
-      // Load both regular notifications and upcoming tasks
-      const [notifications, upcomingTasks] = await Promise.all([
-        this.fetchNotifications(),
-        this.fetchUpcomingTasks()
-      ]);
-      
-      this.updateNotificationBadge(notifications, upcomingTasks);
-      this.renderNotifications(notifications, upcomingTasks);
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-    }
-  }
-
-  async fetchNotifications() {
-    try {
-      const response = await fetch('/notifications?limit=10');
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-      return [];
-    }
-  }
-
-  async fetchUpcomingTasks() {
-    try {
-      const response = await fetch('/tasks/upcoming?days=3');
-      if (response.ok) {
-        return await response.json();
-      }
-      return [];
-    } catch (error) {
-      console.error('Error fetching upcoming tasks:', error);
-      return [];
-    }
-  }
-
-  updateNotificationBadge(notifications, upcomingTasks) {
-    const badge = document.getElementById('notificationBadge');
-    const unreadNotifications = notifications.filter(n => !n.is_read).length;
-    const upcomingTasksCount = upcomingTasks.length;
-    const totalCount = unreadNotifications + upcomingTasksCount;
-    
-    if (totalCount > 0) {
-      badge.textContent = totalCount;
-      badge.style.display = 'block';
-    } else {
-      badge.style.display = 'none';
-    }
-  }
-
-  renderNotifications(notifications, upcomingTasks) {
-    const container = document.getElementById('notificationsList');
-    
-    if (notifications.length === 0 && upcomingTasks.length === 0) {
-      container.innerHTML = `
-        <div class="px-3 py-3 text-center text-muted">
-          <i class="bi bi-bell-slash" style="font-size: 1.5rem;"></i>
-          <div class="mt-2">No notifications</div>
-        </div>
-      `;
-      return;
-    }
-
-    let html = '';
-
-    // Show upcoming tasks first
-    if (upcomingTasks.length > 0) {
-      html += `
-        <div class="px-3 py-2 border-bottom border-warning">
-          <small class="text-warning fw-bold">
-            <i class="bi bi-exclamation-triangle me-1"></i>
-            Upcoming Tasks (Next 3 Days)
-          </small>
-        </div>
-      `;
-      
-      upcomingTasks.forEach(task => {
-        const dueDate = new Date(task.due_date);
-        const now = new Date();
-        const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-        
-        let urgencyClass = '';
-        let urgencyIcon = '';
-        
-        if (daysUntilDue <= 0) {
-          urgencyClass = 'text-danger';
-          urgencyIcon = 'bi-exclamation-triangle-fill';
-        } else if (daysUntilDue === 1) {
-          urgencyClass = 'text-warning';
-          urgencyIcon = 'bi-exclamation-circle';
-        } else {
-          urgencyClass = 'text-info';
-          urgencyIcon = 'bi-calendar-event';
-        }
-        
-        html += `
-          <div class="dropdown-item p-3 border-bottom">
-            <div class="d-flex align-items-start">
-              <div class="flex-grow-1">
-                <div class="d-flex align-items-center mb-1">
-                  <i class="bi ${urgencyIcon} ${urgencyClass} me-2"></i>
-                  <h6 class="mb-0 fw-bold">${task.title}</h6>
-                </div>
-                <p class="mb-1 small">
-                  <strong>For:</strong> ${task.pet_name}<br>
-                  <strong>Due:</strong> ${dueDate.toLocaleDateString()} 
-                  <span class="${urgencyClass}">(${daysUntilDue <= 0 ? 'TODAY' : `${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''} left`})</span>
-                </p>
-                ${task.description ? `<p class="mb-1 small text-muted">${task.description}</p>` : ''}
-                <span class="badge ${this.getPriorityBadgeClass(task.priority)} me-1">
-                  ${task.priority}
-                </span>
-                <small class="text-muted">${task.task_type}</small>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // Show regular notifications
-    if (notifications.length > 0) {
-      if (upcomingTasks.length > 0) {
-        html += `<div class="dropdown-divider"></div>`;
-      }
-      
-      html += notifications.map(notification => `
-        <div class="dropdown-item ${notification.is_read ? '' : 'bg-light'} p-3 border-bottom">
-          <div class="d-flex align-items-start">
-            <div class="flex-grow-1">
-              <h6 class="mb-1 ${notification.is_read ? '' : 'fw-bold'}">${notification.title}</h6>
-              <p class="mb-1 small">${notification.message}</p>
-              <small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
-            </div>
-            <div class="flex-shrink-0 ms-2">
-              ${!notification.is_read ? `
-                <button class="btn btn-sm btn-outline-primary mark-read-btn" 
-                        data-id="${notification.notification_id}" 
-                        title="Mark as read">
-                  <i class="bi bi-check"></i>
-                </button>
-              ` : ''}
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    container.innerHTML = html;
-
-    // Re-attach event listeners
-    container.querySelectorAll('.mark-read-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.markAsRead(btn.dataset.id);
-      });
-    });
-  }
-
-  getPriorityBadgeClass(priority) {
-    const classes = {
-      'high': 'bg-danger',
-      'medium': 'bg-warning',
-      'low': 'bg-success'
-    };
-    return classes[priority] || 'bg-secondary';
-  }
-
-  async markAsRead(notificationId) {
-    try {
-      await fetch(`/notifications/${notificationId}/read`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      this.loadNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  }
-
-  async markAllAsRead() {
-    try {
-      await fetch('/notifications/read-all', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      this.loadNotifications();
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-    }
-  }
-
-  setupEventListeners() {
-    document.getElementById('markAllReadBtn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.markAllAsRead();
-    });
-
-    document.addEventListener('click', (e) => {
-      const dropdown = document.getElementById('notificationDropdown');
-      if (!dropdown.contains(e.target)) {
-        const dropdownMenu = document.querySelector('.dropdown-menu');
-        dropdownMenu.classList.remove('show');
-      }
-    });
-  }
-
-  destroy() {
-    if (this.checkInterval) {
-      clearInterval(this.checkInterval);
-    }
-  }
-}
-
-// Initialize notification system when page loads
-document.addEventListener('DOMContentLoaded', () => {
-  window.notificationSystem = new NotificationSystem();
-});
-</script>
 
 <%- include('partials/footer') %>
 

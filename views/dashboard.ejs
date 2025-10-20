@@ -1,164 +1,305 @@
 <%- include('partials/header', {title: 'Pet Dashboard - Professional' }) %>
 <style>
-  /* Professional Dark Theme */
+/* Modern Professional Theme - Light First */
 :root {
-  --dark-bg: #0f172a;
-  --dark-card: #1e293b;
-  --dark-card-hover: #334155;
-  --dark-border: #475569;
-  --dark-text: #f1f5f9;
-  --dark-muted: #94a3b8;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --info: #06b6d4;
+  /* Light Theme Variables */
+  --light-bg: #ffffff;
+  --light-card: #f8f9fa;
+  --light-card-hover: #e9ecef;
+  --light-border: #dee2e6;
+  --light-text: #212529;
+  --light-muted: #6c757d;
+  --accent: #4361ee;
+  --accent-hover: #3a56d4;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --info: #17a2b8;
+  --purple: #6f42c1;
+  
+  /* Dark Theme Variables */
+  --dark-bg: #0a0f1c;
+  --dark-card: #151a2d;
+  --dark-card-hover: #1d2438;
+  --dark-border: #2a3245;
+  --dark-text: #e2e8f0;
+  --dark-muted: #8a9bb0;
 }
 
-/* Base Styles */
+/* Base Styles - Light Theme by Default */
+/* Remove all spacing before dashboard */
 body {
-  background: #66a9b4;
-  color: var(--dark-text);
+  background: var(--light-bg);
+  color: var(--light-text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
+  font-weight: 400;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+  margin: 0 !important; /* Remove body margin */
+  padding: 0 !important; /* Remove body padding */
+}
+/* Aggressive spacing removal */
+* {
+  margin-top: 0 !important;
 }
 
-.dashboard-dark {
+body > *:first-child {
+  margin-top: 0 !important;
+}
+
+.dashboard-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Fix dashboard spacing - remove all top spacing */
+.dashboard-container {
   min-height: 100vh;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  padding: 0 1rem 1rem 1rem !important; /* Top: 0, Right: 1rem, Bottom: 1rem, Left: 1rem */
+  background: var(--light-bg);
+  transition: all 0.3s ease;
+  margin-top: 0 !important; /* Ensure no margin */
 }
 
-/* Header Section */
-.dark-header {
-  background: #000000;
-  border: 1px solid var(--dark-border);
-  border-radius: 16px;
-  padding: 2.5rem;
+.dashboard-header {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 20px;
+  padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  margin-top: 0 !important; /* Remove top margin */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
+
+/* Also target any potential container spacing */
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Remove any potential spacing from the header partial */
+.navbar {
+  margin-bottom: 0 !important;
+}
+
+/* Ensure no spacing from any parent elements */
+main, .main-content, .content {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 
 .header-title {
   font-size: 2.25rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, var(--accent), #60a5fa);
+  background: linear-gradient(135deg, var(--accent), var(--purple));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
 }
 
 .header-subtitle {
-  color: var(--dark-muted);
+  color: var(--light-muted);
   font-size: 1.1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
 }
 
 /* Stats Grid */
-.stats-grid-dark {
+.stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
-.stat-card-dark {
-  background: #000000;
-  border: 1px solid var(--dark-border);
-  border-radius: 16px;
+.stat-card {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 20px;
   padding: 2rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.stat-card-dark::before {
+.stat-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--info));
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
 }
 
-.stat-card-dark:hover {
-  background: var(--dark-card-hover);
-  transform: translateY(-5px);
+.stat-card:hover {
+  background: var(--light-card-hover);
+  transform: translateY(-8px);
   border-color: var(--accent);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
-.stat-icon-dark {
+.stat-icon {
   width: 64px;
   height: 64px;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.75rem;
   margin-bottom: 1.5rem;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(67, 97, 238, 0.1);
+  border: 1px solid rgba(67, 97, 238, 0.2);
   color: var(--accent);
+  transition: all 0.3s ease;
 }
 
-.stat-number-dark {
+.stat-number {
   font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: var(--dark-text);
+  color: var(--light-text);
+  transition: color 0.3s ease;
 }
 
-.stat-label-dark {
-  color: var(--dark-muted);
+.stat-label {
+  color: var(--light-muted);
   font-size: 0.95rem;
   margin: 0;
+  transition: color 0.3s ease;
 }
 
-/* Content Grid */
-.content-grid-dark {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.section-card-dark {
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  border-radius: 16px;
+/* Filter System */
+.filter-section {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
 
-.section-header-dark {
+.filter-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--dark-border);
+  border-bottom: 1px solid var(--light-border);
 }
 
-.section-title-dark {
+.filter-title {
   font-size: 1.5rem;
   font-weight: 600;
   margin: 0;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--dark-text);
+  color: var(--light-text);
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--light-text);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Active Filters */
+.active-filters-container {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(67, 97, 238, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(67, 97, 238, 0.1);
+}
+
+.active-filter-tag {
+  background: var(--accent);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem;
+}
+
+.active-filter-tag .remove-filter {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.active-filter-tag .remove-filter:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Content Grid */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-card {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--light-border);
+  transition: all 0.3s ease;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--light-text);
+  transition: color 0.3s ease;
 }
 
 /* Pet & Task Items */
-.pet-item-dark, .task-item-dark {
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid var(--dark-border);
-  border-radius: 12px;
+.pet-item, .task-item {
+  background: rgba(250, 248, 248, 0.9);
+  border: 1px solid var(--light-border);
+  border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 1rem;
   transition: all 0.3s ease;
@@ -168,18 +309,18 @@ body {
   border-left: 4px solid var(--accent);
 }
 
-.pet-item-dark:hover, .task-item-dark:hover {
-  background: var(--dark-card-hover);
+.pet-item:hover, .task-item:hover {
+  background: var(--light-card-hover);
   border-color: var(--accent);
-  transform: translateX(5px);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  transform: translateX(8px);
+  box-shadow: 0 8px 20px green;
 }
 
-.pet-avatar-dark, .task-icon-dark {
+.pet-avatar, .task-icon {
   width: 56px;
   height: 56px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent), var(--info));
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,35 +329,40 @@ body {
   flex-shrink: 0;
 }
 
-.pet-info-dark, .task-info-dark {
+.pet-info, .task-info {
   flex: 1;
+  
 }
 
-.pet-name-dark, .task-title-dark {
+.pet-name, .task-title {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
-  color: var(--dark-text);
+  color: #28a745;
+  font-style: italic;
+  transition: color 0.3s ease;
 }
 
-.pet-details-dark, .task-details-dark {
+.pet-details, .task-details {
   margin: 0;
-  color: var(--dark-muted);
-  font-size: 0.9rem;
+  color: black;
+  font-size: large;
+  
+  transition: color 0.3s ease;
 }
 
-.pet-actions-dark, .task-actions-dark {
+.pet-actions, .task-actions {
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
 }
 
 /* Buttons */
-.btn-dark {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(0, 233, 19, 0.3);
-  color: var(--accent);
-  border-radius: 10px;
+.btn-primary {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: white;
+  border-radius: 12px;
   padding: 0.75rem 1.5rem;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -225,9 +371,34 @@ body {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  border: none;
 }
 
-.btn-dark:hover {
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: white;
+  transform: translateY(-3px);
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(67, 97, 238, 0.1);
+  border: 1px solid rgba(67, 97, 238, 0.2);
+  color: var(--accent);
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary:hover {
   background: var(--accent);
   border-color: var(--accent);
   color: white;
@@ -235,39 +406,52 @@ body {
   text-decoration: none;
 }
 
-.btn-dark-primary {
-  background: var(--accent);
-  border: 1px solid var(--accent);
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 10px;
+}
+
+.btn-edit {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  color: var(--warning);
+}
+
+.btn-edit:hover {
+  background: var(--warning);
+  border-color: var(--warning);
   color: white;
 }
 
-.btn-dark-primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
+.btn-remove {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  color: var(--danger);
 }
 
-.btn-sm-dark {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  border-radius: 8px;
+.btn-remove:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: white;
 }
 
 /* Quick Actions */
-.quick-actions-dark {
+.quick-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
   margin-top: 2rem;
 }
 
-.action-btn-dark {
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  border-radius: 12px;
+.action-btn {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 16px;
   padding: 1.5rem 1rem;
   text-align: center;
   text-decoration: none;
-  color: var(--dark-text);
+  color: var(--light-text);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -275,202 +459,90 @@ body {
   gap: 0.75rem;
 }
 
-.action-btn-dark:hover {
-  background: var(--dark-card-hover);
+.action-btn:hover {
+  background: var(--light-card-hover);
   border-color: var(--accent);
-  transform: translateY(-3px);
-  color: var(--dark-text);
+  transform: translateY(-5px);
+  color: var(--light-text);
   text-decoration: none;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-.action-icon-dark {
+.action-icon {
   font-size: 2.25rem;
   color: var(--accent);
 }
 
-.action-label-dark {
+.action-label {
   font-weight: 500;
   font-size: 0.9rem;
 }
 
-/* Pagination */
-.pagination-dark {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--dark-border);
-}
-
-.pagination-btn-dark {
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  color: var(--dark-text);
-  border-radius: 10px;
-  padding: 0.75rem 1.5rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.pagination-btn-dark:hover:not(:disabled) {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: white;
-  transform: translateY(-2px);
-  text-decoration: none;
-}
-
-.pagination-btn-dark:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: var(--dark-card);
-}
-
-.pagination-info-dark {
-  color: var(--dark-muted);
-  font-size: 0.9rem;
-}
-
 /* Badges */
-.badge-dark {
-  background: rgba(59, 130, 246, 0.1);
+.badge {
+  background: rgba(67, 97, 238, 0.1);
   color: var(--accent);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(67, 97, 238, 0.2);
 }
 
 .badge-success { 
-  background: rgba(16, 185, 129, 0.1); 
+  background: rgba(40, 167, 69, 0.1); 
   color: var(--success); 
-  border-color: rgba(16, 185, 129, 0.3); 
+  border-color: rgba(40, 167, 69, 0.2); 
 }
 
 .badge-warning { 
-  background: rgba(245, 158, 11, 0.1); 
+  background: rgba(255, 193, 7, 0.1); 
   color: var(--warning); 
-  border-color: rgba(245, 158, 11, 0.3); 
+  border-color: rgba(255, 193, 7, 0.2); 
 }
 
 .badge-danger { 
-  background: rgba(239, 68, 68, 0.1); 
+  background: rgba(220, 53, 69, 0.1); 
   color: var(--danger); 
-  border-color: rgba(239, 68, 68, 0.3); 
+  border-color: rgba(220, 53, 69, 0.2); 
 }
 
-/* Empty States */
-.empty-state-dark {
-  text-align: center;
-  padding: 3rem 2rem;
-  color: var(--dark-muted);
-}
-
-.empty-icon-dark {
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-  opacity: 0.5;
-  color: var(--dark-muted);
-}
-
-/* Fixed Notification Bell */
-.notification-container {
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
-  z-index: 9999;
-}
-
-.notification-bell-dark {
-  background: green;
-  border: 2px solid red;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.25rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(224, 7, 7, 0.3);
-  cursor: pointer;
-}
-
-.notification-bell-dark:hover {
-  background: rgb(221, 0, 0);
-  border-color: var(--accent);
-  color: rgb(40, 241, 0);
-  transform: scale(1.1);
-}
-
-/* Notification Dropdown */
-.dropdown-menu {
-  background: var(--dark-card) !important;
-  border: 1px solid var(--dark-border) !important;
-  color: var(--dark-text) !important;
-}
-
-.dropdown-header {
-  color: var(--dark-text) !important;
-  border-bottom-color: var(--dark-border) !important;
-}
-
-.dropdown-item {
-  color: #00ff2a !important;
-  transition: all 0.3s ease;
-}
-
-.dropdown-item:hover {
-  background-color: #000000 !important;
-  color: #ffffff !important;
-}
-
-.dropdown-item:hover *:not(.btn):not(.badge) {
-  color: #ffffff !important;
-}
-
-.dropdown-item.text-center {
-  color: #ef4444 !important;
-}
-
-.dropdown-item.text-center:hover {
-  background-color: #000000 !important;
-  color: #ffffff !important;
+.badge-info { 
+  background: rgba(23, 162, 184, 0.1); 
+  color: var(--info); 
+  border-color: rgba(23, 162, 184, 0.2); 
 }
 
 /* Form Elements */
 .form-control, .form-select {
-  background-color: #2d2d2d;
-  border-color: #3d3d3d;
-  color: #e9ecef;
+  background-color: var(--light-card);
+  border-color: var(--light-border);
+  color: var(--light-text);
+  transition: all 0.3s ease;
+  border-radius: 10px;
 }
 
 .form-control:focus, .form-select:focus {
-  background-color: #2d2d2d;
-  border-color: #4CAF50;
-  color: #e9ecef;
-  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+  background-color: var(--light-card);
+  border-color: var(--accent);
+  color: var(--light-text);
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.1);
 }
 
 .form-label {
-  color: var(--dark-text);
+  color: var(--light-text);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
 }
 
 /* Edit Forms */
 .edit-form, .edit-task-form {
   margin-top: 1rem;
   padding: 1rem;
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  border-radius: 8px;
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 12px;
   transition: all 0.3s ease;
   max-height: 0;
   overflow: hidden;
@@ -480,32 +552,110 @@ body {
 .edit-task-form[style*="display: block"] {
   max-height: 500px;
   overflow: visible;
-  border: 2px solid #10b981 !important;
+  border: 2px solid var(--success) !important;
   animation: pulse 2s infinite;
 }
 
-.edit-form-content {
-  background: var(--dark-card);
+@keyframes pulse {
+  0% { border-color: var(--success); }
+  50% { border-color: var(--accent); }
+  100% { border-color: var(--success); }
 }
 
-@keyframes pulse {
-  0% { border-color: #10b981; }
-  50% { border-color: #14f100; }
-  100% { border-color: #10b981; }
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--light-border);
+}
+
+.pagination-btn {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  color: var(--light-text);
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--light-card);
+}
+
+.pagination-info {
+  color: var(--light-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--light-muted);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+  color: var(--light-muted);
+}
+
+.empty-state h4 {
+  color: var(--light-muted);
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
 }
 
 /* Modal Styles */
 .modal-content {
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  color: var(--dark-text);
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  color: var(--light-text);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.2);
 }
 
-.modal-header, .modal-footer {
-  border-color: var(--dark-border);
+.modal-header {
+  border-bottom-color: var(--light-border);
+  padding: 1.5rem 2rem;
 }
 
-/* Animation */
+.modal-footer {
+  border-top-color: var(--light-border);
+  padding: 1.5rem 2rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: var(--light-text);
+}
+
+/* Animations */
 @keyframes slideInRight {
   from {
     opacity: 0;
@@ -521,14 +671,276 @@ body {
   animation: slideInRight 0.6s ease-out;
 }
 
+/* ===== DARK THEME OVERRIDES ===== */
+[data-theme="dark"] body {
+  background: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .dashboard-container {
+  background: linear-gradient(135deg, var(--dark-bg) 0%, #1a2035 100%);
+}
+
+[data-theme="dark"] .dashboard-header {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+[data-theme="dark"] .header-subtitle {
+  color: var(--dark-muted);
+}
+
+[data-theme="dark"] .stat-card {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .stat-card:hover {
+  background: var(--dark-card-hover);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .stat-number {
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .stat-label {
+  color: var(--dark-muted);
+}
+
+[data-theme="dark"] .filter-section {
+  background: var(--dark-card); /* Use dark card instead of pure black */
+  border-color: var(--dark-border);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  color: var(--dark-text); /* Add text color */
+}
+[data-theme="dark"] .filter-header {
+  border-bottom-color: var(--dark-border); /* Use dark border */
+}
+
+[data-theme="dark"] .form-label {
+  color: var(--dark-text); /* Ensure form labels are visible */
+}
+
+[data-theme="dark"] .text-muted {
+  color: var(--dark-muted) !important; /* Make muted text visible */
+}
+
+[data-theme="dark"] .filter-group-title {
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .active-filters-container {
+  background: rgba(67, 97, 238, 0.1);
+  border-color: rgba(67, 97, 238, 0.2);
+}
+
+[data-theme="dark"] .section-card {
+  background: black;
+  border-color: var(--dark-border);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+
+
+[data-theme="dark"] .pet-avatar,
+[data-theme="dark"] .task-icon {
+  width: 56px; /* Fix the width from 100px to 56px */
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: white; /* Change from red to white */
+  flex-shrink: 0;
+}
+
+
+
+ [data-theme="dark"] .content-grid{
+  background: black;
+ }
+
+
+ [data-theme="dark"] .pet-name, 
+[data-theme="dark"] .task-title{
+  font-size: 1.1rem;
+  
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #28a745;
+  font-style: italic;
+  transition: color 0.3s ease;
+}
+
+ [data-theme="dark"] .pet-details, 
+[data-theme="dark"] .task-details  {
+  margin: 0;
+  color:green;
+
+  font-size: large;
+  
+  transition: color 0.3s ease;
+}
+
+
+
+
+
+[data-theme="dark"] .action-btn {
+  background: black;
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .action-btn:hover {
+  background: black;
+  color: var(--dark-text);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: black;
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: black;
+  border-color: var(--accent);
+  color: var(--dark-text);
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+[data-theme="dark"] .form-label {
+  
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .edit-form,
+[data-theme="dark"] .edit-task-form {
+  background: black;
+  border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .pagination {
+  border-top-color: black;
+}
+
+[data-theme="dark"] .pagination-btn {
+  background: black;
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .pagination-btn:hover:not(:disabled) {
+  background: black;
+  border-color: var(--accent);
+  color: white;
+}
+
+
+
+[data-theme="dark"] .empty-state {
+  color: black;
+}
+
+[data-theme="dark"] .empty-icon {
+  color: black;
+}
+
+[data-theme="dark"] .empty-state h4 {
+  color: black;
+}
+
+[data-theme="dark"] .modal-content {
+  background: black;
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+[data-theme="dark"] .modal-header {
+  border-bottom-color: black;
+}
+
+/* ===== DARK THEME CONTENT GRID FIXES ===== */
+[data-theme="dark"] .content-grid {
+  background: black;
+  color: white;
+}
+
+[data-theme="dark"] .section-card {
+  background: black;
+  border-color: #333;
+  color: white;
+}
+
+[data-theme="dark"] .section-title {
+  color: white;
+}
+
+[data-theme="dark"] .section-header {
+  border-bottom-color: #333;
+}
+
+[data-theme="dark"] .pet-item,
+[data-theme="dark"] .task-item {
+  background: #111;
+  border-color: #333;
+  color: white;
+}
+
+[data-theme="dark"] .pet-details,
+[data-theme="dark"] .task-details {
+  color: white !important;
+}
+
+[data-theme="dark"] .empty-state {
+  color: white;
+}
+
+[data-theme="dark"] .empty-state h4 {
+  color: white;
+}
+
+[data-theme="dark"] .empty-icon {
+  color: white;
+}
+
+[data-theme="dark"] .pagination {
+  border-top-color: #333;
+  color: white;
+}
+
+[data-theme="dark"] .pagination-info {
+  color: var(--dark-muted); /* Change from black to dark muted */
+}
+
+[data-theme="dark"] .task-description.text-muted {
+  color: #ccc !important;
+}
+
+[data-theme="dark"] .modal-footer {
+  border-top-color: var(--dark-border);
+}
+
+[data-theme="dark"] .modal-title {
+  color: var(--dark-text);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-  .dashboard-dark {
+  .dashboard-container {
     padding: 1rem 0.5rem;
   }
   
-  .dark-header {
-    padding: 2rem 1.5rem;
+  .dashboard-header {
+    padding: 1.5rem;
     margin: 0 0.5rem 1.5rem 0.5rem;
   }
   
@@ -536,105 +948,50 @@ body {
     font-size: 1.75rem;
   }
   
-  .content-grid-dark {
+  .content-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
   
-  .section-card-dark {
+  .section-card {
     padding: 1.5rem;
     margin: 0 0.5rem;
   }
   
-  .stats-grid-dark {
+  .stats-grid {
     grid-template-columns: 1fr;
   }
   
-  .pet-item-dark, .task-item-dark {
+  .pet-item, .task-item {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
   }
   
-  .pet-actions-dark, .task-actions-dark {
+  .pet-actions, .task-actions {
     justify-content: center;
   }
   
-  .notification-container {
-    top: 1rem;
-    right: 1rem;
-  }
-  
-  .notification-bell-dark {
-    width: 50px;
-    height: 50px;
-    font-size: 1rem;
-  }
-  
-  .quick-actions-dark {
+  .quick-actions {
     grid-template-columns: repeat(2, 1fr);
   }
-}
-
-@media (min-width: 1024px) {
-  .dashboard-dark {
-    padding: 1rem 2rem;
+  
+  .filter-section {
+    padding: 1.5rem;
+    margin: 0 0.5rem 1.5rem 0.5rem;
   }
-
-  .dark-header {
-    padding: 2rem 2rem;
-    margin: 0 2rem 2rem 2rem;
+  
+  .modal-header,
+  .modal-footer {
+    padding: 1rem 1.5rem;
   }
-
-  .header-title {
-    font-size: 2.5rem;
-  }
-
-  .content-grid-dark {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-  }
-}
-
-/* Utility Classes */
-.debug-info-dark {
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  border-radius: 10px;
-  padding: 1rem;
-  margin: 1rem 0;
-  color: var(--dark-muted);
-  font-size: 0.875rem;
-}
-
-.text-light {
-  color: var(--dark-text) !important;
-}
-
-.text-muted {
-  color: var(--dark-muted) !important;
-}
-
-.bg-dark {
-  background-color: var(--dark-card) !important;
-}
-
-.border-secondary {
-  border-color: var(--dark-border) !important;
 }
 </style>
 
-<div class="dashboard-dark">
-  <!-- Notification Bell -->
-  <!-- <button class="notification-bell-dark" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="bi bi-bell"></i>
-    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-          id="notificationBadge" style="display: none;">0</span>
-  </button> -->
-
+<div class="dashboard-container">
   <div class="container-fluid">
     <!-- Header Section -->
-    <div class="dark-header slide-in-right">
+    <div class="dashboard-header slide-in-right">
       <div class="row align-items-center">
         <div class="col-lg-8">
           <h1 class="header-title">Welcome, <%= username %>! 🐾</h1>
@@ -642,10 +999,10 @@ body {
         </div>
         <div class="col-lg-4 text-lg-end">
           <div class="d-flex flex-column flex-sm-row gap-2 justify-content-lg-end">
-            <a href="/pets/add" class="btn btn-dark btn-dark-primary">
+            <a href="/pets/add" class="btn btn-primary">
               <i class="bi bi-plus-circle"></i>Add Pet
             </a>
-            <a href="/schedule-task" class="btn btn-dark">
+            <a href="/schedule-task" class="btn btn-secondary">
               <i class="bi bi-calendar-plus"></i>Add Task
             </a>
           </div>
@@ -653,42 +1010,41 @@ body {
       </div>
     </div>
 
-
     <!-- Stats Overview -->
-    <div class="stats-grid-dark">
-      <div class="stat-card-dark slide-in-right" style="animation-delay: 0.1s">
-        <div class="stat-icon-dark">
+    <div class="stats-grid">
+      <div class="stat-card slide-in-right" style="animation-delay: 0.1s">
+        <div class="stat-icon">
           <i class="bi bi-heart-pulse"></i>
         </div>
-        <div class="stat-number-dark"><%= totalPets || 0 %></div>
-        <div class="stat-label-dark">Total Pets</div>
+        <div class="stat-number"><%= totalPets || 0 %></div>
+        <div class="stat-label">Total Pets</div>
       </div>
       
-      <div class="stat-card-dark slide-in-right" style="animation-delay: 0.2s">
-        <div class="stat-icon-dark">
+      <div class="stat-card slide-in-right" style="animation-delay: 0.2s">
+        <div class="stat-icon">
           <i class="bi bi-list-task"></i>
         </div>
-        <div class="stat-number-dark"><%= totalTasks || 0 %></div>
-        <div class="stat-label-dark">Tasks Due</div>
+        <div class="stat-number"><%= totalTasks || 0 %></div>
+        <div class="stat-label">Tasks Due</div>
       </div>
       
-      <div class="stat-card-dark slide-in-right" style="animation-delay: 0.3s">
-        <div class="stat-icon-dark">
+      <div class="stat-card slide-in-right" style="animation-delay: 0.3s">
+        <div class="stat-icon">
           <i class="bi bi-person-gear"></i>
         </div>
-        <div class="stat-number-dark">1</div>
-        <div class="stat-label-dark">Active Owner</div>
+        <div class="stat-number">1</div>
+        <div class="stat-label">Active Owner</div>
       </div>
     </div>
 
     <!-- Modern Filter System -->
-    <div class="section-card-dark slide-in-right" style="animation-delay: 0.4s">
-      <div class="section-header-dark">
-        <h3 class="section-title-dark">
+    <div class="filter-section slide-in-right" style="animation-delay: 0.4s">
+      <div class="filter-header">
+        <h3 class="filter-title">
           <i class="bi bi-funnel"></i>
           Advanced Filters
         </h3>
-        <button class="btn btn-dark btn-sm-dark" id="clearAllFilters">
+        <button class="btn btn-secondary btn-sm" id="clearAllFilters">
           <i class="bi bi-arrow-clockwise"></i> Reset
         </button>
       </div>
@@ -696,11 +1052,14 @@ body {
       <div class="row g-3">
         <!-- Pet Filters -->
         <div class="col-lg-6">
-          <h6 class="text-light mb-3"><i class="bi bi-heart me-2"></i>Pet Filters</h6>
+          <h6 class="filter-group-title">
+            <i class="bi bi-heart"></i>
+            Pet Filters
+          </h6>
           <div class="row g-2">
             <div class="col-md-6">
-              <label class="form-label text-light small">Species</label>
-              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterSpecies">
+              <label class="form-label small">Species</label>
+              <select class="form-select form-select-sm" id="filterSpecies">
                 <option value="">All Species</option>
                 <option value="dog">Dog</option>
                 <option value="cat">Cat</option>
@@ -710,8 +1069,8 @@ body {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-light small">Gender</label>
-              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterGender">
+              <label class="form-label small">Gender</label>
+              <select class="form-select form-select-sm" id="filterGender">
                 <option value="">All Genders</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -719,15 +1078,15 @@ body {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-light small">Min Age</label>
+              <label class="form-label small">Min Age</label>
               <input type="number" step="0.1" min="0" max="50" 
-                     class="form-control form-control-sm bg-dark text-light border-secondary" 
+                     class="form-control form-control-sm" 
                      id="filterAgeMin" placeholder="0">
             </div>
             <div class="col-md-6">
-              <label class="form-label text-light small">Max Age</label>
+              <label class="form-label small">Max Age</label>
               <input type="number" step="0.1" min="0" max="50" 
-                     class="form-control form-control-sm bg-dark text-light border-secondary" 
+                     class="form-control form-control-sm" 
                      id="filterAgeMax" placeholder="50">
             </div>
           </div>
@@ -735,11 +1094,14 @@ body {
 
         <!-- Task Filters -->
         <div class="col-lg-6">
-          <h6 class="text-light mb-3"><i class="bi bi-list-task me-2"></i>Task Filters</h6>
+          <h6 class="filter-group-title">
+            <i class="bi bi-list-task"></i>
+            Task Filters
+          </h6>
           <div class="row g-2">
             <div class="col-md-6">
-              <label class="form-label text-light small">Priority</label>
-              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterPriority">
+              <label class="form-label small">Priority</label>
+              <select class="form-select form-select-sm" id="filterPriority">
                 <option value="">All Priorities</option>
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
@@ -747,8 +1109,8 @@ body {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-light small">Task Type</label>
-              <select class="form-select form-select-sm bg-dark text-light border-secondary" id="filterTaskType">
+              <label class="form-label small">Task Type</label>
+              <select class="form-select form-select-sm" id="filterTaskType">
                 <option value="">All Types</option>
                 <option value="feeding">Feeding</option>
                 <option value="cleaning">Cleaning</option>
@@ -761,13 +1123,13 @@ body {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-light small">Due Date From</label>
-              <input type="date" class="form-control form-control-sm bg-dark text-light border-secondary" 
+              <label class="form-label small">Due Date From</label>
+              <input type="date" class="form-control form-control-sm" 
                      id="filterDueDateFrom">
             </div>
             <div class="col-md-6">
-              <label class="form-label text-light small">Due Date To</label>
-              <input type="date" class="form-control form-control-sm bg-dark text-light border-secondary" 
+              <label class="form-label small">Due Date To</label>
+              <input type="date" class="form-control form-control-sm" 
                      id="filterDueDateTo">
             </div>
           </div>
@@ -775,7 +1137,7 @@ body {
       </div>
 
       <!-- Active Filters Display -->
-      <div class="mt-3" id="activeFiltersContainer" style="display: none;">
+      <div class="active-filters-container" id="activeFiltersContainer" style="display: none;">
         <div class="d-flex align-items-center mb-2">
           <small class="text-muted me-2">Active Filters:</small>
           <div id="activeFilters" class="d-flex flex-wrap gap-1"></div>
@@ -791,15 +1153,15 @@ body {
     </div>
 
     <!-- Main Content Grid -->
-    <div class="content-grid-dark">
+    <div class="content-grid">
       <!-- Pets Section -->
-      <div class="section-card-dark slide-in-right" style="animation-delay: 0.5s">
-        <div class="section-header-dark">
-          <h3 class="section-title-dark">
+      <div class="section-card slide-in-right" style="animation-delay: 0.5s">
+        <div class="section-header">
+          <h3 class="section-title">
             <i class="bi bi-heart-fill text-danger"></i>
             Your Pets
           </h3>
-          <a href="/pets/add" class="btn btn-dark btn-sm-dark">
+          <a href="/pets/add" class="btn btn-secondary btn-sm">
             <i class="bi bi-plus"></i>Add
           </a>
         </div>
@@ -808,17 +1170,17 @@ body {
           <% if (pets && pets.length > 0) { %>
             <% pets.forEach((pet, index) => { %>
               <!-- Pet Item -->
-              <div class="pet-item-dark slide-in-right" 
+              <div class="pet-item slide-in-right" 
                    data-species="<%= pet.species %>" 
                    data-gender="<%= pet.gender %>" 
                    data-age="<%= pet.age %>"
                    style="animation-delay: <%= 0.6 + (index * 0.1) %>s">
-                <div class="pet-avatar-dark">
+                <div class="pet-avatar">
                   <i class="bi bi-<%= pet.species === 'dog' ? 'heart' : pet.species === 'cat' ? 'star' : 'circle' %>-fill"></i>
                 </div>
-                <div class="pet-info-dark">
-                  <h4 class="pet-name-dark"><%= pet.name %></h4>
-                  <p class="pet-details-dark">
+                <div class="pet-info">
+                  <h4 class="pet-name"><%= pet.name %></h4>
+                  <p class="pet-details">
                     <%= pet.breed || 'Unknown breed' %> • 
                     <% if (pet.age) { %>
                       <span id="age-display-<%= pet.pet_id %>"><%= pet.age %> years</span> • 
@@ -828,41 +1190,41 @@ body {
                     <% } %>
                   </p>
                 </div>
-                <div class="pet-actions-dark">
-                  <span class="badge-dark me-2"><%= pet.gender || 'Unknown' %></span>
-                  <button class="btn btn-dark btn-sm-dark edit-btn" data-pet-id="<%= pet.pet_id %>">
+                <div class="pet-actions">
+                  <span class="badge me-2"><%= pet.gender || 'Unknown' %></span>
+                  <button class="btn btn-edit btn-sm edit-btn" data-pet-id="<%= pet.pet_id %>">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <button class="btn btn-dark btn-sm-dark remove-btn" 
+                  <button class="btn btn-remove btn-sm remove-btn" 
                           data-type="pet" data-id="<%= pet.pet_id %>" data-name="<%= pet.name %>">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
               </div>
 
-              <!-- Edit Form for Pet - INSIDE THE LOOP -->
+              <!-- Edit Form for Pet -->
               <div id="edit-form-<%= pet.pet_id %>" class="edit-form" style="display: none;">
-                <div class="edit-form-content p-3 bg-dark rounded border">
-                  <h5 class="text-light mb-3">Edit <%= pet.name %></h5>
+                <div class="edit-form-content p-3 rounded border">
+                  <h5 class="mb-3">Edit <%= pet.name %></h5>
                   <form class="row g-2">
                     <div class="col-md-6">
-                      <label class="form-label text-light small">Age (years)</label>
+                      <label class="form-label small">Age (years)</label>
                       <input type="number" step="0.1" min="0" max="50" 
-                             class="form-control form-control-sm bg-dark text-light border-secondary" 
+                             class="form-control form-control-sm" 
                              id="edit-age-<%= pet.pet_id %>" value="<%= pet.age %>">
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label text-light small">Weight (kg)</label>
+                      <label class="form-label small">Weight (kg)</label>
                       <input type="number" step="0.1" min="0" max="200" 
-                             class="form-control form-control-sm bg-dark text-light border-secondary" 
+                             class="form-control form-control-sm" 
                              id="edit-weight-<%= pet.pet_id %>" value="<%= pet.weight %>">
                     </div>
                     <div class="col-12 mt-2">
-                      <button type="button" class="btn btn-sm btn-success save-edit-btn" 
+                      <button type="button" class="btn btn-success btn-sm save-edit-btn" 
                               data-pet-id="<%= pet.pet_id %>">
                         <i class="bi bi-check"></i> Save
                       </button>
-                      <button type="button" class="btn btn-sm btn-secondary cancel-edit-btn" 
+                      <button type="button" class="btn btn-secondary btn-sm cancel-edit-btn" 
                               data-pet-id="<%= pet.pet_id %>">
                         <i class="bi bi-x"></i> Cancel
                       </button>
@@ -874,29 +1236,29 @@ body {
 
             <!-- Pets Pagination -->
             <% if (petPagination && petPagination.totalPages > 1) { %>
-              <div class="pagination-dark">
+              <div class="pagination">
                 <% if (petPagination.hasPrev) { %>
                   <a href="?petPage=<%= petPagination.currentPage - 1 %>&taskPage=<%= taskPagination.currentPage %>" 
-                     class="pagination-btn-dark">
+                     class="pagination-btn">
                     <i class="bi bi-chevron-left"></i>Previous
                   </a>
                 <% } else { %>
-                  <button class="pagination-btn-dark" disabled>
+                  <button class="pagination-btn" disabled>
                     <i class="bi bi-chevron-left"></i>Previous
                   </button>
                 <% } %>
                 
-                <span class="pagination-info-dark">
+                <span class="pagination-info">
                   Page <%= petPagination.currentPage %> of <%= petPagination.totalPages %>
                 </span>
                 
                 <% if (petPagination.hasNext) { %>
                   <a href="?petPage=<%= petPagination.currentPage + 1 %>&taskPage=<%= taskPagination.currentPage %>" 
-                     class="pagination-btn-dark">
+                     class="pagination-btn">
                     Next<i class="bi bi-chevron-right"></i>
                   </a>
                 <% } else { %>
-                  <button class="pagination-btn-dark" disabled>
+                  <button class="pagination-btn" disabled>
                     Next<i class="bi bi-chevron-right"></i>
                   </button>
                 <% } %>
@@ -904,13 +1266,13 @@ body {
             <% } %>
 
           <% } else { %>
-            <div class="empty-state-dark">
-              <div class="empty-icon-dark">
+            <div class="empty-state">
+              <div class="empty-icon">
                 <i class="bi bi-heart"></i>
               </div>
               <h4>No Pets Registered</h4>
               <p class="mb-3">Begin by adding your first pet to the system</p>
-              <a href="/pets/add" class="btn btn-dark btn-dark-primary">
+              <a href="/pets/add" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Register First Pet
               </a>
             </div>
@@ -919,13 +1281,13 @@ body {
       </div>
 
       <!-- Tasks Section -->
-      <div class="section-card-dark slide-in-right" style="animation-delay: 0.6s">
-        <div class="section-header-dark">
-          <h3 class="section-title-dark">
+      <div class="section-card slide-in-right" style="animation-delay: 0.6s">
+        <div class="section-header">
+          <h3 class="section-title">
             <i class="bi bi-calendar-check text-warning"></i>
             Upcoming Tasks
           </h3>
-          <a href="/schedule-task" class="btn btn-dark btn-sm-dark">
+          <a href="/schedule-task" class="btn btn-secondary btn-sm">
             <i class="bi bi-plus"></i>Add
           </a>
         </div>
@@ -933,17 +1295,17 @@ body {
         <% if (tasks && tasks.length > 0) { %>
           <% tasks.forEach((task, index) => { %>
             <!-- Task Item -->
-            <div class="task-item-dark slide-in-right" 
+            <div class="task-item slide-in-right" 
                  data-priority="<%= task.priority %>"
                  data-task-type="<%= task.task_type %>"
                  data-due-date="<%= task.due_date %>"
                  style="animation-delay: <%= 0.7 + (index * 0.1) %>s">
-              <div class="task-icon-dark">
+              <div class="task-icon">
                 <i class="bi bi-<%= task.priority === 'high' ? 'exclamation-triangle' : 'calendar-check' %>"></i>
               </div>
-              <div class="task-info-dark">
-                <h4 class="task-title-dark"><%= task.title %></h4>
-                <p class="task-details-dark">
+              <div class="task-info">
+                <h4 class="task-title"><%= task.title %></h4>
+                <p class="task-details">
                   For: <strong><%= task.pet_name %></strong> • 
                   Due: <span class="due-date" data-due-date="<%= task.due_date %>">
                     <%= new Date(task.due_date).toLocaleDateString() %>
@@ -953,44 +1315,44 @@ body {
                   <small class="task-description text-muted"><%= task.description %></small>
                 <% } %>
               </div>
-              <div class="task-actions-dark">
-                <span class="badge-dark badge-<%= task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success' %> me-2">
+              <div class="task-actions">
+                <span class="badge badge-<%= task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success' %> me-2">
                   <%= task.priority %>
                 </span>
-                <button class="btn btn-dark btn-sm-dark edit-task-btn" data-task-id="<%= task.task_id %>">
+                <button class="btn btn-edit btn-sm edit-task-btn" data-task-id="<%= task.task_id %>">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn btn-dark btn-sm-dark remove-btn" 
+                <button class="btn btn-remove btn-sm remove-btn" 
                         data-type="task" data-id="<%= task.task_id %>" data-name="<%= task.title %>">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
             </div>
 
-            <!-- Edit Form for Task - INSIDE THE LOOP -->
+            <!-- Edit Form for Task -->
             <div id="edit-task-form-<%= task.task_id %>" class="edit-task-form" style="display: none;">
-              <div class="edit-form-content p-3 bg-dark rounded border">
-                <h5 class="text-light mb-3">Edit Task</h5>
+              <div class="edit-form-content p-3 rounded border">
+                <h5 class="mb-3">Edit Task</h5>
                 <form class="row g-2">
                   <div class="col-12">
-                    <label class="form-label text-light small">Title</label>
-                    <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary" 
+                    <label class="form-label small">Title</label>
+                    <input type="text" class="form-control form-control-sm" 
                            id="edit-task-title-<%= task.task_id %>" value="<%= task.title %>">
                   </div>
                   <div class="col-12">
-                    <label class="form-label text-light small">Description</label>
-                    <textarea class="form-control form-control-sm bg-dark text-light border-secondary" 
+                    <label class="form-label small">Description</label>
+                    <textarea class="form-control form-control-sm" 
                               id="edit-task-description-<%= task.task_id %>" rows="2"><%= task.description %></textarea>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label text-light small">Due Date</label>
-                    <input type="datetime-local" class="form-control form-control-sm bg-dark text-light border-secondary" 
+                    <label class="form-label small">Due Date</label>
+                    <input type="datetime-local" class="form-control form-control-sm" 
                            id="edit-task-due-date-<%= task.task_id %>" 
                            value="<%= new Date(task.due_date).toISOString().slice(0, 16) %>">
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label text-light small">Priority</label>
-                    <select class="form-select form-select-sm bg-dark text-light border-secondary" 
+                    <label class="form-label small">Priority</label>
+                    <select class="form-select form-select-sm" 
                             id="edit-task-priority-<%= task.task_id %>">
                       <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
                       <option value="medium" <%= task.priority === 'medium' ? 'selected' : '' %>>Medium</option>
@@ -998,11 +1360,11 @@ body {
                     </select>
                   </div>
                   <div class="col-12 mt-2">
-                    <button type="button" class="btn btn-sm btn-success save-task-edit-btn" 
+                    <button type="button" class="btn btn-success btn-sm save-task-edit-btn" 
                             data-task-id="<%= task.task_id %>">
                       <i class="bi bi-check"></i> Save
                     </button>
-                    <button type="button" class="btn btn-sm btn-secondary cancel-task-edit-btn" 
+                    <button type="button" class="btn btn-secondary btn-sm cancel-task-edit-btn" 
                             data-task-id="<%= task.task_id %>">
                       <i class="bi bi-x"></i> Cancel
                     </button>
@@ -1014,29 +1376,29 @@ body {
 
           <!-- Tasks Pagination -->
           <% if (taskPagination && taskPagination.totalPages > 1) { %>
-            <div class="pagination-dark">
+            <div class="pagination">
               <% if (taskPagination.hasPrev) { %>
                 <a href="?petPage=<%= petPagination.currentPage %>&taskPage=<%= taskPagination.currentPage - 1 %>" 
-                   class="pagination-btn-dark">
+                   class="pagination-btn">
                   <i class="bi bi-chevron-left"></i>Previous
                 </a>
               <% } else { %>
-                <button class="pagination-btn-dark" disabled>
+                <button class="pagination-btn" disabled>
                   <i class="bi bi-chevron-left"></i>Previous
                 </button>
               <% } %>
               
-              <span class="pagination-info-dark">
+              <span class="pagination-info">
                 Page <%= taskPagination.currentPage %> of <%= taskPagination.totalPages %>
               </span>
               
               <% if (taskPagination.hasNext) { %>
                 <a href="?petPage=<%= petPagination.currentPage %>&taskPage=<%= taskPagination.currentPage + 1 %>" 
-                   class="pagination-btn-dark">
+                   class="pagination-btn">
                   Next<i class="bi bi-chevron-right"></i>
                 </a>
               <% } else { %>
-                <button class="pagination-btn-dark" disabled>
+                <button class="pagination-btn" disabled>
                   Next<i class="bi bi-chevron-right"></i>
                 </button>
               <% } %>
@@ -1044,13 +1406,13 @@ body {
           <% } %>
 
         <% } else { %>
-          <div class="empty-state-dark">
-            <div class="empty-icon-dark">
+          <div class="empty-state">
+            <div class="empty-icon">
               <i class="bi bi-calendar-x"></i>
             </div>
             <h4>No Tasks Scheduled</h4>
             <p class="mb-3">Create your first care schedule</p>
-            <a href="/schedule-task" class="btn btn-dark btn-dark-primary">
+            <a href="/schedule-task" class="btn btn-primary">
               <i class="bi bi-calendar-plus me-2"></i>Schedule Task
             </a>
           </div>
@@ -1059,62 +1421,54 @@ body {
     </div>
 
     <!-- Quick Actions -->
-    <div class="section-card-dark slide-in-right" style="animation-delay: 0.8s">
-      <h3 class="section-title-dark mb-4">
+    <div class="section-card slide-in-right" style="animation-delay: 0.8s">
+      <h3 class="section-title mb-4">
         <i class="bi bi-lightning-charge text-info"></i>
         Quick Actions
       </h3>
-      <div class="quick-actions-dark">
-        <a href="/pets/add" class="action-btn-dark">
-          <i class="bi bi-plus-circle action-icon-dark"></i>
-          <span class="action-label-dark">Add Pet</span>
+      <div class="quick-actions">
+        <a href="/pets/add" class="action-btn">
+          <i class="bi bi-plus-circle action-icon"></i>
+          <span class="action-label">Add Pet</span>
         </a>
-        <a href="/schedule-task" class="action-btn-dark">
-          <i class="bi bi-calendar-plus action-icon-dark"></i>
-          <span class="action-label-dark">Schedule Task</span>
+        <a href="/schedule-task" class="action-btn">
+          <i class="bi bi-calendar-plus action-icon"></i>
+          <span class="action-label">Schedule Task</span>
         </a>
-        <a href="/health-tracker/add" class="action-btn-dark">
-          <i class="bi bi-heart-pulse action-icon-dark"></i>
-          <span class="action-label-dark">Health Tracker</span>
+        <a href="/health-tracker/add" class="action-btn">
+          <i class="bi bi-heart-pulse action-icon"></i>
+          <span class="action-label">Health Tracker</span>
         </a>
-        <a href="/task-overview" class="action-btn-dark">
-          <i class="bi bi-clipboard-data action-icon-dark"></i>
-          <span class="action-label-dark">Task Overview</span>
+        <a href="/task-overview" class="action-btn">
+          <i class="bi bi-clipboard-data action-icon"></i>
+          <span class="action-label">Task Overview</span>
         </a>
-        <a href="/views/notifications" class="action-btn-dark">
-    <i class="bi bi-bell action-icon-dark"></i>
-    <span class="action-label-dark">Notifications</span>
-  </a>
+       
       </div>
     </div>
   </div>
 </div>
+
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--dark-text);">
-      <div class="modal-header border-bottom border-dark">
+    <div class="modal-content">
+      <div class="modal-header">
         <h5 class="modal-title">Confirm Removal</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p id="confirmationMessage">Are you sure you want to remove this item?</p>
       </div>
-      <div class="modal-footer border-top border-dark">
-        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-dark btn-dark-primary" id="confirmRemoveBtn">Remove</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmRemoveBtn">Remove</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <script src="/js/dashboard.js"></script>
-<script src="/js/dashboard-pagination.js"></script> -->
 <script src="/js/dashboard-filters-enhanced.js"></script>
 <script src="/js/dashboard-enhanced.js"></script>
 
-
 <%- include('partials/footer') %>
-
-<!-- Add Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">

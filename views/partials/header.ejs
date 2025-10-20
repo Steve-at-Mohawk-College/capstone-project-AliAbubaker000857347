@@ -111,7 +111,23 @@
 
 /* Dark mode styles for header notification */
 [data-theme="dark"] .notification-bell-header {
-  background: green;
+  background: rgb(0, 9, 128);
+  font-style: italic;
+  border-radius: 20px;
+  width: 60px;
+  height: 60px;
+  
+  border: 2px solid red;
+  color: white;
+}
+/* Dark mode styles for header notification */
+[data-theme="light"] .notification-bell-header {
+  background: rgb(0, 9, 128);
+  font-style: italic;
+  border-radius: 20px;
+  width: 60px;
+  height: 60px;
+  
   border: 2px solid red;
   color: white;
 }
@@ -125,6 +141,8 @@
     [data-theme="dark"] .navbar-modern {
       background: rgba(33, 37, 41, 0.95);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 20px;
+      font-size: 20px;
     }
 
     [data-theme="dark"] .nav-link-modern {
@@ -618,10 +636,9 @@
               <a class="btn btn-filled-modern btn-modern" href="/register"><i class="bi bi-person-plus me-2"></i> Register</a>
             </li>
           <% } %>
-
-          <!-- Notification Bell in Header -->
+<!-- Notification Bell in Header -->
 <li class="nav-item ms-2">
-  <div class="dropdown" >
+  <div class="dropdown">
     <button class="notification-bell-header dropdown-toggle" 
             id="notificationDropdown" 
             data-bs-toggle="dropdown" 
@@ -632,22 +649,14 @@
         0
       </span>
     </button>
-<!-- Update the dropdown menu in your header -->
-<div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
-  <div class="dropdown-header notification-header d-flex justify-content-between align-items-center border-bottom border-dark">
-    <span>Notifications</span>
-    <button class="btn btn-dark btn-sm-dark" id="markAllReadBtn">
-      Mark all read
-    </button>
+    <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
+      <div class="dropdown-header notification-header d-flex justify-content-between align-items-center border-bottom">
+        <span>Upcoming Tasks</span>
+        <a href="/upcoming-tasks" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+      
   </div>
-  <div class="dropdown-divider"></div>
-  <div id="notificationsList">
-    <div class="px-3 py-3 text-center text-muted">
-      <div class="spinner-border spinner-border-sm" role="status"></div>
-      <span class="ms-2">Loading notifications...</span>
-    </div>
-  </div>
-  <div class="dropdown-divider"></div>
+</li>
   
 </div>
   </div>
@@ -665,58 +674,39 @@
   </main>
 
     
- <script>
-// Enhanced Notification system - Fixed with proper event handling
+ <script>// Simplified Notification System for Upcoming Tasks
 class NotificationSystem {
   constructor() {
     this.checkInterval = null;
-    this.currentNotificationIndex = 0;
-    this.allNotifications = [];
     this.isDropdownOpen = false;
     this.init();
   }
 
   init() {
-    this.loadNotifications();
+    this.loadUpcomingTasks();
     this.setupEventListeners();
     
     this.checkInterval = setInterval(() => {
-      this.loadNotifications();
-    }, 30000);
+      this.loadUpcomingTasks();
+    }, 30000); // Check every 30 seconds
   }
 
-  async loadNotifications() {
+  async loadUpcomingTasks() {
     try {
-      const [notifications, upcomingTasks] = await Promise.all([
-        this.fetchNotifications(),
-        this.fetchUpcomingTasks()
-      ]);
+      const upcomingTasks = await this.fetchUpcomingTasks();
+      this.updateNotificationBadge(upcomingTasks);
       
-      this.updateNotificationBadge(notifications, upcomingTasks);
-      this.allNotifications = [...upcomingTasks, ...notifications];
-      
-      // Only re-render if dropdown is open
       if (this.isDropdownOpen) {
-        this.renderSingleNotification();
+        this.renderUpcomingTasks(upcomingTasks);
       }
     } catch (error) {
-      console.error('Error loading notifications:', error);
-    }
-  }
-
-  async fetchNotifications() {
-    try {
-      const response = await fetch('/notifications?limit=10');
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-      return [];
+      console.error('Error loading upcoming tasks:', error);
     }
   }
 
   async fetchUpcomingTasks() {
     try {
-      const response = await fetch('/tasks/upcoming?days=3');
+      const response = await fetch('/tasks/upcoming?days=3&limit=5');
       if (response.ok) {
         return await response.json();
       }
@@ -727,62 +717,41 @@ class NotificationSystem {
     }
   }
 
-  updateNotificationBadge(notifications, upcomingTasks) {
+  updateNotificationBadge(upcomingTasks) {
     const badge = document.getElementById('notificationBadge');
-    const unreadNotifications = notifications.filter(n => !n.is_read).length;
-    const upcomingTasksCount = upcomingTasks.length;
-    const totalCount = unreadNotifications + upcomingTasksCount;
+    const urgentTasks = upcomingTasks.filter(task => {
+      const dueDate = new Date(task.due_date);
+      const now = new Date();
+      const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+      return daysUntilDue <= 1; // Only count urgent tasks (today/tomorrow)
+    });
     
-    if (totalCount > 0) {
-      badge.textContent = totalCount;
+    if (urgentTasks.length > 0) {
+      badge.textContent = urgentTasks.length;
       badge.style.display = 'block';
     } else {
       badge.style.display = 'none';
     }
   }
 
-  renderSingleNotification() {
+  renderUpcomingTasks(tasks) {
     const container = document.getElementById('notificationsList');
     
     if (!container) return;
     
-    if (this.allNotifications.length === 0) {
+    if (tasks.length === 0) {
       container.innerHTML = `
-        <div class="px-3 py-3 text-center text-muted">
-          <i class="bi bi-bell-slash" style="font-size: 1.5rem;"></i>
-          <div class="mt-2">No notifications</div>
+        <div class="px-3 py-4 text-center text-muted">
+          <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
+          <div class="mt-2">No upcoming tasks</div>
+          <small>You're all caught up!</small>
         </div>
       `;
       return;
     }
 
-    const currentNotification = this.allNotifications[this.currentNotificationIndex];
-    const isUpcomingTask = currentNotification.due_date !== undefined;
-    
-    let html = '';
-    
-    // Navigation header
-    html += `
-      <div class="notification-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-dark">
-        <small class="text-muted">
-          ${this.currentNotificationIndex + 1} of ${this.allNotifications.length}
-        </small>
-        <div class="d-flex gap-1">
-          <button class="btn btn-sm btn-outline-secondary prev-notification-btn" 
-                  ${this.currentNotificationIndex === 0 ? 'disabled' : ''}>
-            <i class="bi bi-chevron-left"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-secondary next-notification-btn" 
-                  ${this.currentNotificationIndex === this.allNotifications.length - 1 ? 'disabled' : ''}>
-            <i class="bi bi-chevron-right"></i>
-          </button>
-        </div>
-      </div>
-    `;
-
-    // Current notification
-    if (isUpcomingTask) {
-      const dueDate = new Date(currentNotification.due_date);
+    let html = tasks.map((task, index) => {
+      const dueDate = new Date(task.due_date);
       const now = new Date();
       const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
       
@@ -800,102 +769,32 @@ class NotificationSystem {
         urgencyIcon = 'bi-calendar-event';
       }
       
-      html += `
-        <div class="notification-item p-3">
-          <div class="d-flex align-items-start mb-2">
+      return `
+        <div class="notification-item p-3 border-bottom" style="${index === tasks.length - 1 ? 'border-bottom: none !important;' : ''}">
+          <div class="d-flex align-items-start">
             <i class="bi ${urgencyIcon} ${urgencyClass} me-2 fs-5"></i>
             <div class="flex-grow-1">
-              <h6 class="mb-1 fw-bold">${currentNotification.title}</h6>
-              <div class="d-flex align-items-center gap-2 mb-2">
-                <span class="badge ${this.getPriorityBadgeClass(currentNotification.priority)}">
-                  ${currentNotification.priority}
+              <h6 class="mb-1 fw-bold">${task.title}</h6>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge ${this.getPriorityBadgeClass(task.priority)}">
+                  ${task.priority}
                 </span>
-                <small class="text-muted">${currentNotification.task_type}</small>
+                <small class="text-muted">${task.pet_name}</small>
               </div>
+              <p class="mb-1 small">
+                <i class="bi bi-calendar me-1"></i>
+                ${dueDate.toLocaleDateString()} 
+                <span class="${urgencyClass} fw-bold">
+                  (${daysUntilDue <= 0 ? 'TODAY' : `${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''} left`})
+                </span>
+              </p>
             </div>
-          </div>
-          
-          <div class="notification-content">
-            <p class="mb-2">
-              <strong>For:</strong> ${currentNotification.pet_name}<br>
-              <strong>Due:</strong> ${dueDate.toLocaleDateString()} 
-              <span class="${urgencyClass} fw-bold">
-                (${daysUntilDue <= 0 ? 'TODAY' : `${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''} left`})
-              </span>
-            </p>
-            ${currentNotification.description ? `
-              <div class="bg-dark rounded p-2 mb-2">
-                <small class="text-muted">${currentNotification.description}</small>
-              </div>
-            ` : ''}
           </div>
         </div>
       `;
-    } else {
-      html += `
-        <div class="notification-item p-3">
-          <div class="d-flex align-items-start mb-2">
-            <i class="bi bi-bell${currentNotification.is_read ? '' : '-fill'} text-primary me-2 fs-5"></i>
-            <div class="flex-grow-1">
-              <h6 class="mb-1 ${currentNotification.is_read ? '' : 'fw-bold'}">${currentNotification.title}</h6>
-              <small class="text-muted">${new Date(currentNotification.created_at).toLocaleString()}</small>
-            </div>
-            ${!currentNotification.is_read ? `
-              <button class="btn btn-sm btn-outline-primary mark-read-btn" 
-                      data-id="${currentNotification.notification_id}" 
-                      title="Mark as read">
-                <i class="bi bi-check"></i>
-              </button>
-            ` : ''}
-          </div>
-          
-          <div class="notification-content">
-            <p class="mb-0">${currentNotification.message}</p>
-          </div>
-        </div>
-      `;
-    }
+    }).join('');
 
     container.innerHTML = html;
-    this.attachEventListeners();
-  }
-
-  attachEventListeners() {
-    // Previous button
-    const prevBtn = document.querySelector('.prev-notification-btn');
-    if (prevBtn) {
-      prevBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (this.currentNotificationIndex > 0) {
-          this.currentNotificationIndex--;
-          this.renderSingleNotification();
-        }
-      });
-    }
-
-    // Next button
-    const nextBtn = document.querySelector('.next-notification-btn');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (this.currentNotificationIndex < this.allNotifications.length - 1) {
-          this.currentNotificationIndex++;
-          this.renderSingleNotification();
-        }
-      });
-    }
-
-    // Mark as read button
-    const markReadBtn = document.querySelector('.mark-read-btn');
-    if (markReadBtn) {
-      markReadBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.markAsRead(markReadBtn.dataset.id);
-      });
-    }
   }
 
   getPriorityBadgeClass(priority) {
@@ -907,67 +806,19 @@ class NotificationSystem {
     return classes[priority] || 'bg-secondary';
   }
 
-  async markAsRead(notificationId) {
-    try {
-      await fetch(`/notifications/${notificationId}/read`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      this.loadNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  }
-
-  async markAllAsRead() {
-    try {
-      await fetch('/notifications/read-all', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      this.loadNotifications();
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-    }
-  }
-
   setupEventListeners() {
-    // Mark all read button
-    const markAllReadBtn = document.getElementById('markAllReadBtn');
-    if (markAllReadBtn) {
-      markAllReadBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.markAllAsRead();
-      });
-    }
-
     // Dropdown open/close events
     const dropdownElement = document.getElementById('notificationDropdown');
     if (dropdownElement) {
       dropdownElement.addEventListener('show.bs.dropdown', () => {
         this.isDropdownOpen = true;
-        this.currentNotificationIndex = 0;
-        this.renderSingleNotification();
+        this.loadUpcomingTasks();
       });
 
       dropdownElement.addEventListener('hide.bs.dropdown', () => {
         this.isDropdownOpen = false;
       });
     }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      const dropdown = document.getElementById('notificationDropdown');
-      const dropdownMenu = document.querySelector('.dropdown-menu');
-      
-      if (dropdown && !dropdown.contains(e.target) && dropdownMenu && dropdownMenu.classList.contains('show')) {
-        const bsDropdown = bootstrap.Dropdown.getInstance(dropdown);
-        if (bsDropdown) {
-          bsDropdown.hide();
-        }
-      }
-    });
   }
 
   destroy() {
@@ -979,47 +830,6 @@ class NotificationSystem {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  // Theme toggle functionality
-  const themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', function() {
-      const lightIcon = document.getElementById('lightIcon');
-      const darkIcon = document.getElementById('darkIcon');
-      const html = document.documentElement;
-      
-      const currentTheme = html.getAttribute('data-theme') || 'light';
-      
-      if (currentTheme === 'light') {
-        lightIcon.classList.remove('d-none');
-        darkIcon.classList.add('d-none');
-        html.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        lightIcon.classList.add('d-none');
-        darkIcon.classList.remove('d-none');
-        html.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-      }
-    });
-  }
-
-  // Load saved theme
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  const lightIcon = document.getElementById('lightIcon');
-  const darkIcon = document.getElementById('darkIcon');
-  const html = document.documentElement;
-
-  html.setAttribute('data-theme', savedTheme);
-  
-  if (savedTheme === 'dark') {
-    if (lightIcon) lightIcon.classList.remove('d-none');
-    if (darkIcon) darkIcon.classList.add('d-none');
-  } else {
-    if (lightIcon) lightIcon.classList.add('d-none');
-    if (darkIcon) darkIcon.classList.remove('d-none');
-  }
-
-  // Initialize notification system
   window.notificationSystem = new NotificationSystem();
 });
 </script>

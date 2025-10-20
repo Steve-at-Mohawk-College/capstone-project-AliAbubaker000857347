@@ -1,0 +1,201 @@
+<%- include('../partials/admin-header', {title: 'User Management'}) %>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+      <div class="position-sticky pt-3">
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+          <span>Admin Panel</span>
+        </h6>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/dashboard">
+              <i class="bi bi-speedometer2 me-2"></i>
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/users">
+              <i class="bi bi-people me-2"></i>
+              User Management
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/posts">
+              <i class="bi bi-chat-dots me-2"></i>
+              Post Moderation
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Post Moderation</h1>
+      </div>
+
+      <!-- Posts Table -->
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (posts && posts.length > 0) { %>
+                  <% posts.forEach(post => { %>
+                    <tr>
+                      <td><%= post.post_id %></td>
+                      <td><%= post.title %></td>
+                      <td><%= post.username %></td>
+                      <td>
+                        <span class="badge bg-<%= post.is_approved ? 'success' : 'warning' %>">
+                          <%= post.is_approved ? 'Approved' : 'Pending' %>
+                        </span>
+                      </td>
+                      <td><%= new Date(post.created_at).toLocaleDateString() %></td>
+                      <td>
+                        <div class="btn-group btn-group-sm">
+                          <% if (!post.is_approved) { %>
+                            <button class="btn btn-success approve-post-btn" 
+                                    data-post-id="<%= post.post_id %>">
+                              <i class="bi bi-check-lg"></i> Approve
+                            </button>
+                          <% } %>
+                          <button class="btn btn-danger delete-post-btn" 
+                                  data-post-id="<%= post.post_id %>"
+                                  data-title="<%= post.title %>">
+                            <i class="bi bi-trash"></i> Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="6" class="text-center text-muted py-4">No posts found</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Post approval functionality
+  document.querySelectorAll('.approve-post-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const postId = this.dataset.postId;
+      approvePost(postId, this);
+    });
+  });
+
+  // Post deletion functionality
+  document.querySelectorAll('.delete-post-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const postId = this.dataset.postId;
+      const postTitle = this.dataset.title;
+      
+      if (confirm(`Are you sure you want to delete post "${postTitle}"? This action cannot be undone.`)) {
+        deletePost(postId, this);
+      }
+    });
+  });
+// In both admin/users.ejs and admin/posts.ejs, update the fetch calls:
+
+async function approvePost(postId, button) {
+  try {
+    const response = await fetch(`/admin/posts/${postId}/approve`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      showToast('Post approved successfully!', 'success');
+      // Remove the approve button and update status
+      button.remove();
+      const statusBadge = button.closest('tr').querySelector('.badge');
+      statusBadge.className = 'badge bg-success';
+      statusBadge.textContent = 'Approved';
+    } else {
+      showToast('Error approving post: ' + result.error, 'error');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showToast('Error approving post: ' + error.message, 'error');
+  }
+}
+
+// Add similar error handling to all your fetch functions
+  async function deletePost(postId, button) {
+    try {
+      const response = await fetch(`/admin/posts/${postId}/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showToast('Post deleted successfully!', 'success');
+        // Remove the row from the table
+        button.closest('tr').remove();
+      } else {
+        showToast('Error deleting post: ' + result.error, 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error deleting post', 'error');
+    }
+  }
+
+  function showToast(message, type = 'info') {
+    // Create toast notification
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remove toast after it hides
+    toast.addEventListener('hidden.bs.toast', () => {
+      toast.remove();
+    });
+  }
+});
+</script>
+
+<%- include('../partials/admin-footer') %>

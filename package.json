@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "setup-admin": "node scripts/createAdmin.js",
     "test": "node tests/test-runner.js",
     "test:auth": "node -e \"const AuthTests = require('./tests/auth-tests'); const TestSummary = require('./tests/test-summary'); const tests = new AuthTests(new TestSummary()); tests.runAllTests().then(() => tests.cleanup());\"",
     "test:pets": "node -e \"console.log('Run npm test instead - pet tests need a valid user from auth tests'); process.exit(1);\"",
@@ -15,7 +16,13 @@
     "test:tasks:all": "npm run test:tasks:api && npm run test:tasks:integration",
     "test:all": "npm run test && npm run test:tasks:all",
     "kill-port": "npx kill-port 3000",
-    "test:clear": "cls && npm run test:tasks:integration"
+    "test:clear": "cls && npm run test:tasks:integration",
+    "test:notifications": "node tests/notification-test-runner.js",
+    "test:notifications:model": "jest tests/notification-model.test.js --config=jest.config.js",
+    "test:notifications:service": "jest tests/notification-service.test.js --config=jest.config.js",
+    "test:notifications:routes": "jest tests/notification-routes.test.js --config=jest.config.js",
+    "test:notifications:integration": "jest tests/notification-integration.test.js --config=jest.config.js --testTimeout=30000",
+    "test:all:with-notifications": "npm run test && npm run test:notifications"
   },
   "keywords": [
     "pet",

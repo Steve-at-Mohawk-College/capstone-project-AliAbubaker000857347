@@ -213,7 +213,6 @@ class TaskOverview {
       
       // Show loading state
       this.showLoading();
-      
       const response = await fetch('/tasks/api/tasks/overview');
       
       if (!response.ok) {

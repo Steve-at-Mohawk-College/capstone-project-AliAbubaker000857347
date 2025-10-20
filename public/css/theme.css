@@ -407,11 +407,6 @@
   border-color: var(--bs-primary);
 }
 
-/* Filter section specific styles */
-[data-theme="dark"] .filter-section {
-  background: linear-gradient(135deg, #2d2d2d, #3d3d3d) !important;
-  border-color: var(--bs-border-color) !important;
-}
 
 [data-theme="dark"] .pet-card {
   border-color: var(--bs-border-color) !important;

@@ -1,0 +1,347 @@
+<%- include('../partials/admin-header', {title: 'Admin Dashboard'}) %>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+      <div class="position-sticky pt-3">
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+          <span>Admin Panel</span>
+        </h6>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/dashboard">
+              <i class="bi bi-speedometer2 me-2"></i>
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/users">
+              <i class="bi bi-people me-2"></i>
+              User Management
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/posts">
+              <i class="bi bi-chat-dots me-2"></i>
+              Post Moderation
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Admin Dashboard</h1>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="row">
+        <div class="col-md-3 mb-4">
+          <div class="card text-white bg-primary">
+            <div class="card-body">
+              <h5 class="card-title"><%= userCount %></h5>
+              <p class="card-text">Total Users</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="card text-white bg-success">
+            <div class="card-body">
+              <h5 class="card-title"><%= petCount %></h5>
+              <p class="card-text">Total Pets</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="card text-white bg-warning">
+            <div class="card-body">
+              <h5 class="card-title"><%= taskCount %></h5>
+              <p class="card-text">Total Tasks</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="card text-white bg-info">
+            <div class="card-body">
+              <h5 class="card-title"><%= postCount %></h5>
+              <p class="card-text">Community Posts</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Recent Users -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">Recent Users</h5>
+            </div>
+            <div class="card-body">
+              <% if (recentUsers && recentUsers.length > 0) { %>
+                <div class="list-group">
+                  <% recentUsers.forEach(user => { %>
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1"><%= user.username %></h6>
+                        <small class="text-muted"><%= new Date(user.created_at).toLocaleDateString() %></small>
+                      </div>
+                      <p class="mb-1"><%= user.email %></p>
+                      <small class="text-muted">User ID: <%= user.user_id %></small>
+                    </div>
+                  <% }); %>
+                </div>
+              <% } else { %>
+                <p class="text-muted">No users found.</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Posts -->
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">Pending Approval (<%= pendingPosts ? pendingPosts.length : 0 %>)</h5>
+            </div>
+            <div class="card-body">
+              <% if (pendingPosts && pendingPosts.length > 0) { %>
+                <div class="list-group">
+                  <% pendingPosts.forEach(post => { %>
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1"><%= post.title %></h6>
+                        <small class="text-muted"><%= new Date(post.created_at).toLocaleDateString() %></small>
+                      </div>
+                      <p class="mb-1">By: <%= post.username %></p>
+                      <div class="btn-group btn-group-sm mt-2">
+                        <button class="btn btn-success approve-btn" data-id="<%= post.post_id %>">
+                          <i class="bi bi-check-lg"></i> Approve
+                        </button>
+                        <button class="btn btn-danger delete-btn" data-id="<%= post.post_id %>">
+                          <i class="bi bi-trash"></i> Delete
+                        </button>
+                      </div>
+                    </div>
+                  <% }); %>
+                </div>
+              <% } else { %>
+                <div class="text-center py-3">
+                  <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                  <p class="text-muted mt-2">No posts pending approval</p>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <a href="/admin/users" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-people me-2"></i> Manage Users
+                  </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <a href="/admin/posts" class="btn btn-outline-info w-100">
+                    <i class="bi bi-chat-dots me-2"></i> Moderate Posts
+                  </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <a href="/admin/dashboard" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-arrow-clockwise me-2"></i> Refresh
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Admin dashboard loaded');
+  
+  // Post approval functionality
+  const approveButtons = document.querySelectorAll('.approve-btn');
+  if (approveButtons.length > 0) {
+    approveButtons.forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const postId = this.dataset.id;
+        const button = this;
+        
+        // Show loading state
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-hourglass-split"></i> Approving...';
+        button.disabled = true;
+        
+        try {
+          const response = await fetch(`/admin/posts/${postId}/approve`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            // Remove the entire list item
+            const listItem = button.closest('.list-group-item');
+            if (listItem) {
+              listItem.style.opacity = '0.5';
+              setTimeout(() => {
+                listItem.remove();
+                showToast('Post approved successfully!', 'success');
+                
+                // Update pending count
+                const pendingCount = document.querySelectorAll('.list-group-item').length;
+                const titleElement = document.querySelector('.card-title');
+                if (titleElement) {
+                  titleElement.textContent = `Pending Approval (${pendingCount})`;
+                }
+              }, 500);
+            }
+          } else {
+            throw new Error(result.error || 'Unknown error');
+          }
+        } catch (error) {
+          console.error('Error approving post:', error);
+          showToast('Error approving post: ' + error.message, 'error');
+          
+          // Reset button
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }
+      });
+    });
+  } else {
+    console.log('No approve buttons found');
+  }
+
+  // Post deletion functionality
+  const deleteButtons = document.querySelectorAll('.delete-btn');
+  if (deleteButtons.length > 0) {
+    deleteButtons.forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const postId = this.dataset.id;
+        const button = this;
+        
+        if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+          // Show loading state
+          const originalText = button.innerHTML;
+          button.innerHTML = '<i class="bi bi-hourglass-split"></i> Deleting...';
+          button.disabled = true;
+          
+          try {
+            const response = await fetch(`/admin/posts/${postId}/delete`, {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              // Remove the entire list item
+              const listItem = button.closest('.list-group-item');
+              if (listItem) {
+                listItem.style.opacity = '0.5';
+                setTimeout(() => {
+                  listItem.remove();
+                  showToast('Post deleted successfully!', 'success');
+                  
+                  // Update pending count
+                  const pendingCount = document.querySelectorAll('.list-group-item').length;
+                  const titleElement = document.querySelector('.card-title');
+                  if (titleElement) {
+                    titleElement.textContent = `Pending Approval (${pendingCount})`;
+                  }
+                }, 500);
+              }
+            } else {
+              throw new Error(result.error || 'Unknown error');
+            }
+          } catch (error) {
+            console.error('Error deleting post:', error);
+            showToast('Error deleting post: ' + error.message, 'error');
+            
+            // Reset button
+            button.innerHTML = originalText;
+            button.disabled = false;
+          }
+        }
+      });
+    });
+  } else {
+    console.log('No delete buttons found');
+  }
+
+  function showToast(message, type = 'info') {
+    // Create toast notification
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remove toast after it hides
+    toast.addEventListener('hidden.bs.toast', () => {
+      toast.remove();
+    });
+  }
+});
+</script>
+
+<style>
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 250px;
+}
+
+.list-group-item {
+  transition: opacity 0.5s ease;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}
+</style>
+
+<%- include('../partials/admin-footer') %>

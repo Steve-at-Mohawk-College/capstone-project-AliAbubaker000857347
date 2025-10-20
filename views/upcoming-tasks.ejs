@@ -1,0 +1,350 @@
+<%- include('partials/header', {title: 'Upcoming Tasks - Next 3 Days'}) %>
+
+<style>
+.upcoming-tasks-container {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: var(--light-bg);
+  transition: all 0.3s ease;
+}
+
+.page-header {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.page-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: var(--light-muted);
+  font-size: 1.1rem;
+}
+
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.task-card {
+  background: var(--light-card);
+  border: 1px solid var(--light-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.task-card.high-priority::before {
+  background: linear-gradient(90deg, var(--danger), #ff6b6b);
+}
+
+.task-card.medium-priority::before {
+  background: linear-gradient(90deg, var(--warning), #ffd166);
+}
+
+.task-card.low-priority::before {
+  background: linear-gradient(90deg, var(--success), #06d6a0);
+}
+
+.task-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.task-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.task-priority {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.task-priority.high {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.task-priority.medium {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--warning);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.task-priority.low {
+  background: rgba(40, 167, 69, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.task-pet {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--light-muted);
+  font-size: 0.9rem;
+}
+
+.task-due {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.urgent {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.today {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.upcoming {
+  color: var(--info);
+  font-weight: 600;
+}
+
+.task-description {
+  color: var(--light-muted);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--light-muted);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] .upcoming-tasks-container {
+  background: linear-gradient(135deg, var(--dark-bg) 0%, #1a2035 100%);
+}
+
+[data-theme="dark"] .page-header {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+[data-theme="dark"] .page-subtitle {
+  color: var(--dark-muted);
+}
+
+[data-theme="dark"] .task-card {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+}
+
+@media (max-width: 768px) {
+  .upcoming-tasks-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .page-header {
+    padding: 1.5rem;
+    margin: 0 0.5rem 1.5rem 0.5rem;
+  }
+  
+  .tasks-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .task-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+</style>
+
+<div class="upcoming-tasks-container">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header slide-in-right">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="page-title">Upcoming Tasks 🗓️</h1>
+          <p class="page-subtitle">Tasks due in the next 3 days - Stay on top of your pet care schedule</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="/schedule-task" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Schedule New Task
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks Grid -->
+    <% if (tasks && tasks.length > 0) { %>
+      <div class="tasks-grid">
+        <% tasks.forEach((task, index) => { 
+          const dueDate = new Date(task.due_date);
+          const now = new Date();
+          const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+          
+          let urgencyClass = '';
+          let urgencyText = '';
+          
+          if (daysUntilDue <= 0) {
+            urgencyClass = 'urgent';
+            urgencyText = 'TODAY';
+          } else if (daysUntilDue === 1) {
+            urgencyClass = 'today';
+            urgencyText = 'TOMORROW';
+          } else {
+            urgencyClass = 'upcoming';
+            urgencyText = `IN ${daysUntilDue} DAYS`;
+          }
+        %>
+          <div class="task-card slide-in-right <%= task.priority %>-priority" 
+               style="animation-delay: <%= 0.2 + (index * 0.1) %>s">
+            <div class="task-header">
+              <h3 class="task-title"><%= task.title %></h3>
+              <span class="task-priority <%= task.priority %>">
+                <%= task.priority %>
+              </span>
+            </div>
+            
+            <div class="task-meta">
+              <span class="task-pet">
+                <i class="bi bi-<%= task.species === 'dog' ? 'heart' : task.species === 'cat' ? 'star' : 'circle' %>-fill"></i>
+                <%= task.pet_name %>
+              </span>
+              <span class="task-due <%= urgencyClass %>">
+                <i class="bi bi-calendar-event"></i>
+                <%= dueDate.toLocaleDateString() %> • <%= urgencyText %>
+              </span>
+            </div>
+            
+            <% if (task.description) { %>
+              <p class="task-description"><%= task.description %></p>
+            <% } %>
+            
+            <div class="task-actions">
+              <button class="btn btn-success btn-sm complete-task-btn" data-task-id="<%= task.task_id %>">
+                <i class="bi bi-check-circle"></i> Mark Complete
+              </button>
+              
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="bi bi-calendar-check"></i>
+        </div>
+        <h3>No Upcoming Tasks</h3>
+        <p class="mb-4">You're all caught up! No tasks due in the next 3 days.</p>
+        <a href="/schedule-task" class="btn btn-primary">
+          <i class="bi bi-calendar-plus me-2"></i>Schedule Your First Task
+        </a>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+// Mark task as complete
+document.addEventListener('DOMContentLoaded', function() {
+  const completeButtons = document.querySelectorAll('.complete-task-btn');
+  
+  completeButtons.forEach(button => {
+    button.addEventListener('click', async function() {
+      const taskId = this.dataset.taskId;
+      
+      try {
+        const response = await fetch(`/tasks/${taskId}/complete`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          // Remove the task card with a fade out animation
+          const taskCard = this.closest('.task-card');
+          taskCard.style.opacity = '0';
+          taskCard.style.transform = 'translateX(100px)';
+          
+          setTimeout(() => {
+            taskCard.remove();
+            
+            // Check if no tasks left
+            const remainingTasks = document.querySelectorAll('.task-card');
+            if (remainingTasks.length === 0) {
+              location.reload(); // Reload to show empty state
+            }
+          }, 300);
+        }
+      } catch (error) {
+        console.error('Error completing task:', error);
+        alert('Failed to mark task as complete');
+      }
+    });
+  });
+});
+</script>
+
+<%- include('partials/footer') %>

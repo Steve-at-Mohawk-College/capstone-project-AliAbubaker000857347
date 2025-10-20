@@ -304,13 +304,7 @@ body {
   }
 }
 
-.pet-info, .task-item {
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  border-left: 4px solid var(--primary-color);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+
 
 /* Quick actions */
 .action-buttons {

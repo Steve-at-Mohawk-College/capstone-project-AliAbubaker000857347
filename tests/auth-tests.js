@@ -18,59 +18,64 @@ class AuthTests {
     }
 
     async testUserRegistration() {
-        const testCase = 'User Registration - Valid Data';
-        console.log(`\n Test: ${testCase}`);
+    const testCase = 'User Registration - Valid Data';
+    console.log(`\n Test: ${testCase}`);
+    
+    try {
+        const userData = {
+            username: `testuser_${Date.now()}`,
+            email: `test_${Date.now()}@example.com`,
+            password: 'SecurePass123!'
+        };
+
+        // Hash password
+        const passwordHash = await bcrypt.hash(userData.password, 10);
+        const verificationToken = 'test_token_123';
+
+        // Create user in database
+        const result = await createUser(userData.username, userData.email, passwordHash, verificationToken);
         
-        try {
-            const userData = {
-                username: `testuser_${Date.now()}`,
-                email: `test_${Date.now()}@example.com`,
-                password: 'SecurePass123!'
-            };
-
-            // Hash password
-            const passwordHash = await bcrypt.hash(userData.password, 10);
-            const verificationToken = 'test_token_123';
-
-            // Create user in database
-            const result = await createUser(userData.username, userData.email, passwordHash, verificationToken);
-            
-            // Verify user was created
-            const dbUser = await findByEmail(userData.email);
-            
-            if (!dbUser) {
-                throw new Error('User not found in database after creation');
-            }
-
-            // Test assertions
-            if (!dbUser.user_id) throw new Error('User ID not generated');
-            if (dbUser.username !== userData.username) throw new Error('Username mismatch');
-            if (dbUser.email !== userData.email) throw new Error('Email mismatch');
-            if (dbUser.verification_token !== verificationToken) throw new Error('Verification token not set');
-            if (dbUser.is_verified !== 0) throw new Error('User should not be verified initially');
-
-            this.testUser = dbUser;
-
-            console.log(' PASS: User created successfully');
-            console.log('   Details:', {
-                userId: dbUser.user_id,
-                username: dbUser.username,
-                email: dbUser.email,
-                isVerified: dbUser.is_verified === 1
-            });
-
-            this.testSummary.addResult(testCase, 'PASS', {
-                userId: dbUser.user_id,
-                username: dbUser.username,
-                email: dbUser.email
-            });
-
-        } catch (error) {
-            console.log(' FAIL: User registration failed');
-            console.log('   Error:', error.message);
-            this.testSummary.addResult(testCase, 'FAIL', error.message);
+        // Verify user was created
+        const dbUser = await findByEmail(userData.email);
+        
+        if (!dbUser) {
+            throw new Error('User not found in database after creation');
         }
+
+        // Test assertions - FIXED: Handle different boolean representations
+        if (!dbUser.user_id) throw new Error('User ID not generated');
+        if (dbUser.username !== userData.username) throw new Error('Username mismatch');
+        if (dbUser.email !== userData.email) throw new Error('Email mismatch');
+        if (dbUser.verification_token !== verificationToken) throw new Error('Verification token not set');
+        
+        // FIX: Check if is_verified is falsy (0, false, etc.) instead of strict equality
+        if (dbUser.is_verified !== 0 && dbUser.is_verified !== false) {
+            throw new Error(`User should not be verified initially. Got: ${dbUser.is_verified} (type: ${typeof dbUser.is_verified})`);
+        }
+
+        this.testUser = dbUser;
+
+        console.log(' PASS: User created successfully');
+        console.log('   Details:', {
+            userId: dbUser.user_id,
+            username: dbUser.username,
+            email: dbUser.email,
+            isVerified: dbUser.is_verified,
+            isVerifiedType: typeof dbUser.is_verified
+        });
+
+        this.testSummary.addResult(testCase, 'PASS', {
+            userId: dbUser.user_id,
+            username: dbUser.username,
+            email: dbUser.email
+        });
+
+    } catch (error) {
+        console.log(' FAIL: User registration failed');
+        console.log('   Error:', error.message);
+        this.testSummary.addResult(testCase, 'FAIL', error.message);
     }
+}
 
     async testDuplicateEmail() {
         const testCase = 'User Registration - Duplicate Email';

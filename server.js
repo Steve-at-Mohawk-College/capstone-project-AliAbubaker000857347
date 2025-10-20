@@ -26,7 +26,7 @@ const taskRoutes = require('./routes/taskRoutes');
  const healthRoutes = require('./routes/healthRoutes');
 // const communityRoutes = require('./routes/communityRoutes');
 // const profileRoutes = require('./routes/profileRoutes');
-// const adminRoutes = require('./routes/adminRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const { time } = require('console');
 const { title } = require('process');
 
@@ -204,7 +204,7 @@ app.use('/tasks', requireAuth, taskRoutes);
 app.use('/health', requireAuth, healthRoutes);
 // app.use('/community', requireAuth, communityRoutes);
 // app.use('/profile', requireAuth, profileRoutes);
-// app.use('/admin', adminRoutes);
+app.use('/admin', adminRoutes);
 
 
 
@@ -378,8 +378,7 @@ app.get('/debug/tasks-overview', requireAuth, async (req, res) => {
 const notificationWorker = require('./workers/notificationWorker');
 const notificationRoutes = require('./routes/notificationRoutes');
 
-// Add after your other route registrations
-app.use('/notifications', requireAuth, notificationRoutes);
+
 
 // Start notification worker (after database connection)
 async function initializeApp() {
@@ -424,10 +423,8 @@ app.get('/admin/notifications/check', requireAuth, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
 });
-
-
-
 
 
 
@@ -490,6 +487,111 @@ app.get('/health-tracker', requireAuth, async (req, res) => {
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading health tracker.',
+      error: process.env.NODE_ENV === 'development' ? err : {}
+    });
+  }
+});
+
+// API endpoint for upcoming tasks
+app.get('/tasks/upcoming', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const days = parseInt(req.query.days) || 3;
+    const limit = parseInt(req.query.limit) || 10;
+    
+    // Calculate date range
+    const now = new Date();
+    const targetDate = new Date();
+    targetDate.setDate(now.getDate() + days);
+    
+    console.log('📅 Fetching upcoming tasks:', {
+      userId,
+      days,
+      limit,
+      now: now.toISOString(),
+      targetDate: targetDate.toISOString()
+    });
+
+    const sql = `
+      SELECT t.*, p.name as pet_name, p.species 
+      FROM tasks t 
+      JOIN pets p ON t.pet_id = p.pet_id 
+      WHERE t.user_id = ? 
+      AND t.completed = false
+      AND t.due_date BETWEEN ? AND ?
+      ORDER BY t.due_date ASC, t.priority DESC
+      LIMIT ?
+    `;
+    
+    const tasks = await query(sql, [userId, now, targetDate, limit]);
+    
+    console.log('✅ Found upcoming tasks:', tasks.length);
+    
+    res.json(tasks);
+  } catch (error) {
+    console.error('❌ Error fetching upcoming tasks:', error);
+    res.status(500).json({ error: 'Failed to fetch upcoming tasks' });
+  }
+});
+
+// Upcoming tasks page
+app.get('/upcoming-tasks', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    
+    // Get tasks due in next 3 days
+    const now = new Date();
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(now.getDate() + 3);
+    
+    console.log('📅 Loading upcoming tasks page:', {
+      userId,
+      now: now.toISOString(),
+      threeDaysFromNow: threeDaysFromNow.toISOString()
+    });
+
+    const sql = `
+      SELECT t.*, p.name as pet_name, p.species 
+      FROM tasks t 
+      JOIN pets p ON t.pet_id = p.pet_id 
+      WHERE t.user_id = ? 
+      AND t.completed = false
+      AND t.due_date BETWEEN ? AND ?
+      ORDER BY t.due_date ASC, t.priority DESC
+    `;
+    
+    const tasks = await query(sql, [userId, now, threeDaysFromNow]);
+    
+    console.log('✅ Tasks for upcoming page:', tasks.length);
+    
+    res.render('upcoming-tasks', { 
+      title: 'Upcoming Tasks - Next 3 Days',
+      tasks: tasks,
+      username: req.session.username
+    });
+  } catch (error) {
+    console.error('❌ Error fetching upcoming tasks page:', error);
+    res.status(500).render('error', { 
+      error: 'Failed to load upcoming tasks',
+      message: 'There was an error loading your upcoming tasks.'
+    });
+  }
+});
+
+
+
+
+// Task Overview page
+app.get('/task-overview', requireAuth, async (req, res) => {
+  try {
+    res.render('task-overview', {
+      title: 'Task Overview - Pet Care Management'
+    });
+  } catch (error) {
+    console.error('Task overview page error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Error loading task overview page.',
       error: process.env.NODE_ENV === 'development' ? err : {}
     });
   }

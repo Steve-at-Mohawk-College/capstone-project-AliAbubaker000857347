@@ -96,6 +96,101 @@
   line-height: 1.5 !important;
 }
 
+/* Detail View Styles */
+.pet-avatar-large, .task-icon-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.task-icon-large.overdue {
+    background: linear-gradient(135deg, var(--danger), #ff6b6b);
+}
+
+.detail-section {
+    padding: 1.5rem;
+    background: var(--light-card);
+    border-radius: 12px;
+    border: 1px solid var(--light-border);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--light-text);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--light-muted);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    color: var(--light-text);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.health-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(67, 97, 238, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(67, 97, 238, 0.1);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--light-muted);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.countdown {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.countdown.text-danger {
+    color: var(--danger);
+}
+
+/* Dark theme support */
+[data-theme="dark"] .detail-section {
+    background: var(--dark-card);
+    border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .stat-item {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: rgba(67, 97, 238, 0.2);
+}
+
 /* ===== SPECIFIC DASHBOARD ELEMENTS ===== */
 
 /* Pet info text */

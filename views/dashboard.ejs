@@ -26,6 +26,136 @@
   --dark-muted: #8a9bb0;
 }
 
+/* Detail View Styles */
+.pet-avatar-large, .task-icon-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.task-icon-large.overdue {
+    background: linear-gradient(135deg, var(--danger), #ff6b6b);
+}
+/* Debug styles - remove after testing */
+.clickable-item {
+    position: relative;
+}
+
+
+
+.pet-item:hover, .task-item:hover {
+    background: var(--light-card-hover);
+    border-color: var(--accent);
+    transform: translateX(8px);
+    box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+    cursor: pointer;
+}
+.detail-section {
+    padding: 1.5rem;
+    background: var(--light-card);
+    border-radius: 12px;
+    border: 1px solid var(--light-border);
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--light-text);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--light-muted);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.detail-value {
+    color: var(--light-text);
+    font-size: 1rem;
+    margin: 0 0 1rem 0;
+}
+
+.health-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(67, 97, 238, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(67, 97, 238, 0.1);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--light-muted);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.countdown {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.countdown.text-danger {
+    color: var(--danger);
+}
+
+.time-remaining {
+    padding: 1rem;
+    background: var(--light-card);
+    border-radius: 12px;
+    border: 1px solid var(--light-border);
+}
+
+.status-info {
+    padding: 1rem;
+    background: var(--light-card);
+    border-radius: 12px;
+    border: 1px solid var(--light-border);
+}
+
+/* Dark theme support */
+[data-theme="dark"] .detail-section {
+    background: var(--dark-card);
+    border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .stat-item {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: rgba(67, 97, 238, 0.2);
+}
+
+[data-theme="dark"] .time-remaining,
+[data-theme="dark"] .status-info {
+    background: var(--dark-card);
+    border-color: var(--dark-border);
+}
+
 /* Base Styles - Light Theme by Default */
 /* Remove all spacing before dashboard */
 body {
@@ -1170,11 +1300,13 @@ main, .main-content, .content {
           <% if (pets && pets.length > 0) { %>
             <% pets.forEach((pet, index) => { %>
               <!-- Pet Item -->
-              <div class="pet-item slide-in-right" 
-                   data-species="<%= pet.species %>" 
-                   data-gender="<%= pet.gender %>" 
-                   data-age="<%= pet.age %>"
-                   style="animation-delay: <%= 0.6 + (index * 0.1) %>s">
+              <div class="pet-item slide-in-right clickable-item" 
+     data-type="pet" 
+     data-id="<%= pet.pet_id %>"
+     data-species="<%= pet.species %>" 
+     data-gender="<%= pet.gender %>" 
+     data-age="<%= pet.age %>"
+     style="animation-delay: <%= 0.6 + (index * 0.1) %>s; cursor: pointer;">
                 <div class="pet-avatar">
                   <i class="bi bi-<%= pet.species === 'dog' ? 'heart' : pet.species === 'cat' ? 'star' : 'circle' %>-fill"></i>
                 </div>
@@ -1295,11 +1427,13 @@ main, .main-content, .content {
         <% if (tasks && tasks.length > 0) { %>
           <% tasks.forEach((task, index) => { %>
             <!-- Task Item -->
-            <div class="task-item slide-in-right" 
-                 data-priority="<%= task.priority %>"
-                 data-task-type="<%= task.task_type %>"
-                 data-due-date="<%= task.due_date %>"
-                 style="animation-delay: <%= 0.7 + (index * 0.1) %>s">
+            <div class="task-item slide-in-right clickable-item"
+     data-type="task"
+     data-id="<%= task.task_id %>"
+     data-priority="<%= task.priority %>"
+     data-task-type="<%= task.task_type %>"
+     data-due-date="<%= task.due_date %>"
+     style="animation-delay: <%= 0.7 + (index * 0.1) %>s; cursor: pointer;">
               <div class="task-icon">
                 <i class="bi bi-<%= task.priority === 'high' ? 'exclamation-triangle' : 'calendar-check' %>"></i>
               </div>
@@ -1467,7 +1601,28 @@ main, .main-content, .content {
     </div>
   </div>
 </div>
+  <!-- Detail View Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailModalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
+      </div>
+      <div class="modal-body" id="detailModalBody">
+        <!-- Content will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="detailEditBtn" style="display: none;">Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+
+
+<script src="/js/detail-views.js"></script>
 <script src="/js/dashboard-filters-enhanced.js"></script>
 <script src="/js/dashboard-enhanced.js"></script>
 

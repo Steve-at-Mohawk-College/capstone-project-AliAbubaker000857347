@@ -1,5 +1,6 @@
 const express = require('express');
 const { getPetsByUser, createPet, updatePet, deletePet } = require('../models/petModel');
+const { getTasksByUser } = require('../models/taskModel'); 
 
 const router = express.Router();
 
@@ -210,6 +211,37 @@ router.put('/:petId', requireAuth, async (req, res) => {
     console.error('💥 Update pet error:', err);
     res.status(500).json({ error: 'Error updating pet: ' + err.message });
   }
+});
+
+
+// GET /api/pets/:petId - Get single pet details
+router.get('/api/pets/:petId', requireAuth, async (req, res) => {
+    try {
+        const pets = await getPetsByUser(req.session.userId);
+        const pet = pets.find(p => p.pet_id == req.params.petId);
+        
+        if (!pet) {
+            return res.status(404).json({ error: 'Pet not found' });
+        }
+        
+        res.json(pet);
+    } catch (error) {
+        console.error('Get pet error:', error);
+        res.status(500).json({ error: 'Error fetching pet' });
+    }
+});
+
+// GET /api/pets/:petId/tasks - Get tasks for specific pet
+router.get('/api/pets/:petId/tasks', requireAuth, async (req, res) => {
+    try {
+        const tasks = await getTasksByUser(req.session.userId);
+        const petTasks = tasks.filter(task => task.pet_id == req.params.petId);
+        
+        res.json(petTasks);
+    } catch (error) {
+        console.error('Get pet tasks error:', error);
+        res.status(500).json({ error: 'Error fetching pet tasks' });
+    }
 });
 
 // DELETE /pets/:petId

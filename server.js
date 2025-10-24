@@ -645,6 +645,179 @@ app.get('/health-tracker-history', requireAuth, async (req, res) => {
   }
 });
 
+app.get('/test-domain-email', async (req, res) => {
+  try {
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    
+    console.log('🔑 Testing SendGrid with Domain Authentication...');
+    console.log('From Email: no-reply@send37.get-cans.live');
+    
+    const msg = {
+      to: 'aliabdulsameea69@gmail.com',
+      from: {
+        email: 'no-reply@send37.get-cans.live',
+        name: 'Pet Care Management'
+      },
+      subject: 'Domain Authentication Test - Working!',
+      text: 'Your domain authentication is working correctly!',
+      html: '<strong>✅ Domain authentication successful! Emails are now sending from your verified domain.</strong>'
+    };
+    
+    await sgMail.send(msg);
+    console.log('✅ Domain email test sent successfully!');
+    res.json({ success: true, message: 'Domain email test sent successfully' });
+  } catch (error) {
+    console.error('❌ Domain email test failed:', error.response?.body || error.message);
+    res.status(500).json({ 
+      error: 'Domain email test failed', 
+      details: error.response?.body || error.message 
+    });
+  }
+});
+// Add this temporary route to debug SendGrid
+app.get('/debug-sendgrid', async (req, res) => {
+  try {
+    const sgMail = require('@sendgrid/mail');
+    
+    console.log('🔍 SendGrid Debug Information:');
+    console.log('API Key Present:', !!process.env.SENDGRID_API_KEY);
+    console.log('API Key Length:', process.env.SENDGRID_API_KEY?.length);
+    console.log('API Key Starts With:', process.env.SENDGRID_API_KEY?.substring(0, 10));
+    console.log('From Email:', process.env.FROM_EMAIL);
+    
+    // Test the API key directly
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    
+    const msg = {
+      to: 'aliabdulsameea69@gmail.com',
+      from: {
+        email: 'no-reply@send37.get-cans.live',
+        name: 'Pet Care Management'
+      },
+      subject: 'SendGrid API Test',
+      text: 'Testing API key functionality',
+      html: '<p>Testing API key functionality</p>'
+    };
+    
+    await sgMail.send(msg);
+    console.log('✅ API Key is working!');
+    res.json({ success: true, message: 'API key is valid' });
+    
+  } catch (error) {
+    console.error('❌ API Key test failed:');
+    console.error('Error Code:', error.code);
+    console.error('Error Message:', error.message);
+    console.error('Response Body:', error.response?.body);
+    
+    res.status(500).json({
+      error: 'API key test failed',
+      code: error.code,
+      message: error.message,
+      details: error.response?.body
+    });
+  }
+});
+
+app.get('/test-final', async (req, res) => {
+  try {
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    
+    console.log('🎯 Final Test - Domain: em3996.pet-care.live');
+    
+    const msg = {
+      to: 'aliabdulsameea69@gmail.com',
+      from: 'no-reply@em3996.pet-care.live',
+      subject: 'FINAL TEST - Domain Fully Verified!',
+      text: 'Your domain em3996.pet-care.live is fully authenticated and ready!',
+      html: '<h2>✅ Domain Fully Verified!</h2><p>All DNS records are verified and your domain is ready!</p>'
+    };
+    
+    await sgMail.send(msg);
+    console.log('✅ FINAL SUCCESS: Email sent from verified domain!');
+    res.json({ 
+      success: true, 
+      message: 'Domain email working perfectly!',
+      domain: 'em3996.pet-care.live'
+    });
+    
+  } catch (error) {
+    console.error('❌ Final test failed:', error.response?.body || error.message);
+    res.status(500).json({ 
+      error: 'Final test failed',
+      details: error.response?.body 
+    });
+  }
+});
+
+app.get('/debug-email-config', (req, res) => {
+  console.log('🔍 Current Email Configuration:');
+  console.log('SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
+  console.log('SENDGRID_API_KEY length:', process.env.SENDGRID_API_KEY?.length);
+  console.log('EMAIL_USER from env:', process.env.EMAIL_USER);
+  console.log('FROM_EMAIL from env:', process.env.FROM_EMAIL);
+  
+  res.json({
+    apiKeyPresent: !!process.env.SENDGRID_API_KEY,
+    apiKeyLength: process.env.SENDGRID_API_KEY?.length,
+    emailUser: process.env.EMAIL_USER,
+    fromEmail: process.env.FROM_EMAIL,
+    verifiedDomain: 'em3996.pet-care.live'
+  });
+});
+
+app.get('/test-correct-domain', async (req, res) => {
+  try {
+    const sgMail = require('@sendgrid/mail');
+    
+    console.log('🔐 API Key Check:');
+    console.log('Key exists:', !!process.env.SENDGRID_API_KEY);
+    console.log('Key length:', process.env.SENDGRID_API_KEY?.length);
+    console.log('Key starts with:', process.env.SENDGRID_API_KEY?.substring(0, 10));
+    
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    
+    const msg = {
+      to: 'aliabdulsameea69@gmail.com',
+      from: 'no-reply@em3996.pet-care.live', // Your verified domain
+      subject: 'CORRECT DOMAIN TEST - em3996.pet-care.live',
+      text: 'Testing with the correct authenticated domain.',
+      html: '<p>Testing with <strong>em3996.pet-care.live</strong> - your verified domain</p>'
+    };
+    
+    console.log('🚀 Sending test email...');
+    await sgMail.send(msg);
+    console.log('✅ SUCCESS: Email sent from verified domain!');
+    
+    res.json({ 
+      success: true, 
+      message: 'Email sent successfully from em3996.pet-care.live',
+      domain: 'em3996.pet-care.live'
+    });
+    
+  } catch (error) {
+    console.error('❌ Test failed:');
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    console.error('Response body:', error.response?.body);
+    
+    // Check if it's an API key issue
+    if (error.code === 401) {
+      console.error('🔑 API KEY ISSUE: Generate a new API key in SendGrid');
+    }
+    
+    res.status(500).json({ 
+      success: false,
+      error: 'Email test failed',
+      code: error.code,
+      message: error.message,
+      details: error.response?.body
+    });
+  }
+});
+
+
 // In your server.js - REPLACE the dashboard route with this:
 
 app.get('/dashboard', requireAuth, async (req, res) => {

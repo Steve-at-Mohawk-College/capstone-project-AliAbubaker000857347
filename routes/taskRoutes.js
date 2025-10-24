@@ -243,6 +243,72 @@ router.delete('/:taskId', requireAuth, async (req, res) => {
   }
 });
 
+// Calendar tasks endpoint - ADD THIS ABOVE THE :taskId ROUTE
+
+router.get('/calendar', requireAuth, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        
+        console.log('📅 Calendar tasks API called for user:', userId);
+        
+        // Get tasks for a wider date range to ensure we see data
+        const now = new Date();
+        const pastDate = new Date();
+        pastDate.setDate(now.getDate() - 7); // Include some past dates for testing
+        const futureDate = new Date();
+        futureDate.setDate(now.getDate() + 90); // Extended to 90 days
+
+        const sql = `
+            SELECT 
+                t.*, 
+                p.name as pet_name, 
+                p.species,
+                DATE(t.due_date) as due_date_date
+            FROM tasks t 
+            JOIN pets p ON t.pet_id = p.pet_id 
+            WHERE t.user_id = ? 
+            AND t.completed = false
+            AND t.due_date BETWEEN ? AND ?
+            ORDER BY t.due_date ASC
+        `;
+        
+        console.log('📅 Query date range:', pastDate, 'to', futureDate);
+        
+        const tasks = await query(sql, [userId, pastDate, futureDate]);
+        
+        console.log('✅ Calendar tasks found:', tasks.length);
+        
+        // Log sample tasks for debugging
+        tasks.slice(0, 3).forEach((task, index) => {
+            console.log(`📝 Task ${index + 1}:`, {
+                title: task.title,
+                due_date: task.due_date,
+                due_date_date: task.due_date_date,
+                pet_name: task.pet_name
+            });
+        });
+        
+        res.json(tasks);
+    } catch (error) {
+        console.error('❌ Calendar tasks API error:', error);
+        res.status(500).json({ error: 'Failed to load calendar data' });
+    }
+});
+
+
+router.get('/debug-routes', (req, res) => {
+  const routes = [];
+  router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      routes.push({
+        path: middleware.route.path,
+        methods: Object.keys(middleware.route.methods)
+      });
+    }
+  });
+  res.json(routes);
+});
+
 // GET /tasks/:taskId - Get a single task
 router.get('/:taskId', requireAuth, async (req, res) => {
   try {
@@ -353,6 +419,9 @@ router.get('/api/tasks/overview', requireAuth, async (req, res) => {
     });
   }
 });
+
+
+
 
 // PUT /tasks/:taskId/complete - Mark task as complete
 router.put('/:taskId/complete', requireAuth, async (req, res) => {

@@ -1,6 +1,10 @@
+const database = require('../config/database');
+
+const { query, queryOne } = require('../config/database');
+
 const bcrypt = require('bcryptjs');
 const { createUser, findByEmail, findByUsername, verifyUser } = require('../models/userModel');
-const { query, queryOne } = require('../config/database');
+
 
 class AuthTests {
     constructor(testSummary) {
@@ -165,6 +169,50 @@ class AuthTests {
             }
         }
     }
+
+    async cleanup() {
+    if (this.testUser) {
+        try {
+            await query('DELETE FROM users WHERE user_id = ?', [this.testUser.user_id]);
+            console.log(' Cleaned up test user data');
+        } catch (error) {
+            console.log('  Cleanup warning:', error.message);
+        }
+    }
+        
+        
+    }
+
+    // Add a method to run tests and exit properly
+    static async runWithExit() {
+        const summary = new TestSummary();
+        const tests = new AuthTests(summary);
+        
+        try {
+            await tests.runAllTests();
+            console.log('\n✅ All authentication tests completed successfully!');
+            return true;
+        } catch (error) {
+            console.error('\n❌ Authentication tests failed:', error);
+            return false;
+        } finally {
+            await tests.cleanup();
+            // Force exit after cleanup
+            setTimeout(() => process.exit(0), 500);
+        }
+    }
 }
+
+// Add this to allow direct execution
+if (require.main === module) {
+    AuthTests.runWithExit().then(success => {
+        process.exit(success ? 0 : 1);
+    });
+}
+
+
+    
+
+
 
 module.exports = AuthTests;

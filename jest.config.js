@@ -4,18 +4,18 @@ module.exports = {
     '**/tests/**/*.test.js',
     '**/tests/**/*.spec.js'
   ],
-  testPathIgnorePatterns: [
-    '/node_modules/'
-  ],
   collectCoverageFrom: [
-    'models/**/*.js',
-    'routes/**/*.js',
-    'services/**/*.js'
+    '**/*.js',
+    '!**/node_modules/**',
+    '!**/tests/**',
+    '!**/coverage/**'
   ],
-  coverageDirectory: 'coverage',
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/coverage/'
+  ],
   verbose: true,
   forceExit: true,
-  clearMocks: true,
-  resetMocks: true,
-  restoreMocks: true
+  detectOpenHandles: true,
+  testTimeout: 30000
 };

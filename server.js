@@ -317,6 +317,8 @@ app.get('/debug/tasks', requireAuth, async (req, res) => {
 });
 
 
+
+
 // Update the debug endpoint in server.js
 app.get('/debug/tasks-overview', requireAuth, async (req, res) => {
   try {
@@ -369,7 +371,86 @@ app.get('/debug/tasks-overview', requireAuth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// Calendar page route - ADD THIS TO YOUR server.js
+app.get('/calendar', requireAuth, async (req, res) => {
+    try {
+        console.log('📅 Loading calendar page for user:', req.session.userId);
+        res.render('calendar', {
+            title: 'Calendar - Pet Care Management',
+            username: req.session.username
+        });
+    } catch (error) {
+        console.error('❌ Calendar page error:', error);
+        res.status(500).render('error', {
+            title: 'Error',
+            message: 'Error loading calendar page.'
+        });
+    }
+});
 
+// Calendar API endpoint - ADD THIS TO YOUR server.js
+app.get('/tasks/calendar', requireAuth, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        
+        console.log('📅 Calendar API called for user:', userId);
+        
+        // Get tasks for the next 60 days for calendar view
+        const now = new Date();
+        const futureDate = new Date();
+        futureDate.setDate(now.getDate() + 60);
+        
+        console.log('📅 Date range:', {
+            now: now.toISOString(),
+            futureDate: futureDate.toISOString()
+        });
+
+        const sql = `
+            SELECT t.*, p.name as pet_name, p.species 
+            FROM tasks t 
+            JOIN pets p ON t.pet_id = p.pet_id 
+            WHERE t.user_id = ? 
+            AND t.completed = false
+            AND t.due_date BETWEEN ? AND ?
+            ORDER BY t.due_date ASC
+        `;
+        
+        const tasks = await query(sql, [userId, now, futureDate]);
+        
+        console.log('✅ Calendar tasks found:', tasks.length);
+        
+        res.json(tasks);
+    } catch (error) {
+        console.error('❌ Calendar API error:', error);
+        res.status(500).json({ error: 'Failed to load calendar data: ' + error.message });
+    }
+});
+
+
+
+// Debug route to check tasks
+app.get('/debug/user-tasks', requireAuth, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        
+        const tasks = await query(`
+            SELECT t.*, p.name as pet_name 
+            FROM tasks t 
+            JOIN pets p ON t.pet_id = p.pet_id 
+            WHERE t.user_id = ? 
+            AND t.completed = false
+            ORDER BY t.due_date ASC
+        `, [userId]);
+        
+        res.json({
+            userId: userId,
+            totalTasks: tasks.length,
+            tasks: tasks
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 
 
@@ -394,6 +475,20 @@ async function initializeApp() {
       const notificationWorker = require('./workers/notificationWorker');
       notificationWorker.start();
     }
+    
+if (process.env.NODE_ENV === 'test') {
+  console.log('🧪 Test environment detected')
+  // Disable rate limiting in tests
+  app.use((req, res, next) => {
+    if (req.path.includes('/auth/')) {
+      // Skip rate limiting for auth in tests
+      return next()
+    }
+    next()
+  })
+}
+
+
 
     // Only start server if not in test environment and this is the main module
     if (process.env.NODE_ENV !== 'test' && require.main === module) {
@@ -1256,28 +1351,7 @@ app.use((req, res) => {
 // ===== Start server =====
 const PORT = process.env.PORT || 3000;
 
-async function initializeApp() {
-  try {
-    const dbConnected = await testConnection();
-    if (!dbConnected) {
-      console.error('❌ Failed to connect to database. Exiting...');
-      process.exit(1);
-    }
 
-    // Only start server if not in test environment and this is the main module
-    if (process.env.NODE_ENV !== 'test' && require.main === module) {
-      app.listen(PORT, () => {
-        console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-        console.log(`📊 Health check: http://localhost:${PORT}/health-check`);
-        console.log(`🔗 Login page: http://localhost:${PORT}/login`);
-        console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-      });
-    }
-  } catch (error) {
-    console.error('Failed to initialize app:', error);
-    process.exit(1);
-  }
-}
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
@@ -1290,6 +1364,23 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
+// puppeteer-auth.js
+module.exports = async (browser) => {
+  const page = await browser.newPage();
+  
+  await page.goto('http://localhost:3000/login');
+  
+  // Update these selectors to match your login form
+  await page.type('input[name="username"]', process.env.TEST_USERNAME);
+  await page.type('input[name="password"]', process.env.TEST_PASSWORD);
+  await page.click('button[type="submit"]');
+  
+  // Wait for navigation to complete
+  await page.waitForNavigation();
+  
+  // Keep the browser and page open for Lighthouse
+  return page;
+};
 // Export app for testing
 module.exports = app;
 

@@ -248,9 +248,45 @@ window.editTask = function(taskId) {
 
 window.completeTask = function(taskId) {
     console.log('✅ Completing task:', taskId);
-    // You can implement task completion logic here
-    alert(`Task ${taskId} marked as complete!`);
-    // Close the modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('detailModal'));
-    if (modal) modal.hide();
+    
+    fetch(`/tasks/${taskId}/complete`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // Remove the task from the dashboard immediately
+            const taskElement = document.querySelector(`.clickable-item[data-type="task"][data-id="${taskId}"]`);
+            if (taskElement) {
+                taskElement.style.opacity = '0';
+                taskElement.style.transform = 'translateX(100px)';
+                
+                setTimeout(() => {
+                    taskElement.remove();
+                    
+                    // Check if no tasks left and show empty state if needed
+                    const remainingTasks = document.querySelectorAll('.task-item');
+                    if (remainingTasks.length === 0) {
+                        // You might want to reload or show empty state
+                        window.location.reload();
+                    }
+                }, 300);
+            }
+            
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('detailModal'));
+            if (modal) modal.hide();
+            
+            // Show success message
+            alert('Task marked as complete and removed from dashboard!');
+        } else {
+            alert('Failed to mark task as complete');
+        }
+    })
+    .catch(error => {
+        console.error('Error completing task:', error);
+        alert('Failed to mark task as complete');
+    });
 }

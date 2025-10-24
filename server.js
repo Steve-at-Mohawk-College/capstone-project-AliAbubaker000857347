@@ -687,24 +687,26 @@ app.get('/dashboard', requireAuth, async (req, res) => {
 
     // Get paginated tasks - ONLY 5 PER PAGE
     const tasks = await queryPaginated(
-      `SELECT t.*, p.name as pet_name 
-       FROM tasks t 
-       JOIN pets p ON t.pet_id = p.pet_id 
-       WHERE p.user_id = ? 
-       ORDER BY t.due_date ASC`,
-      [userId],
-      itemsPerPage,
-      taskOffset
-    );
+  `SELECT t.*, p.name as pet_name 
+   FROM tasks t 
+   JOIN pets p ON t.pet_id = p.pet_id 
+   WHERE p.user_id = ? 
+   AND t.completed = false  
+   ORDER BY t.due_date ASC`,
+  [userId],
+  itemsPerPage,
+  taskOffset
+);
     
-    // Get total task count
-    const totalTasksResult = await query(
-      `SELECT COUNT(*) as count 
-       FROM tasks t 
-       JOIN pets p ON t.pet_id = p.pet_id 
-       WHERE p.user_id = ?`,
-      [userId]
-    );
+    // Get total task count - 
+const totalTasksResult = await query(
+  `SELECT COUNT(*) as count 
+   FROM tasks t 
+   JOIN pets p ON t.pet_id = p.pet_id 
+   WHERE p.user_id = ? 
+   AND t.completed = false`,  
+  [userId]
+);
     const totalTasks = totalTasksResult[0].count;
     const totalTaskPages = Math.max(1, Math.ceil(totalTasks / itemsPerPage));
 

@@ -183,26 +183,24 @@ async function updateTask(taskId, userId, taskData) {
 }
 
 
-// Add this method to your taskModel.js
 async function completeTask(taskId, userId) {
-  // Verify ownership
-  const taskCheck = await query(
-    'SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?',
-    [taskId, userId]
-  );
-  
-  if (taskCheck.length === 0) {
-    throw new Error('Task not found or access denied');
-  }
+    // Verify ownership
+    const taskCheck = await query(
+        'SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?',
+        [taskId, userId]
+    );
+    
+    if (taskCheck.length === 0) {
+        throw new Error('Task not found or access denied');
+    }
 
-  // Remove completed_at from the query since the column doesn't exist
-  const sql = `
-    UPDATE tasks 
-    SET completed = true, completed_at = NOW(), notification_sent = true
-    WHERE task_id = ? AND user_id = ?
-  `;
-  
-  return query(sql, [taskId, userId]);
+    const sql = `
+        UPDATE tasks 
+        SET completed = true, completed_at = NOW()
+        WHERE task_id = ? AND user_id = ?
+    `;
+    
+    return query(sql, [taskId, userId]);
 }
 
 

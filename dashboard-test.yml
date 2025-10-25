@@ -1,0 +1,24 @@
+config:
+  target: "https://petwell-a1271a0b47f3.herokuapp.com/dashboard"
+  phases:
+    - duration: 180
+      arrivalRate: 20  # 20 concurrent users accessing dashboard
+
+scenarios:
+  - name: "Dashboard Load Test"
+    flow:
+      - post:
+          url: "/api/login"
+          json:
+            email: "aliabdulsameea69@gmail.com"
+            password: "Ali6824!"
+          capture:
+            json: "$.token"
+            as: "authToken"
+      
+      - loop:
+          - get:
+              url: "/api/dashboard"
+              headers:
+                Authorization: "Bearer {{ authToken }}"
+          

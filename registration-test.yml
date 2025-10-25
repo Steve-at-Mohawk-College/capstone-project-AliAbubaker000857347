@@ -1,0 +1,23 @@
+config:
+  target: "https://petwell-a1271a0b47f3.herokuapp.com/register"
+  phases:
+    - duration: 300
+      arrivalRate: 5  # 5 new users per second for 5 minutes
+  payload:
+    path: "new-users.csv"
+    fields:
+      - "username"
+      - "email"
+      - "password"
+
+scenarios:
+  - name: "User Registration Spike"
+    flow:
+      - post:
+          url: "/api/register"
+          json:
+            username: "{{ username }}"
+            email: "{{ email }}"
+            password: "{{ password }}"
+          ensure:
+            status: 201

@@ -1,4 +1,4 @@
-// Detail View Handler
+// Detail View Handler - Fixed version
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 Detail views script loaded - checking for modal...');
     
@@ -22,13 +22,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     detailModalElement.addEventListener('hidden.bs.modal', function () {
         console.log('📱 Modal closed - cleaning up');
-        // Clear modal content when closed to prevent focus issues
         detailModalBody.innerHTML = '';
         detailModalTitle.innerHTML = '';
     });
 
-    // Click handlers for pet and task items
+    // MODIFIED: Click handlers for pet and task items - exclude action buttons
     document.addEventListener('click', function(e) {
+        // Check if click is on an action button (edit, delete, or their icons)
+        if (e.target.closest('.edit-btn') || 
+            e.target.closest('.remove-btn') || 
+            e.target.closest('.edit-task-btn') ||
+            e.target.closest('.save-edit-btn') ||
+            e.target.closest('.cancel-edit-btn') ||
+            e.target.closest('.save-task-edit-btn') ||
+            e.target.closest('.cancel-task-edit-btn')) {
+            console.log('🔧 Action button clicked - skipping detail view');
+            return; // Don't show detail view for action buttons
+        }
+
+        // Check if click is on the main item (not the action buttons)
         const item = e.target.closest('.clickable-item');
         if (item) {
             e.preventDefault();
@@ -47,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Simple pet details using existing data
+    // Rest of your existing functions remain the same...
     function showSimplePetDetails(item) {
         const petName = item.querySelector('.pet-name').textContent;
         const petDetails = item.querySelector('.pet-details').textContent;
@@ -101,16 +113,13 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Hide edit button since we have inline buttons
         detailEditBtn.style.display = 'none';
         
-        // Show modal after a brief delay to ensure content is rendered
         setTimeout(() => {
             detailModal.show();
         }, 50);
     }
 
-    // Simple task details using existing data
     function showSimpleTaskDetails(item) {
         const taskTitle = item.querySelector('.task-title').textContent;
         const taskDetails = item.querySelector('.task-details').textContent;
@@ -182,10 +191,8 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Hide edit button since we have inline buttons
         detailEditBtn.style.display = 'none';
         
-        // Show modal after a brief delay to ensure content is rendered
         setTimeout(() => {
             detailModal.show();
         }, 50);
@@ -218,14 +225,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Global functions for button actions - attach to window object
+// Global functions remain the same...
 window.editPet = function(petId) {
     console.log('✏️ Editing pet:', petId);
     const editBtn = document.querySelector(`.edit-btn[data-pet-id="${petId}"]`);
     if (editBtn) {
         editBtn.click();
     }
-    // Close the modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('detailModal'));
     if (modal) modal.hide();
 }
@@ -241,7 +247,6 @@ window.editTask = function(taskId) {
     if (editBtn) {
         editBtn.click();
     }
-    // Close the modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('detailModal'));
     if (modal) modal.hide();
 }
@@ -257,7 +262,6 @@ window.completeTask = function(taskId) {
     })
     .then(response => {
         if (response.ok) {
-            // Remove the task from the dashboard immediately
             const taskElement = document.querySelector(`.clickable-item[data-type="task"][data-id="${taskId}"]`);
             if (taskElement) {
                 taskElement.style.opacity = '0';
@@ -266,20 +270,16 @@ window.completeTask = function(taskId) {
                 setTimeout(() => {
                     taskElement.remove();
                     
-                    // Check if no tasks left and show empty state if needed
                     const remainingTasks = document.querySelectorAll('.task-item');
                     if (remainingTasks.length === 0) {
-                        // You might want to reload or show empty state
                         window.location.reload();
                     }
                 }, 300);
             }
             
-            // Close the modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('detailModal'));
             if (modal) modal.hide();
             
-            // Show success message
             alert('Task marked as complete and removed from dashboard!');
         } else {
             alert('Failed to mark task as complete');

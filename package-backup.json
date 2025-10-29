@@ -29,8 +29,14 @@
     "test:notifications:routes": "jest tests/notification-routes.test.js --config=jest.config.js",
     "test:notifications:integration": "jest tests/notification-integration.test.js --config=jest.config.js --testTimeout=30000",
     "test:tasks:all": "npm run test:tasks:api && npm run test:tasks:integration",
-    "test:full-suite": "npm run test:auth && npm run test:notifications && npm run test:tasks:api && npm run test:tasks:integration",
+    "test:full-suite": "npm run test:auth && npm run test:notifications &&   npm run test:tasks:api && npm run test:tasks:integration",
     "test:ui": "jest tests/*-ui.test.js --config=jest.config.js --runInBand",
+   
+
+     
+    "test:pets": "node tests/run-pet-tests.js",
+    
+    "test:pets:with-auth": "npm run test:auth && npm run test:pets",
 
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",

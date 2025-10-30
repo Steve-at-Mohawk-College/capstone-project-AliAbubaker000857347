@@ -1,0 +1,220 @@
+
+<%- include('partials/header', {title: 'Edit Health Record'}) %>
+
+
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card card-custom">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-4 text-center">Edit Health Record</h1>
+        
+        <% if (typeof message !== 'undefined' && message) { %>
+          <div class="alert alert-success"><%= message %></div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <!-- Display field-specific errors -->
+        <% if (fieldErrors && typeof fieldErrors === 'object' && Object.keys(fieldErrors).length > 0) { %>
+          <div class="alert alert-warning">
+            <strong>Please correct the following errors:</strong>
+            <ul class="mb-0 mt-2">
+              <% Object.values(fieldErrors).forEach(error => { %>
+                <li><%= error %></li>
+              <% }); %>
+            </ul>
+          </div>
+        <% } %>
+
+        <form action="/health/<%= record.health_id %>" method="POST" id="healthForm" novalidate>
+          <input type="hidden" name="_method" value="PUT">
+          
+          <div class="mb-3">
+            <label for="pet_id" class="form-label">Pet *</label>
+            <select class="form-select <%= (fieldErrors && fieldErrors.pet_id) ? 'is-invalid' : '' %>" 
+                    id="pet_id" name="pet_id" required disabled>
+              <option value="">Select a Pet</option>
+              <% pets.forEach(pet => { %>
+                <option value="<%= pet.pet_id %>" 
+                        <%= (record.pet_id == pet.pet_id) ? 'selected' : '' %>>
+                  <%= pet.name %> (<%= pet.species %>)
+                </option>
+              <% }); %>
+            </select>
+            <input type="hidden" name="pet_id" value="<%= record.pet_id %>">
+            <% if (fieldErrors && fieldErrors.pet_id) { %>
+              <div class="invalid-feedback"><%= fieldErrors.pet_id %></div>
+            <% } %>
+            <div class="form-text">Pet cannot be changed for existing records</div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="weight" class="form-label">Weight (kg)</label>
+                <input type="number" step="0.01" min="0.1" max="200" 
+                       class="form-control <%= (fieldErrors && fieldErrors.weight) ? 'is-invalid' : '' %>" 
+                       id="weight" name="weight" 
+                       placeholder="e.g., 5.2"
+                       value="<%= (body && body.weight) ? body.weight : (record.weight || '') %>">
+                <% if (fieldErrors && fieldErrors.weight) { %>
+                  <div class="invalid-feedback"><%= fieldErrors.weight %></div>
+                <% } else { %>
+                  <div class="form-text">Must be between 0.1 and 200 kg</div>
+                <% } %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="date_recorded" class="form-label">Record Date *</label>
+                <input type="date" class="form-control <%= (fieldErrors && fieldErrors.date_recorded) ? 'is-invalid' : '' %>" 
+                       id="date_recorded" name="date_recorded" required 
+                       value="<%= (body && body.date_recorded) ? body.date_recorded : (record.date_recorded ? new Date(record.date_recorded).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]) %>"
+                       max="<%= new Date().toISOString().split('T')[0] %>">
+                <% if (fieldErrors && fieldErrors.date_recorded) { %>
+                  <div class="invalid-feedback"><%= fieldErrors.date_recorded %></div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="diet" class="form-label">Diet</label>
+            <input type="text" class="form-control <%= (fieldErrors && fieldErrors.diet) ? 'is-invalid' : '' %>" 
+                   id="diet" name="diet" 
+                   placeholder="e.g., Kibble, Wet food, Raw diet"
+                   value="<%= (body && body.diet) ? body.diet : (record.diet || '') %>"
+                   maxlength="255">
+            <% if (fieldErrors && fieldErrors.diet) { %>
+              <div class="invalid-feedback"><%= fieldErrors.diet %></div>
+            <% } else { %>
+              <div class="form-text">Maximum 255 characters</div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label for="medical_notes" class="form-label">Medical Notes</label>
+            <textarea class="form-control <%= (fieldErrors && fieldErrors.medical_notes) ? 'is-invalid' : '' %>" 
+                      id="medical_notes" name="medical_notes" rows="3" 
+                      placeholder="Any medical observations, symptoms, or notes..."
+                      maxlength="1000"><%= (body && body.medical_notes) ? body.medical_notes : (record.medical_notes || '') %></textarea>
+            <% if (fieldErrors && fieldErrors.medical_notes) { %>
+              <div class="invalid-feedback"><%= fieldErrors.medical_notes %></div>
+            <% } else { %>
+              <div class="form-text">Maximum 1000 characters</div>
+            <% } %>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="vet_visit_date" class="form-label">Vet Visit Date</label>
+                <input type="date" class="form-control <%= (fieldErrors && fieldErrors.vet_visit_date) ? 'is-invalid' : '' %>" 
+                       id="vet_visit_date" name="vet_visit_date"
+                       value="<%= (body && body.vet_visit_date) ? body.vet_visit_date : (record.vet_visit_date ? new Date(record.vet_visit_date).toISOString().split('T')[0] : '') %>"
+                       max="<%= new Date().toISOString().split('T')[0] %>">
+                <% if (fieldErrors && fieldErrors.vet_visit_date) { %>
+                  <div class="invalid-feedback"><%= fieldErrors.vet_visit_date %></div>
+                <% } %>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="vaccination_date" class="form-label">Vaccination Date</label>
+                <input type="date" class="form-control <%= (fieldErrors && fieldErrors.vaccination_date) ? 'is-invalid' : '' %>" 
+                       id="vaccination_date" name="vaccination_date"
+                       value="<%= (body && body.vaccination_date) ? body.vaccination_date : (record.vaccination_date ? new Date(record.vaccination_date).toISOString().split('T')[0] : '') %>"
+                       max="<%= new Date().toISOString().split('T')[0] %>">
+                <% if (fieldErrors && fieldErrors.vaccination_date) { %>
+                  <div class="invalid-feedback"><%= fieldErrors.vaccination_date %></div>
+                <% } %>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="next_vaccination_date" class="form-label">Next Vaccination</label>
+                <input type="date" class="form-control <%= (fieldErrors && fieldErrors.next_vaccination_date) ? 'is-invalid' : '' %>" 
+                       id="next_vaccination_date" name="next_vaccination_date"
+                       value="<%= (body && body.next_vaccination_date) ? body.next_vaccination_date : (record.next_vaccination_date ? new Date(record.next_vaccination_date).toISOString().split('T')[0] : '') %>"
+                       min="<%= new Date().toISOString().split('T')[0] %>">
+                <% if (fieldErrors && fieldErrors.next_vaccination_date) { %>
+                  <div class="invalid-feedback"><%= fieldErrors.next_vaccination_date %></div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success btn-lg">Update Health Record</button>
+            <a href="/health-tracker-history" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Client-side validation
+document.getElementById('healthForm').addEventListener('submit', function(e) {
+  const weight = document.getElementById('weight');
+  const dateRecorded = document.getElementById('date_recorded');
+  const nextVaccination = document.getElementById('next_vaccination_date');
+  
+  let isValid = true;
+  
+  // Validate weight if provided
+  if (weight.value) {
+    const weightValue = parseFloat(weight.value);
+    if (weightValue < 0.1 || weightValue > 200) {
+      showFieldError(weight, 'Weight must be between 0.1 and 200 kg');
+      isValid = false;
+    } else {
+      clearFieldError(weight);
+    }
+  }
+  
+  // Validate date recorded is not in future
+  if (dateRecorded.value > new Date().toISOString().split('T')[0]) {
+    showFieldError(dateRecorded, 'Record date cannot be in the future');
+    isValid = false;
+  } else {
+    clearFieldError(dateRecorded);
+  }
+  
+  // Validate next vaccination is in future
+  if (nextVaccination.value && nextVaccination.value <= new Date().toISOString().split('T')[0]) {
+    showFieldError(nextVaccination, 'Next vaccination date must be in the future');
+    isValid = false;
+  } else {
+    clearFieldError(nextVaccination);
+  }
+  
+  if (!isValid) {
+    e.preventDefault();
+  }
+});
+
+function showFieldError(field, message) {
+  field.classList.add('is-invalid');
+  let feedback = field.nextElementSibling;
+  if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+    feedback = document.createElement('div');
+    feedback.className = 'invalid-feedback';
+    field.parentNode.insertBefore(feedback, field.nextSibling);
+  }
+  feedback.textContent = message;
+}
+
+function clearFieldError(field) {
+  field.classList.remove('is-invalid');
+  const feedback = field.nextElementSibling;
+  if (feedback && feedback.classList.contains('invalid-feedback')) {
+    feedback.remove();
+  }
+}
+</script>
+
+<%- include('partials/footer') %>

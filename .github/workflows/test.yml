@@ -1,0 +1,115 @@
+name: Pet Care Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test123
+          MYSQL_DATABASE: petcare_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest mysql-connector-python python-dotenv coverage pytest-cov
+
+    - name: Wait for MySQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mysql-client
+        while ! mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" -p"test123" --silent; do
+          sleep 2
+        done
+        echo "MySQL is ready!"
+
+    - name: Create test tables
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -u root -p"test123" petcare_test -e "
+          CREATE TABLE IF NOT EXISTS users (
+            user_id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(50) UNIQUE NOT NULL,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            is_verified BOOLEAN DEFAULT FALSE,
+            role ENUM('regular', 'admin') DEFAULT 'regular',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS pets (
+            pet_id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            name VARCHAR(50) NOT NULL,
+            breed VARCHAR(50) NOT NULL,
+            age DECIMAL(4,1) NOT NULL,
+            species VARCHAR(30) NOT NULL,
+            gender ENUM('male', 'female', 'other') NOT NULL,
+            weight DECIMAL(5,1) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS tasks (
+            task_id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            pet_id INT NOT NULL,
+            task_type ENUM('feeding', 'cleaning', 'vaccination', 'medication', 'grooming', 'vet_visit', 'exercise', 'other') NOT NULL,
+            title VARCHAR(100) NOT NULL,
+            description TEXT,
+            due_date DATETIME NOT NULL,
+            priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+            completed BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+          SHOW TABLES;
+        "
+
+    - name: Run tests
+      env:
+        TEST_DB_HOST: 127.0.0.1
+        TEST_DB_USER: root
+        TEST_DB_PASSWORD: test123
+        TEST_DB_NAME: petcare_test
+        TEST_DB_PORT: 3306
+      run: |
+        python run_tests.py
+
+    - name: Run tests with coverage
+      env:
+        TEST_DB_HOST: 127.0.0.1
+        TEST_DB_USER: root
+        TEST_DB_PASSWORD: test123
+        TEST_DB_NAME: petcare_test
+        TEST_DB_PORT: 3306
+      run: |
+        python -m pytest tests/ -v --cov=. --cov-report=xml --cov-report=html
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: |
+          htmlcov/
+          coverage.xml

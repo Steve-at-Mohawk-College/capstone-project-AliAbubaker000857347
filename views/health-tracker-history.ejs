@@ -1,212 +1,244 @@
 <%- include('partials/header', {title: 'Health Tracker History'}) %>
 
-<div class="row">
-  <div class="col-12">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1 class="h3 mb-1">Health Tracker History</h1>
-        <p class="text-muted mb-0">📊 Complete health history of your pets</p>
-      </div>
-      <div class="d-flex">
-        <a href="/health-tracker/add" class="btn btn-custom">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Health Tracker History</h1>
+        <a href="/health-tracker/add" class="btn btn-primary">
           <i class="bi bi-plus-circle"></i> Add New Record
         </a>
       </div>
+
+      <% if (typeof message !== 'undefined' && message) { %>
+        <div class="alert alert-success alert-dismissible fade show">
+          <%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% } %>
+
+      <% if (pets.length === 0) { %>
+        <div class="alert alert-info">
+          <h4>No Pets Found</h4>
+          <p>You haven't added any pets yet. <a href="/pets/add">Add your first pet</a> to start tracking health records.</p>
+        </div>
+      <% } else { %>
+        <% pets.forEach(pet => { %>
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-heart-pulse text-danger"></i>
+                <%= pet.name %> - Health History
+              </h5>
+            </div>
+            <div class="card-body">
+              <% const records = healthRecords[pet.pet_id] || []; %>
+              <% if (records.length === 0) { %>
+                <div class="text-center py-4">
+                  <i class="bi bi-clipboard-x display-4 text-muted"></i>
+                  <p class="mt-3 text-muted">No health records found for <%= pet.name %></p>
+                  <a href="/health-tracker/add?pet_id=<%= pet.pet_id %>" class="btn btn-outline-primary">
+                    Add First Health Record
+                  </a>
+                </div>
+              <% } else { %>
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Weight</th>
+                        <th>Diet</th>
+                        <th>Vet Visit</th>
+                        <th>Vaccination</th>
+                        <th>Next Vaccination</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% records.forEach(record => { %>
+                        <tr>
+                          <td>
+                            <strong><%= new Date(record.date_recorded).toLocaleDateString() %></strong>
+                          </td>
+                          <td>
+                            <% if (record.weight) { %>
+                              <%= record.weight %> kg
+                            <% } else { %>
+                              <span class="text-muted">-</span>
+                            <% } %>
+                          </td>
+                          <td>
+                            <% if (record.diet) { %>
+                              <%= record.diet.substring(0, 30) %><%= record.diet.length > 30 ? '...' : '' %>
+                            <% } else { %>
+                              <span class="text-muted">-</span>
+                            <% } %>
+                          </td>
+                          <td>
+                            <% if (record.vet_visit_date) { %>
+                              <%= new Date(record.vet_visit_date).toLocaleDateString() %>
+                            <% } else { %>
+                              <span class="text-muted">-</span>
+                            <% } %>
+                          </td>
+                          <td>
+                            <% if (record.vaccination_date) { %>
+                              <%= new Date(record.vaccination_date).toLocaleDateString() %>
+                            <% } else { %>
+                              <span class="text-muted">-</span>
+                            <% } %>
+                          </td>
+                          <td>
+                            <% if (record.next_vaccination_date) { %>
+                              <% const nextVaccDate = new Date(record.next_vaccination_date); %>
+                              <% const today = new Date(); %>
+                              <span class="<%= nextVaccDate < today ? 'text-danger' : '' %>">
+                                <%= nextVaccDate.toLocaleDateString() %>
+                                <% if (nextVaccDate < today) { %>
+                                  <br><small class="text-danger">Overdue</small>
+                                <% } %>
+                              </span>
+                            <% } else { %>
+                              <span class="text-muted">-</span>
+                            <% } %>
+                          </td>
+                          <td>
+                            <div class="btn-group btn-group-sm">
+                              <button class="btn btn-outline-primary view-record" 
+                                      data-record-id="<%= record.health_id %>"
+                                      title="View Details">
+                                <i class="bi bi-eye"></i>
+                              </button>
+                              <button class="btn btn-outline-warning edit-record"
+                                      data-record-id="<%= record.health_id %>"
+                                      title="Edit Record">
+                                <i class="bi bi-pencil"></i>
+                              </button>
+                              <button class="btn btn-outline-danger delete-record"
+                                      data-record-id="<%= record.health_id %>"
+                                      data-pet-name="<%= pet.name %>"
+                                      data-record-date="<%= new Date(record.date_recorded).toLocaleDateString() %>"
+                                      title="Delete Record">
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      <% }); %>
+                    </tbody>
+                  </table>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
     </div>
   </div>
 </div>
 
-<% if (pets && pets.length > 0) { %>
-  <div class="row">
-    <% pets.forEach(pet => { %>
-      <div class="col-12 mb-4">
-        <div class="card card-custom">
-          <div class="card-header bg-primary text-white">
-            <h2 class="h5 mb-0">
-              <i class="bi bi-heart-fill me-2"></i>
-              <%= pet.name %>'s Health History
-              <span class="badge bg-light text-primary ms-2">
-                <%= healthRecords[pet.pet_id] ? healthRecords[pet.pet_id].length : 0 %> records
-              </span>
-            </h2>
-          </div>
-          <div class="card-body">
-            <% if (healthRecords[pet.pet_id] && healthRecords[pet.pet_id].length > 0) { %>
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Weight (kg)</th>
-                      <th>Diet</th>
-                      <th>Vet Visit</th>
-                      <th>Vaccination</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% healthRecords[pet.pet_id].forEach(record => { %>
-                      <tr>
-                        <td><%= new Date(record.date_recorded).toLocaleDateString() %></td>
-                        <td><%= record.weight || 'N/A' %></td>
-                        <td><%= record.diet || 'N/A' %></td>
-                        <td>
-                          <% if (record.vet_visit_date) { %>
-                            <%= new Date(record.vet_visit_date).toLocaleDateString() %>
-                          <% } else { %>
-                            N/A
-                          <% } %>
-                        </td>
-                        <td>
-                          <% if (record.vaccination_date) { %>
-                            <%= new Date(record.vaccination_date).toLocaleDateString() %>
-                          <% } else { %>
-                            N/A
-                          <% } %>
-                        </td>
-                        <td>
-                          <button class="btn btn-sm btn-outline-primary view-record-btn" 
-        data-record-id="<%= record.health_id %>"> 
-  <i class="bi bi-eye"></i> View
-</button>
-                        </td>
-                      </tr>
-                    <% }); %>
-                  </tbody>
-                </table>
-              </div>
-            <% } else { %>
-              <div class="text-center py-4">
-                <div class="bg-light rounded-circle p-4 d-inline-block mb-3">
-                  <i class="bi bi-clipboard-plus text-muted" style="font-size: 2rem;"></i>
-                </div>
-                <h5 class="text-muted">No health records found</h5>
-                <p class="text-muted mb-3">Start tracking <%= pet.name %>'s health by adding the first record</p>
-                <a href="/health-tracker/add?pet_id=<%= pet.pet_id %>" class="btn btn-custom">
-                  <i class="bi bi-plus-circle"></i> Add First Record
-                </a>
-              </div>
-            <% } %>
-          </div>
-        </div>
-      </div>
-    <% }); %>
-  </div>
-<% } else { %>
-  <div class="text-center py-5">
-    <div class="bg-light rounded-circle p-5 d-inline-block mb-4">
-      <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
-    </div>
-    <h3 class="text-muted">No pets found</h3>
-    <p class="text-muted mb-4">Add your first pet to start tracking health records</p>
-    <a href="/pets/add" class="btn btn-custom btn-lg">
-      <i class="bi bi-plus-circle"></i> Add Your First Pet
-    </a>
-  </div>
-<% } %>
-
 <!-- Record Details Modal -->
-<div class="modal fade" id="recordDetailsModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="recordModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Health Record Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body" id="recordDetailsContent">
-        <!-- Content will be loaded via JavaScript -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-body" id="recordDetails">
+        <!-- Content loaded via JavaScript -->
       </div>
     </div>
   </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // View record details
-  document.querySelectorAll('.view-record-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const recordId = this.getAttribute('data-record-id');
+// View record details
+document.querySelectorAll('.view-record').forEach(btn => {
+  btn.addEventListener('click', async function() {
+    const recordId = this.dataset.recordId;
+    
+    try {
+      const response = await fetch(`/health/records/${recordId}`);
+      const record = await response.json();
       
-      // Show loading state
-      document.getElementById('recordDetailsContent').innerHTML = `
-        <div class="text-center py-4">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="mt-2">Loading record details...</p>
-        </div>
-      `;
-      
-      // Fetch record details
-      fetch(`/health/records/${recordId}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(record => {
-          if (record.error) {
-            throw new Error(record.error);
-          }
-          
-          // Helper function to format dates safely
-          const formatDate = (date) => {
-            if (!date) return 'Not scheduled';
-            try {
-              const d = new Date(date);
-              return isNaN(d.getTime()) ? 'Invalid date' : d.toLocaleDateString();
-            } catch (e) {
-              return 'Invalid date';
-            }
-          };
-          
-          const modalContent = `
-            <div class="row">
-              <div class="col-md-6">
-                <h6>Basic Information</h6>
-                <p><strong>Pet:</strong> ${record.pet_name || 'Unknown'}</p>
-                <p><strong>Date Recorded:</strong> ${formatDate(record.date_recorded)}</p>
-                <p><strong>Weight:</strong> ${record.weight ? record.weight + ' kg' : 'Not recorded'}</p>
-                <p><strong>Diet:</strong> ${record.diet || 'Not specified'}</p>
-              </div>
-              <div class="col-md-6">
-                <h6>Medical Information</h6>
-                <p><strong>Vet Visit:</strong> ${formatDate(record.vet_visit_date)}</p>
-                <p><strong>Vaccination:</strong> ${formatDate(record.vaccination_date)}</p>
-                <p><strong>Next Vaccination:</strong> ${formatDate(record.next_vaccination_date)}</p>
-              </div>
+      if (response.ok) {
+        document.getElementById('recordDetails').innerHTML = `
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Basic Information</h6>
+              <p><strong>Pet:</strong> ${record.pet_name}</p>
+              <p><strong>Record Date:</strong> ${new Date(record.date_recorded).toLocaleDateString()}</p>
+              <p><strong>Weight:</strong> ${record.weight ? record.weight + ' kg' : 'Not recorded'}</p>
+              <p><strong>Diet:</strong> ${record.diet || 'Not recorded'}</p>
             </div>
-            ${record.medical_notes ? `
+            <div class="col-md-6">
+              <h6>Medical Information</h6>
+              <p><strong>Vet Visit:</strong> ${record.vet_visit_date ? new Date(record.vet_visit_date).toLocaleDateString() : 'Not recorded'}</p>
+              <p><strong>Vaccination:</strong> ${record.vaccination_date ? new Date(record.vaccination_date).toLocaleDateString() : 'Not recorded'}</p>
+              <p><strong>Next Vaccination:</strong> ${record.next_vaccination_date ? new Date(record.next_vaccination_date).toLocaleDateString() : 'Not scheduled'}</p>
+            </div>
+          </div>
+          ${record.medical_notes ? `
             <div class="row mt-3">
               <div class="col-12">
                 <h6>Medical Notes</h6>
-                <div class="bg-light p-3 rounded">
-                  <p class="mb-0">${record.medical_notes}</p>
+                <div class="border rounded p-3 bg-light">
+                  ${record.medical_notes}
                 </div>
               </div>
             </div>
-            ` : ''}
-          `;
-          
-          document.getElementById('recordDetailsContent').innerHTML = modalContent;
-        })
-        .catch(error => {
-          console.error('Error fetching record:', error);
-          document.getElementById('recordDetailsContent').innerHTML = `
-            <div class="alert alert-danger">
-              Error loading record details: ${error.message}
-            </div>
-          `;
-        });
-      
-      // Show modal
-      const modal = new bootstrap.Modal(document.getElementById('recordDetailsModal'));
-      modal.show();
-    });
+          ` : ''}
+        `;
+        
+        new bootstrap.Modal(document.getElementById('recordModal')).show();
+      } else {
+        alert('Error loading record details');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error loading record details');
+    }
+  });
+});
+
+// Edit record - ADD THIS FUNCTION
+document.querySelectorAll('.edit-record').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const recordId = this.dataset.recordId;
+    // Redirect to edit page
+    window.location.href = `/health/edit/${recordId}`;
+  });
+});
+
+// Delete record
+document.querySelectorAll('.delete-record').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const recordId = this.dataset.recordId;
+    const petName = this.dataset.petName;
+    const recordDate = this.dataset.recordDate;
+    
+    if (confirm(`Are you sure you want to delete the health record for ${petName} from ${recordDate}?`)) {
+      fetch(`/health/${recordId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok) {
+          location.reload();
+        } else {
+          alert('Error deleting record: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting record');
+      });
+    }
   });
 });
 </script>

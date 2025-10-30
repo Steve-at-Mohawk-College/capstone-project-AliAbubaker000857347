@@ -1,0 +1,31 @@
+Week 6 -  PyTest DB tests and Edge case testing 
+
+python -m pytest tests/test_edge_cases.py -v
+Say: "Edge case testing validates invalid inputs like bad emails, pet ages, and task dates before they reach the database."
+
+-----------------------------------
+python -c "
+print('Testing edge cases:')
+emails = ['valid@test.com', 'invalid@', 'bad-email']
+for email in emails:
+    import re
+    valid = re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email)
+    print(f'Email {email:15} → {"VALID" if valid else "INVALID"}')
+
+
+Say: "Our tests catch invalid data at the validation layer, protecting the database."
+"
+----------------
+
+python -m pytest tests/test_database.py -v
+Say: "Database tests verify user creation, pet management, and data integrity with transaction safety."
+
+
+
+--------------------------
+type .github\workflows\test.yml | findstr "name:"
+Say: "GitHub Actions runs all tests automatically on every commit with MySQL and coverage reporting."
+
+
+
+

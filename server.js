@@ -31,6 +31,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const { time } = require('console');
 const { title } = require('process');
 
+
 // ===== Create Express app =====
 const app = express();
 
@@ -707,6 +708,14 @@ app.get('/landing', (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
 // Health tracker history page
 app.get('/health-tracker-history', requireAuth, async (req, res) => {
   try {
@@ -725,7 +734,8 @@ app.get('/health-tracker-history', requireAuth, async (req, res) => {
     res.render('health-tracker-history', {
       title: 'Health Tracker History',
       pets,
-      healthRecords
+      healthRecords,
+      message: req.query.message || null
     });
   } catch (err) {
     console.error('Health tracker history error:', err);
@@ -736,6 +746,47 @@ app.get('/health-tracker-history', requireAuth, async (req, res) => {
     });
   }
 });
+
+
+
+
+
+
+
+// Add health record form
+app.get('/health-tracker/add', requireAuth, async (req, res) => {
+  try {
+    const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
+    
+    if (pets.length === 0) {
+      return res.redirect('/pets/add?message=Please add a pet first.');
+    }
+    
+    res.render('add-health-record', {
+      title: 'Add Health Record',
+      pets,
+      selectedPetId: req.query.pet_id || null,
+      body: null,
+      fieldErrors: {} // Initialize as empty object instead of null
+    });
+  } catch (err) {
+    console.error('Add health record form error:', err);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Error loading health record form.',
+      error: process.env.NODE_ENV === 'development' ? err : {}
+    });
+  }
+});
+
+
+
+
+
+
+
+
+
 
 app.get('/test-domain-email', async (req, res) => {
   try {
@@ -1189,29 +1240,7 @@ async function getPetCount(userId) {
   const result = await query('SELECT COUNT(*) as count FROM pets WHERE user_id = ?', [userId]);
   return result[0].count;
 }
-// Add health record form
-app.get('/health-tracker/add', requireAuth, async (req, res) => {
-  try {
-    const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
-    
-    if (pets.length === 0) {
-      return res.redirect('/pets/add?message=Please add a pet first.');
-    }
-    
-    res.render('add-health-record', {
-      title: 'Add Health Record',
-      pets,
-      selectedPetId: req.query.pet_id || null
-    });
-  } catch (err) {
-    console.error('Add health record form error:', err);
-    res.status(500).render('error', {
-      title: 'Error',
-      message: 'Error loading health record form.',
-      error: process.env.NODE_ENV === 'development' ? err : {}
-    });
-  }
-});
+
 // Add this route to debug file serving
 app.get('/debug-files', (req, res) => {
   const fs = require('fs');
@@ -1344,6 +1373,37 @@ app.use((req, res) => {
     error: {},
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+// edit health tracker
+
+const methodOverride = require('method-override');
+
+
+
+
+
+app.use(methodOverride('_method'));
+
+
+
+
+
+
+
+
+
+
+
 
 // ===== Start server =====
 const PORT = process.env.PORT || 3000;

@@ -1,2 +1,6 @@
 node_modules
 .env
+
+echo "cypress/screenshots/" >> .gitignore
+echo "cypress/downloads/" >> .gitignore
+echo "cypress/videos/" >> .gitignore

@@ -4,3 +4,11 @@ node_modules
 echo "cypress/screenshots/" >> .gitignore
 echo "cypress/downloads/" >> .gitignore
 echo "cypress/videos/" >> .gitignore
+public/uploads/ 
+"# Cypress test files" 
+"cypress/screenshots/" 
+"cypress/downloads/" 
+"cypress/videos/" 
+ 
+"# Uploaded files" 
+"public/uploads/" 

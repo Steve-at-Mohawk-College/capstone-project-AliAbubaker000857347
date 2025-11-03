@@ -1,6 +1,0 @@
-tests/
-demo-tests.js
-node_modules/puppeteer/
-node_modules/jest/
-node_modules/sharp/
-.git/

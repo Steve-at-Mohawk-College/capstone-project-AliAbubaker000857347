@@ -24,9 +24,9 @@ const petRoutes = require('./routes/petRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 // In your main server file
  const healthRoutes = require('./routes/healthRoutes');
-// const communityRoutes = require('./routes/communityRoutes');
+const communityRoutes = require('./routes/communityRoutes');
 // now admin can login with this path  https://petwell-a1271a0b47f3.herokuapp.com/admin/login"
-
+const profileRoutes = require('./routes/profileRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const { time } = require('console');
 const { title } = require('process');
@@ -200,8 +200,8 @@ app.use('/auth', authRoutes);
 app.use('/pets', requireAuth, petRoutes);
 app.use('/tasks', requireAuth, taskRoutes);
 app.use('/health', requireAuth, healthRoutes);
-// app.use('/community', requireAuth, communityRoutes);
-// app.use('/profile', requireAuth, profileRoutes);
+app.use('/community', requireAuth, communityRoutes);
+app.use('/profile', requireAuth, profileRoutes);
 app.use('/admin', adminRoutes);
 
 

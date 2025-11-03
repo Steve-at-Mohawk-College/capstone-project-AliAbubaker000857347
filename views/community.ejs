@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - Pet Care</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <style>
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #8b5cf6;
+            --light-purple: #f3f0ff;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+        }
+        
+        .community-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-header {
+            border-bottom: 1px solid var(--bs-border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .card-header-custom {
+            border-bottom: 1px solid var(--bs-border-color);
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+            background-color: var(--bs-card-bg);
+        }
+        
+        .btn-custom {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-custom:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .community-post {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            border: 1px solid var(--bs-border-color);
+        }
+        
+        .community-post:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .post-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--bs-heading-color);
+        }
+        
+        .post-meta {
+            color: var(--bs-text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .post-content {
+            color: var(--bs-body-color);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .comment-toggle {
+            border-left: 3px solid var(--bs-border-color);
+            padding-left: 1rem;
+            margin: 1rem 0;
+        }
+
+        .toggle-comments-btn {
+            border: 1px solid var(--bs-border-color);
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .toggle-comments-btn:hover {
+            background: var(--bs-light-bg);
+        }
+
+        .toggle-comments-btn .toggle-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .toggle-comments-btn.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .comments-container {
+            border-left: 3px solid var(--bs-border-color);
+            padding-left: 1rem;
+            margin-top: 0.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .comment {
+            background-color: var(--bs-light-bg);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--bs-border-color);
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bs-text-muted);
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--bs-heading-color);
+        }
+
+        .comment-time {
+            font-size: 0.75rem;
+            color: var(--bs-text-muted);
+            margin-left: auto;
+        }
+
+        .comment-content {
+            font-size: 0.875rem;
+            color: var(--bs-body-color);
+            line-height: 1.5;
+        }
+        
+        .comment-form {
+            margin-top: 1rem;
+        }
+        
+        .guidelines-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .guidelines-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .guidelines-list li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: 0.5rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            color: var(--bs-text-muted);
+        }
+        
+        .sidebar-card {
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+        }
+        
+        @media (max-width: 768px) {
+            .community-container {
+                padding: 0 1rem;
+            }
+            
+            .post-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .post-avatar {
+                margin-bottom: 0.5rem;
+            }
+        }
+
+ 
+    </style>
+</head>
+<body>
+    <%- include('partials/header', {title: 'Community' }) %>
+    
+    <!-- Main Content -->
+    <div class="container community-container py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-header">
+                    <h1 class="mb-2">Community</h1>
+                    <p class="text-muted">Connect with other pet owners, share experiences, and get advice</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Create Post Form -->
+                <div class="card card-custom mb-4">
+                    <div class="card-header card-header-custom">
+                        <h3 class="h5 mb-0"><i class="bi bi-pencil-square me-2"></i>Create a Post</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="/community" method="POST">
+                            <div class="mb-3">
+                                <label for="title" class="form-label fw-semibold">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" placeholder="What would you like to discuss?" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="content" class="form-label fw-semibold">Content</label>
+                                <textarea class="form-control" id="content" name="content" rows="4" placeholder="Share your thoughts, questions, or experiences..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-custom">
+                                <i class="bi bi-send me-2"></i>Post to Community
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Community Posts -->
+                <div class="card card-custom">
+                    <div class="card-header card-header-custom">
+                        <h2 class="h5 mb-0"><i class="bi bi-chat-dots me-2"></i>Latest Community Posts</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <% if (posts && posts.length) { %>
+                            <% posts.forEach(post => { %>
+                                <div class="community-post">
+                                    <div class="post-header">
+                                        <div class="post-avatar">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="post-title"><%= post.title %></h3>
+                                            <div class="post-meta">
+                                                <span class="me-2"><i class="bi bi-person me-1"></i>by <strong><%= post.username %></strong></span>
+                                                • 
+                                                <span class="ms-2"><i class="bi bi-clock me-1"></i><%= new Date(post.created_at).toLocaleString() %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="post-content">
+                                        <%= post.content %>
+                                    </div>
+                                    
+                                    <div class="comments-section">
+                                        <% if (post.comments && post.comments.length) { %>
+                                            <div class="comment-toggle" data-post-id="<%= post.post_id %>">
+                                                <button class="btn btn-sm btn-outline-secondary toggle-comments-btn">
+                                                    <i class="bi bi-chat-dots me-1"></i>
+                                                    <span class="comment-count"><%= post.comments.length %></span> 
+                                                    <%= post.comments.length === 1 ? 'reply' : 'replies' %>
+                                                    <i class="bi bi-chevron-down ms-1 toggle-icon"></i>
+                                                </button>
+                                            </div>
+                                            
+                                            <div class="comments-container" id="comments-<%= post.post_id %>" style="display: none;">
+                                                <% post.comments.forEach(comment => { %>
+                                                    <div class="comment">
+                                                        <div class="comment-header">
+                                                            <div class="comment-avatar">
+                                                                <i class="bi bi-person"></i>
+                                                            </div>
+                                                            <span class="comment-author"><%= comment.username %></span>
+                                                            <span class="comment-time">
+                                                                <%= new Date(comment.created_at).toLocaleString() %>
+                                                            </span>
+                                                        </div>
+                                                        <div class="comment-content">
+                                                            <%= comment.content %>
+                                                        </div>
+                                                    </div>
+                                                <% }); %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <form class="comment-form" data-post-id="<%= post.post_id %>">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="content" placeholder="Write a comment..." required>
+                                            <button class="btn btn-outline-primary" type="submit">
+                                                <i class="bi bi-send me-1"></i>Comment
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="bi bi-chat-dots"></i>
+                                </div>
+                                <h5 class="text-muted">No posts yet</h5>
+                                <p class="text-muted mb-3">Be the first to share something with the community!</p>
+                                <a href="#title" class="btn btn-custom">Create First Post</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar-card">
+                    <div class="card card-custom mb-4">
+                        <div class="card-header card-header-custom">
+                            <h3 class="h5 mb-0"><i class="bi bi-info-circle me-2"></i>Community Guidelines</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <ul class="guidelines-list">
+                                <li>Be kind and respectful to others</li>
+                                <li>Share helpful information and tips</li>
+                                <li>Ask questions about pet care</li>
+                                <li>No spam or self-promotion</li>
+                                <li>No inappropriate content</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card card-custom">
+                        <div class="card-header card-header-custom">
+                            <h3 class="h5 mb-0"><i class="bi bi-lightning me-2"></i>Quick Actions</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-grid gap-2">
+                                <a href="/dashboard" class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                                </a>
+                                <a href="/pets/add" class="btn btn-outline-secondary">
+                                    <i class="bi bi-plus-circle me-2"></i>Add New Pet
+                                </a>
+                                <a href="/health-tracker/add" class="btn btn-outline-secondary">
+                                    <i class="bi bi-calendar-plus me-2"></i>Schedule Task
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/theme.js"></script>
+
+    <script>
+        // Your JavaScript code remains exactly the same
+        document.addEventListener('DOMContentLoaded', function() {
+            // Comment toggle functionality
+            document.querySelectorAll('.toggle-comments-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const postId = this.closest('.comment-toggle').getAttribute('data-post-id');
+                    const commentsContainer = document.getElementById('comments-' + postId);
+                    const toggleIcon = this.querySelector('.toggle-icon');
+                    
+                    // Toggle comments visibility
+                    if (commentsContainer.style.display === 'none') {
+                        commentsContainer.style.display = 'block';
+                        this.classList.add('expanded');
+                    } else {
+                        commentsContainer.style.display = 'none';
+                        this.classList.remove('expanded');
+                    }
+                });
+            });
+
+            // Add loading states to forms (BUT NOT COMMENT FORMS)
+            const mainForms = document.querySelectorAll('form:not(.comment-form)');
+            mainForms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        const originalText = submitButton.innerHTML;
+                        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+                        submitButton.disabled = true;
+                        
+                        // Revert after 5 seconds if something goes wrong
+                        setTimeout(() => {
+                            submitButton.innerHTML = originalText;
+                            submitButton.disabled = false;
+                        }, 5000);
+                    }
+                });
+            });
+
+            // AJAX for submitting comments 
+            const commentForms = document.querySelectorAll('.comment-form');
+            commentForms.forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const postId = this.getAttribute('data-post-id');
+                    const contentInput = this.querySelector('input[name="content"]');
+                    const content = contentInput.value.trim();
+                    
+                    if (!content) {
+                        alert('Please enter a comment');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+                    submitButton.disabled = true;
+                    
+                    try {
+                        const response = await fetch(`/community/comments/${postId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ content })
+                        });
+
+                        const responseText = await response.text();
+                        
+                        if (response.ok) {
+                            try {
+                                const result = JSON.parse(responseText);
+                                
+                                if (result.success) {
+                                    // Clear the input field
+                                    contentInput.value = '';
+                                    
+                                    // Add the new comment to the UI
+                                    addCommentToUI(result.comment, postId);
+                                    
+                                    // Update comment count
+                                    updateCommentCount(postId, true);
+                                    
+                                } else {
+                                    alert('Error: ' + result.error);
+                                }
+                            } catch (parseError) {
+                                console.error('JSON parse error:', parseError);
+                                alert('Error parsing server response');
+                            }
+                        } else {
+                            console.error('Server error response:', responseText);
+                            alert('Error posting comment: ' + responseText);
+                        }
+                    } catch (error) {
+                        console.error('Network error details:', error);
+                        alert('Network error posting comment. Please try again.');
+                    } finally {
+                        // Restore button state
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
+                    }
+                });
+            });
+
+            // Function to add comment to UI
+            function addCommentToUI(comment, postId) {
+                // Create comment HTML
+                const commentHTML = `
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <span class="comment-author">${comment.username}</span>
+                            <span class="comment-time">
+                                ${new Date(comment.created_at).toLocaleString()}
+                            </span>
+                        </div>
+                        <div class="comment-content">
+                            ${comment.content}
+                        </div>
+                    </div>
+                `;
+                
+                // Find the comments container for this post
+                const commentsContainer = document.getElementById(`comments-${postId}`);
+                const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
+                
+                // If comments container exists, append the new comment
+                if (commentsContainer) {
+                    commentsContainer.insertAdjacentHTML('beforeend', commentHTML);
+                    
+                    // If comments were hidden, show them after adding a new comment
+                    if (commentsContainer.style.display === 'none') {
+                        commentsContainer.style.display = 'block';
+                        const toggleBtn = commentToggle.querySelector('.toggle-comments-btn');
+                        if (toggleBtn) {
+                            toggleBtn.classList.add('expanded');
+                        }
+                    }
+                } else {
+                    // If no comments container exists (first comment), create one
+                    const commentSection = document.querySelector(`.comments-section[data-post-id="${postId}"]`) || 
+                                        document.querySelector(`.comment-form[data-post-id="${postId}"]`).previousElementSibling;
+                    
+                    if (commentSection) {
+                        const newCommentsContainer = document.createElement('div');
+                        newCommentsContainer.className = 'comments-container';
+                        newCommentsContainer.id = `comments-${postId}`;
+                        newCommentsContainer.innerHTML = commentHTML;
+                        commentSection.appendChild(newCommentsContainer);
+                        
+                        // Also create the toggle button if it doesn't exist
+                        if (!commentToggle) {
+                            const toggleHTML = `
+                                <div class="comment-toggle mb-3" data-post-id="${postId}">
+                                    <button class="btn btn-sm btn-outline-secondary toggle-comments-btn">
+                                        <i class="bi bi-chat-dots me-1"></i>
+                                        <span class="comment-count">1</span> reply
+                                        <i class="bi bi-chevron-down ms-1 toggle-icon"></i>
+                                    </button>
+                                </div>
+                            `;
+                            
+                            const commentForm = document.querySelector(`.comment-form[data-post-id="${postId}"]`);
+                            commentForm.insertAdjacentHTML('beforebegin', toggleHTML);
+                            
+                            // Add event listener to the new toggle button
+                            const newToggleBtn = document.querySelector(`.comment-toggle[data-post-id="${postId}"] .toggle-comments-btn`);
+                            newToggleBtn.addEventListener('click', function() {
+                                const postId = this.closest('.comment-toggle').getAttribute('data-post-id');
+                                const commentsContainer = document.getElementById('comments-' + postId);
+                                const toggleIcon = this.querySelector('.toggle-icon');
+                                
+                                if (commentsContainer.style.display === 'none') {
+                                    commentsContainer.style.display = 'block';
+                                    this.classList.add('expanded');
+                                } else {
+                                    commentsContainer.style.display = 'none';
+                                    this.classList.remove('expanded');
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Function to update comment count
+            function updateCommentCount(postId, increment = true) {
+                const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
+                
+                if (commentToggle) {
+                    const countElement = commentToggle.querySelector('.comment-count');
+                    if (countElement) {
+                        let currentCount = parseInt(countElement.textContent) || 0;
+                        currentCount = increment ? currentCount + 1 : currentCount - 1;
+                        countElement.textContent = currentCount;
+                        
+                        // Update text (reply/replies)
+                        const buttonText = commentToggle.querySelector('.toggle-comments-btn');
+                        if (buttonText) {
+                            const textParts = buttonText.textContent.split(' ');
+                            textParts[textParts.length - 2] = currentCount === 1 ? 'reply' : 'replies';
+                            buttonText.textContent = textParts.join(' ');
+                        }
+                    }
+                } else if (increment) {
+                    // Create toggle button if it doesn't exist (first comment)
+                    const toggleHTML = `
+                        <div class="comment-toggle mb-3" data-post-id="${postId}">
+                            <button class="btn btn-sm btn-outline-secondary toggle-comments-btn">
+                                <i class="bi bi-chat-dots me-1"></i>
+                                <span class="comment-count">1</span> reply
+                                <i class="bi bi-chevron-down ms-1 toggle-icon"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    const commentForm = document.querySelector(`.comment-form[data-post-id="${postId}"]`);
+                    commentForm.insertAdjacentHTML('beforebegin', toggleHTML);
+                    
+                    // Add event listener to the new toggle button
+                    const newToggleBtn = document.querySelector(`.comment-toggle[data-post-id="${postId}"] .toggle-comments-btn`);
+                    newToggleBtn.addEventListener('click', function() {
+                        const postId = this.closest('.comment-toggle').getAttribute('data-post-id');
+                        const commentsContainer = document.getElementById('comments-' + postId);
+                        const toggleIcon = this.querySelector('.toggle-icon');
+                        
+                        if (commentsContainer.style.display === 'none') {
+                            commentsContainer.style.display = 'block';
+                            this.classList.add('expanded');
+                        } else {
+                            commentsContainer.style.display = 'none';
+                            this.classList.remove('expanded');
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

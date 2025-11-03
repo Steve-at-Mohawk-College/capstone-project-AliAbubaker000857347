@@ -29,28 +29,3 @@ Say: "GitHub Actions runs all tests automatically on every commit with MySQL and
 
 
 
-PyTest DB Tests:
-
-Database connection & user creation tests
-
-Transaction rollback safety
-
-Data integrity validation
-
-Edge Case Testing:
-
-Email format validation
-
-Pet age/weight boundaries
-
-Task date validation
-
-Input security checks
-
-CI/CD Pipeline:
-
-Automated testing on every push
-
-MySQL database setup
-
-Coverage reporting

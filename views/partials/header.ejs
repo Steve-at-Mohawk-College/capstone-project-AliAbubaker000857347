@@ -24,7 +24,7 @@
     
 /* Single Notification View */
 .notification-item {
-  min-height: 120px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -49,7 +49,7 @@
 
 /* Make dropdown slightly taller for single notification */
 .notification-dropdown {
-  max-height: 280px !important;
+  max-height: 50px !important;
   min-height: 200px;
 }
 
@@ -109,27 +109,25 @@
   transform: scale(1.1);
 }
 
-/* Dark mode styles for header notification */
+/* Theme-aware notification bell */
 [data-theme="dark"] .notification-bell-header {
-  background: rgb(0, 9, 128);
+  background: rgba(67, 97, 238, 0.1);
   font-style: italic;
   border-radius: 20px;
   width: 60px;
   height: 60px;
-  
-  border: 2px solid red;
+  border: 2px solid var(--primary);
   color: white;
 }
-/* Dark mode styles for header notification */
+
 [data-theme="light"] .notification-bell-header {
-  background: rgb(0, 9, 128);
+  background: rgba(67, 97, 238, 0.05);
   font-style: italic;
   border-radius: 20px;
   width: 60px;
   height: 60px;
-  
-  border: 2px solid red;
-  color: white;
+  border: 2px solid var(--primary);
+  color: var(--dark);
 }
 
 [data-theme="dark"] .notification-bell-header:hover {
@@ -498,189 +496,1016 @@
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
 
-    /* Responsive Adjustments */
-    @media (max-width: 991.98px) {
-      .navbar-nav .nav-link-modern {
-        text-align: left;
-        padding: 0.8rem 1rem !important;
-        margin: 0.1rem 0;
-      }
-      
-      .dropdown-menu-modern {
-        border: none;
-        box-shadow: none;
-        padding-left: 1.5rem;
-        margin-top: 0;
-      }
-      
-      .profile-modern {
-        justify-content: flex-start;
-        padding: 0.8rem 1rem;
-      }
-    }
-
     /* Accessibility */
     a:focus, button:focus {
       outline: 2px solid var(--primary) !important;
       outline-offset: 2px;
     }
+
+    /* Fix notification dropdown positioning */
+.navbar-modern {
+  position: relative;
+  z-index: 1030; /* Bootstrap navbar default z-index */
+}
+
+.dropdown-menu {
+  z-index: 1050 !important; /* Higher than navbar */
+}
+
+/* Ensure dropdown appears below header */
+.header-icons .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  margin-top: 0.5rem;
+}
+
+
+
+  
+  .header-icons .dropdown-menu {
+    position: fixed;
+    top: 70px; /* Adjust based on your header height */
+    right: 1rem;
+    left: auto;
+    width: 300px;
+    max-width: 90vw;
+    transform: none !important;
+  }
+}
+
+/* Ensure dashboard content stays below header */
+.dashboard-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Fix for desktop dropdown */
+@media (min-width: 992px) {
+  .header-icons .dropdown-menu {
+    position: absolute;
+  }
+}
+
+/* Desktop Header Icons - Professional Layout */
+@media (min-width: 992px) {
+  .header-icons.d-none.d-lg-flex {
+    display: flex !important;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+  }
+
+  /* Profile Section - Desktop */
+  .header-icons .profile-modern {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    background: rgba(67, 97, 238, 0.05);
+    border: 1px solid rgba(67, 97, 238, 0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--dark);
+  }
+
+  .header-icons .profile-modern:hover {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+  }
+
+  .header-icons .username-modern {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--dark);
+    margin: 0;
+  }
+
+  .header-icons .user-avatar-modern {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Theme Toggle - Desktop */
+  .header-icons .theme-toggle-modern {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(67, 97, 238, 0.05);
+    border: 1px solid rgba(67, 97, 238, 0.1);
+    color: var(--gray);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-icons .theme-toggle-modern:hover {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: rotate(15deg) scale(1.05);
+  }
+
+  /* Notification Bell - Desktop */
+  .header-icons .notification-bell {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(67, 97, 238, 0.05);
+    border: 1px solid rgba(67, 97, 238, 0.1);
+    color: var(--gray);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-decoration: none;
+  }
+
+  .header-icons .notification-bell:hover {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: scale(1.05);
+  }
+
+  .header-icons .notification-bell .badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.4rem;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Dropdown Menus - Desktop */
+  .header-icons .dropdown-menu {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 0.75rem;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .header-icons .dropdown-item {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin: 0.1rem 0.5rem;
+    width: auto;
+    transition: all 0.2s ease;
+  }
+
+  .header-icons .dropdown-item:hover {
+    background: rgba(67, 97, 238, 0.08);
+    color: var(--primary);
+  }
+
+  /* Notification Dropdown Specific */
+  .header-icons .notification-dropdown {
+    min-width: 320px;
+    max-width: 400px;
+  }
+
+  .header-icons .notification-dropdown .dropdown-header {
+    background: rgba(67, 97, 238, 0.05);
+    border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  /* Dark Theme Support for Desktop */
+  [data-theme="dark"] .header-icons .profile-modern {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: rgba(67, 97, 238, 0.2);
+    color: var(--dark-text);
+  }
+
+  [data-theme="dark"] .header-icons .profile-modern:hover {
+    background: rgba(67, 97, 238, 0.2);
+  }
+
+  [data-theme="dark"] .header-icons .username-modern {
+    color: var(--dark-text);
+  }
+
+  [data-theme="dark"] .header-icons .theme-toggle-modern,
+  [data-theme="dark"] .header-icons .notification-bell {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: rgba(67, 97, 238, 0.2);
+    color: var(--dark-text);
+  }
+
+  [data-theme="dark"] .header-icons .theme-toggle-modern:hover,
+  [data-theme="dark"] .header-icons .notification-bell:hover {
+    background: rgba(67, 97, 238, 0.2);
+    color: var(--primary);
+  }
+
+  [data-theme="dark"] .header-icons .dropdown-menu {
+    background: var(--dark-card);
+    border-color: var(--dark-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="dark"] .header-icons .dropdown-item {
+    color: var(--dark-text);
+  }
+
+  [data-theme="dark"] .header-icons .dropdown-item:hover {
+    background: rgba(67, 97, 238, 0.15);
+  }
+
+  [data-theme="dark"] .header-icons .notification-dropdown .dropdown-header {
+    background: rgba(67, 97, 238, 0.1);
+    border-color: rgba(67, 97, 238, 0.2);
+    color: var(--dark-text);
+  }
+}
+
+/* Mobile Header Icons - Keep existing but ensure consistency */
+@media (max-width: 991.98px) {
+  .header-icons.d-lg-none {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header-icons.d-lg-none .profile-modern,
+  .header-icons.d-lg-none .theme-toggle-modern,
+  .header-icons.d-lg-none .notification-bell {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(67, 97, 238, 0.05);
+    border: 1px solid rgba(67, 97, 238, 0.1);
+  }
+}
+
+/* Smooth transitions for all header elements */
+.header-icons * {
+  transition: all 0.3s ease;
+}
+
+/* Make dropdown containers fully black in dark theme */
+[data-theme="dark"] .dropdown-menu {
+  background: #000000 !important;
+  border: 1px solid #333333 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: #e9ecef !important;
+  background: #000000 !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+  background: #1a1a1a !important;
+  color: var(--primary) !important;
+}
+
+[data-theme="dark"] .dropdown-divider {
+  border-color: #333333 !important;
+}
+
+/* Notification dropdown specific - fully black */
+[data-theme="dark"] .dropdown-menu .p-3 {
+  background: #000000 !important;
+}
+
+[data-theme="dark"] .dropdown-menu .fw-bold {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .dropdown-menu .text-primary {
+  color: var(--primary) !important;
+}
+
+[data-theme="dark"] .dropdown-menu .text-muted {
+  color: #a0aec0 !important;
+}
+
+/* Notification items in dark theme */
+[data-theme="dark"] .notification-item {
+  background: #000000 !important;
+  border-bottom-color: #333333 !important;
+}
+
+[data-theme="dark"] .notification-item:hover {
+  background: #1a1a1a !important;
+}
+
+/* Profile dropdown specific */
+[data-theme="dark"] .dropdown-menu.dropdown-menu-end {
+  background: #000000 !important;
+  border: 1px solid #333333 !important;
+}
+
+[data-theme="dark"] .dropdown-menu .text-danger {
+  color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .dropdown-menu .text-danger:hover {
+  color: #ff5252 !important;
+  background: #1a1a1a !important;
+}
+
+/* Quick actions dropdown */
+[data-theme="dark"] .navbar-nav .dropdown-menu {
+  background: #000000 !important;
+  border: 1px solid #333333 !important;
+}
+
+[data-theme="dark"] .navbar-nav .dropdown-item {
+  color: #e9ecef !important;
+  background: #000000 !important;
+}
+
+[data-theme="dark"] .navbar-nav .dropdown-item:hover {
+  background: #1a1a1a !important;
+  color: var(--primary) !important;
+}
+
+/* Ensure all dropdown content has proper contrast */
+[data-theme="dark"] .dropdown-menu * {
+  color: #e9ecef !important;
+}
+
+[data-theme="dark"] .dropdown-menu .bi {
+  color: inherit !important;
+}
+
+/* Fix for any remaining light backgrounds in dropdowns */
+[data-theme="dark"] .dropdown-menu .bg-light {
+  background: #1a1a1a !important;
+}
+
+[data-theme="dark"] .dropdown-menu .bg-white {
+  background: #000000 !important;
+}
+
+/* Mobile dropdown specific fixes */
+@media (max-width: 991.98px) {
+  [data-theme="dark"] .header-icons .dropdown-menu {
+    background: #000000 !important;
+    border: 1px solid #333333 !important;
+  }
+  
+  [data-theme="dark"] .header-icons .dropdown-item {
+    background: #000000 !important;
+    color: #e9ecef !important;
+  }
+  
+  [data-theme="dark"] .header-icons .dropdown-item:hover {
+    background: #1a1a1a !important;
+  }
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu {
+    background: #000000 !important;
+    border: 1px solid #333333 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-item {
+    background: #000000 !important;
+    color: #e9ecef !important;
+    border-radius: 8px;
+    margin: 0.1rem 0.3rem;
+    padding: 0.75rem 1rem;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-item:hover,
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-item:focus {
+    background: #1a1a1a !important;
+    color: var(--primary) !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-divider {
+    border-color: #333333 !important;
+    margin: 0.5rem 0;
+  }
+
+  /* Mobile notification dropdown specific */
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu.p-3 {
+    background: #000000 !important;
+    border: 1px solid #333333 !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu .fw-bold {
+    color: #ffffff !important;
+    background: #000000 !important;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu .text-primary {
+    color: var(--primary) !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu .text-muted {
+    color: #a0aec0 !important;
+  }
+
+  /* Mobile notification items */
+  [data-theme="dark"] .header-icons.d-lg-none .notification-item {
+    background: #000000 !important;
+    border-bottom-color: #333333 !important;
+    padding: 0.75rem 0.5rem;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .notification-item:hover {
+    background: #1a1a1a !important;
+  }
+
+  /* Mobile profile dropdown */
+  [data-theme="dark"] .header-icons.d-lg-none .profile-modern .dropdown-menu {
+    background: #000000 !important;
+    border: 1px solid #333333 !important;
+    min-width: 200px;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .profile-modern .dropdown-item {
+    background: #000000 !important;
+    color: #e9ecef !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .profile-modern .dropdown-item:hover {
+    background: #1a1a1a !important;
+    color: var(--primary) !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .profile-modern .text-danger {
+    color: #ff6b6b !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .profile-modern .text-danger:hover {
+    color: #ff5252 !important;
+    background: #1a1a1a !important;
+  }
+
+  /* Fix for mobile navbar collapse dropdowns */
+  [data-theme="dark"] .navbar-collapse .dropdown-menu {
+    background: #000000 !important;
+    border: 1px solid #333333 !important;
+    margin-top: 0.5rem;
+  }
+
+  [data-theme="dark"] .navbar-collapse .dropdown-item {
+    background: #000000 !important;
+    color: #e9ecef !important;
+  }
+
+  [data-theme="dark"] .navbar-collapse .dropdown-item:hover {
+    background: #1a1a1a !important;
+    color: var(--primary) !important;
+  }
+
+  /* Ensure all text in mobile dropdowns is visible */
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu * {
+    color: #e9ecef !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu .bi {
+    color: inherit !important;
+  }
+
+  /* Fix badge colors in mobile dark theme */
+  [data-theme="dark"] .header-icons.d-lg-none .badge {
+    color: white !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .bg-danger {
+    background-color: #dc3545 !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .bg-success {
+    background-color: #198754 !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .bg-warning {
+    background-color: #ffc107 !important;
+    color: #000000 !important;
+  }
+}
+
+
+@media (max-width: 576px) {
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-menu {
+    width: 280px !important;
+    max-width: 85vw !important;
+    right: 0.5rem !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .dropdown-item {
+    padding: 0.7rem 0.9rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .notification-item {
+    padding: 0.6rem 0.4rem !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .notification-item h6 {
+    font-size: 0.85rem !important;
+  }
+
+  [data-theme="dark"] .header-icons.d-lg-none .notification-item p {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Ensure mobile dropdowns stay above other content */
+@media (max-width: 991.98px) {
+  .header-icons.d-lg-none .dropdown-menu {
+    z-index: 1060 !important;
+  }
+}
+
+
+/* Desktop dropdown specific fixes */
+@media (min-width: 992px) {
+  [data-theme="dark"] .header-icons .dropdown-menu {
+    background: #000000 !important;
+    border: 1px solid #333333 !important;
+  }
+  
+  [data-theme="dark"] .header-icons .dropdown-item {
+    background: #000000 !important;
+    color: #e9ecef !important;
+  }
+  
+  [data-theme="dark"] .header-icons .dropdown-item:hover {
+    background: #1a1a1a !important;
+  }
+}
+/* Fix navbar toggler icon (three slashes) for dark theme */
+[data-theme="dark"] .navbar-toggler {
+  background: rgba(67, 97, 238, 0.1) !important;
+  border: 1px solid rgba(67, 97, 238, 0.3) !important;
+  border-radius: 8px !important;
+  padding: 0.4rem 0.6rem !important;
+}
+
+[data-theme="dark"] .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  width: 1.2em !important;
+  height: 1.2em !important;
+}
+
+[data-theme="dark"] .navbar-toggler:focus {
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.5) !important;
+  outline: none !important;
+}
+
+[data-theme="dark"] .navbar-toggler:hover {
+  background: rgba(67, 97, 238, 0.2) !important;
+  border-color: var(--primary) !important;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+/* Light theme toggler */
+[data-theme="light"] .navbar-toggler {
+  background: rgba(67, 97, 238, 0.05) !important;
+  border: 1px solid rgba(67, 97, 238, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 0.4rem 0.6rem !important;
+}
+
+[data-theme="light"] .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  width: 1.2em !important;
+  height: 1.2em !important;
+}
+
+[data-theme="light"] .navbar-toggler:focus {
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3) !important;
+  outline: none !important;
+}
+
+[data-theme="light"] .navbar-toggler:hover {
+  background: rgba(67, 97, 238, 0.1) !important;
+  border-color: var(--primary) !important;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+[data-theme="light"] .user-avatar-modern {
+  background: rgba(67, 97, 238, 0.1) !important;
+  border: 2px solid rgba(67, 97, 238, 0.3) !important;
+  color: var(--dark) !important;
+}
+
+/* Ensure the person icon is properly visible */
+.user-avatar-modern i {
+  font-size: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Mobile-specific toggler improvements */
+@media (max-width: 991.98px) {
+  [data-theme="dark"] .navbar-toggler {
+    background: rgba(67, 97, 238, 0.15) !important;
+    border: 1px solid rgba(67, 97, 238, 0.4) !important;
+  }
+  
+  [data-theme="light"] .navbar-toggler {
+    background: rgba(67, 97, 238, 0.08) !important;
+    border: 1px solid rgba(67, 97, 238, 0.2) !important;
+  }
+  
+  .navbar-toggler {
+    margin-left: auto !important;
+    margin-right: 0.5rem !important;
+  }
+}
+
+/* Mobile Navigation Fix - Menu opens below stable header */
+@media (max-width: 991.98px) {
+  .navbar-modern {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 1030 !important;
+    padding: 0.8rem 0 !important;
+  }
+
+  .navbar-collapse {
+    position: fixed !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(10px) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+    max-height: calc(100vh - 70px) !important;
+    overflow-y: auto !important;
+    z-index: 1020 !important;
+    margin-top: 0 !important;
+  }
+
+  /* Dark theme for mobile menu */
+  [data-theme="dark"] .navbar-collapse {
+    background: rgba(33, 37, 41, 0.98) !important;
+    backdrop-filter: blur(10px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Mobile navigation items */
+  .navbar-nav {
+    padding: 1rem 0 !important;
+    margin: 0 !important;
+  }
+
+  .nav-item-modern {
+    margin: 0 !important;
+  }
+
+  .nav-link-modern {
+    padding: 1rem 1.5rem !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    font-size: 1rem !important;
+  }
+
+  [data-theme="dark"] .nav-link-modern {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .nav-link-modern:hover,
+  .nav-link-modern:focus {
+    background: rgba(67, 97, 238, 0.1) !important;
+  }
+
+  .nav-link-modern.active::after {
+    display: none !important;
+  }
+
+  /* Mobile dropdown menus */
+  .navbar-collapse .dropdown-menu {
+    position: static !important;
+    float: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: rgba(0, 0, 0, 0.02) !important;
+  }
+
+  [data-theme="dark"] .navbar-collapse .dropdown-menu {
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .navbar-collapse .dropdown-item {
+    padding: 0.8rem 2rem !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
+  }
+
+  [data-theme="dark"] .navbar-collapse .dropdown-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* Add padding to body to account for fixed header */
+  body {
+    padding-top: 70px !important;
+  }
+
+  /* Ensure header icons stay in header */
+  .header-icons.d-lg-none {
+    position: static !important;
+    order: 2;
+    margin-left: auto;
+    margin-right: 0.5rem;
+  }
+
+  /* Fix container layout */
+  .navbar-modern .container-fluid {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 1rem !important;
+  }
+
+  .navbar-brand-modern {
+    margin-right: auto !important;
+  }
+
+  /* Smooth animations */
+  .navbar-collapse {
+    transition: all 0.3s ease-in-out !important;
+  }
+
+  .navbar-collapse.collapsing {
+    transition: height 0.3s ease !important;
+  }
+}
+
+/* Fix for very small screens */
+@media (max-width: 576px) {
+  .navbar-modern {
+    padding: 0.6rem 0 !important;
+  }
+
+  body {
+    padding-top: 60px !important;
+  }
+
+  .navbar-collapse {
+    top: 60px !important;
+    max-height: calc(100vh - 60px) !important;
+  }
+
+  .nav-link-modern {
+    padding: 0.9rem 1.25rem !important;
+  }
+
+  .navbar-collapse .dropdown-item {
+    padding: 0.7rem 1.75rem !important;
+  }
+}
+
+/* Ensure desktop behavior remains unchanged */
+@media (min-width: 992px) {
+  .navbar-modern {
+    position: relative !important;
+    padding: 1rem 0 !important;
+  }
+
+  body {
+    padding-top: 0 !important;
+  }
+
+  .navbar-collapse {
+    position: static !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+}
+
+/* Prevent body scroll when mobile menu is open */
+body.mobile-menu-open {
+  overflow: hidden !important;
+}
+
+/* JavaScript helper class for mobile menu state */
+.mobile-menu-open .navbar-collapse {
+  transform: translateY(0) !important;
+}
+
+/* Fix for very small screens */
+@media (max-width: 576px) {
+  .navbar-toggler {
+    padding: 0.35rem 0.5rem !important;
+  }
+  
+  .navbar-toggler-icon {
+    width: 1.1em !important;
+    height: 1.1em !important;
+  }
+}
+
   </style>
 </head>
 <body>
   <!-- Modern Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-modern" role="navigation" aria-label="Main navigation">
-    <div class="container">
-      <!-- Brand -->
-      <a class="navbar-brand navbar-brand-modern" href="/landing" aria-label="Pet Care Home">
+    <nav class="navbar navbar-expand-lg navbar-modern">
+    <div class="container-fluid px-3">
+      <!-- Left: Logo + text -->
+      <a class="navbar-brand navbar-brand-modern" href="/landing">
         <i class="bi bi-heart-pulse-fill"></i> PetCare
       </a>
 
-      <!-- Mobile Toggle -->
-      <button class="navbar-toggler navbar-toggler-modern" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" 
-              aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon navbar-toggler-icon-modern"></span>
+      <!-- Right: Profile + theme + notification -->
+      <div class="header-icons d-lg-none">
+        <div class="profile-modern dropdown">
+          <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button></form></li>
+          </ul>
+        </div>
+
+        <button id="themeToggle" class="theme-toggle-modern" title="Toggle theme">
+          <i class="bi bi-moon-fill"></i>
+        </button>
+
+        <div class="dropdown">
+          <button class="notification-bell" id="notificationDropdown" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-danger rounded-pill" id="notificationBadge" style="display:none;">0</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end p-3" style="min-width:250px;">
+            <div class="fw-bold mb-2">Upcoming Tasks</div>
+            <div id="notificationsList">No upcoming tasks</div>
+            <div class="text-end mt-2">
+              <a href="/upcoming-tasks" class="small text-primary">View All</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toggle -->
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Navbar Content -->
-      <div class="collapse navbar-collapse" id="navbarMain">
-        <!-- Left Nav -->
-        <ul class="navbar-nav me-auto">
-          <% if (typeof username !== 'undefined') { %>
-            <!-- Dashboard -->
-            <li class="nav-item nav-item-modern">
-              <a class="nav-link nav-link-modern <%= title === 'Dashboard' ? 'active' : '' %>" href="/dashboard">
-                <i class="bi bi-speedometer2 me-2"></i> Dashboard
-              </a>
-            </li>
-
-            <!-- Quick Actions -->
-            <li class="nav-item dropdown nav-item-modern dropdown-modern">
-              <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="quickActions" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-lightning me-2"></i> Quick Actions
-              </a>
-              <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="quickActions">
-                <li><a class="dropdown-item dropdown-item-modern" href="/pets/add"><i class="bi bi-heart me-2" style="color: var(--secondary);"></i>Add Pet</a></li>
-                <li><a class="dropdown-item dropdown-item-modern" href="/schedule-task"><i class="bi bi-calendar-plus me-2" style="color: var(--primary);"></i>Add Task</a></li>
-              </ul>
-            </li>
-
-            <!-- Community -->
-            <li class="nav-item nav-item-modern">
-              <a class="nav-link nav-link-modern <%= title === 'Community' ? 'active' : '' %>" href="/community">
-                <i class="bi bi-people me-2"></i> Community
-              </a>
-            </li>
-
-            <!-- Health -->
-            <li class="nav-item nav-item-modern">
-              <a class="nav-link nav-link-modern <%= title === 'Health Tracker' ? 'active' : '' %>" href="/health-tracker-history">
-                <i class="bi bi-clipboard-heart me-2"></i> Health
-              </a>
-            </li>
-            <!-- In your navigation menu -->
-<li class="nav-item">
-    <a class="nav-link" href="/calendar">
-        <i class="bi bi-calendar3 me-2"></i>Calendar
-    </a>
-</li>
-          <% } %>
-
-          <% if (title === 'Welcome to Pet Care') { %>
-            <!-- Explore Dropdown -->
-            <li class="nav-item dropdown nav-item-modern dropdown-modern">
-              <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="exploreMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-compass me-2"></i> Explore
-              </a>
-              <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="exploreMenu">
-                <li><a class="dropdown-item dropdown-item-modern" href="#features">Features</a></li>
-                <li><a class="dropdown-item dropdown-item-modern" href="#services">Services</a></li>
-                <li><a class="dropdown-item dropdown-item-modern" href="#faq">FAQ</a></li>
-              </ul>
-            </li>
-          <% } %>
+      <!-- Collapsible Nav -->
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
+          <li class="nav-item"><a class="nav-link nav-link-modern" href="/dashboard"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="quickActions" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-lightning me-2"></i> Quick Actions
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/pets/add"><i class="bi bi-heart me-2 text-success"></i>Add Pet</a></li>
+              <li><a class="dropdown-item" href="/schedule-task"><i class="bi bi-calendar-plus me-2 text-primary"></i>Add Task</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link nav-link-modern" href="/community"><i class="bi bi-people me-2"></i> Community</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-modern" href="/health-tracker-history"><i class="bi bi-clipboard-heart me-2"></i> Health</a></li>
+          <li class="nav-item"><a class="nav-link nav-link-modern" href="/calendar"><i class="bi bi-calendar3 me-2"></i> Calendar</a></li>
         </ul>
 
-        <!-- Right Nav -->
-        <ul class="navbar-nav ms-auto align-items-center">
-          <% if (typeof username !== 'undefined') { %>
-            <!-- Profile Dropdown -->
-            <li class="nav-item dropdown nav-item-modern dropdown-modern">
-              <a class="profile-modern dropdown-toggle d-flex align-items-center" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="username-modern"><%= username %></span>
-                <!-- Note: You would need to add the user avatar image here -->
-                <!-- <img src="/path/to/avatar.jpg" class="user-avatar-modern" alt="User Avatar"> -->
-                <div class="user-avatar-modern bg-primary text-white d-flex align-items-center justify-content-center">
-                  <i class="bi bi-person-fill"></i>
-                </div>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-modern dropdown-menu-end" aria-labelledby="userMenu">
-                <li><a class="dropdown-item dropdown-item-modern" href="/profile"><i class="bi bi-person-circle me-2"></i> Profile</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <form action="/auth/logout" method="POST" class="d-inline">
-                    <button type="submit" class="dropdown-item dropdown-item-modern text-danger">
-                      <i class="bi bi-box-arrow-right me-2"></i> Logout
-                    </button>
-                  </form>
-                </li>
-              </ul>
-            </li>
+        <!-- Desktop Right Section -->
+        <div class="header-icons d-none d-lg-flex">
+          <div class="profile-modern dropdown">
+            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <span class="me-2 fw-semibold text-dark"><%= username %></span>
+              <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button></form></li>
+            </ul>
+          </div>
 
-            <!-- Theme Toggle -->
-            <li class="nav-item ms-2">
-              <button id="themeToggle" class="btn theme-toggle-modern" title="Toggle dark/light mode" aria-label="Toggle theme">
-                <i class="bi bi-sun-fill d-none" id="lightIcon"></i>
-                <i class="bi bi-moon-fill" id="darkIcon"></i>
-              </button>
-            </li>
-          <% } else { %>
-            <!-- Guests -->
-            <li class="nav-item me-2">
-              <a class="btn btn-outline-modern btn-modern" href="/login"><i class="bi bi-box-arrow-in-right me-2"></i> Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="btn btn-filled-modern btn-modern" href="/register"><i class="bi bi-person-plus me-2"></i> Register</a>
-            </li>
-          <% } %>
-<!-- Notification Bell in Header -->
-<li class="nav-item ms-2">
-  <div class="dropdown">
-    <button class="notification-bell-header dropdown-toggle" 
-            id="notificationDropdown" 
-            data-bs-toggle="dropdown" 
-            aria-expanded="false">
-      <i class="bi bi-bell"></i>
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-            id="notificationBadge" style="display: none;">
-        0
-      </span>
-    </button>
-    <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
-      <div class="dropdown-header notification-header d-flex justify-content-between align-items-center border-bottom">
-        <span>Upcoming Tasks</span>
-        <a href="/upcoming-tasks" class="btn btn-sm btn-outline-primary">View All</a>
-      </div>
-      
-  </div>
-</li>
-  
-</div>
-  </div>
-</li>
-        </ul>
+          <button id="themeToggleDesktop" class="theme-toggle-modern" title="Toggle theme">
+            <i class="bi bi-moon-fill"></i>
+          </button>
+
+          <div class="dropdown">
+            <button class="notification-bell" id="notificationDropdownDesktop" data-bs-toggle="dropdown">
+              <i class="bi bi-bell"></i>
+              <span class="badge bg-danger rounded-pill" id="notificationBadgeDesktop" style="display:none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end p-3" style="min-width:250px;">
+              <div class="fw-bold mb-2">Upcoming Tasks</div>
+              <div id="notificationsListDesktop">No upcoming tasks</div>
+              <div class="text-end mt-2">
+                <a href="/upcoming-tasks" class="small text-primary">View All</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- Main Content -->
-  <main class="pt-5 mt-4">
-    <div class="container py-4">
-      <!-- Your page content here -->
-    </div>
-  </main>
+    <!-- Main Content Area - Dashboard will inject content here -->
 
     
- <script>// Simplified Notification System for Upcoming Tasks
+ <script>
+// Theme toggle functionality for both mobile and desktop
+function setupThemeToggle() {
+  // Get both theme toggles
+  const themeToggleMobile = document.getElementById('themeToggle');
+  const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+  
+  // Function to toggle theme
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Update all theme icons on the page
+    updateThemeIcons(newTheme);
+  }
+  
+  // Function to update all theme icons
+  function updateThemeIcons(theme) {
+    const allThemeIcons = document.querySelectorAll('#themeToggle i, #themeToggleDesktop i');
+    
+    allThemeIcons.forEach(icon => {
+      if (theme === 'dark') {
+        icon.classList.remove('bi-moon-fill');
+        icon.classList.add('bi-sun-fill');
+      } else {
+        icon.classList.remove('bi-sun-fill');
+        icon.classList.add('bi-moon-fill');
+      }
+    });
+  }
+  
+  // Add event listeners to both toggles
+  if (themeToggleMobile) {
+    themeToggleMobile.addEventListener('click', toggleTheme);
+  }
+  
+  if (themeToggleDesktop) {
+    themeToggleDesktop.addEventListener('click', toggleTheme);
+  }
+  
+  // Initialize theme from localStorage
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeIcons(savedTheme);
+}
+
+// Update the existing DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize notification system
+  window.notificationSystem = new NotificationSystem();
+  
+  // Initialize theme toggles
+  setupThemeToggle();
+});
+</script>
+
+<script>
+// Simplified Notification System for Upcoming Tasks
 class NotificationSystem {
   constructor() {
     this.checkInterval = null;
@@ -724,7 +1549,10 @@ class NotificationSystem {
   }
 
   updateNotificationBadge(upcomingTasks) {
-    const badge = document.getElementById('notificationBadge');
+    // Update both mobile and desktop badges
+    const badgeMobile = document.getElementById('notificationBadge');
+    const badgeDesktop = document.getElementById('notificationBadgeDesktop');
+    
     const urgentTasks = upcomingTasks.filter(task => {
       const dueDate = new Date(task.due_date);
       const now = new Date();
@@ -733,74 +1561,88 @@ class NotificationSystem {
     });
     
     if (urgentTasks.length > 0) {
-      badge.textContent = urgentTasks.length;
-      badge.style.display = 'block';
+      if (badgeMobile) {
+        badgeMobile.textContent = urgentTasks.length;
+        badgeMobile.style.display = 'block';
+      }
+      if (badgeDesktop) {
+        badgeDesktop.textContent = urgentTasks.length;
+        badgeDesktop.style.display = 'block';
+      }
     } else {
-      badge.style.display = 'none';
+      if (badgeMobile) badgeMobile.style.display = 'none';
+      if (badgeDesktop) badgeDesktop.style.display = 'none';
     }
   }
 
   renderUpcomingTasks(tasks) {
-    const container = document.getElementById('notificationsList');
+    // Update both mobile and desktop notification lists
+    const containerMobile = document.getElementById('notificationsList');
+    const containerDesktop = document.getElementById('notificationsListDesktop');
     
-    if (!container) return;
-    
-    if (tasks.length === 0) {
-      container.innerHTML = `
-        <div class="px-3 py-4 text-center text-muted">
-          <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
-          <div class="mt-2">No upcoming tasks</div>
-          <small>You're all caught up!</small>
-        </div>
-      `;
-      return;
-    }
-
-    let html = tasks.map((task, index) => {
-      const dueDate = new Date(task.due_date);
-      const now = new Date();
-      const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+    const renderToContainer = (container) => {
+      if (!container) return;
       
-      let urgencyClass = '';
-      let urgencyIcon = '';
-      
-      if (daysUntilDue <= 0) {
-        urgencyClass = 'text-danger';
-        urgencyIcon = 'bi-exclamation-triangle-fill';
-      } else if (daysUntilDue === 1) {
-        urgencyClass = 'text-warning';
-        urgencyIcon = 'bi-exclamation-circle';
-      } else {
-        urgencyClass = 'text-info';
-        urgencyIcon = 'bi-calendar-event';
+      if (tasks.length === 0) {
+        container.innerHTML = `
+          <div class="px-3 py-4 text-center text-muted">
+            <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
+            <div class="mt-2">No upcoming tasks</div>
+            <small>You're all caught up!</small>
+          </div>
+        `;
+        return;
       }
-      
-      return `
-        <div class="notification-item p-3 border-bottom" style="${index === tasks.length - 1 ? 'border-bottom: none !important;' : ''}">
-          <div class="d-flex align-items-start">
-            <i class="bi ${urgencyIcon} ${urgencyClass} me-2 fs-5"></i>
-            <div class="flex-grow-1">
-              <h6 class="mb-1 fw-bold">${task.title}</h6>
-              <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge ${this.getPriorityBadgeClass(task.priority)}">
-                  ${task.priority}
-                </span>
-                <small class="text-muted">${task.pet_name}</small>
+
+      let html = tasks.map((task, index) => {
+        const dueDate = new Date(task.due_date);
+        const now = new Date();
+        const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+        
+        let urgencyClass = '';
+        let urgencyIcon = '';
+        
+        if (daysUntilDue <= 0) {
+          urgencyClass = 'text-danger';
+          urgencyIcon = 'bi-exclamation-triangle-fill';
+        } else if (daysUntilDue === 1) {
+          urgencyClass = 'text-warning';
+          urgencyIcon = 'bi-exclamation-circle';
+        } else {
+          urgencyClass = 'text-info';
+          urgencyIcon = 'bi-calendar-event';
+        }
+        
+        return `
+          <div class="notification-item p-3 border-bottom" style="${index === tasks.length - 1 ? 'border-bottom: none !important;' : ''}">
+            <div class="d-flex align-items-start">
+              <i class="bi ${urgencyIcon} ${urgencyClass} me-2 fs-5"></i>
+              <div class="flex-grow-1">
+                <h6 class="mb-1 fw-bold">${task.title}</h6>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <span class="badge ${this.getPriorityBadgeClass(task.priority)}">
+                    ${task.priority}
+                  </span>
+                  <small class="text-muted">${task.pet_name}</small>
+                </div>
+                <p class="mb-1 small">
+                  <i class="bi bi-calendar me-1"></i>
+                  ${dueDate.toLocaleDateString()} 
+                  <span class="${urgencyClass} fw-bold">
+                    (${daysUntilDue <= 0 ? 'TODAY' : `${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''} left`})
+                  </span>
+                </p>
               </div>
-              <p class="mb-1 small">
-                <i class="bi bi-calendar me-1"></i>
-                ${dueDate.toLocaleDateString()} 
-                <span class="${urgencyClass} fw-bold">
-                  (${daysUntilDue <= 0 ? 'TODAY' : `${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''} left`})
-                </span>
-              </p>
             </div>
           </div>
-        </div>
-      `;
-    }).join('');
+        `;
+      }).join('');
 
-    container.innerHTML = html;
+      container.innerHTML = html;
+    };
+
+    renderToContainer(containerMobile);
+    renderToContainer(containerDesktop);
   }
 
   getPriorityBadgeClass(priority) {
@@ -813,18 +1655,25 @@ class NotificationSystem {
   }
 
   setupEventListeners() {
-    // Dropdown open/close events
-    const dropdownElement = document.getElementById('notificationDropdown');
-    if (dropdownElement) {
-      dropdownElement.addEventListener('show.bs.dropdown', () => {
-        this.isDropdownOpen = true;
-        this.loadUpcomingTasks();
-      });
+    // Dropdown open/close events for both mobile and desktop
+    const dropdownMobile = document.getElementById('notificationDropdown');
+    const dropdownDesktop = document.getElementById('notificationDropdownDesktop');
+    
+    const setupDropdown = (dropdownElement) => {
+      if (dropdownElement) {
+        dropdownElement.addEventListener('show.bs.dropdown', () => {
+          this.isDropdownOpen = true;
+          this.loadUpcomingTasks();
+        });
 
-      dropdownElement.addEventListener('hide.bs.dropdown', () => {
-        this.isDropdownOpen = false;
-      });
-    }
+        dropdownElement.addEventListener('hide.bs.dropdown', () => {
+          this.isDropdownOpen = false;
+        });
+      }
+    };
+
+    setupDropdown(dropdownMobile);
+    setupDropdown(dropdownDesktop);
   }
 
   destroy() {
@@ -833,11 +1682,6 @@ class NotificationSystem {
     }
   }
 }
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  window.notificationSystem = new NotificationSystem();
-});
 </script>
   
 

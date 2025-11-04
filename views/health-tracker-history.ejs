@@ -153,6 +153,118 @@
   </div>
 </div>
 
+<style>
+  /* Mobile-specific spacing fixes for Health Tracker */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-top: 5rem !important; /* Add space between header and content */
+  }
+  
+  .d-flex.justify-content-between.align-items-center.mb-4 {
+    margin-top: 5rem !important; /* Add space below navbar */
+  }
+  
+  /* Remove top spacing from the main container */
+  .container-fluid .row {
+    margin-top: 0 !important;
+  }
+  
+ 
+  /* Ensure cards don't have extra top spacing */
+  .card {
+    margin-top: 0 !important;
+  }
+  
+  .card:first-child {
+    margin-top: 0 !important;
+  }
+  
+  /* Adjust card header padding for mobile */
+  .card-header {
+    padding: 0.75rem 0.5rem !important;
+  }
+  
+  /* Adjust card body padding for mobile */
+  .card-body {
+    padding: 1rem 0.5rem !important;
+  }
+  
+  /* Make the table more mobile-friendly */
+  .table-responsive {
+    margin: 0 -0.5rem !important;
+  }
+  
+  /* Adjust button sizes for mobile */
+  .btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem !important;
+  }
+  
+  /* Ensure alert spacing is minimal */
+  .alert {
+    margin-top: 0.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Additional aggressive spacing removal for very small screens */
+@media (max-width: 480px) {
+   .container-fluid {
+    padding-top: 5rem !important;
+  }
+  
+   .d-flex.justify-content-between.align-items-center.mb-4 {
+    margin-top: 5rem !important; /* Add space below navbar */
+  }
+  /* Stack the header buttons on very small screens */
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    align-items: flex-start !important;
+  }
+  
+  .d-flex.justify-content-between.align-items-center h1 {
+    margin-bottom: 0 !important;
+  }
+  
+  /* Make table more compact */
+  .table td, .table th {
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  /* Adjust button text for very small screens */
+  .btn {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  /* Reduce card spacing */
+  .card {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Ensure no spacing from header partial */
+.navbar {
+  margin-bottom: 0 !important;
+}
+
+/* Remove any body spacing */
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Target direct children to remove spacing */
+body > .container-fluid {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+
+
+</style>
+
 <script>
 // View record details
 document.querySelectorAll('.view-record').forEach(btn => {

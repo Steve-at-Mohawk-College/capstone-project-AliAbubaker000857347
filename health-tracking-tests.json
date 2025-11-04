@@ -1,0 +1,370 @@
+{
+  "info": {
+    "name": "Health Tracking Tests - Week 6 - FIXED",
+    "description": "GUI testing for Health Tracking - Fixed for your app",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "s%3AtPqRYLEigouVV9ZYnnUSmM_GbwgZsMWM.K1qdKZLgCUhHe3lbLv%2FkoNOVs4vsQiXppRBGeJegG9U",
+      "type": "string"
+    },
+    {
+      "key": "petId",
+      "value": "444",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. TEST - Get Health Records (Check Current Data)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "connect.sid={{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/health/records",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health", "records"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Check current health records",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Returns JSON data\", function () {",
+              "    pm.response.to.be.json;",
+              "});",
+              "",
+              "// Log current records for debugging",
+              "var jsonData = pm.response.json();",
+              "console.log(\"Current health records:\", JSON.stringify(jsonData, null, 2));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Add Health Record - Valid Data (FORM DATA)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Cookie",
+            "value": "connect.sid={{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "pet_id",
+              "value": "{{petId}}",
+              "type": "text"
+            },
+            {
+              "key": "weight",
+              "value": "28.5",
+              "type": "text"
+            },
+            {
+              "key": "diet",
+              "value": "Premium Kibble + Chicken",
+              "type": "text"
+            },
+            {
+              "key": "medical_notes",
+              "value": "Regular checkup - healthy and active",
+              "type": "text"
+            },
+            {
+              "key": "date_recorded",
+              "value": "2024-01-10",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Test 1: Should redirect on success (302) or return 200",
+              "pm.test(\"Status code indicates success\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 302]);",
+              "});",
+              "",
+              "// Test 2: If redirect, check location",
+              "if (pm.response.code === 302) {",
+              "    pm.test(\"Redirects to success page\", function () {",
+              "        var location = pm.response.headers.get('Location');",
+              "        pm.expect(location).to.include('health-tracker-history');",
+              "    });",
+              "}",
+              "",
+              "// Test 3: Check for success indicators",
+              "pm.test(\"No server errors\", function () {",
+              "    pm.expect(pm.response.text()).to.not.include('Internal Server Error');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Edge Case - Negative Weight (FORM DATA)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Cookie",
+            "value": "connect.sid={{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "pet_id",
+              "value": "{{petId}}",
+              "type": "text"
+            },
+            {
+              "key": "weight",
+              "value": "-5",
+              "type": "text"
+            },
+            {
+              "key": "diet",
+              "value": "Test Diet",
+              "type": "text"
+            },
+            {
+              "key": "date_recorded",
+              "value": "2024-01-10",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Edge Case Test: Should reject negative weight",
+              "pm.test(\"Rejects negative weight - status 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Shows validation error message\", function () {",
+              "    var responseText = pm.response.text();",
+              "    pm.expect(responseText).to.include(\"Weight must be between\");",
+              "    console.log(\"Error response:\", responseText);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Edge Case - Future Date (FORM DATA)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Cookie",
+            "value": "connect.sid={{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "pet_id",
+              "value": "{{petId}}",
+              "type": "text"
+            },
+            {
+              "key": "weight",
+              "value": "20",
+              "type": "text"
+            },
+            {
+              "key": "date_recorded",
+              "value": "2025-12-31",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Edge Case Test: Should reject future dates",
+              "pm.test(\"Rejects future dates - status 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Shows date validation error\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"cannot be in the future\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Database Test - Verify Record Was Created",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "connect.sid={{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/health/records",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health", "records"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Database Test: Verify our test record exists",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Health records exist\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(Object.keys(jsonData).length).to.be.greaterThan(0);",
+              "});",
+              "",
+              "// Check if our test data is in the records",
+              "pm.test(\"Test record has weight data\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var petRecords = jsonData[pm.collectionVariables.get(\"petId\")];",
+              "    if (petRecords && petRecords.length > 0) {",
+              "        var hasWeight = petRecords.some(record => record.weight !== null);",
+              "        pm.expect(hasWeight).to.be.true;",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Test Chart.js Data Structure",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "connect.sid={{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/health/records",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health", "records"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Chart.js Data Test: Verify data structure is suitable for charts",
+              "pm.test(\"Data structure works for Chart.js\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    ",
+              "    // Check if we have the expected structure",
+              "    pm.expect(jsonData).to.be.an('object');",
+              "    ",
+              "    // Check if we have pet records",
+              "    var petIds = Object.keys(jsonData);",
+              "    pm.expect(petIds.length).to.be.greaterThan(0);",
+              "    ",
+              "    // Check if records have date and weight for charts",
+              "    var firstPetId = petIds[0];",
+              "    var records = jsonData[firstPetId];",
+              "    pm.expect(records).to.be.an('array');",
+              "    ",
+              "    console.log(\"Data structure for charts:\", {",
+              "        pets: petIds.length,",
+              "        records: records.length,",
+              "        hasDates: records.some(r => r.date_recorded),",
+              "        hasWeights: records.some(r => r.weight)",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

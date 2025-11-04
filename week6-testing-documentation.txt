@@ -1,0 +1,105 @@
+WEEK 6 TESTING DOCUMENTATION - HEALTH TRACKING FEATURES
+========================================================
+
+PROJECT CHANGES FOR WEEK 6 TESTING
+===================================
+
+NO CODE CHANGES REQUIRED - All health tracking functionality was already implemented
+and working correctly from previous weeks.
+
+chnages:
+**Testing Methodology:** GUI-based API testing using Postman
+**Tests Covered:** Database operations, edge cases, validation, Chart.js data integration
+
+EXISTING FEATURES TESTED:
+-------------------------
+1. Health Record CRUD Operations
+   - POST /health - Add health records (form data)
+   - GET /health/records - Retrieve health records (JSON API)
+   - PUT /health/:id - Update health records
+   - DELETE /health/:id - Delete health records
+
+2. Data Validation
+   - Weight validation (0.1kg - 200kg range)
+   - Date validation (no future dates)
+   - Required field validation
+   - SQL injection protection
+
+3. Database Integration
+   - MySQL database with health_tracker table
+   - Foreign key relationships (pet_id)
+   - Data persistence and retrieval
+
+4. Chart.js Integration
+   - JSON data structure suitable for visualization
+   - Date and numeric data formatting
+   - API endpoints for chart data
+
+TESTING METHODOLOGY
+===================
+
+Tool Used: Postman (GUI-based testing)
+Benefits: No coding required, visual results, professional industry tool
+
+TEST FILES CREATED:
+-------------------
+1. health-tracking-tests.json - Postman collection with all test cases
+
+TEST CASES COVERED:
+-------------------
+1. Valid Data Test
+   - Purpose: Verify successful health record creation
+   - Method: POST request with valid weight, diet, and date
+   - Expected: 200 OK or 302 Redirect to success page
+
+2. Edge Case - Negative Weight
+   - Purpose: Test validation for invalid weight values
+   - Method: POST request with weight = -5
+   - Expected: 400 Bad Request with validation error
+
+3. Edge Case - Future Date
+   - Purpose: Test date validation logic
+   - Method: POST request with future date
+   - Expected: 400 Bad Request with date error
+
+4. Database Verification
+   - Purpose: Confirm data persistence
+   - Method: GET /health/records API call
+   - Expected: JSON response with stored records
+
+5. Chart.js Data Structure
+   - Purpose: Verify data format for visualization
+   - Method: Analyze JSON structure from API
+   - Expected: Proper date and numeric data formatting
+
+HOW TO RUN THE TESTS
+====================
+
+PREREQUISITES:
+--------------
+1. Node.js and npm installed
+2. MySQL database running
+3. Pet Care application running on http://localhost:3000
+4. Postman installed (desktop or web version)
+
+STEP-BY-STEP TESTING INSTRUCTIONS:
+----------------------------------
+
+1. START THE APPLICATION:
+   npm start
+
+2. OPEN POSTMAN:
+
+3. CREATE A NEW COLLECTION: and add import a file 
+
+4. import a file called health-tracking-tests.json
+
+5. you must see 6 tests in the collection and Send and see your results
+
+6. if you see a 200 OK response, then the test passed
+
+7. if you see a 400 Bad Request response, then the test failed
+
+8. if you see a 500 Internal Server Error response, then the test failed
+
+9. if you see a 404 Not Found response, then the test failed

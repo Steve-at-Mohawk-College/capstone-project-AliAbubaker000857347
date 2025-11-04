@@ -1063,19 +1063,61 @@ main, .main-content, .content {
   color: var(--dark-text);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .dashboard-container {
-    padding: 1rem 0.5rem;
-  }
-  
+/* Additional aggressive spacing removal for mobile */
+@media (max-width: 480px) {
   .dashboard-header {
-    padding: 1.5rem;
-    margin: 0 0.5rem 1.5rem 0.5rem;
+    padding: 1rem 0.75rem !important;
+    margin: 0 0 1rem 0 !important;
   }
   
   .header-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem !important; /* Smaller title on very small screens */
+  }
+  
+  .stats-grid {
+    gap: 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .stat-card {
+    padding: 1.5rem 1rem !important;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+   .dashboard-container {
+    padding: 0 0.5rem 1rem 0.5rem !important; /* Reduce side padding on mobile */
+  }
+  
+  .dashboard-header {
+    margin: 0 0 1.5rem 0 !important; /* Ensure no top margin on mobile */
+    padding: 1.5rem 1rem !important; /* Adjust padding for mobile */
+    border-radius: 16px !important; /* Slightly smaller radius on mobile */
+  }
+  
+  /* Ensure header partial doesn't create spacing */
+  .navbar {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  /* Remove any potential spacing from container */
+  .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Target any direct children of body to remove spacing */
+  body > * {
+    margin-top: 0 !important;
+  }
+  
+  /* Specific fix for the header title spacing */
+  .header-title {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
   
   .content-grid {

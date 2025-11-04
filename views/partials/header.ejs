@@ -1410,7 +1410,7 @@ body.mobile-menu-open {
         <div class="header-icons d-none d-lg-flex">
           <div class="profile-modern dropdown">
             <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
-              <span class="me-2 fw-semibold text-dark"><%= username %></span>
+             <span class="me-2 fw-semibold text-dark"><%= typeof username !== 'undefined' ? username : 'User' %></span>
               <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">

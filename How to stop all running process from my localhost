@@ -1,0 +1,2 @@
+npx kill-port 3000
+taskkill /f /im node.exe

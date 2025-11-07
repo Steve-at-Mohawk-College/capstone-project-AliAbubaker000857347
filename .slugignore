@@ -1,0 +1,7 @@
+node_modules/cypress/
+node_modules/puppeteer/
+node_modules/sharp/
+cypress/
+tests/
+*.test.js
+*.spec.js

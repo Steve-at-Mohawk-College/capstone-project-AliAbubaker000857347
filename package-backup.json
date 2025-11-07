@@ -4,6 +4,19 @@
   "description": "A comprehensive pet care management web application",
   "main": "server.js",
   "scripts": {
+    
+    "test:week7:ci": "CI=true jest tests/week7-community-test.js --verbose",
+    "test:week7:accessibility": "jest tests/week7-community-test.js --testNamePattern=\"Accessibility\" --verbose",
+    "test:week7:security": "jest tests/week7-community-test.js --testNamePattern=\"Security\" --verbose",
+    "test:week7:functional": "jest tests/week7-community-test.js --testNamePattern=\"Functional\" --verbose",
+    "test:week7:manual": "jest tests/week7-community-test.js --testNamePattern=\"Manual\" --verbose",
+
+
+      "test:week7": "jest tests/week7-community-test.js --verbose --no-watch --runInBand",
+    "test:week7:watch": "jest tests/week7-community-test.js --verbose --watch",
+
+   
+    
     "start": "node server.js",
     "dev": "nodemon server.js",
     "setup-admin": "node scripts/createAdmin.js",
@@ -42,6 +55,7 @@
     "test:week5:all": "npm run test:week5:e2e && npm run test:week5:accessibility",
     "test:week5:dev": "cypress open --e2e --spec \"cypress/e2e/week5/cypress-e2e-tests/**/*\""
   },
+ 
   "keywords": [
     "pet",
     "care",
@@ -54,8 +68,6 @@
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
     "bcryptjs": "^2.4.3",
-    "compression": "^1.8.1",
-    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.10",
@@ -63,27 +75,32 @@
     "express-rate-limit": "^7.5.1",
     "express-session": "^1.18.2",
     "express-validator": "^7.2.1",
-    "helmet": "^7.2.0",
     "lodash": "^4.17.21",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "lodash.once": "^4.1.1",
-    "method-override": "^3.0.0",
     "multer": "^2.0.2",
     "mysql2": "^3.15.0",
     "nodemailer": "^6.10.1",
-    "sharp": "^0.34.4"
+    "sharp": "^0.34.3"
   },
   "devDependencies": {
     "@testing-library/cypress": "^10.0.1",
     "axe-core": "^4.11.0",
+    "axios": "^1.13.1",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
     "cypress": "^13.6.0",
     "cypress-axe": "^1.7.0",
+    "helmet": "^8.1.0",
     "jest": "^29.7.0",
+    "jest-puppeteer": "^11.0.0",
+    "method-override": "^3.0.0",
     "nodemon": "^3.0.2",
     "puppeteer": "^21.11.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+ 
     "start-server-and-test": "^2.1.2",
     "supertest": "^6.3.4",
     "webpack": "^5.102.1"

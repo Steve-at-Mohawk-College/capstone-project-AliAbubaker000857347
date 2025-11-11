@@ -78,7 +78,6 @@
     "axios": "^1.13.2",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
-    "cypress": "^13.17.0",
     "cypress-axe": "^1.7.0",
     "helmet": "^8.1.0",
     "jest": "^29.7.0",

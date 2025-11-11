@@ -8,56 +8,25 @@
     "dev": "nodemon server.js",
     "setup-admin": "node scripts/createAdmin.js",
     "kill-port": "npx kill-port 3000",
-
-    
     "test": "npm run test:unit",
-
-    
     "test:unit": "jest tests/unit/ --verbose",
     "test:unit:models": "jest tests/unit/models/ --verbose",
     "test:unit:services": "jest tests/unit/services/ --verbose",
-
-    
     "test:integration": "jest tests/integration/ --verbose --testTimeout=30000",
     "test:integration:notifications": "jest tests/integration/api/notifications/ --verbose",
     "test:integration:calendar": "jest tests/integration/api/calendar/ --verbose",
     "test:integration:auth": "jest tests/integration/api/auth/ --verbose",
-
-  
     "test:e2e:node:auth": "node tests/e2e/nodejs/auth-tests.js",
     "test:e2e:node:pets": "node tests/e2e/nodejs/pet-tests.js",
-
- 
-
-
-  
-  
-
-  
     "test:python": "python -m pytest tests/python/ -v",
-
-   
-    
-  
-
-     "test:runners:auth": "node tests/runners/run-auth-tests.js",
+    "test:runners:auth": "node tests/runners/run-auth-tests.js",
     "test:runners:pets": "node tests/runners/run-pet-tests.js",
     "test:runners:notifications": "node tests/runners/notification-test-runner.js",
-
-  
     "test:legacy:week7": "jest tests/legacy/week7-community-test.js --verbose",
-
-     "test:runners:all": "node tests/runners/simple-master-runner.js",
-
-  
+    "test:runners:all": "node tests/runners/simple-master-runner.js",
     "test:week5": "node scripts/test-week5.js",
     "test:week5:services": "node services/test-week5.js",
-
-   
-  
     "test:watch": "jest tests/unit/ --watch",
-
-   
     "test:auth": "npm run test:integration:auth && npm run test:e2e:node:auth",
     "test:notifications:model": "jest tests/unit/models/notification-model.test.js --verbose",
     "test:notifications:service": "jest tests/unit/services/notification-service.test.js --verbose",
@@ -67,18 +36,11 @@
     "test:tasks:api": "jest tests/integration/api/tasks/task-api.test.js --verbose",
     "test:tasks:integration": "jest tests/integration/api/tasks/task-integration.test.js --verbose",
     "test:calendar:integration": "jest tests/integration/api/calendar/calendar-ui-integration.test.js --verbose",
-
-
-    
     "test:e2e:cypress": "cypress run --spec 'tests/e2e/cypress/**/*.cy.js'",
     "test:e2e:cypress:calendar": "cypress run --spec 'tests/e2e/cypress/features/calendar/*.cy.js'",
     "test:e2e:cypress:tasks": "cypress run --spec 'tests/e2e/cypress/features/tasks/*.cy.js'",
     "test:e2e:cypress:notifications": "cypress run --spec 'tests/e2e/cypress/features/notifications/*.cy.js'",
-
-    
     "test:accessibility": "cypress run --spec 'tests/e2e/cypress/accessibility/*.cy.js'",
-
-   
     "cypress:open": "cypress open --e2e --spec 'tests/e2e/cypress/**/*.cy.js'"
   },
   "keywords": [
@@ -116,7 +78,6 @@
     "axios": "^1.13.2",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
-    "cypress": "^13.6.0",
     "cypress-axe": "^1.7.0",
     "helmet": "^8.1.0",
     "jest": "^29.7.0",

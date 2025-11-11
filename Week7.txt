@@ -50,7 +50,9 @@ Make sure your server is running first
 npm start
 
 # In a new terminal, run the tests:
-npm run test:week7
+Open C:\Users\Ali Dahche 1\Downloads\ZAP_2.16.1_Crossplatform\ZAP_2.16.1
+run ZAP.bat
+quick scan on https://petwell-a1271a0b47f3.herokuapp.com/community
 
 Open C:\Users\Ali Dahche 1\Downloads\ZAP_2.16.1_Crossplatform\ZAP_2.16.1
 run ZAP.bat

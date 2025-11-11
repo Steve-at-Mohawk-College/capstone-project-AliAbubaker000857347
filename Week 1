@@ -1,0 +1,8 @@
+    Registration page is done and all error message and normal warning will be display to registration page
+
+    i have RegistrationTests
+
+    so for running this test
+
+    cd RegistrationTests
+    node node run-all-tests.js

@@ -179,18 +179,51 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// POST /auth/register
+
+
+
+// POST /auth/register - UPDATED VERSION
 router.post('/register', async (req, res) => {
   const { email, password, username } = req.body || {};
-  if (!email || !password || !username) return res.status(400).send('Email, password, and username are required.');
+  
+  // Store form data to repopulate on error
+  const formData = { email, username };
+  
+  if (!email || !password || !username) {
+    return res.status(400).render('register', { 
+      title: 'Register - Pet Care Management',
+      error: 'Email, password, and username are required.',
+      formData
+    });
+  }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return res.status(400).send('Please enter a valid email address.');
-  if (password.length < 8) return res.status(400).send('Password must be at least 8 characters long.');
+  if (!emailRegex.test(email)) {
+    return res.status(400).render('register', { 
+      title: 'Register - Pet Care Management',
+      error: 'Please enter a valid email address.',
+      formData
+    });
+  }
+  
+  if (password.length < 8) {
+    return res.status(400).render('register', { 
+      title: 'Register - Pet Care Management',
+      error: 'Password must be at least 8 characters long.',
+      formData
+    });
+  }
 
   try {
     const existing = await queryOne('SELECT * FROM users WHERE email = ? OR username = ?', [email, username]);
-    if (existing) return res.status(400).send(existing.email === email ? 'Email already in use.' : 'Username already taken.');
+    if (existing) {
+      const error = existing.email === email ? 'Email already in use.' : 'Username already taken.';
+      return res.status(400).render('register', { 
+        title: 'Register - Pet Care Management',
+        error: error,
+        formData
+      });
+    }
 
     const hash = await bcrypt.hash(password, 10);
     const token = crypto.randomBytes(32).toString('hex');
@@ -198,12 +231,30 @@ router.post('/register', async (req, res) => {
     await createUser(username, email, hash, token);
     await sendEmail(email, token, username);
 
-    res.send('Check your email to verify your account.');
+    // Render success message on register page
+    res.render('register', { 
+      title: 'Register - Pet Care Management',
+      message: 'Check your email to verify your account.',
+      formData: {} // Clear form on success
+    });
   } catch (e) {
     console.error('Registration error:', e);
-    res.status(500).send('Server error during registration.');
+    res.status(500).render('register', { 
+      title: 'Register - Pet Care Management',
+      error: 'Server error during registration.',
+      formData
+    });
   }
 });
+
+
+
+
+
+
+
+
+
 
 // GET /auth/verify
 router.get('/verify', async (req, res) => {

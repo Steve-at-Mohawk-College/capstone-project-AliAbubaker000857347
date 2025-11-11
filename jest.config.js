@@ -1,14 +1,18 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: [
-    '**/tests/**/*.test.js',
-    '**/tests/**/*.spec.js',
-    '**/tests/week7-community-test.js'
+    '**/tests/unit/**/*.test.js',
+    '**/tests/integration/**/*.test.js'
   ],
   testPathIgnorePatterns: [
-    '/node_modules/'
+    '/node_modules/',
+    '/tests/e2e/',
+    '/tests/helpers/',
+    '/tests/runners/',
+    '/tests/python/',
+    '/tests/legacy/'
   ],
   verbose: true,
   testTimeout: 30000,
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.js']
+  setupFilesAfterEnv: ['<rootDir>/tests/helpers/setup.js']
 };

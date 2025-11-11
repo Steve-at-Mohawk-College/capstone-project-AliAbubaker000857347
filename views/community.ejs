@@ -51,21 +51,13 @@
             background-color: var(--bs-card-bg);
         }
         
-        .btn-custom {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem 1.25rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
         
-        .btn-custom:hover {
-            background-color: var(--secondary-color);
-            color: white;
-            transform: translateY(-1px);
-        }
+        
+       .btn-custom:hover {
+    background-color: #1b5e20; /* Even darker on hover */
+    color: white;
+    transform: translateY(-1px);
+}
         
         .community-post {
             margin-bottom: 1.5rem;
@@ -261,6 +253,72 @@
             }
         }
 
+
+       .btn-custom {
+    background-color: #2e7d32; /* Much darker green for proper contrast */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+
+
+/* Ensure sufficient contrast */
+.btn-custom:hover,
+.btn-custom:focus {
+    background-color: #5a32a8; /* Darker shade for better contrast */
+    color: white;
+}
+
+/* For dark theme - ensure good contrast */
+[data-theme="dark"] .btn-custom {
+    background-color: #388e3c;
+    color: #ffffff;
+}
+[data-theme="dark"] .btn-custom:hover {
+    background-color: #2e7d32;
+    color: #ffffff;
+}
+
+.btn-custom {
+    background-color: #1b5e20 !important; /* Very dark green */
+    color: white !important;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-custom:hover {
+    background-color: #2e7d32 !important;
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+[data-theme="dark"] .form-label {
+    color: #e9ecef !important;
+}
+
+[data-theme="dark"] .form-label.fw-semibold {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .text-body-emphasis {
+    color: #f8f9fa !important;
+}
+[data-theme="dark"] .btn-outline-primary {
+    color: #86b7fe !important;
+    border-color: #86b7fe !important;
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+    background-color: #86b7fe !important;
+    color: #000000 !important;
+}
  
     </style>
 </head>
@@ -273,7 +331,7 @@
             <div class="col-12">
                 <div class="page-header">
                     <h1 class="mb-2">Community</h1>
-                    <p class="text-muted">Connect with other pet owners, share experiences, and get advice</p>
+                   <p class="text-body-emphasis">Connect with other pet owners, share experiences, and get advice</p>
                 </div>
             </div>
         </div>
@@ -282,25 +340,26 @@
             <div class="col-lg-8">
                 <!-- Create Post Form -->
                 <div class="card card-custom mb-4">
-                    <div class="card-header card-header-custom">
-                        <h3 class="h5 mb-0"><i class="bi bi-pencil-square me-2"></i>Create a Post</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="/community" method="POST">
-                            <div class="mb-3">
-                                <label for="title" class="form-label fw-semibold">Title</label>
-                                <input type="text" class="form-control" id="title" name="title" placeholder="What would you like to discuss?" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="content" class="form-label fw-semibold">Content</label>
-                                <textarea class="form-control" id="content" name="content" rows="4" placeholder="Share your thoughts, questions, or experiences..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-custom">
-                                <i class="bi bi-send me-2"></i>Post to Community
-                            </button>
-                        </form>
-                    </div>
-                </div>
+    <div class="card-header card-header-custom">
+        <h2 class="h5 mb-0"><i class="bi bi-pencil-square me-2"></i>Create a Post</h2>
+    </div>
+    <div class="card-body p-4">
+        <form action="/community" method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label fw-semibold">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="What would you like to discuss?" required>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label fw-semibold">Content</label>
+                <textarea class="form-control" id="content" name="content" rows="4" placeholder="Share your thoughts, questions, or experiences..." required></textarea>
+            </div>
+            <!-- FIXED BUTTON - NO INLINE STYLES -->
+            <button type="submit" class="btn btn-custom">
+                <i class="bi bi-send me-2"></i>Post to Community
+            </button>
+        </form>
+    </div>
+</div>
 
                 <!-- Community Posts -->
                 <div class="card card-custom">
@@ -362,13 +421,14 @@
                                     </div>
                                     
                                     <form class="comment-form" data-post-id="<%= post.post_id %>">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="content" placeholder="Write a comment..." required>
-                                            <button class="btn btn-outline-primary" type="submit">
-                                                <i class="bi bi-send me-1"></i>Comment
-                                            </button>
-                                        </div>
-                                    </form>
+    <div class="input-group">
+        <label for="comment-<%= post.post_id %>" class="visually-hidden">Write a comment</label>
+        <input type="text" class="form-control" id="comment-<%= post.post_id %>" name="content" placeholder="Write a comment..." required>
+        <button class="btn btn-outline-primary" type="submit">
+            <i class="bi bi-send me-1"></i>Comment
+        </button>
+    </div>
+</form>
                                 </div>
                             <% }); %>
                         <% } else { %>
@@ -673,5 +733,7 @@
             }
         });
     </script>
+  
 </body>
 </html>
+<%- include('partials/footer') %>

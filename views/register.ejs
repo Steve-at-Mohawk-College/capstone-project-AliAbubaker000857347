@@ -2,9 +2,6 @@
 
 <div class="row justify-content-center">
   <div class="col-md-6 col-lg-5">
-    <!-- Back to Home Button -->
-    
-    
     <div class="card card-custom">
       <div class="card-body p-4">
         <div class="text-center mb-4">
@@ -28,7 +25,10 @@
               <span class="input-group-text">
                 <i class="bi bi-person"></i>
               </span>
-              <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+              <input type="text" class="form-control" id="username" name="username" 
+                     placeholder="Choose a username" 
+                     value="<%= typeof formData !== 'undefined' && formData.username ? formData.username : '' %>" 
+                     required>
             </div>
           </div>
           
@@ -38,7 +38,10 @@
               <span class="input-group-text">
                 <i class="bi bi-envelope"></i>
               </span>
-              <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com" required>
+              <input type="email" class="form-control" id="email" name="email" 
+                     placeholder="your@email.com" 
+                     value="<%= typeof formData !== 'undefined' && formData.email ? formData.email : '' %>" 
+                     required>
             </div>
           </div>
           
@@ -48,7 +51,8 @@
               <span class="input-group-text">
                 <i class="bi bi-lock"></i>
               </span>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" minlength="8" required>
+              <input type="password" class="form-control" id="password" name="password" 
+                     placeholder="Create a password" minlength="8" required>
             </div>
             <div class="form-text">Password must be at least 8 characters long.</div>
           </div>

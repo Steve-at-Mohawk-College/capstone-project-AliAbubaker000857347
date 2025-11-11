@@ -5,3 +5,8 @@ cypress/
 tests/
 *.test.js
 *.spec.js
+docs/
+.git/
+*.md
+*.txt
+coverage/

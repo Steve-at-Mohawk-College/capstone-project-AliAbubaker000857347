@@ -12,3 +12,20 @@ public/uploads/
  
 "# Uploaded files" 
 "public/uploads/" 
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# Cypress test artifacts
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+# Cypress test artifacts
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/

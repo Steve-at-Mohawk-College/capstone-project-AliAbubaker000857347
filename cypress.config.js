@@ -1,18 +1,18 @@
 const { defineConfig } = require("cypress");
+const path = require('path');
 
 module.exports = defineConfig({
   e2e: {
     baseUrl: "http://localhost:3000",
     setupNodeEvents(on, config) {
-      // implement node event listeners here
       return config;
     },
-    specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
-    supportFile: "cypress/support/e2e.js",
-    fixturesFolder: "cypress/fixtures",
-    downloadsFolder: "cypress/downloads",
-    videosFolder: "cypress/videos",
-    screenshotsFolder: "cypress/sshots",
+    specPattern: 'tests/e2e/cypress/**/*.cy.{js,jsx,ts,tsx}',
+    supportFile: 'cypress/support/e2e.js', // This should now work
+    fixturesFolder: 'cypress/fixtures',
+    downloadsFolder: 'cypress/downloads',
+    videosFolder: 'cypress/videos',
+    screenshotsFolder: 'cypress/screenshots',
     video: false,
     screenshotOnRunFailure: true,
     defaultCommandTimeout: 10000,
@@ -20,7 +20,6 @@ module.exports = defineConfig({
     viewportWidth: 1280,
     viewportHeight: 720,
   },
-
   component: {
     devServer: {
       framework: "react",

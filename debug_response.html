@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title || 'Pet Care Management' %></title>
+  <title>Register - Pet Care Management</title>
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -1354,7 +1354,7 @@ body.mobile-menu-open {
       <!-- Right: Profile + theme + notification -->
       <div class="header-icons d-lg-none">
         <div class="profile-modern dropdown">
-          <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-label="User profile">
+          <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
             <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
@@ -1370,9 +1370,7 @@ body.mobile-menu-open {
 
         <div class="dropdown">
           <button class="notification-bell" id="notificationDropdown" data-bs-toggle="dropdown">
-            <a href="#" class="notification-bell" aria-label="Notifications">
-    <i class="bi bi-bell"></i>
-</a>
+            <i class="bi bi-bell"></i>
             <span class="badge bg-danger rounded-pill" id="notificationBadge" style="display:none;">0</span>
           </button>
           <div class="dropdown-menu dropdown-menu-end p-3" style="min-width:250px;">
@@ -1386,9 +1384,10 @@ body.mobile-menu-open {
       </div>
 
       <!-- Toggle -->
-      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
-<span class="navbar-toggler-icon"></span>
-</button>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
       <!-- Collapsible Nav -->
       <div class="collapse navbar-collapse" id="mainNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
@@ -1411,7 +1410,7 @@ body.mobile-menu-open {
         <div class="header-icons d-none d-lg-flex">
           <div class="profile-modern dropdown">
             <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
-             <span class="me-2 fw-semibold text-dark"><%= typeof username !== 'undefined' ? username : 'User' %></span>
+             <span class="me-2 fw-semibold text-dark"></span>
               <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -1690,3 +1689,143 @@ class NotificationSystem {
 
 </body>
 </html>
+
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card card-custom">
+      <div class="card-body p-4">
+        <div class="text-center mb-4">
+          <i class="bi bi-person-plus text-primary" style="font-size: 3rem;"></i>
+          <h1 class="h3 mt-2">Create Account</h1>
+          <p class="text-muted">Join our pet care community</p>
+        </div>
+        
+        
+          <div class="alert alert-info">Check your email to verify your account.</div>
+        
+        
+        
+
+        <form action="/auth/register" method="POST">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username *</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-person"></i>
+              </span>
+              <input type="text" class="form-control" id="username" name="username" 
+                     placeholder="Choose a username" 
+                     value="" 
+                     required>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address *</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-envelope"></i>
+              </span>
+              <input type="email" class="form-control" id="email" name="email" 
+                     placeholder="your@email.com" 
+                     value="" 
+                     required>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label for="password" class="form-label">Password *</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-lock"></i>
+              </span>
+              <input type="password" class="form-control" id="password" name="password" 
+                     placeholder="Create a password" minlength="8" required>
+            </div>
+            <div class="form-text">Password must be at least 8 characters long.</div>
+          </div>
+          
+          <button type="submit" class="btn btn-custom w-100 btn-lg">
+            <i class="bi bi-person-plus me-2"></i>Create Account
+          </button>
+        </form>
+
+        <div class="mt-4 text-center">
+          <p>Already have an account? <a href="/login" class="text-decoration-none">Sign in here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-white mt-5">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-heart-pulse me-2"></i>Pet Care
+                </h5>
+                <p class="text-muted">Comprehensive pet care management for your furry family members.</p>
+
+            </div>
+
+            <div class="col-md-2 mb-4">
+                <h6 class="fw-bold mb-3">Navigation</h6>
+                <ul class="list-unstyled">
+
+                    
+                        <li class="mb-2"><a href="/dashboard" class="text-muted text-decoration-none">Dashboard</a></li>
+
+                        <li class="mb-2"><a href="/health-tracker-history"
+                                class="text-muted text-decoration-none">Health</a></li>
+                        
+                </ul>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <h6 class="fw-bold mb-3">Resources</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="/community" class="text-muted text-decoration-none">Community</a></li>
+
+                </ul>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <h6 class="fw-bold mb-3">Contact</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2 text-muted"><i class="bi bi-envelope me-2"></i>support@petcare.com</li>
+
+                    <a href="/privacy" class="text-muted text-decoration-none me-3">
+                        <li class="mb-2 text-muted"><i class="bi bi-eye-slash me-2"></i>Privacy Policy</li>
+                    </a>
+                    <!-- <li class="mb-2 text-muted"><i class="bi bi-telephone me-2"></i>+1 (555) 123-4567</li> -->
+                    <!-- <li class="mb-2 text-muted"><i class="bi bi-geo-alt me-2"></i>123 Pet Street, Pet City</li> -->
+                </ul>
+            </div>
+        </div>
+
+        <hr class="my-4 bg-secondary">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="text-muted mb-0 text-center" >&copy; 2025 Pet Care Management. All rights reserved.</p>
+            </div>
+            
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Theme JS -->
+<script src="/js/theme.js"></script>
+
+<!-- Additional scripts for specific pages -->
+
+                </body>
+
+                </html>

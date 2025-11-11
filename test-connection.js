@@ -1,4 +1,4 @@
-const { testConnection } = require('./config/database');
+const { testConnection } = require('../config/database');
 
 async function test() {
   const connected = await testConnection();

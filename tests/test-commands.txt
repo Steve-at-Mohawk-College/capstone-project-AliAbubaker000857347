@@ -1,0 +1,194 @@
+==================================================
+PET CARE MANAGEMENT APP - TEST COMMANDS
+==================================================
+
+🚀 QUICK START:
+1. Start your server first: npm start
+2. Then run tests in a new terminal
+
+==================================================
+🧪 UNIT TESTS (Fastest - Individual Components)
+==================================================
+
+# All unit tests
+npm run test:unit
+
+# Specific unit test categories
+npm run test:unit:models
+npm run test:unit:services
+
+# Individual unit test files
+npm run test:notifications:model
+npm run test:notifications:service
+
+==================================================
+🔗 INTEGRATION TESTS (API & Database)
+==================================================
+
+# All integration tests
+npm run test:integration
+
+# Specific integration test categories
+npm run test:integration:notifications
+npm run test:integration:calendar
+npm run test:integration:auth
+
+# Individual integration test files
+npm run test:notifications:routes
+npm run test:notifications:integration
+npm run test:tasks:api
+npm run test:tasks:integration
+npm run test:calendar:integration
+
+==================================================
+🌐 E2E TESTS (Node.js - Complete User Flows)
+==================================================
+
+# Authentication E2E tests
+npm run test:e2e:node:auth
+
+# Pet management E2E tests
+npm run test:e2e:node:pets
+
+==================================================
+🖥️ E2E TESTS (Cypress - Browser Automation)
+==================================================
+
+# All Cypress tests
+npm run test:e2e:cypress
+
+# Specific Cypress features
+npm run test:e2e:cypress:calendar
+npm run test:e2e:cypress:tasks
+npm run test:e2e:cypress:notifications
+
+# Accessibility tests
+npm run test:accessibility
+
+# Open Cypress UI for interactive testing
+npm run cypress:open
+
+==================================================
+🐍 PYTHON TESTS
+==================================================
+
+npm run test:python
+# Open the coverage report
+start htmlcov/index.html
+
+# Say: "This shows our 33% test coverage across Python files, with detailed line-by-line analysis"
+
+==================================================
+🔄 TEST RUNNERS (Custom Test Suites)
+==================================================
+
+# Run all test suites
+npm run test:runners:all
+
+# Individual test runners
+npm run test:runners:auth
+npm run test:runners:pets
+npm run test:runners:notifications
+
+==================================================
+📅 LEGACY/WEEK TESTS
+==================================================
+
+npm run test:legacy:week7
+npm run test:week5
+npm run test:week5:services
+
+==================================================
+🎯 FEATURE-SPECIFIC TEST SUITES
+==================================================
+
+# Complete authentication testing
+npm run test:auth
+
+# Complete notifications testing
+npm run test:notifications
+
+# Complete tasks testing
+npm run test:tasks:api && npm run test:tasks:integration
+
+# Complete calendar testing
+npm run test:calendar:integration
+
+==================================================
+⚡ DEVELOPMENT & DEBUGGING
+==================================================
+
+# Watch mode (runs tests when files change)
+npm run test:watch
+
+# Default test command
+npm test
+
+==================================================
+🎬 DEMO/VIDEO SCENARIOS
+==================================================
+
+For a quick demo showing everything works:
+
+1. Show basic functionality:
+   npm run test:unit
+   npm run test:integration
+
+2. Show user authentication flow:
+   npm run test:auth
+
+3. Show notifications system:
+   npm run test:notifications
+
+4. Show pet management:
+   npm run test:e2e:node:pets
+
+5. Show browser testing:
+   npm run test:e2e:cypress:calendar
+
+6. Show complete test suite:
+   npm run test:runners:all
+
+==================================================
+🔧 TROUBLESHOOTING COMMANDS
+==================================================
+
+# If tests fail with module errors, check specific files:
+npm run test:notifications:model
+npm run test:notifications:service
+
+# If Cypress fails, test one file:
+npx cypress run --spec "tests/e2e/cypress/features/calendar/calendar-ui.cy.js"
+
+# Clear test cache if needed:
+npx jest --clearCache
+
+==================================================
+📊 TEST COVERAGE SUMMARY
+==================================================
+
+Quick Status Check:
+✅ Unit Tests:        npm run test:unit
+✅ Integration Tests: npm run test:integration  
+✅ E2E Node Tests:    npm run test:e2e:node:auth && npm run test:e2e:node:pets
+✅ Cypress Tests:     npm run test:e2e:cypress
+✅ Python Tests:      npm run test:python
+
+Full Regression Test:
+npm run test:runners:all
+
+==================================================
+💡 PRO TIPS FOR DEMO VIDEOS
+==================================================
+
+1. Start with: npm run test:unit (fastest, shows basics work)
+2. Then: npm run test:integration (shows APIs work)
+3. Then: npm run test:auth (shows user system works)
+4. Then: npm run test:notifications (shows notification system)
+5. End with: npm run test:runners:all (shows everything works)
+
+For browser demos: npm run cypress:open
+
+==================================================
+Last Updated: $(date)
+==================================================

@@ -11,6 +11,54 @@ function requireAuth(req, res, next) {
   return res.redirect('/login');
 }
 
+
+const { updateUsername, checkUserExistsExcludingCurrent } = require('../models/userModel');
+
+// POST /profile/username - Update username (for regular users)
+router.post('/username', requireAuth, async (req, res) => {
+  try {
+    const { username } = req.body;
+    const userId = req.session.userId;
+
+    if (!username || username.trim().length < 3) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username must be at least 3 characters long'
+      });
+    }
+
+    const trimmedUsername = username.trim();
+
+    // Check if username already exists (excluding current user)
+    const existingUser = await checkUserExistsExcludingCurrent(userId, trimmedUsername, null);
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username already taken'
+      });
+    }
+
+    // Update username
+    await updateUsername(userId, trimmedUsername);
+
+    // Update session
+    req.session.username = trimmedUsername;
+
+    res.json({
+      success: true,
+      message: 'Username updated successfully',
+      newUsername: trimmedUsername
+    });
+
+  } catch (error) {
+    console.error('Username update error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error updating username'
+    });
+  }
+});
+
 // GET /profile - Profile page
 router.get('/', requireAuth, async (req, res) => {
   try {

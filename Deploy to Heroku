@@ -6,6 +6,8 @@ npm uninstall cypress
 # Update package-lock.json
 npm install
 
+cope package-heroku.json package.json
+
 # Commit the changes
 git add package.json package-lock.json
 git commit -m "Deploy: Remove Cypress for production"

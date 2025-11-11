@@ -393,6 +393,78 @@
             font-size: 0.65rem;
         }
     }
+
+
+
+
+
+
+
+
+
+    /* ===== PROFILE PAGE STYLES ===== */
+/* Remove fixed positioning from header on profile page */
+.navbar-modern {
+  position: relative !important;
+  top: auto !important;
+}
+
+/* Remove body padding since header is no longer fixed */
+body {
+  padding-top: 0 !important;
+  margin: 0 !important;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.container-fluid.py-4 {
+  padding: 1rem !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Your existing profile styles */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.card-custom {
+  border: none;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+.card-custom:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+.border-bottom {
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+/* Remove any extra spacing */
+.row.justify-content-center {
+  margin-top: 0 !important;
+}
+
+.d-flex.justify-content-between.align-items-center.mb-4 {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container-fluid.py-4 {
+    padding: 0.5rem !important;
+  }
+}
 </style>
 
 <link rel="stylesheet" href="/css/calendar.css">

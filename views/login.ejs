@@ -1,220 +1,264 @@
 <%- include('partials/header', {title: 'Login - Pet Care Management' , showBackButton: true}) %>
 
-  <div class="row justify-content-center align-items-center min-vh-80 py-5">
+<style>
+/* ===== FIX HEADER GAP FOR LOGIN PAGE ===== */
+/* Remove ALL spacing from body */
+body {
+    padding-top: 0 !important;
+    margin: 0 !important;
+}
+
+/* Target the navbar directly */
+.navbar-modern {
+    position: relative !important;
+    top: auto !important;
+}
+
+/* Remove ALL padding and margins from main container */
+.container-fluid {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Remove spacing from the row and card */
+.row.justify-content-center {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.col-md-6.col-lg-5 {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.card.card-custom {
+    margin-top: 0 !important;
+    border-top: none !important;
+}
+
+/* Remove any potential spacing from header partial */
+header {
+    margin-bottom: 0 !important;
+}
+
+/* Remove extra spacing from min-vh-80 */
+.min-vh-80 {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Your existing login styles */
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.avatar-circle i {
+    font-size: 2.5rem;
+}
+
+.card-custom {
+    border-radius: 1rem;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+.input-group-lg .input-group-text,
+.input-group-lg .form-control {
+    padding: 0.75rem 1rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.form-control:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+}
+
+.btn-outline-secondary:hover {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+}
+</style>
+
+<div class="row justify-content-center align-items-center min-vh-80 py-5">
     <div class="col-md-6 col-lg-5">
-      <% if (typeof showBackButton === 'undefined' || showBackButton) { %>
-  <!-- Mobile version -->
-  <div class="d-block d-md-none mb-4 text-center">
-    <a href="/" class="btn btn-outline-dark btn-sm">
-      <i class="bi bi-arrow-left me-1"></i>Back to Home
-    </a>
-  </div>
-
-  <!-- Desktop version -->
-  <a href="/" class="back-to-home d-none d-lg-flex text-dark text-decoration-none align-items-center">
-    <i class="bi bi-arrow-left me-1"></i>Home
-  </a>
-<% } %>
-
-      
-
-      <div class="card card-custom shadow-lg border-0">
-        <div class="card-body p-5">
-          <!-- Header Section -->
-          <div class="text-center mb-4">
-            <div class="avatar-circle mb-3">
-              <i class="bi bi-person-circle text-white"></i>
+        <% if (typeof showBackButton === 'undefined' || showBackButton) { %>
+            <!-- Mobile version -->
+            <div class="d-block d-md-none mb-4 text-center">
+                <a href="/" class="btn btn-outline-dark btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Home
+                </a>
             </div>
-            <h1 class="h3 fw-bold text-dark">Welcome Back</h1>
-            <p class="text-muted">Sign in to manage your pets' health and happiness</p>
-          </div>
 
-          <!-- Messages -->
-          <% if (typeof message !=='undefined' && message) { %>
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-              <i class="bi bi-info-circle me-2"></i>
-              <%= message %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <% } %>
+            <!-- Desktop version -->
+            <a href="/" class="back-to-home d-none d-lg-flex text-dark text-decoration-none align-items-center">
+                <i class="bi bi-arrow-left me-1"></i>Home
+            </a>
+        <% } %>
 
-              <% if (typeof error !=='undefined' && error) { %>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                  <i class="bi bi-exclamation-triangle me-2"></i>
-                  <%= error %>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="card card-custom shadow-lg border-0">
+            <div class="card-body p-5">
+                <!-- Header Section -->
+                <div class="text-center mb-4">
+                    <div class="avatar-circle mb-3">
+                        <i class="bi bi-person-circle text-white"></i>
+                    </div>
+                    <h1 class="h3 fw-bold text-dark">Welcome Back</h1>
+                    <p class="text-muted">Sign in to manage your pets' health and happiness</p>
                 </div>
+
+                <!-- Messages -->
+                <% if (typeof message !=='undefined' && message) { %>
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <%= message %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 <% } %>
 
-                  <!-- Login Form -->
-                  <form action="/auth/login" method="POST" class="needs-validation" novalidate>
+                <% if (typeof error !=='undefined' && error) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <%= error %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+
+                <!-- Login Form -->
+                <form action="/auth/login" method="POST" class="needs-validation" novalidate>
                     <div class="mb-4">
-                      <label for="email" class="form-label fw-semibold">Email Address</label>
-                      <div class="input-group input-group-lg">
-                        <span class="input-group-text bg-light border-end-0">
-                          <i class="bi bi-envelope text-primary"></i>
-                        </span>
-                        <input type="email" class="form-control border-start-0 ps-2" id="email" name="email"
-                          placeholder="your@email.com" required>
-                        <div class="invalid-feedback">
-                          Please provide a valid email address.
+                        <label for="email" class="form-label fw-semibold">Email Address</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-envelope text-primary"></i>
+                            </span>
+                            <input type="email" class="form-control border-start-0 ps-2" id="email" name="email"
+                                placeholder="your@email.com" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid email address.
+                            </div>
                         </div>
-                      </div>
                     </div>
 
                     <div class="mb-4">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <label for="password" class="form-label fw-semibold">Password</label>
-                        <a href="/forgot-password" class="text-decoration-none small text-primary">
-                          Forgot password?
-                        </a>
-                      </div>
-                      <div class="input-group input-group-lg">
-                        <span class="input-group-text bg-light border-end-0">
-                          <i class="bi bi-lock text-primary"></i>
-                        </span>
-                        <input type="password" class="form-control" id="password" name="password"
-                          placeholder="Enter your password" required>
-                        <!-- <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
-                          <i class="bi bi-eye"></i>
-                        </button> -->
-                        <div class="invalid-feedback">
-                          Please enter your password.
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <a href="/forgot-password" class="text-decoration-none small text-primary">
+                                Forgot password?
+                            </a>
                         </div>
-                      </div>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-lock text-primary"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="Enter your password" required>
+                            <!-- <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button> -->
+                            <div class="invalid-feedback">
+                                Please enter your password.
+                            </div>
+                        </div>
 
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                            <label class="form-check-label small" for="rememberMe">Remember me</label>
+                        </div>
 
-                      <div class="mb-4 form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
-                        <label class="form-check-label small" for="rememberMe">Remember me</label>
-                      </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg py-3 fw-semibold">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </button>
+                </form>
 
-                      <button type="submit" class="btn btn-primary w-100 btn-lg py-3 fw-semibold">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                      </button>
-                  </form>
-
-                  <!-- Divider -->
-                  <div class="position-relative my-4">
+                <!-- Divider -->
+                <div class="position-relative my-4">
                     <hr>
-                    <span
-                      class="position-absolute top-50 start-50 translate-middle bg-white px-3 small text-muted">or</span>
-                  </div>
+                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 small text-muted">or</span>
+                </div>
 
-
-
-                  <!-- Sign Up Link -->
-                  <div class="text-center mt-4 pt-3 border-top">
+                <!-- Sign Up Link -->
+                <div class="text-center mt-4 pt-3 border-top">
                     <p class="mb-0">Don't have an account?
-                      <a href="/register" class="text-decoration-none fw-semibold text-primary">Sign up here</a>
+                        <a href="/register" class="text-decoration-none fw-semibold text-primary">Sign up here</a>
                     </p>
-                  </div>
+                </div>
 
-                  <% if (typeof message !== 'undefined' && message) { %>
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="bi bi-info-circle me-2"></i>
-        <%= message %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-<% } %>
+                <% if (typeof message !== 'undefined' && message) { %>
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <%= message %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
 
-<!-- Add this specific alert for timeout messages -->
-<% if (typeof message !== 'undefined' && message.includes('session has expired')) { %>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <i class="bi bi-clock-history me-2"></i>
-        <%= message %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-<% } %>
-
-                  
+                <!-- Add this specific alert for timeout messages -->
+                <% if (typeof message !== 'undefined' && message.includes('session has expired')) { %>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-clock-history me-2"></i>
+                        <%= message %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <style>
-    .min-vh-80 {
-      min-height: 80vh;
-      display: flex;
-      align-items: center;
-    }
-
-    .avatar-circle {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-    }
-
-    .avatar-circle i {
-      font-size: 2.5rem;
-    }
-
-    .card-custom {
-      border-radius: 1rem;
-      overflow: hidden;
-    }
-
-    .input-group-lg .input-group-text,
-    .input-group-lg .form-control {
-      padding: 0.75rem 1rem;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      border: none;
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-    }
-
-    .form-control:focus {
-      border-color: #4CAF50;
-      box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
-    }
-
-    .btn-outline-secondary:hover {
-      background-color: #4CAF50;
-      border-color: #4CAF50;
-      color: white;
-    }
-  </style>
-
-  <script>
+<script>
     // Form validation
     document.addEventListener('DOMContentLoaded', function () {
-      // Toggle password visibility
-      const togglePassword = document.querySelector('#togglePassword');
-      const password = document.querySelector('#password');
+        // Toggle password visibility
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
 
-      if (togglePassword && password) {
-        togglePassword.addEventListener('click', function () {
-          const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-          password.setAttribute('type', type);
-          this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+        if (togglePassword && password) {
+            togglePassword.addEventListener('click', function () {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+            });
+        }
+
+        // Form validation
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
         });
-      }
-
-      // Form validation
-      const forms = document.querySelectorAll('.needs-validation');
-      Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
-      });
     });
-  </script>
+</script>
 
-  <%- include('partials/footer') %>
+<%- include('partials/footer') %>

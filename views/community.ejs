@@ -19,24 +19,53 @@
             --light-color: #f9fafb;
         }
         
-        /* CRITICAL FIX: Ensure dropdowns work on community page */
-        .community-page .navbar-modern {
-            z-index: 1030 !important;
-            position: relative;
+        /* ===== CRITICAL HEADER GAP FIXES ===== */
+        /* Remove ALL spacing from body and containers */
+        body.community-page {
+            padding-top: 0 !important;
+            margin: 0 !important;
         }
         
-        .community-page .dropdown-menu {
-            z-index: 1050 !important;
+        /* Target the navbar directly */
+        .navbar-modern {
+            position: relative !important;
+            top: auto !important;
         }
         
-        .community-page .header-icons .dropdown-menu {
-            position: absolute !important;
-            top: 100% !important;
-            left: auto !important;
-            right: 0 !important;
-            transform: none !important;
+        /* Remove ALL padding and margins from main container */
+        .container.community-container {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
         }
         
+        .container.py-4 {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+        
+        /* Remove spacing from the first elements */
+        .page-header {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        
+        /* Remove any potential spacing from rows and columns */
+        .row:first-child {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        
+        .col-12:first-child {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        
+        /* Ensure no spacing from header partial */
+        header {
+            margin-bottom: 0 !important;
+        }
+        
+        /* ===== COMMUNITY PAGE SPECIFIC STYLES ===== */
         .community-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -285,6 +314,24 @@
         [data-theme="dark"] .btn-outline-primary:hover {
             background-color: #86b7fe !important;
             color: #000000 !important;
+        }
+        
+        /* CRITICAL FIX: Ensure dropdowns work on community page */
+        .community-page .navbar-modern {
+            z-index: 1030 !important;
+            position: relative;
+        }
+        
+        .community-page .dropdown-menu {
+            z-index: 1050 !important;
+        }
+        
+        .community-page .header-icons .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: auto !important;
+            right: 0 !important;
+            transform: none !important;
         }
         
         @media (max-width: 768px) {

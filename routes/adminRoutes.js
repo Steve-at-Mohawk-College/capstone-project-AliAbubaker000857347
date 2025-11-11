@@ -1,6 +1,7 @@
 const express = require('express');
 const { query, queryOne } = require('../config/database');
 const router = express.Router();
+const { updateUsername, checkUserExistsExcludingCurrent } = require('../models/userModel');
 
 // Admin authentication middleware
 function requireAdmin(req, res, next) {
@@ -10,6 +11,51 @@ function requireAdmin(req, res, next) {
     message: 'Admin privileges required to access this page.'
   });
 }
+
+
+
+
+// Update username (admin functionality)
+router.post('/users/:id/username', requireAdmin, async (req, res) => {
+  try {
+    const { username } = req.body;
+    const targetUserId = req.params.id;
+
+    if (!username || username.trim().length < 3) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username must be at least 3 characters long'
+      });
+    }
+
+    const trimmedUsername = username.trim();
+
+    // Check if username already exists (excluding target user)
+    const existingUser = await checkUserExistsExcludingCurrent(targetUserId, trimmedUsername, null);
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username already taken'
+      });
+    }
+
+    // Update username
+    await updateUsername(targetUserId, trimmedUsername);
+
+    res.json({
+      success: true,
+      message: 'Username updated successfully',
+      newUsername: trimmedUsername
+    });
+
+  } catch (error) {
+    console.error('Admin username update error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error updating username'
+    });
+  }
+});
 
 // Modify your admin routes to pass additional data
 router.get('/dashboard', requireAdmin, async (req, res) => {
@@ -55,7 +101,9 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
     console.error('Admin dashboard error:', error);
     res.status(500).render('error', {
       title: 'Error',
-      message: 'Error loading admin dashboard.'
+      message: 'Error loading admin dashboard.',
+      error: process.env.NODE_ENV === 'development' ? error : {} 
+
     });
   }
 });
@@ -74,10 +122,11 @@ router.get('/users', requireAdmin, async (req, res) => {
       users
     });
   } catch (error) {
-    console.error('User management error:', error);
+     console.error('User management error:', error);
     res.status(500).render('error', {
       title: 'Error',
-      message: 'Error loading user management.'
+      message: 'Error loading user management.',
+      error: process.env.NODE_ENV === 'development' ? error : {}
     });
   }
 });
@@ -97,10 +146,11 @@ router.get('/posts', requireAdmin, async (req, res) => {
       posts
     });
   } catch (error) {
-    console.error('Post moderation error:', error);
+   console.error('Post moderation error:', error);
     res.status(500).render('error', {
       title: 'Error',
-      message: 'Error loading post moderation.'
+      message: 'Error loading post moderation.',
+      error: process.env.NODE_ENV === 'development' ? error : {}
     });
   }
 });
@@ -131,18 +181,7 @@ router.post('/posts/:id/delete', requireAdmin, async (req, res) => {
   }
 });
 
-// Update your role update route
-router.post('/users/:id/role', requireAdmin, async (req, res) => {
-  try {
-    console.log('Updating role for user ID:', req.params.id, 'to:', req.body.role);
-    const result = await query('UPDATE users SET role = ? WHERE user_id = ?', [req.body.role, req.params.id]);
-    console.log('Role update result:', result);
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Update role error:', error);
-    res.status(500).json({ success: false, error: 'Error updating user role' });
-  }
-});
+
 
 // Update your delete user route
 router.post('/users/:id/delete', requireAdmin, async (req, res) => {
@@ -184,7 +223,7 @@ router.get('/users/:id', requireAdmin, async (req, res) => {
   }
 });
 
-// Update user role (already exists, but add better error handling)
+// Update user role 
 router.post('/users/:id/role', requireAdmin, async (req, res) => {
   try {
     const { role } = req.body;

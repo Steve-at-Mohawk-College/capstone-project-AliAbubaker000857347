@@ -58,7 +58,18 @@
                   <% users.forEach(user => { %>
                     <tr>
                       <td><%= user.user_id %></td>
-                      <td><%= user.username %></td>
+                      <!-- Replace the username table cell in views/admin/users.ejs -->
+<td>
+  <div class="d-flex align-items-center">
+    <span class="me-2 username-display"><%= user.username %></span>
+    <button class="btn btn-sm btn-outline-secondary edit-username-btn" 
+            data-user-id="<%= user.user_id %>"
+            data-current-username="<%= user.username %>"
+            title="Edit username">
+      <i class="bi bi-pencil"></i>
+    </button>
+  </div>
+</td>
                       <td><%= user.email %></td>
                       <td>
                         <select class="form-select form-select-sm role-select" 
@@ -98,6 +109,7 @@
 </div>
 
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
   // Role update functionality
   document.querySelectorAll('.role-select').forEach(select => {
@@ -144,6 +156,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Username editing functionality
+  document.querySelectorAll('.edit-username-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const userId = this.dataset.userId;
+      const currentUsername = this.dataset.currentUsername;
+      
+      const newUsername = prompt('Enter new username:', currentUsername);
+      
+      if (newUsername && newUsername.trim() !== currentUsername && newUsername.trim().length >= 3) {
+        updateUserUsername(userId, newUsername.trim(), this);
+      } else if (newUsername && newUsername.trim().length < 3) {
+        alert('Username must be at least 3 characters long');
+      }
+    });
+  });
+
   async function deleteUser(userId) {
     try {
       const response = await fetch(`/admin/users/${userId}/delete`, {
@@ -168,6 +196,43 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  async function updateUserUsername(userId, newUsername, buttonElement) {
+    const originalText = buttonElement.innerHTML;
+    buttonElement.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
+    buttonElement.disabled = true;
+
+    try {
+      const response = await fetch(`/admin/users/${userId}/username`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: newUsername })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        showToast('Username updated successfully!', 'success');
+        
+        // Update the displayed username
+        const usernameDisplay = buttonElement.closest('td').querySelector('.username-display');
+        usernameDisplay.textContent = newUsername;
+        
+        // Update the button's data attribute
+        buttonElement.dataset.currentUsername = newUsername;
+      } else {
+        showToast('Error updating username: ' + result.error, 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error updating username', 'error');
+    } finally {
+      buttonElement.innerHTML = originalText;
+      buttonElement.disabled = false;
+    }
+  }
+
   function showToast(message, type = 'info') {
     // Create toast notification
     const toast = document.createElement('div');
@@ -189,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
 </script>
 
 <%- include('../partials/admin-footer') %>

@@ -12,6 +12,13 @@ async function findByEmail(email) {
   return queryOne(`SELECT * FROM users WHERE email = ?`, [email]);
 }
 
+async function updateUsername(userId, newUsername) {
+  const sql = `UPDATE users SET username = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?`;
+  return query(sql, [newUsername, userId]);
+}
+
+
+
 async function findByUsername(username) {
   return queryOne(`SELECT * FROM users WHERE username = ?`, [username]);
 }
@@ -78,5 +85,6 @@ module.exports = {
   getUserProfile,
   getUserProfileWithStats,
   checkUserExistsExcludingCurrent,
-  deleteUser
+  deleteUser,
+   updateUsername
 };

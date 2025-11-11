@@ -186,7 +186,7 @@ body > *:first-child {
 /* Fix dashboard spacing - remove all top spacing */
 .dashboard-container {
   min-height: 100vh;
-  padding: 0 1rem 1rem 1rem !important; /* Top: 0, Right: 1rem, Bottom: 1rem, Left: 1rem */
+   padding: 1rem !important;
   background: var(--light-bg);
   transition: all 0.3s ease;
   margin-top: 0 !important; /* Ensure no margin */
@@ -1084,10 +1084,46 @@ main, .main-content, .content {
   }
 }
 
+@media (max-width: 850px) {
+    body {
+    padding-top: 60px !important; /* Slightly less padding on mobile */
+  }
+    .dashboard-container {
+    min-height: calc(100vh - 60px);
+    padding: 0.5rem !important;
+  }
+}
+
+
+@media (max-width: 950px) {
+    body {
+    padding-top: 60px !important; /* Slightly less padding on mobile */
+  }
+    .dashboard-container {
+    min-height: calc(100vh - 60px);
+    padding: 0.5rem !important;
+  }
+}
+
+
+@media (max-width: 1000px) {
+    body {
+    padding-top: 60px !important; /* Slightly less padding on mobile */
+  }
+    .dashboard-container {
+    min-height: calc(100vh - 60px);
+    padding: 0.5rem !important;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-   .dashboard-container {
-    padding: 0 0.5rem 1rem 0.5rem !important; /* Reduce side padding on mobile */
+   body {
+    padding-top: 60px !important; /* Slightly less padding on mobile */
+  }
+    .dashboard-container {
+    min-height: calc(100vh - 60px);
+    padding: 0.5rem !important;
   }
   
   .dashboard-header {

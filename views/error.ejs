@@ -7,9 +7,13 @@
         <h1 class="display-4 text-danger">Oops!</h1>
         <p class="lead"><%= message %></p>
         
-        <% if (error && error.stack) { %>
+        <% if (typeof error !== 'undefined' && error && error.stack) { %>
           <div class="alert alert-secondary text-start mt-4">
             <pre class="mb-0" style="white-space:pre-wrap;"><%= error.stack %></pre>
+          </div>
+        <% } else if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-secondary text-start mt-4">
+            <pre class="mb-0" style="white-space:pre-wrap;"><%= JSON.stringify(error, null, 2) %></pre>
           </div>
         <% } %>
         

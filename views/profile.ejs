@@ -1,328 +1,576 @@
 <%- include('partials/header', {title: 'My Profile - Pet Care' }) %>
+<style>
+/* ===== PROFILE PAGE STYLES ===== */
+/* Remove fixed positioning from header on profile page */
+.navbar-modern {
+  position: relative !important;
+  top: auto !important;
+}
 
+/* Remove body padding since header is no longer fixed */
+body {
+  padding-top: 0 !important;
+  margin: 0 !important;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.container-fluid.py-4 {
+  padding: 1rem !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Your existing profile styles */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.card-custom {
+  border: none;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+.card-custom:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+.border-bottom {
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+/* Remove any extra spacing */
+.row.justify-content-center {
+  margin-top: 0 !important;
+}
+
+.d-flex.justify-content-between.align-items-center.mb-4 {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container-fluid.py-4 {
+    padding: 0.5rem !important;
+  }
+}
+</style>
+
+<div class="container-fluid py-4">
   <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="card card-custom">
-        <div class="card-body p-4">
-          <h1 class="h3 mb-4 text-center">My Profile</h1>
+    <div class="col-xxl-10">
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-1">My Profile</h1>
+          <p class="text-muted mb-0">Manage your account settings and preferences</p>
+        </div>
+        <a href="/dashboard" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+      </div>
 
-          <% if (typeof message !=='undefined' && message) { %>
-            <div class="alert alert-info alert-dismissible fade show">
-              <%= message %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <% } %>
+      <!-- Alerts -->
+      <% if (typeof message !=='undefined' && message) { %>
+        <div class="alert alert-info alert-dismissible fade show mb-4">
+          <i class="bi bi-info-circle me-2"></i><%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% } %>
 
-              <% if (typeof error !=='undefined' && error) { %>
-                <div class="alert alert-danger alert-dismissible fade show">
-                  <%= error %>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+      <% if (typeof error !=='undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show mb-4">
+          <i class="bi bi-exclamation-triangle me-2"></i><%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% } %>
+
+      <div class="row g-4">
+        <!-- Left Column - Profile Overview -->
+        <div class="col-lg-4">
+          <!-- Profile Card -->
+          <div class="card card-custom h-100">
+            <div class="card-body text-center p-4">
+              <!-- Profile Picture -->
+              <div class="position-relative d-inline-block mb-4">
+                <img id="profilePicture" 
+                     src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
+                     class="rounded-circle shadow" 
+                     width="140" height="140"
+                     style="object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"
+                     onerror="this.onerror=null; this.src='/images/default-avatar.png'" 
+                     alt="Profile Picture">
+                
+                <!-- Camera Button -->
+                <label for="profilePictureInput"
+                       class="btn btn-primary rounded-circle position-absolute bottom-0 end-0 shadow"
+                       style="cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+                  <i class="bi bi-camera-fill"></i>
+                </label>
+                
+                <!-- Remove Button -->
+                <% if (user.profile_picture_url) { %>
+                  <button class="btn btn-danger rounded-circle position-absolute top-0 end-0 shadow"
+                          onclick="removeProfilePicture()" 
+                          title="Remove profile picture"
+                          style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 <% } %>
+              </div>
 
-                  <div class="text-center mb-4">
-                    <div class="position-relative d-inline-block">
-                      <img id="profilePicture" src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
-                        class="rounded-circle shadow" width="150" height="150"
-                        style="object-fit: cover; transition: opacity 0.3s;"
-                        onerror="this.onerror=null; this.src='/images/default-avatar.png'" alt="Profile Picture">
-                      <label for="profilePictureInput"
-                        class="btn btn-primary rounded-circle position-absolute bottom-0 end-0"
-                        style="cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                        <i class="bi bi-camera"></i>
-                      </label>
-                      <% if (user.profile_picture_url) { %>
-                        <button class="btn btn-danger rounded-circle position-absolute top-0 end-0"
-                          onclick="removeProfilePicture()" title="Remove profile picture"
-                          style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                        <% } %>
-                    </div>
+              <!-- User Info -->
+              <h3 class="h4 mb-2"><%= user.username %></h3>
+              <p class="text-muted mb-3">
+                <i class="bi bi-envelope me-2"></i><%= user.email %>
+              </p>
+              
+              <!-- Account Type -->
+              <div class="mb-4">
+                <span class="badge bg-<%= user.role === 'admin' ? 'danger' : 'primary' %> px-3 py-2 fs-6">
+                  <i class="bi bi-<%= user.role === 'admin' ? 'shield-shaded' : 'person' %> me-1"></i>
+                  <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %> Account
+                </span>
+              </div>
 
-                    <!-- Single file input - moved outside the label -->
-                    <input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
-
-                    <div class="mt-3">
-                      <h4>
-                        <%= user.username %>
-                      </h4>
-                      <p class="text-muted">
-                        <%= user.email %>
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Stats Overview -->
-                  <div class="row mb-4">
-                    <div class="col-md-4 mb-3">
-                      <div class="card h-100">
-                        <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
-                          <h6 class="card-title text-muted small">Pets</h6>
-                          <p class="card-text h4 mb-0 fw-bold">
-                            <%= user.pet_count || 0 %>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                      <div class="card h-100">
-                        <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
-                          <h6 class="card-title text-muted small">Upcoming Tasks</h6>
-                          <p class="card-text h4 mb-0 fw-bold">
-                            <%= user.upcoming_task_count || 0 %>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                      <div class="card h-100">
-                        <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
-                          <h6 class="card-title text-muted small">Member Since</h6>
-                          <p class="card-text h6 mb-0">
-                            <%= new Date(user.created_at).toLocaleDateString() %>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-md-12 mb-3">
-                    <div class="card">
-                      <div class="card-body text-center">
-                        <h5 class="card-title">Account Type</h5>
-                        <p class="card-text">
-                          <span class="badge bg-<%= user.role === 'admin' ? 'danger' : 'primary' %>">
-                            <%= user.role %>
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+              <!-- Member Since -->
+              <div class="text-muted">
+                <i class="bi bi-calendar-event me-2"></i>
+                Member since <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="text-center mt-4">
-          <a href="/dashboard" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-          </a>
-          <button class="btn btn-outline-primary ms-2" onclick="testUpload()">
-            <i class="bi bi-bug"></i> Test Upload
-          </button>
+        <!-- Right Column - Stats & Settings -->
+        <div class="col-lg-8">
+          <!-- Stats Overview -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="card card-custom h-100 border-0 bg-primary text-white">
+                <div class="card-body text-center p-4">
+                  <div class="mb-3">
+                    <i class="bi bi-heart-fill fs-1 opacity-75"></i>
+                  </div>
+                  <h3 class="h2 mb-1"><%= user.pet_count || 0 %></h3>
+                  <p class="mb-0 opacity-90">Pets</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card card-custom h-100 border-0 bg-warning text-dark">
+                <div class="card-body text-center p-4">
+                  <div class="mb-3">
+                    <i class="bi bi-calendar-check fs-1 opacity-75"></i>
+                  </div>
+                  <h3 class="h2 mb-1"><%= user.upcoming_task_count || 0 %></h3>
+                  <p class="mb-0 opacity-90">Upcoming Tasks</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card card-custom h-100 border-0 bg-success text-white">
+                <div class="card-body text-center p-4">
+                  <div class="mb-3">
+                    <i class="bi bi-clock-history fs-1 opacity-75"></i>
+                  </div>
+                  <h3 class="h2 mb-1"><%= Math.floor((new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)) %></h3>
+                  <p class="mb-0 opacity-90">Days Active</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Settings -->
+          <div class="card card-custom">
+            <div class="card-header bg-transparent border-bottom-0 px-4 pt-4">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-gear-fill text-primary me-2"></i>
+                Account Settings
+              </h5>
+            </div>
+            <div class="card-body p-4">
+              <!-- Username Update -->
+              <div class="row align-items-center mb-4 pb-3 border-bottom">
+                <div class="col-md-8">
+                  <label class="form-label fw-semibold">Username</label>
+                  <p class="text-muted mb-0">Your public display name</p>
+                </div>
+                <div class="col-md-4">
+                  <form id="usernameForm" class="d-flex gap-2">
+                    <input type="text" 
+                           class="form-control" 
+                           id="usernameInput" 
+                           value="<%= user.username %>" 
+                           required 
+                           minlength="3"
+                           placeholder="Enter new username">
+                    <button type="submit" class="btn btn-primary" id="updateUsernameBtn">
+                      <i class="bi bi-check-lg"></i>
+                    </button>
+                  </form>
+                  <div class="form-text text-end">Min. 3 characters</div>
+                </div>
+              </div>
+
+              <!-- Email Display -->
+              <div class="row align-items-center mb-4 pb-3 border-bottom">
+                <div class="col-md-8">
+                  <label class="form-label fw-semibold">Email Address</label>
+                  <p class="text-muted mb-0">Your account email</p>
+                </div>
+                <div class="col-md-4">
+                  <div class="alert alert-light border mb-0">
+                    <i class="bi bi-envelope me-2 text-muted"></i>
+                    <strong><%= user.email %></strong>
+                  </div>
+                  <div class="form-text text-end">Contact support to change</div>
+                </div>
+              </div>
+
+              <!-- Profile Picture Settings -->
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <label class="form-label fw-semibold">Profile Picture</label>
+                  <p class="text-muted mb-0">Update your profile photo</p>
+                </div>
+                <div class="col-md-4 text-end">
+                  <div class="d-flex gap-2 justify-content-end">
+                    <label for="profilePictureInput" class="btn btn-outline-primary">
+                      <i class="bi bi-upload me-2"></i>Upload
+                    </label>
+                    <% if (user.profile_picture_url) { %>
+                      <button class="btn btn-outline-danger" onclick="removeProfilePicture()">
+                        <i class="bi bi-trash me-2"></i>Remove
+                      </button>
+                    <% } %>
+                  </div>
+                  <div class="form-text">JPG, PNG up to 5MB</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card card-custom mt-4">
+            <div class="card-header bg-transparent border-bottom-0 px-4 pt-4">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-lightning-fill text-warning me-2"></i>
+                Quick Actions
+              </h5>
+            </div>
+            <div class="card-body p-4">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <a href="/pets/add" class="card card-custom h-100 text-decoration-none hover-lift">
+                    <div class="card-body text-center p-4">
+                      <i class="bi bi-plus-circle-fill text-success fs-1 mb-3"></i>
+                      <h6 class="card-title">Add New Pet</h6>
+                      <p class="text-muted small mb-0">Register a new pet to your account</p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-6">
+                  <a href="/schedule-task" class="card card-custom h-100 text-decoration-none hover-lift">
+                    <div class="card-body text-center p-4">
+                      <i class="bi bi-calendar-plus-fill text-primary fs-1 mb-3"></i>
+                      <h6 class="card-title">Schedule Task</h6>
+                      <p class="text-muted small mb-0">Create reminders and tasks</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  </div>
+</div>
 
-  <script>
-    // Enhanced profile picture handling
-    document.addEventListener('DOMContentLoaded', function () {
-      console.log('Profile page loaded');
+<!-- Hidden File Input -->
+<input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
 
-      const fileInput = document.getElementById('profilePictureInput');
-      const profileImg = document.getElementById('profilePicture');
-      const cameraLabel = document.querySelector('label[for="profilePictureInput"]');
+<script>
+// Enhanced profile picture handling
+document.addEventListener('DOMContentLoaded', function () {
+  console.log('Profile page loaded');
 
-      if (!fileInput) {
-        console.error('❌ File input not found!');
+  const fileInput = document.getElementById('profilePictureInput');
+  const profileImg = document.getElementById('profilePicture');
+  const cameraLabel = document.querySelector('label[for="profilePictureInput"]');
+
+  if (!fileInput) {
+    console.error('❌ File input not found!');
+    return;
+  }
+
+  if (!cameraLabel) {
+    console.error('❌ Camera label not found!');
+    return;
+  }
+
+  // Add click handler to the camera button
+  cameraLabel.addEventListener('click', function (e) {
+    e.preventDefault();
+    console.log('Camera button clicked');
+    fileInput.click();
+  });
+
+  // Enhanced file input change handler
+  fileInput.addEventListener('change', function (e) {
+    console.log('File input changed');
+    if (this.files && this.files[0]) {
+      console.log('File selected:', this.files[0].name, this.files[0].size, 'bytes');
+      uploadProfilePicture(this.files[0]);
+    } else {
+      console.log('No file selected');
+    }
+  });
+
+  // Username form handling
+  const usernameForm = document.getElementById('usernameForm');
+  const usernameInput = document.getElementById('usernameInput');
+  const updateUsernameBtn = document.getElementById('updateUsernameBtn');
+
+  if (usernameForm) {
+    usernameForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const newUsername = usernameInput.value.trim();
+      
+      if (newUsername.length < 3) {
+        showAlert('Username must be at least 3 characters long', 'danger');
         return;
       }
 
-      if (!cameraLabel) {
-        console.error('❌ Camera label not found!');
+      if (newUsername === '<%= user.username %>') {
+        showAlert('Please enter a different username', 'info');
         return;
       }
 
-      // Add click handler to the camera button
-      cameraLabel.addEventListener('click', function (e) {
-        e.preventDefault();
-        console.log('Camera button clicked');
-        fileInput.click();
-      });
-
-      // Enhanced file input change handler
-      fileInput.addEventListener('change', function (e) {
-        console.log('File input changed');
-        if (this.files && this.files[0]) {
-          console.log('File selected:', this.files[0].name, this.files[0].size, 'bytes');
-          uploadProfilePicture(this.files[0]);
-        } else {
-          console.log('No file selected');
-        }
-      });
-
-      console.log('Event listeners attached successfully');
-    });
-
-    async function uploadProfilePicture(file) {
-      if (!file) {
-        console.log('No file provided');
-        return;
-      }
-
-      console.log('Starting upload for:', file.name);
-
-      // Show loading state
-      const profileImg = document.getElementById('profilePicture');
-      const originalOpacity = profileImg.style.opacity;
-      profileImg.style.opacity = '0.5';
-      profileImg.style.filter = 'grayscale(50%)';
-
-      const formData = new FormData();
-      formData.append('profilePicture', file);
+      // Disable button during request
+      updateUsernameBtn.disabled = true;
+      updateUsernameBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
 
       try {
-        console.log('Uploading to /profile/picture...');
-
-        const response = await fetch('/profile/picture', {
+        const response = await fetch('/profile/username', {
           method: 'POST',
-          body: formData
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: newUsername })
         });
 
-        console.log('Response received:', response.status);
-
         const result = await response.json();
-        console.log('Upload response:', result);
 
         if (result.success) {
-          console.log('✅ Upload successful');
-
-          // Update profile picture immediately with cache busting
-          const profileImg = document.getElementById('profilePicture');
-          profileImg.src = result.imageUrl + '?t=' + Date.now();
-          profileImg.style.opacity = '1';
-          profileImg.style.filter = 'none';
-
-          // Update session data in the header
-          updateHeaderProfilePicture(result.imageUrl);
-
-          // Show success message
-          showAlert('Profile picture updated successfully!', 'success');
-
-          // Show remove button if it wasn't there
-          const removeBtn = document.querySelector('.btn-danger');
-          if (!removeBtn) {
-            console.log('Reloading page to show remove button...');
-            // Reload to show remove button and update everywhere
-            setTimeout(() => location.reload(), 1000);
-          }
-
+          showAlert('Username updated successfully!', 'success');
+          
+          // Update displayed username
+          document.querySelector('h3.h4').textContent = newUsername;
+          
+          // Update session data in header
+          updateHeaderUsername(newUsername);
         } else {
-          console.error('❌ Upload failed:', result.error);
-          showAlert(result.error || 'Error uploading picture', 'danger');
-          profileImg.style.opacity = originalOpacity;
-          profileImg.style.filter = 'none';
+          showAlert(result.error || 'Error updating username', 'danger');
+          // Reset input to original value on error
+          usernameInput.value = '<%= user.username %>';
         }
       } catch (error) {
-        console.error('❌ Upload error:', error);
-        showAlert('Error uploading profile picture: ' + error.message, 'danger');
-        profileImg.style.opacity = originalOpacity;
-        profileImg.style.filter = 'none';
+        console.error('Username update error:', error);
+        showAlert('Error updating username: ' + error.message, 'danger');
+        usernameInput.value = '<%= user.username %>';
       } finally {
-        // Always reset the file input
-        document.getElementById('profilePictureInput').value = '';
-        console.log('File input reset');
+        // Re-enable button
+        updateUsernameBtn.disabled = false;
+        updateUsernameBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
       }
-    }
-
-    function updateHeaderProfilePicture(url) {
-      console.log('Updating header images with:', url);
-      // Update all profile pictures in the header
-      const headerImages = document.querySelectorAll('.navbar img');
-      headerImages.forEach(img => {
-        if (img.src.includes('profile') || img.alt.includes('Profile')) {
-          img.src = url + '?t=' + Date.now();
-          console.log('Updated header image:', img);
-        }
-      });
-    }
-
-    async function removeProfilePicture() {
-      if (!confirm('Are you sure you want to remove your profile picture?')) {
-        return;
-      }
-
-      console.log('Removing profile picture...');
-
-      try {
-        const response = await fetch('/profile/picture', {
-          method: 'DELETE'
-        });
-
-        const result = await response.json();
-        console.log('Delete response:', result);
-
-        if (result.success) {
-          console.log('✅ Removal successful');
-
-          // Reset to default avatar
-          const profileImg = document.getElementById('profilePicture');
-          profileImg.src = '/images/default-avatar.png?t=' + Date.now();
-
-          // Update header images too
-          updateHeaderProfilePicture('/images/default-avatar.png');
-
-          // Hide remove button
-          const removeBtn = document.querySelector('.btn-danger');
-          if (removeBtn) {
-            removeBtn.style.display = 'none';
-          }
-
-          showAlert('Profile picture removed successfully!', 'success');
-        } else {
-          console.error('❌ Removal failed:', result.error);
-          showAlert(result.error || 'Error removing picture', 'danger');
-        }
-      } catch (error) {
-        console.error('❌ Delete error:', error);
-        showAlert('Error removing profile picture: ' + error.message, 'danger');
-      }
-    }
-
-    function showAlert(message, type) {
-      console.log('Showing alert:', type, message);
-
-      // Remove existing alerts
-      const existingAlerts = document.querySelectorAll('.alert');
-      existingAlerts.forEach(alert => alert.remove());
-
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-      alertDiv.innerHTML = `
-      <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-
-      const cardBody = document.querySelector('.card-body');
-      if (cardBody) {
-        cardBody.insertBefore(alertDiv, cardBody.firstChild);
-
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-          if (alertDiv.parentNode) {
-            alertDiv.remove();
-          }
-        }, 5000);
-      }
-    }
-
-    // Debug function to test upload
-    function testUpload() {
-      console.log('=== UPLOAD DEBUG INFO ===');
-      console.log('File input:', document.getElementById('profilePictureInput'));
-      console.log('Profile image:', document.getElementById('profilePicture'));
-      console.log('Session userId:', '<%= userId %>');
-
-      // Create a test file input click
-      document.getElementById('profilePictureInput').click();
-    }
-
-    // Add global error handler
-    window.addEventListener('error', function (e) {
-      console.error('Global error:', e.error);
-      showAlert('An error occurred: ' + e.error.message, 'danger');
     });
-  </script>
+  }
 
-  <%- include('partials/footer') %>
+  console.log('Event listeners attached successfully');
+});
+
+async function uploadProfilePicture(file) {
+  if (!file) {
+    console.log('No file provided');
+    return;
+  }
+
+  // Validate file size (5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    showAlert('File size must be less than 5MB', 'danger');
+    return;
+  }
+
+  console.log('Starting upload for:', file.name);
+
+  // Show loading state
+  const profileImg = document.getElementById('profilePicture');
+  const originalOpacity = profileImg.style.opacity;
+  profileImg.style.opacity = '0.5';
+  profileImg.style.filter = 'grayscale(50%)';
+
+  const formData = new FormData();
+  formData.append('profilePicture', file);
+
+  try {
+    console.log('Uploading to /profile/picture...');
+
+    const response = await fetch('/profile/picture', {
+      method: 'POST',
+      body: formData
+    });
+
+    console.log('Response received:', response.status);
+
+    const result = await response.json();
+    console.log('Upload response:', result);
+
+    if (result.success) {
+      console.log('✅ Upload successful');
+
+      // Update profile picture immediately with cache busting
+      const profileImg = document.getElementById('profilePicture');
+      profileImg.src = result.imageUrl + '?t=' + Date.now();
+      profileImg.style.opacity = '1';
+      profileImg.style.filter = 'none';
+
+      // Update session data in the header
+      updateHeaderProfilePicture(result.imageUrl);
+
+      // Show success message
+      showAlert('Profile picture updated successfully!', 'success');
+
+      // Reload to show remove button and update everywhere
+      setTimeout(() => location.reload(), 1500);
+
+    } else {
+      console.error('❌ Upload failed:', result.error);
+      showAlert(result.error || 'Error uploading picture', 'danger');
+      profileImg.style.opacity = originalOpacity;
+      profileImg.style.filter = 'none';
+    }
+  } catch (error) {
+    console.error('❌ Upload error:', error);
+    showAlert('Error uploading profile picture: ' + error.message, 'danger');
+    profileImg.style.opacity = originalOpacity;
+    profileImg.style.filter = 'none';
+  } finally {
+    // Always reset the file input
+    document.getElementById('profilePictureInput').value = '';
+    console.log('File input reset');
+  }
+}
+
+function updateHeaderProfilePicture(url) {
+  console.log('Updating header images with:', url);
+  // Update all profile pictures in the header
+  const headerImages = document.querySelectorAll('.navbar img, .user-avatar-modern');
+  headerImages.forEach(img => {
+    if (img.src.includes('profile') || img.alt.includes('Profile') || img.classList.contains('user-avatar-modern')) {
+      img.src = url + '?t=' + Date.now();
+      console.log('Updated header image:', img);
+    }
+  });
+}
+
+function updateHeaderUsername(newUsername) {
+  // Update username in desktop header
+  const desktopUsername = document.querySelector('.header-icons.d-none.d-lg-flex .username-modern');
+  if (desktopUsername) {
+    desktopUsername.textContent = newUsername;
+  }
+  
+  // Update page title if it contains username
+  document.title = document.title.replace(/<%= user.username %>/g, newUsername);
+}
+
+async function removeProfilePicture() {
+  if (!confirm('Are you sure you want to remove your profile picture?')) {
+    return;
+  }
+
+  console.log('Removing profile picture...');
+
+  try {
+    const response = await fetch('/profile/picture', {
+      method: 'DELETE'
+    });
+
+    const result = await response.json();
+    console.log('Delete response:', result);
+
+    if (result.success) {
+      console.log('✅ Removal successful');
+      showAlert('Profile picture removed successfully!', 'success');
+      
+      // Reload page to reflect changes
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      console.error('❌ Removal failed:', result.error);
+      showAlert(result.error || 'Error removing picture', 'danger');
+    }
+  } catch (error) {
+    console.error('❌ Delete error:', error);
+    showAlert('Error removing profile picture: ' + error.message, 'danger');
+  }
+}
+
+function showAlert(message, type) {
+  console.log('Showing alert:', type, message);
+
+  // Remove existing alerts
+  const existingAlerts = document.querySelectorAll('.alert');
+  existingAlerts.forEach(alert => alert.remove());
+
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+  alertDiv.innerHTML = `
+    <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+
+  const container = document.querySelector('.container-fluid');
+  if (container) {
+    container.insertBefore(alertDiv, container.firstChild);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      if (alertDiv.parentNode) {
+        alertDiv.remove();
+      }
+    }, 5000);
+  }
+}
+
+// Debug function to test upload
+function testUpload() {
+  console.log('=== UPLOAD DEBUG INFO ===');
+  console.log('File input:', document.getElementById('profilePictureInput'));
+  console.log('Profile image:', document.getElementById('profilePicture'));
+  console.log('Session userId:', '<%= userId %>');
+
+  // Create a test file input click
+  document.getElementById('profilePictureInput').click();
+}
+
+// Add global error handler
+window.addEventListener('error', function (e) {
+  console.error('Global error:', e.error);
+  showAlert('An error occurred: ' + e.error.message, 'danger');
+});
+</script>
+
+<%- include('partials/footer') %>

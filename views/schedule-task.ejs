@@ -1,5 +1,82 @@
 <%- include('partials/header', {title: 'Schedule Task'}) %>
 
+<style>
+/* ===== FIX HEADER GAP FOR SCHEDULE TASK PAGE ===== */
+/* Remove ALL spacing from body */
+body {
+    padding-top: 0 !important;
+    margin: 0 !important;
+}
+
+/* Target the navbar directly */
+.navbar-modern {
+    position: relative !important;
+    top: auto !important;
+}
+
+/* Remove ALL padding and margins from main container */
+.container-fluid {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Remove spacing from the row and card */
+.row.justify-content-center {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.col-md-8.col-lg-6 {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.card.card-custom {
+    margin-top: 0 !important;
+    border-top: none !important;
+}
+
+/* Remove any potential spacing from header partial */
+header {
+    margin-bottom: 0 !important;
+}
+
+/* Ensure no extra spacing in card body */
+.card-body.p-4 {
+    padding-top: 1rem !important;
+}
+
+/* Your existing card styles */
+.card-custom {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.card-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+.btn-custom {
+    background-color: #1b5e20 !important;
+    color: white !important;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-custom:hover {
+    background-color: #2e7d32 !important;
+    color: white !important;
+    transform: translateY(-1px);
+}
+</style>
+
 <div class="row justify-content-center">
   <div class="col-md-8 col-lg-6">
     <div class="card card-custom">
@@ -90,10 +167,6 @@
                 const localMax = `${maxYear}-${maxMonth}-${maxDay}T23:59`;
               %>
 
-              
-
-              
-              
               <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
                      required min="<%= localMin %>" max="<%= localMax %>"
                      value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>">
@@ -194,4 +267,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<%- include('partials/footer') %>
+<%- include('partials/footer') %>```

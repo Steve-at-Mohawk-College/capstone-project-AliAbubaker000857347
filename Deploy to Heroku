@@ -1,0 +1,32 @@
+Step 1: Prepare for Deployment
+cmd
+# Remove Cypress to avoid deployment conflicts
+npm uninstall cypress
+
+# Update package-lock.json
+npm install
+
+# Commit the changes
+git add package.json package-lock.json
+git commit -m "Deploy: Remove Cypress for production"
+Step 2: Deploy to Heroku
+cmd
+# Push to Heroku
+git push heroku main
+
+# Monitor deployment in real-time
+heroku logs --tail -a petwell
+Step 3: Verify Deployment
+cmd
+# Check if deployment succeeded
+heroku releases -a petwell -n 3
+
+# Open your live app
+heroku open -a petwell
+
+# Check app status
+heroku ps -a petwell
+Step 4: Restore Cypress (for local development)
+cmd
+# Reinstall Cypress for local testing
+npm install cypress --save-dev

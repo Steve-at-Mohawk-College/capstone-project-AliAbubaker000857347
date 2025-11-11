@@ -19,6 +19,24 @@
             --light-color: #f9fafb;
         }
         
+        /* CRITICAL FIX: Ensure dropdowns work on community page */
+        .community-page .navbar-modern {
+            z-index: 1030 !important;
+            position: relative;
+        }
+        
+        .community-page .dropdown-menu {
+            z-index: 1050 !important;
+        }
+        
+        .community-page .header-icons .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: auto !important;
+            right: 0 !important;
+            transform: none !important;
+        }
+        
         .community-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -51,13 +69,21 @@
             background-color: var(--bs-card-bg);
         }
         
-        
-        
-       .btn-custom:hover {
-    background-color: #1b5e20; /* Even darker on hover */
-    color: white;
-    transform: translateY(-1px);
-}
+        .btn-custom {
+            background-color: #1b5e20 !important;
+            color: white !important;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #2e7d32 !important;
+            color: white !important;
+            transform: translateY(-1px);
+        }
         
         .community-post {
             margin-bottom: 1.5rem;
@@ -237,6 +263,29 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
         }
+
+        /* Theme specific fixes */
+        [data-theme="dark"] .form-label {
+            color: #e9ecef !important;
+        }
+
+        [data-theme="dark"] .form-label.fw-semibold {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .text-body-emphasis {
+            color: #f8f9fa !important;
+        }
+
+        [data-theme="dark"] .btn-outline-primary {
+            color: #86b7fe !important;
+            border-color: #86b7fe !important;
+        }
+
+        [data-theme="dark"] .btn-outline-primary:hover {
+            background-color: #86b7fe !important;
+            color: #000000 !important;
+        }
         
         @media (max-width: 768px) {
             .community-container {
@@ -252,77 +301,9 @@
                 margin-bottom: 0.5rem;
             }
         }
-
-
-       .btn-custom {
-    background-color: #2e7d32; /* Much darker green for proper contrast */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1.25rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-
-
-/* Ensure sufficient contrast */
-.btn-custom:hover,
-.btn-custom:focus {
-    background-color: #5a32a8; /* Darker shade for better contrast */
-    color: white;
-}
-
-/* For dark theme - ensure good contrast */
-[data-theme="dark"] .btn-custom {
-    background-color: #388e3c;
-    color: #ffffff;
-}
-[data-theme="dark"] .btn-custom:hover {
-    background-color: #2e7d32;
-    color: #ffffff;
-}
-
-.btn-custom {
-    background-color: #1b5e20 !important; /* Very dark green */
-    color: white !important;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1.25rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.btn-custom:hover {
-    background-color: #2e7d32 !important;
-    color: white !important;
-    transform: translateY(-1px);
-}
-
-[data-theme="dark"] .form-label {
-    color: #e9ecef !important;
-}
-
-[data-theme="dark"] .form-label.fw-semibold {
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .text-body-emphasis {
-    color: #f8f9fa !important;
-}
-[data-theme="dark"] .btn-outline-primary {
-    color: #86b7fe !important;
-    border-color: #86b7fe !important;
-}
-
-[data-theme="dark"] .btn-outline-primary:hover {
-    background-color: #86b7fe !important;
-    color: #000000 !important;
-}
- 
     </style>
 </head>
-<body>
+<body class="community-page">
     <%- include('partials/header', {title: 'Community' }) %>
     
     <!-- Main Content -->
@@ -340,26 +321,25 @@
             <div class="col-lg-8">
                 <!-- Create Post Form -->
                 <div class="card card-custom mb-4">
-    <div class="card-header card-header-custom">
-        <h2 class="h5 mb-0"><i class="bi bi-pencil-square me-2"></i>Create a Post</h2>
-    </div>
-    <div class="card-body p-4">
-        <form action="/community" method="POST">
-            <div class="mb-3">
-                <label for="title" class="form-label fw-semibold">Title</label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="What would you like to discuss?" required>
-            </div>
-            <div class="mb-3">
-                <label for="content" class="form-label fw-semibold">Content</label>
-                <textarea class="form-control" id="content" name="content" rows="4" placeholder="Share your thoughts, questions, or experiences..." required></textarea>
-            </div>
-            <!-- FIXED BUTTON - NO INLINE STYLES -->
-            <button type="submit" class="btn btn-custom">
-                <i class="bi bi-send me-2"></i>Post to Community
-            </button>
-        </form>
-    </div>
-</div>
+                    <div class="card-header card-header-custom">
+                        <h2 class="h5 mb-0"><i class="bi bi-pencil-square me-2"></i>Create a Post</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="/community" method="POST">
+                            <div class="mb-3">
+                                <label for="title" class="form-label fw-semibold">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" placeholder="What would you like to discuss?" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="content" class="form-label fw-semibold">Content</label>
+                                <textarea class="form-control" id="content" name="content" rows="4" placeholder="Share your thoughts, questions, or experiences..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-custom">
+                                <i class="bi bi-send me-2"></i>Post to Community
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
                 <!-- Community Posts -->
                 <div class="card card-custom">
@@ -421,14 +401,14 @@
                                     </div>
                                     
                                     <form class="comment-form" data-post-id="<%= post.post_id %>">
-    <div class="input-group">
-        <label for="comment-<%= post.post_id %>" class="visually-hidden">Write a comment</label>
-        <input type="text" class="form-control" id="comment-<%= post.post_id %>" name="content" placeholder="Write a comment..." required>
-        <button class="btn btn-outline-primary" type="submit">
-            <i class="bi bi-send me-1"></i>Comment
-        </button>
-    </div>
-</form>
+                                        <div class="input-group">
+                                            <label for="comment-<%= post.post_id %>" class="visually-hidden">Write a comment</label>
+                                            <input type="text" class="form-control" id="comment-<%= post.post_id %>" name="content" placeholder="Write a comment..." required>
+                                            <button class="btn btn-outline-primary" type="submit">
+                                                <i class="bi bi-send me-1"></i>Comment
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             <% }); %>
                         <% } else { %>
@@ -490,8 +470,28 @@
     <script src="/js/theme.js"></script>
 
     <script>
-        // Your JavaScript code remains exactly the same
+        // Community page specific dropdown fix
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Community page loaded - testing dropdowns');
+            
+            // Test if dropdowns are working
+            const profileDropdowns = document.querySelectorAll('.profile-modern .dropdown-toggle');
+            profileDropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    console.log('Profile dropdown clicked - working!');
+                });
+            });
+
+            // Force re-initialization of all dropdowns
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                const toggle = dropdown.querySelector('.dropdown-toggle');
+                if (toggle) {
+                    // Re-initialize Bootstrap dropdown
+                    new bootstrap.Dropdown(toggle);
+                }
+            });
+
             // Comment toggle functionality
             document.querySelectorAll('.toggle-comments-btn').forEach(button => {
                 button.addEventListener('click', function() {
@@ -499,7 +499,6 @@
                     const commentsContainer = document.getElementById('comments-' + postId);
                     const toggleIcon = this.querySelector('.toggle-icon');
                     
-                    // Toggle comments visibility
                     if (commentsContainer.style.display === 'none') {
                         commentsContainer.style.display = 'block';
                         this.classList.add('expanded');
@@ -510,26 +509,7 @@
                 });
             });
 
-            // Add loading states to forms (BUT NOT COMMENT FORMS)
-            const mainForms = document.querySelectorAll('form:not(.comment-form)');
-            mainForms.forEach(form => {
-                form.addEventListener('submit', function() {
-                    const submitButton = this.querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        const originalText = submitButton.innerHTML;
-                        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-                        submitButton.disabled = true;
-                        
-                        // Revert after 5 seconds if something goes wrong
-                        setTimeout(() => {
-                            submitButton.innerHTML = originalText;
-                            submitButton.disabled = false;
-                        }, 5000);
-                    }
-                });
-            });
-
-            // AJAX for submitting comments 
+            // AJAX for submitting comments
             const commentForms = document.querySelectorAll('.comment-form');
             commentForms.forEach(form => {
                 form.addEventListener('submit', async function(e) {
@@ -544,7 +524,6 @@
                         return;
                     }
                     
-                    // Show loading state
                     const submitButton = this.querySelector('button[type="submit"]');
                     const originalText = submitButton.innerHTML;
                     submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
@@ -559,47 +538,26 @@
                             body: JSON.stringify({ content })
                         });
 
-                        const responseText = await response.text();
+                        const result = await response.json();
                         
-                        if (response.ok) {
-                            try {
-                                const result = JSON.parse(responseText);
-                                
-                                if (result.success) {
-                                    // Clear the input field
-                                    contentInput.value = '';
-                                    
-                                    // Add the new comment to the UI
-                                    addCommentToUI(result.comment, postId);
-                                    
-                                    // Update comment count
-                                    updateCommentCount(postId, true);
-                                    
-                                } else {
-                                    alert('Error: ' + result.error);
-                                }
-                            } catch (parseError) {
-                                console.error('JSON parse error:', parseError);
-                                alert('Error parsing server response');
-                            }
+                        if (result.success) {
+                            contentInput.value = '';
+                            addCommentToUI(result.comment, postId);
+                            updateCommentCount(postId, true);
                         } else {
-                            console.error('Server error response:', responseText);
-                            alert('Error posting comment: ' + responseText);
+                            alert('Error: ' + result.error);
                         }
                     } catch (error) {
-                        console.error('Network error details:', error);
+                        console.error('Network error:', error);
                         alert('Network error posting comment. Please try again.');
                     } finally {
-                        // Restore button state
                         submitButton.innerHTML = originalText;
                         submitButton.disabled = false;
                     }
                 });
             });
 
-            // Function to add comment to UI
             function addCommentToUI(comment, postId) {
-                // Create comment HTML
                 const commentHTML = `
                     <div class="comment">
                         <div class="comment-header">
@@ -617,123 +575,31 @@
                     </div>
                 `;
                 
-                // Find the comments container for this post
                 const commentsContainer = document.getElementById(`comments-${postId}`);
                 const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
                 
-                // If comments container exists, append the new comment
                 if (commentsContainer) {
                     commentsContainer.insertAdjacentHTML('beforeend', commentHTML);
-                    
-                    // If comments were hidden, show them after adding a new comment
                     if (commentsContainer.style.display === 'none') {
                         commentsContainer.style.display = 'block';
                         const toggleBtn = commentToggle.querySelector('.toggle-comments-btn');
-                        if (toggleBtn) {
-                            toggleBtn.classList.add('expanded');
-                        }
-                    }
-                } else {
-                    // If no comments container exists (first comment), create one
-                    const commentSection = document.querySelector(`.comments-section[data-post-id="${postId}"]`) || 
-                                        document.querySelector(`.comment-form[data-post-id="${postId}"]`).previousElementSibling;
-                    
-                    if (commentSection) {
-                        const newCommentsContainer = document.createElement('div');
-                        newCommentsContainer.className = 'comments-container';
-                        newCommentsContainer.id = `comments-${postId}`;
-                        newCommentsContainer.innerHTML = commentHTML;
-                        commentSection.appendChild(newCommentsContainer);
-                        
-                        // Also create the toggle button if it doesn't exist
-                        if (!commentToggle) {
-                            const toggleHTML = `
-                                <div class="comment-toggle mb-3" data-post-id="${postId}">
-                                    <button class="btn btn-sm btn-outline-secondary toggle-comments-btn">
-                                        <i class="bi bi-chat-dots me-1"></i>
-                                        <span class="comment-count">1</span> reply
-                                        <i class="bi bi-chevron-down ms-1 toggle-icon"></i>
-                                    </button>
-                                </div>
-                            `;
-                            
-                            const commentForm = document.querySelector(`.comment-form[data-post-id="${postId}"]`);
-                            commentForm.insertAdjacentHTML('beforebegin', toggleHTML);
-                            
-                            // Add event listener to the new toggle button
-                            const newToggleBtn = document.querySelector(`.comment-toggle[data-post-id="${postId}"] .toggle-comments-btn`);
-                            newToggleBtn.addEventListener('click', function() {
-                                const postId = this.closest('.comment-toggle').getAttribute('data-post-id');
-                                const commentsContainer = document.getElementById('comments-' + postId);
-                                const toggleIcon = this.querySelector('.toggle-icon');
-                                
-                                if (commentsContainer.style.display === 'none') {
-                                    commentsContainer.style.display = 'block';
-                                    this.classList.add('expanded');
-                                } else {
-                                    commentsContainer.style.display = 'none';
-                                    this.classList.remove('expanded');
-                                }
-                            });
-                        }
+                        if (toggleBtn) toggleBtn.classList.add('expanded');
                     }
                 }
             }
 
-            // Function to update comment count
             function updateCommentCount(postId, increment = true) {
                 const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
-                
                 if (commentToggle) {
                     const countElement = commentToggle.querySelector('.comment-count');
                     if (countElement) {
                         let currentCount = parseInt(countElement.textContent) || 0;
                         currentCount = increment ? currentCount + 1 : currentCount - 1;
                         countElement.textContent = currentCount;
-                        
-                        // Update text (reply/replies)
-                        const buttonText = commentToggle.querySelector('.toggle-comments-btn');
-                        if (buttonText) {
-                            const textParts = buttonText.textContent.split(' ');
-                            textParts[textParts.length - 2] = currentCount === 1 ? 'reply' : 'replies';
-                            buttonText.textContent = textParts.join(' ');
-                        }
                     }
-                } else if (increment) {
-                    // Create toggle button if it doesn't exist (first comment)
-                    const toggleHTML = `
-                        <div class="comment-toggle mb-3" data-post-id="${postId}">
-                            <button class="btn btn-sm btn-outline-secondary toggle-comments-btn">
-                                <i class="bi bi-chat-dots me-1"></i>
-                                <span class="comment-count">1</span> reply
-                                <i class="bi bi-chevron-down ms-1 toggle-icon"></i>
-                            </button>
-                        </div>
-                    `;
-                    
-                    const commentForm = document.querySelector(`.comment-form[data-post-id="${postId}"]`);
-                    commentForm.insertAdjacentHTML('beforebegin', toggleHTML);
-                    
-                    // Add event listener to the new toggle button
-                    const newToggleBtn = document.querySelector(`.comment-toggle[data-post-id="${postId}"] .toggle-comments-btn`);
-                    newToggleBtn.addEventListener('click', function() {
-                        const postId = this.closest('.comment-toggle').getAttribute('data-post-id');
-                        const commentsContainer = document.getElementById('comments-' + postId);
-                        const toggleIcon = this.querySelector('.toggle-icon');
-                        
-                        if (commentsContainer.style.display === 'none') {
-                            commentsContainer.style.display = 'block';
-                            this.classList.add('expanded');
-                        } else {
-                            commentsContainer.style.display = 'none';
-                            this.classList.remove('expanded');
-                        }
-                    });
                 }
             }
         });
     </script>
-  
 </body>
 </html>
-<%- include('partials/footer') %>

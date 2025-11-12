@@ -423,9 +423,9 @@ router.post('/login', async (req, res) => {
     req.session.username = user.username;
     req.session.role = user.role;
     req.session.email = user.email;
+    req.session.profilePicture = user.profile_picture_url;
 
-    // In your authRoutes.js login route, after setting session variables:
-// req.session.profilePicture = user.profile_picture_url;
+
 
     // Redirect to admin dashboard if admin login or hardcoded admin
     if ((user.role === 'admin' && isAdminLogin) || user.email === HARDCODED_ADMIN_EMAIL) {

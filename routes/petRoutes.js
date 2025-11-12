@@ -1,13 +1,14 @@
 const express = require('express');
 const { getPetsByUser, createPet, updatePet, deletePet } = require('../models/petModel');
 const { getTasksByUser } = require('../models/taskModel'); 
+const { query } = require('../config/database'); // Add this import
 
 const router = express.Router();
 
 // Middleware: require authentication
 function requireAuth(req, res, next) {
   if (req.session?.userId) return next();
-  return res.redirect('/login.html');
+  return res.redirect('/login');
 }
 
 // Utility: validate text fields (letters, spaces, apostrophes, hyphens)
@@ -17,6 +18,24 @@ function isAlphaText(value, min, max) {
          value.trim().length >= min &&
          value.trim().length <= max;
 }
+
+// GET /pets/add - Add pet form (ADD THIS ROUTE)
+router.get('/add', requireAuth, async (req, res) => {
+  try {
+    res.render('add-pet', { 
+      title: 'Add New Pet - Pet Care',
+      username: req.session.username,
+      profilePicture: req.session.profilePicture // Add this
+    });
+  } catch (error) {
+    console.error('Add pet form error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Error loading add pet form.',
+      error: process.env.NODE_ENV === 'development' ? error : {}
+    });
+  }
+});
 
 // POST /pets - Add a new pet
 router.post('/', requireAuth, async (req, res) => {
@@ -68,9 +87,11 @@ router.post('/', requireAuth, async (req, res) => {
   // If there are validation errors, return to form with preserved data and field-specific errors
   if (hasErrors) {
     return res.status(400).render('add-pet', {
-      title: 'Add New Pet',
+      title: 'Add New Pet - Pet Care',
       error: 'Please correct the errors below.',
       fieldErrors,
+      username: req.session.username, // Add this
+      profilePicture: req.session.profilePicture, // Add this
       // Preserve all form data
       name: name || '',
       breed: breed || '',
@@ -100,8 +121,10 @@ router.post('/', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Add pet error:', err);
     res.status(500).render('add-pet', {
-      title: 'Add New Pet',
+      title: 'Add New Pet - Pet Care',
       error: 'Error adding pet. Please try again.',
+      username: req.session.username, // Add this
+      profilePicture: req.session.profilePicture, // Add this
       // Preserve form data on server error too
       name: name || '',
       breed: breed || '',
@@ -212,7 +235,6 @@ router.put('/:petId', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Error updating pet: ' + err.message });
   }
 });
-
 
 // GET /api/pets/:petId - Get single pet details
 router.get('/api/pets/:petId', requireAuth, async (req, res) => {

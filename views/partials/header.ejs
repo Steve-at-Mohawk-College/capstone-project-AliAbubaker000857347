@@ -624,6 +624,49 @@ body.mobile-menu-open {
 [data-theme="light"] .header-icons .notification-item:hover {
   background: rgba(67, 97, 238, 0.05) !important;
 }
+
+
+/* Enhanced user avatar styles */
+.user-avatar-modern {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  font-size: 1rem;
+  overflow: hidden;
+}
+
+.user-avatar-modern img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar-modern i {
+  font-size: 1rem;
+}
+
+/* Adjust sizes for different screen sizes */
+@media (max-width: 768px) {
+  .user-avatar-modern {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (min-width: 992px) {
+  .header-icons.d-none.d-lg-flex .user-avatar-modern {
+    width: 36px;
+    height: 36px;
+  }
+}
 </style>
 
 
@@ -640,16 +683,51 @@ body.mobile-menu-open {
 
       <!-- Right: Profile + theme + notification -->
       <div class="header-icons d-lg-none">
-        <div class="profile-modern dropdown">
-          <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-label="User profile">
-            <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button></form></li>
-          </ul>
-        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- In header.ejs - Replace the user avatar sections -->
+
+<!-- Mobile Profile Section -->
+<div class="profile-modern dropdown">
+  <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-label="User profile">
+    <% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
+      <img src="<%= profilePicture %>" class="user-avatar-modern" alt="Profile" onerror="this.onerror=null; this.src='/images/default-avatar.png'">
+    <% } else { %>
+      <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+    <% } %>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Profile</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button></form></li>
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <button id="themeToggle" class="theme-toggle-modern" title="Toggle theme">
           <i class="bi bi-moon-fill"></i>
@@ -696,17 +774,38 @@ body.mobile-menu-open {
 
         <!-- Desktop Right Section -->
         <div class="header-icons d-none d-lg-flex">
-          <div class="profile-modern dropdown">
-            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
-             <span class="me-2 fw-semibold text-dark"><%= typeof username !== 'undefined' ? username : 'User' %></span>
-              <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Profile</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button></form></li>
-            </ul>
-          </div>
+          
+          
+          
+          
+          
+          <!-- Desktop Profile Section -->
+<div class="profile-modern dropdown">
+  <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+    <span class="me-2 fw-semibold text-dark"><%= typeof username !== 'undefined' ? username : 'User' %></span>
+    <% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
+      <img src="<%= profilePicture %>" class="user-avatar-modern" alt="Profile" onerror="this.onerror=null; this.src='/images/default-avatar.png'">
+    <% } else { %>
+      <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+    <% } %>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Profile</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button></form></li>
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
           <button id="themeToggleDesktop" class="theme-toggle-modern" title="Toggle theme">
             <i class="bi bi-moon-fill"></i>

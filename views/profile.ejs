@@ -675,6 +675,38 @@ body {
   color: white;
 }
 
+/* ===== DARK MODE ACCOUNT DELETION FIXES ===== */
+[data-theme="dark"] .alert-info {
+  background: rgba(13, 110, 253, 0.15) !important;
+  border: 1px solid rgba(13, 110, 253, 0.3) !important;
+  color: #e9ecef !important;
+}
+
+[data-theme="dark"] .alert-info .alert-heading {
+  color: #6ea8fe !important;
+}
+
+[data-theme="dark"] .alert-info a {
+  color: #6ea8fe !important;
+}
+
+[data-theme="dark"] .alert-info a:hover {
+  color: #8bb9fe !important;
+}
+
+[data-theme="dark"] .bg-light {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .bg-light .text-dark {
+  color: #e9ecef !important;
+}
+
+[data-theme="dark"] .bg-light .text-muted {
+  color: #adb5bd !important;
+}
+
 </style>
 
 <div class="container-fluid profile-container">
@@ -1054,6 +1086,58 @@ body {
               </div>
             </div>
           </div>
+
+
+            <!-- Account Deletion Information -->
+          <div class="card card-custom mt-4 slide-up" style="animation-delay: 0.7s;">
+            <div class="card-header">
+              <h5 class="card-title mb-0 d-flex align-items-center">
+                <i class="bi bi-shield-exclamation text-danger me-2"></i>
+                Account Security
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info border-0">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-info-circle-fill text-primary me-3 fs-5 mt-1"></i>
+                  <div>
+                    <h6 class="alert-heading mb-2 fw-semibold">Account Deletion Policy</h6>
+                    <p class="mb-2">For security reasons, users cannot delete their accounts directly. If you need to delete your account, please contact our support team.</p>
+                    <div class="d-flex align-items-center mt-3">
+                      <i class="bi bi-envelope-fill text-primary me-2"></i>
+                      <strong>Email:</strong>
+                      <a href="mailto:support@petcare.com" class="ms-2 text-decoration-none">support@petcare.com</a>
+                    </div>
+                    <div class="mt-2 small text-muted">
+                      Please include your username and reason for account deletion in your email.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Additional Security Information -->
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <i class="bi bi-clock-history text-warning me-3 fs-4"></i>
+                    <div>
+                      <small class="text-muted d-block">Response Time</small>
+                      <strong class="text-dark">Within 24-48 hours</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center p-3 bg-light rounded">
+                    <i class="bi bi-shield-check text-success me-3 fs-4"></i>
+                    <div>
+                      <small class="text-muted d-block">Data Protection</small>
+                      <strong class="text-dark">GDPR Compliant</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1304,10 +1388,52 @@ async function handleBioUpdate(e) {
   }
 }
 
-// Profile Picture Upload Function
+
+// Enhanced function to update all profile pictures on the page
+function updateAllProfilePictures(url) {
+  console.log('Updating all profile pictures with:', url);
+  
+  // Update header images
+  const headerImages = document.querySelectorAll('.user-avatar-modern');
+  headerImages.forEach(img => {
+    if (img.tagName === 'IMG') {
+      img.src = url + '?t=' + Date.now();
+    } else if (img.classList.contains('user-avatar-modern')) {
+      // Replace the icon with an image
+      const newImg = document.createElement('img');
+      newImg.src = url + '?t=' + Date.now();
+      newImg.alt = 'Profile';
+      newImg.className = 'user-avatar-modern';
+      newImg.onerror = function() {
+        this.onerror = null;
+        this.src = '/images/default-avatar.png';
+      };
+      img.parentNode.replaceChild(newImg, img);
+    }
+  });
+  
+  // Update any other profile pictures on the page
+  const profilePics = document.querySelectorAll('img[src*="profile"], .profile-picture');
+  profilePics.forEach(img => {
+    if (img.src.includes('profile') || img.classList.contains('profile-picture')) {
+      img.src = url + '?t=' + Date.now();
+    }
+  });
+}
+
+
+// Profile Picture Upload Function - IMPROVED VERSION
+let isUploading = false;
+
 async function uploadProfilePicture(file) {
   if (!file) {
     console.log('No file provided');
+    return;
+  }
+
+  // Prevent multiple simultaneous uploads
+  if (isUploading) {
+    console.log('⚠️ Upload already in progress, skipping...');
     return;
   }
 
@@ -1319,11 +1445,20 @@ async function uploadProfilePicture(file) {
 
   console.log('Starting upload for:', file.name);
 
-  // Show loading state
+  // Show loading state and disable upload button
   const profileImg = document.getElementById('profilePicture');
+  const uploadButton = document.querySelector('label[for="profilePictureInput"]');
   const originalOpacity = profileImg.style.opacity;
+  
   profileImg.style.opacity = '0.5';
   profileImg.style.filter = 'grayscale(50%)';
+  
+  if (uploadButton) {
+    uploadButton.style.pointerEvents = 'none';
+    uploadButton.style.opacity = '0.6';
+  }
+
+  isUploading = true;
 
   const formData = new FormData();
   formData.append('profilePicture', file);
@@ -1343,39 +1478,54 @@ async function uploadProfilePicture(file) {
 
     if (result.success) {
       console.log('✅ Upload successful');
-
-      // Update profile picture immediately with cache busting
-      const profileImg = document.getElementById('profilePicture');
-      profileImg.src = result.imageUrl + '?t=' + Date.now();
-      profileImg.style.opacity = '1';
-      profileImg.style.filter = 'none';
-
-      // Update session data in the header
-      updateHeaderProfilePicture(result.imageUrl);
-
+      
+      // Update all profile pictures on the page
+      updateAllProfilePictures(result.imageUrl);
+      
       // Show success message
       showAlert('Profile picture updated successfully!', 'success');
-
-      // Reload to show remove button and update everywhere
-      setTimeout(() => location.reload(), 1500);
-
+      
     } else {
       console.error('❌ Upload failed:', result.error);
       showAlert(result.error || 'Error uploading picture', 'danger');
-      profileImg.style.opacity = originalOpacity;
-      profileImg.style.filter = 'none';
     }
   } catch (error) {
     console.error('❌ Upload error:', error);
     showAlert('Error uploading profile picture: ' + error.message, 'danger');
+  } finally {
+    // Reset UI states
     profileImg.style.opacity = originalOpacity;
     profileImg.style.filter = 'none';
-  } finally {
+    
+    if (uploadButton) {
+      uploadButton.style.pointerEvents = 'auto';
+      uploadButton.style.opacity = '1';
+    }
+    
     // Always reset the file input
     document.getElementById('profilePictureInput').value = '';
-    console.log('File input reset');
+    
+    // Reset upload flag
+    isUploading = false;
+    console.log('File input reset and upload completed');
   }
 }
+
+// Update file input event listener to prevent multiple triggers
+document.addEventListener('DOMContentLoaded', function() {
+  const fileInput = document.getElementById('profilePictureInput');
+  
+  if (fileInput) {
+    fileInput.addEventListener('change', function(e) {
+      if (this.files && this.files[0]) {
+        uploadProfilePicture(this.files[0]);
+      }
+    });
+  }
+});
+
+
+
 
 // Remove Profile Picture Function
 async function removeProfilePicture() {

@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const upload = require('../config/upload');
 const { query, queryOne } = require('../config/database');
 const { 
@@ -213,6 +214,8 @@ router.get('/', requireAuth, async (req, res) => {
     res.render('profile', {
       title: 'My Profile - Pet Care',
       user: userProfile,
+      username: req.session.username,
+      profilePicture: req.session.profilePicture, // Add this line
       error: null,
       message: null
     });
@@ -226,13 +229,15 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
-// POST /profile/picture - Upload profile picture
+
+
+
+// In your profileRoutes.js - Update the upload section
 router.post('/picture', requireAuth, upload.single('profilePicture'), async (req, res) => {
   try {
     console.log("➡️ POST /profile/picture called");
     console.log("Session userId:", req.session.userId);
-    console.log("Uploaded file:", req.file);
-
+    
     if (!req.file) {
       return res.status(400).json({ 
         success: false, 
@@ -240,46 +245,58 @@ router.post('/picture', requireAuth, upload.single('profilePicture'), async (req
       });
     }
 
-    // Process the image
-    let processedFilePath;
-    try {
-      processedFilePath = await processProfilePicture(req.file.path);
-    } catch (processError) {
-      console.error('Image processing error:', processError);
-      // Use original file if processing fails
-      processedFilePath = req.file.path;
+    console.log("Uploaded file info:", {
+      filename: req.file.filename,
+      path: req.file.path,
+      size: req.file.size,
+      destination: req.file.destination
+    });
+
+    // Use the original file directly (skip processing for now)
+    let finalFilePath = req.file.path;
+    
+    // Optional: Only attempt processing if not in OneDrive
+    if (!req.file.path.includes('OneDrive')) {
+      try {
+        finalFilePath = await processProfilePicture(req.file.path);
+      } catch (processError) {
+        console.error('Image processing failed, using original:', processError.message);
+        finalFilePath = req.file.path;
+      }
     }
 
     // Get relative path for web access
     const relativePath = path.relative(
       path.join(__dirname, '../public'), 
-      processedFilePath
-    ).replace(/\\/g, '/'); // Convert backslashes to forward slashes for web
+      finalFilePath
+    ).replace(/\\/g, '/');
 
     const webPath = '/' + relativePath;
 
+    console.log('💾 Updating database with web path:', webPath);
+    
     // Update DB
     await updateUserProfilePicture(req.session.userId, webPath);
 
     // Update session
     req.session.profilePicture = webPath;
     
-    console.log('Profile picture updated successfully:', webPath);
+    console.log('✅ Profile picture updated successfully');
 
     res.json({ 
       success: true, 
       message: 'Profile picture updated successfully',
       imageUrl: webPath
     });
+    
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('❌ Upload error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Error uploading profile picture: ' + error.message 
     });
   }
 });
-
 
 
 

@@ -8,7 +8,7 @@ const {
   deleteTask,
   getTaskById,
   completeTask,
-    getUpcomingTasks
+  getUpcomingTasks
 } = require('../models/taskModel');
 
 // ADD THIS IMPORT - this was missing!
@@ -27,6 +27,31 @@ function requireAuth(req, res, next) {
   if (req.session?.userId) return next();
   return res.redirect('/login');
 }
+
+// GET /tasks/schedule - Schedule task form (ADD THIS ROUTE)
+router.get('/schedule', requireAuth, async (req, res) => {
+  try {
+    const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
+    
+    if (pets.length === 0) {
+      return res.redirect('/pets/add?message=Please add a pet first.');
+    }
+    
+    res.render('schedule-task', { 
+      title: 'Schedule Task - Pet Care',
+      username: req.session.username,
+      profilePicture: req.session.profilePicture, // Add this
+      pets 
+    });
+  } catch (err) {
+    console.error('Schedule task form error:', err);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Error loading task form.',
+      error: process.env.NODE_ENV === 'development' ? err : {}
+    });
+  }
+});
 
 // GET /tasks/upcoming - Get tasks due in the next X days
 router.get('/upcoming', requireAuth, async (req, res) => {
@@ -104,17 +129,21 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
     // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      // Get pets for the form
+      const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
+      
       return res.status(400).render('schedule-task', {
-        title: 'Schedule Task',
-        pets: req.pets || [],
+        title: 'Schedule Task - Pet Care',
+        pets: pets || [],
+        username: req.session.username, // Add this
+        profilePicture: req.session.profilePicture, // Add this
         error: errors.array()[0].msg,
         preservedPetId: req.body.pet_id,
         preservedTaskType: req.body.task_type,
         preservedTitle: req.body.title,
         preservedDescription: req.body.description,
         preservedDueDate: req.body.due_date,
-        preservedPriority: req.body.priority,
-        csrfToken: req.csrfToken ? req.csrfToken() : ''
+        preservedPriority: req.body.priority
       });
     }
 
@@ -141,17 +170,21 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       errorMessage = error.message;
     }
     
+    // Get pets for the form
+    const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
+    
     res.status(500).render('schedule-task', {
-      title: 'Schedule Task',
-      pets: req.pets || [],
+      title: 'Schedule Task - Pet Care',
+      pets: pets || [],
+      username: req.session.username, // Add this
+      profilePicture: req.session.profilePicture, // Add this
       error: errorMessage,
       preservedPetId: req.body.pet_id,
       preservedTaskType: req.body.task_type,
       preservedTitle: req.body.title,
       preservedDescription: req.body.description,
       preservedDueDate: req.body.due_date,
-      preservedPriority: req.body.priority,
-      csrfToken: req.csrfToken ? req.csrfToken() : ''
+      preservedPriority: req.body.priority
     });
   }
 });
@@ -243,8 +276,7 @@ router.delete('/:taskId', requireAuth, async (req, res) => {
   }
 });
 
-// Calendar tasks endpoint - ADD THIS ABOVE THE :taskId ROUTE
-
+// Calendar tasks endpoint
 router.get('/calendar', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -294,7 +326,6 @@ router.get('/calendar', requireAuth, async (req, res) => {
         res.status(500).json({ error: 'Failed to load calendar data' });
     }
 });
-
 
 router.get('/debug-routes', (req, res) => {
   const routes = [];
@@ -419,9 +450,6 @@ router.get('/api/tasks/overview', requireAuth, async (req, res) => {
     });
   }
 });
-
-
-
 
 // PUT /tasks/:taskId/complete - Mark task as complete
 router.put('/:taskId/complete', requireAuth, async (req, res) => {

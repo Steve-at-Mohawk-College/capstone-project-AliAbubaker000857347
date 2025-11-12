@@ -112,6 +112,9 @@ app.use((req, res, next) => {
     res.locals.username = req.session.username || null;
     res.locals.userId = req.session.userId;
     res.locals.role = req.session.role;
+
+     console.log('🔄 Middleware - Setting profilePicture:', res.locals.profilePicture);
+    console.log('🔄 Middleware - Setting username:', res.locals.username);
     
     // Refresh email from database if not in session
     if (!req.session.email) {
@@ -221,6 +224,9 @@ app.use('/health', requireAuth, healthRoutes);
 app.use('/community', requireAuth, communityRoutes);
 app.use('/profile', requireAuth, profileRoutes);
 app.use('/admin', adminRoutes);
+
+const dashboardRoutes = require('./routes/dashboardRoutes');
+app.use('/dashboard', requireAuth, dashboardRoutes);
 
 
 
@@ -1328,6 +1334,39 @@ app.get('/health-check', async (req, res) => {
       database: 'disconnected',
       error: error.message,
     });
+  }
+});
+
+// Add this to your server.js for testing
+app.get('/test-file-system', (req, res) => {
+  const fs = require('fs');
+  const path = require('path');
+  
+  const testDir = path.join(__dirname, 'public/uploads/profile-pictures');
+  const testFile = path.join(testDir, 'test-write.txt');
+  
+  try {
+    // Check if directory exists and is writable
+    const dirExists = fs.existsSync(testDir);
+    const canWrite = (() => {
+      try {
+        fs.writeFileSync(testFile, 'test');
+        fs.unlinkSync(testFile);
+        return true;
+      } catch {
+        return false;
+      }
+    })();
+    
+    res.json({
+      directory: testDir,
+      directoryExists: dirExists,
+      canWriteToDirectory: canWrite,
+      isOneDrive: testDir.includes('OneDrive'),
+      platform: process.platform
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

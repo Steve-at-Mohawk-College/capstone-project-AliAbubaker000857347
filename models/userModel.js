@@ -84,7 +84,7 @@ async function deleteUser(userId) {
 
 // Get user profile with additional stats
 async function getUserProfileWithStats(userId) {
-  const userSql = 'SELECT user_id, username, email, profile_picture_url, bio, role, created_at FROM users WHERE user_id = ?';
+  const userSql = 'SELECT user_id, username, email, profile_picture_url, bio, role, is_verified, created_at FROM users WHERE user_id = ?';
   const petsSql = 'SELECT COUNT(*) as pet_count FROM pets WHERE user_id = ?';
   const tasksSql = 'SELECT COUNT(*) as task_count FROM tasks WHERE user_id = ? AND completed = false AND due_date >= NOW()';
   
@@ -105,6 +105,76 @@ async function checkUserExistsExcludingCurrent(userId, username, email) {
   return queryOne(sql, [username, email, userId]);
 }
 
+
+// In models/userModel.js - UPDATE updateUserEmail function
+async function updateUserEmail(userId, email, verificationToken) {
+  const sql = `UPDATE users 
+               SET pending_email = ?, 
+                   pending_email_token = ?, 
+                   pending_email_expiry = ?,
+                   updated_at = CURRENT_TIMESTAMP 
+               WHERE user_id = ?`;
+  
+  const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  
+  return query(sql, [email, verificationToken, expiryDate, userId]);
+}
+
+
+// Add retry mechanism for critical operations
+async function queryWithRetry(sql, params, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await query(sql, params);
+    } catch (error) {
+      if (error.code === 'ER_USER_LIMIT_REACHED' && attempt < maxRetries) {
+        console.log(`Database connection limit reached, retrying... (${attempt}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+
+// Verify pending email
+async function verifyPendingEmail(token) {
+  const sql = `UPDATE users 
+               SET email = pending_email,
+                   is_verified = true,
+                   pending_email = NULL,
+                   pending_email_token = NULL,
+                   pending_email_expiry = NULL,
+                   verification_token = NULL
+               WHERE pending_email_token = ? 
+               AND pending_email_expiry > NOW()`;
+  
+  return query(sql, [token]);
+}
+
+// Get pending email info
+async function getPendingEmail(userId) {
+  const sql = 'SELECT pending_email, pending_email_expiry FROM users WHERE user_id = ?';
+  return queryOne(sql, [userId]);
+}
+
+// Cancel pending email change
+async function cancelPendingEmail(userId) {
+  const sql = `UPDATE users 
+               SET pending_email = NULL,
+                   pending_email_token = NULL,
+                   pending_email_expiry = NULL
+               WHERE user_id = ?`;
+  
+  return query(sql, [userId]);
+}
+
+// Check if email already exists (excluding current user)
+async function checkEmailExistsExcludingCurrent(userId, email) {
+  const sql = 'SELECT * FROM users WHERE email = ? AND user_id != ?';
+  return queryOne(sql, [email, userId]);
+}
+
 module.exports = {
   createUser,
   findByEmail,
@@ -120,5 +190,10 @@ module.exports = {
    updateUsername,
     updateUserBio,
   getUserBio,
-  updateBioModerationStatus
+  updateBioModerationStatus,
+   updateUserEmail, 
+  checkEmailExistsExcludingCurrent,
+  verifyPendingEmail,      
+  getPendingEmail,         
+  cancelPendingEmail 
 };

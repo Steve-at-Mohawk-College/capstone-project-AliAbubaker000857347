@@ -251,12 +251,67 @@ router.post('/register', async (req, res) => {
 
 
 
+// GET /auth/verify-email-change - Verify email change
+router.get('/verify-email-change', async (req, res) => {
+  const { token } = req.query;
+  
+  if (!token) {
+    return res.status(400).render('error', {
+      title: 'Error',
+      message: 'Invalid verification token.',
+      error: {}
+    });
+  }
+
+  try {
+    // Find user by pending email token
+    const user = await queryOne(
+      'SELECT * FROM users WHERE pending_email_token = ? AND pending_email_expiry > NOW()',
+      [token]
+    );
+
+    if (!user) {
+      return res.render('error', {
+        title: 'Error',
+        message: 'Invalid or expired verification token.',
+        error: {}
+      });
+    }
+
+    // Verify the pending email
+    const result = await verifyPendingEmail(token);
+    
+    if (result.affectedRows === 0) {
+      return res.render('error', {
+        title: 'Error',
+        message: 'Invalid or expired verification token.',
+        error: {}
+      });
+    }
+
+    // Update session if user is logged in
+    if (req.session && req.session.userId === user.user_id) {
+      req.session.email = user.pending_email; // Now it's the actual email
+    }
+    
+    res.render('verify', { 
+      title: 'Email Changed Successfully - Pet Care',
+      message: 'Your email has been successfully updated and verified!'
+    });
+  } catch (error) {
+    console.error('Email change verification error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Database error during email verification.',
+      error: process.env.NODE_ENV === 'development' ? error : {}
+    });
+  }
+});
 
 
 
 
-
-// GET /auth/verify
+// GET /auth/verify - Update to handle both registration and email change verification
 router.get('/verify', async (req, res) => {
   const { token } = req.query;
   if (!token) return res.status(400).render('error', {
@@ -266,14 +321,37 @@ router.get('/verify', async (req, res) => {
   });
   
   try {
-    const result = await verifyUser(token);
-    if (result.affectedRows === 0) return res.render('error', {
-      title: 'Error',
-      message: 'Invalid or expired token.',
-      error: {}
-    });
+    // Find user by verification token
+    const user = await queryOne('SELECT * FROM users WHERE verification_token = ?', [token]);
     
-    res.render('verify', { title: 'Email Verified - Pet Care' });
+    if (!user) {
+      return res.render('error', {
+        title: 'Error',
+        message: 'Invalid or expired token.',
+        error: {}
+      });
+    }
+
+    // Verify the user
+    const result = await verifyUser(token);
+    
+    if (result.affectedRows === 0) {
+      return res.render('error', {
+        title: 'Error',
+        message: 'Invalid or expired token.',
+        error: {}
+      });
+    }
+
+    // Update session if user is logged in
+    if (req.session && req.session.userId === user.user_id) {
+      req.session.email = user.email;
+    }
+    
+    res.render('verify', { 
+      title: 'Email Verified - Pet Care',
+      message: 'Your email has been successfully verified.'
+    });
   } catch (e) {
     console.error('Verification error:', e);
     res.status(500).render('error', {
@@ -282,7 +360,27 @@ router.get('/verify', async (req, res) => {
       error: process.env.NODE_ENV === 'development' ? e : {}
     });
   }
-});// POST /auth/login
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// POST /auth/login
 router.post('/login', async (req, res) => {
   const { email, password, isAdminLogin } = req.body || {};
   if (!email || !password) return res.status(400).send('Email and password required.');

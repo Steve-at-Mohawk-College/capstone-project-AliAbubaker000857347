@@ -112,11 +112,29 @@ app.use((req, res, next) => {
     res.locals.username = req.session.username || null;
     res.locals.userId = req.session.userId;
     res.locals.role = req.session.role;
+    
+    // Refresh email from database if not in session
+    if (!req.session.email) {
+      (async () => {
+        try {
+          const user = await findById(req.session.userId);
+          if (user) {
+            req.session.email = user.email;
+            res.locals.email = user.email;
+          }
+        } catch (error) {
+          console.error('Error refreshing email:', error);
+        }
+      })();
+    } else {
+      res.locals.email = req.session.email;
+    }
   } else {
     res.locals.profilePicture = null;
     res.locals.username = null;
     res.locals.userId = null;
     res.locals.role = null;
+    res.locals.email = null;
   }
   next();
 });
@@ -459,40 +477,32 @@ const notificationRoutes = require('./routes/notificationRoutes');
 
 
 
-// Start notification worker (after database connection)
+// In server.js - UPDATE initializeApp function
 async function initializeApp() {
   try {
-    const dbConnected = await testConnection();
+    const db = require('./config/database');
+    const dbConnected = await db.testConnection();
+    
     if (!dbConnected) {
       console.error('❌ Failed to connect to database. Exiting...');
       process.exit(1);
     }
+
+    // Start connection monitoring AFTER successful connection
+    monitorConnections();
 
     // Start notification worker
     if (process.env.NODE_ENV !== 'test') {
       const notificationWorker = require('./workers/notificationWorker');
       notificationWorker.start();
     }
-    
-if (process.env.NODE_ENV === 'test') {
-  console.log('🧪 Test environment detected')
-  // Disable rate limiting in tests
-  app.use((req, res, next) => {
-    if (req.path.includes('/auth/')) {
-      // Skip rate limiting for auth in tests
-      return next()
-    }
-    next()
-  })
-}
-
-
 
     // Only start server if not in test environment and this is the main module
     if (process.env.NODE_ENV !== 'test' && require.main === module) {
+      const PORT = process.env.PORT || 3000;
       app.listen(PORT, () => {
         console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-        console.log(`📋 Notification worker: ${notificationWorker.isRunning ? 'RUNNING' : 'STOPPED'}`);
+        console.log(`📋 Notification worker: RUNNING`);
         console.log(`📊 Health check: http://localhost:${PORT}/health-check`);
         console.log(`🔗 Login page: http://localhost:${PORT}/login`);
         console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
@@ -961,8 +971,7 @@ app.get('/test-correct-domain', async (req, res) => {
 });
 
 
-// In your server.js - REPLACE the dashboard route with this:
-
+// In server.js - UPDATE the dashboard route
 app.get('/dashboard', requireAuth, async (req, res) => {
   try {
     console.log('📊 Dashboard route called - checking variables being passed');
@@ -982,11 +991,11 @@ app.get('/dashboard', requireAuth, async (req, res) => {
       userId, petPage, taskPage, itemsPerPage, petOffset, taskOffset
     });
 
-    // Use the new queryPaginated function
-    const { queryPaginated, query } = require('./config/database');
+    // IMPORTANT: Import database functions properly
+    const db = require('./config/database');
     
     // Get paginated pets - ONLY 5 PER PAGE
-    const pets = await queryPaginated(
+    const pets = await db.queryPaginated(
       `SELECT * FROM pets WHERE user_id = ? ORDER BY name`,
       [userId],
       itemsPerPage,
@@ -994,7 +1003,7 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     );
     
     // Get total pet count
-    const totalPetsResult = await query(
+    const totalPetsResult = await db.query(
       `SELECT COUNT(*) as count FROM pets WHERE user_id = ?`,
       [userId]
     );
@@ -1002,45 +1011,38 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     const totalPetPages = Math.max(1, Math.ceil(totalPets / itemsPerPage));
 
     // Get paginated tasks - ONLY 5 PER PAGE
-    const tasks = await queryPaginated(
-  `SELECT t.*, p.name as pet_name 
-   FROM tasks t 
-   JOIN pets p ON t.pet_id = p.pet_id 
-   WHERE p.user_id = ? 
-   AND t.completed = false  
-   ORDER BY t.due_date ASC`,
-  [userId],
-  itemsPerPage,
-  taskOffset
-);
+    const tasks = await db.queryPaginated(
+      `SELECT t.*, p.name as pet_name 
+       FROM tasks t 
+       JOIN pets p ON t.pet_id = p.pet_id 
+       WHERE p.user_id = ? 
+       AND t.completed = false  
+       ORDER BY t.due_date ASC`,
+      [userId],
+      itemsPerPage,
+      taskOffset
+    );
     
-    // Get total task count - 
-const totalTasksResult = await query(
-  `SELECT COUNT(*) as count 
-   FROM tasks t 
-   JOIN pets p ON t.pet_id = p.pet_id 
-   WHERE p.user_id = ? 
-   AND t.completed = false`,  
-  [userId]
-);
+    // Get total task count
+    const totalTasksResult = await db.query(
+      `SELECT COUNT(*) as count 
+       FROM tasks t 
+       JOIN pets p ON t.pet_id = p.pet_id 
+       WHERE p.user_id = ? 
+       AND t.completed = false`,  
+      [userId]
+    );
     const totalTasks = totalTasksResult[0].count;
     const totalTaskPages = Math.max(1, Math.ceil(totalTasks / itemsPerPage));
 
     console.log('📈 Pagination results:', {
       totalPets,
       totalTasks,
-      petsCount: pets.length, // Should be 5 or less
-      tasksCount: tasks.length, // Should be 5 or less
+      petsCount: pets.length,
+      tasksCount: tasks.length,
       totalPetPages,
       totalTaskPages
     });
-
-    // DEBUG: Verify pagination is working
-    if (pets.length > itemsPerPage) {
-      console.error('❌ PAGINATION ERROR: Got', pets.length, 'pets but should only get', itemsPerPage);
-    } else {
-      console.log('✅ Pagination working correctly - showing', pets.length, 'pets');
-    }
 
     res.render('dashboard', {
       title: 'Pet Dashboard',
@@ -1070,9 +1072,9 @@ const totalTasksResult = await query(
     // Fallback without pagination
     try {
       console.log('🔄 Trying fallback query without pagination...');
-      const { query } = require('./config/database');
-      const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
-      const tasks = await query(
+      const db = require('./config/database');
+      const pets = await db.query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
+      const tasks = await db.query(
         `SELECT t.*, p.name as pet_name 
          FROM tasks t 
          JOIN pets p ON t.pet_id = p.pet_id 
@@ -1376,6 +1378,60 @@ app.use((req, res) => {
 
 
 
+
+
+// In server.js - FIX the connection monitoring
+function monitorConnections() {
+  const db = require('./config/database');
+  
+  setInterval(() => {
+    try {
+      // Check if pool exists and has the properties we need
+      if (db.pool && db.pool._allConnections) {
+        console.log(`📊 Connection pool status: ${db.pool._allConnections.length} total, ${db.pool._freeConnections.length} free`);
+      } else {
+        console.log('📊 Connection pool: Not available for monitoring');
+      }
+    } catch (error) {
+      console.log('📊 Connection monitoring error:', error.message);
+    }
+  }, 30000); // Log every 30 seconds
+}
+
+
+
+// Call this after database initialization
+monitorConnections();
+
+// Emergency connection reset endpoint
+app.get('/debug/reset-connections', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    
+    console.log('🔄 Attempting connection pool reset...');
+    
+    // Close current pool
+    if (db.pool && db.pool.end) {
+      await db.pool.end();
+      console.log('✅ Connection pool closed');
+    }
+    
+    // Reinitialize database connection
+    const newDb = require('./config/database');
+    await newDb.testConnection();
+    
+    res.json({
+      success: true,
+      message: 'Connection pool reset successfully'
+    });
+  } catch (error) {
+    console.error('Connection reset failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
 
 
 

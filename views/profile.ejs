@@ -1,17 +1,23 @@
+
+
+
+
+
 <%- include('partials/header', {title: 'My Profile - Pet Care' }) %>
 <style>
-/* ===== ENHANCED PROFILE PAGE STYLES ===== */
+/* ===== ENHANCED PROFESSIONAL PROFILE STYLES ===== */
 :root {
   --primary: #4361ee;
   --primary-light: #4895ef;
   --secondary: #06d6a0;
   --accent: #ff6b6b;
+  --warning: #ffd166;
   --light: #f8f9fa;
   --dark: #212529;
   --gray: #6c757d;
   --light-gray: #e9ecef;
-  --border-radius: 16px;
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -19,6 +25,7 @@
 .profile-container {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   min-height: 100vh;
+  padding: 2rem 0;
 }
 
 .navbar-modern {
@@ -32,23 +39,18 @@ body {
   background: #f8f9fa;
 }
 
-.container-fluid.py-4 {
-  padding: 2rem 1rem !important;
-}
-
 /* Enhanced Cards */
 .card-custom {
   border: none;
   box-shadow: var(--shadow);
   border-radius: var(--border-radius);
   transition: var(--transition);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .card-custom:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
 }
 
@@ -56,7 +58,7 @@ body {
 .profile-header {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   border-radius: var(--border-radius);
-  padding: 2rem;
+  padding: 2.5rem;
   margin-bottom: 2rem;
   color: white;
   position: relative;
@@ -70,7 +72,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 .profile-header-content {
@@ -86,8 +88,8 @@ body {
 }
 
 .profile-picture {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   border: 4px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -102,15 +104,15 @@ body {
 
 .profile-picture-actions {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 8px;
+  right: 8px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .profile-picture-btn {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 2px solid white;
   display: flex;
@@ -119,6 +121,7 @@ body {
   backdrop-filter: blur(10px);
   transition: var(--transition);
   cursor: pointer;
+  font-size: 0.9rem;
 }
 
 .profile-picture-btn.upload {
@@ -143,6 +146,7 @@ body {
   position: relative;
   overflow: hidden;
   transition: var(--transition);
+  height: 100%;
 }
 
 .stats-card::before {
@@ -156,105 +160,119 @@ body {
 }
 
 .stats-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .stats-card .card-body {
   position: relative;
   z-index: 2;
+  padding: 1.5rem;
 }
 
 .stats-icon {
-  font-size: 2.5rem;
+  font-size: 2rem;
   opacity: 0.9;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Bio Section Enhanced */
 .bio-section {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: white;
 }
 
 .bio-textarea {
-  border-radius: 12px;
+  border-radius: 8px;
   border: 2px solid #e9ecef;
   transition: var(--transition);
   resize: vertical;
   min-height: 120px;
+  font-size: 0.9rem;
 }
 
 .bio-textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
 }
 
 .bio-preview {
-  background: rgba(67, 97, 238, 0.05);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: rgba(67, 97, 238, 0.03);
+  border-radius: 8px;
+  padding: 1.25rem;
   border-left: 4px solid var(--primary);
 }
 
 /* Settings Section */
 .settings-item {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   transition: var(--transition);
 }
 
 .settings-item:hover {
   background: rgba(67, 97, 238, 0.02);
-  border-radius: 8px;
-  padding-left: 1rem;
-  padding-right: 1rem;
 }
 
 .settings-item:last-child {
   border-bottom: none;
 }
 
-/* Quick Actions */
-.quick-action-card {
-  border-radius: var(--border-radius);
-  transition: var(--transition);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  text-decoration: none;
-  color: inherit;
-}
-
-.quick-action-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-  text-decoration: none;
-  color: inherit;
-}
-
-.quick-action-icon {
-  font-size: 2.5rem;
+/* Email Status Styles */
+.email-status-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
   margin-bottom: 1rem;
-  transition: var(--transition);
 }
 
-.quick-action-card:hover .quick-action-icon {
-  transform: scale(1.1);
+.current-email-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.pending-email-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #fff3cd;
+  border-radius: 6px;
+  border: 1px solid #ffeaa7;
+  margin-top: 0.5rem;
+}
+
+.email-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.email-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
 /* Badges */
 .badge-modern {
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
 /* Buttons */
 .btn-modern {
-  border-radius: 50px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-weight: 500;
   transition: var(--transition);
   border: 2px solid transparent;
+  font-size: 0.875rem;
 }
 
 .btn-modern-primary {
@@ -264,27 +282,60 @@ body {
 }
 
 .btn-modern-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+}
+
+.btn-modern-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
 }
 
 /* Form Controls */
 .form-control-modern {
-  border-radius: 12px;
+  border-radius: 8px;
   border: 2px solid #e9ecef;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.8rem;
   transition: var(--transition);
+  font-size: 0.9rem;
 }
 
 .form-control-modern:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+}
+
+/* Quick Actions */
+.quick-action-card {
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.quick-action-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: inherit;
+}
+
+.quick-action-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  transition: var(--transition);
+}
+
+.quick-action-card:hover .quick-action-icon {
+  transform: scale(1.1);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .container-fluid.py-4 {
-    padding: 1rem 0.5rem !important;
+  .profile-container {
+    padding: 1rem 0;
   }
   
   .profile-header {
@@ -293,12 +344,23 @@ body {
   }
   
   .profile-picture {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
   }
   
   .stats-card .h2 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+  }
+  
+  .current-email-display,
+  .pending-email-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .email-actions {
+    align-self: flex-end;
   }
 }
 
@@ -319,7 +381,7 @@ body {
 @keyframes slideUp {
   from { 
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to { 
     opacity: 1;
@@ -338,8 +400,8 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border: 2px solid #f3f3f3;
   border-top: 2px solid var(--primary);
   border-radius: 50%;
@@ -351,6 +413,29 @@ body {
   100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
+/* Professional spacing and typography */
+.card-header {
+  padding: 1.25rem 1.5rem;
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--dark);
+  margin-bottom: 0.5rem;
+}
 
 
 /* ===== DARK MODE SUPPORT ===== */
@@ -520,18 +605,88 @@ body {
 [data-theme="dark"] .text-muted small {
   color: #adb5bd !important;
 }
+
+
+/* ===== DARK MODE EMAIL STATUS FIXES ===== */
+[data-theme="dark"] .email-status-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .current-email-display {
+  background: rgba(33, 37, 41, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .pending-email-display {
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #ffd166;
+}
+
+[data-theme="dark"] .current-email-display strong,
+[data-theme="dark"] .pending-email-display strong {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge.bg-success {
+  background: linear-gradient(135deg, #198754 0%, #20c997 100%) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+  color: #212529 !important;
+}
+
+[data-theme="dark"] .email-info .text-primary {
+  color: #6ea8fe !important;
+}
+
+[data-theme="dark"] .email-info .text-warning {
+  color: #ffd166 !important;
+}
+
+[data-theme="dark"] .form-text.small {
+  color: #adb5bd !important;
+}
+
+/* Fix the email actions buttons in dark mode */
+[data-theme="dark"] .email-actions .btn-outline-secondary {
+  color: #adb5bd;
+  border-color: #6c757d;
+}
+
+[data-theme="dark"] .email-actions .btn-outline-secondary:hover {
+  background: #6c757d;
+  border-color: #adb5bd;
+  color: white;
+}
+
+[data-theme="dark"] .email-actions .btn-outline-primary {
+  color: #6ea8fe;
+  border-color: #6ea8fe;
+}
+
+[data-theme="dark"] .email-actions .btn-outline-primary:hover {
+  background: #6ea8fe;
+  border-color: #6ea8fe;
+  color: white;
+}
+
 </style>
 
-<div class="container-fluid py-4 profile-container">
+<div class="container-fluid profile-container">
   <div class="row justify-content-center">
     <div class="col-xxl-10">
-      <!-- Enhanced Header Section -->
+      <!-- Professional Header Section -->
       <div class="profile-header slide-up">
-        <div class="profile-header-content text-center text-lg-start">
+        <div class="profile-header-content">
           <div class="row align-items-center">
             <div class="col-lg-8">
-              <h1 class="h2 mb-2 fw-bold">My Profile</h1>
-              <p class="mb-0 opacity-90">Manage your account settings and preferences</p>
+              <h1 class="h3 mb-2 fw-bold">Account Profile</h1>
+              <p class="mb-0 opacity-90">Manage your personal information and account settings</p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
               <a href="/dashboard" class="btn btn-light btn-modern">
@@ -560,10 +715,10 @@ body {
       <div class="row g-4">
         <!-- Left Column - Profile Overview -->
         <div class="col-lg-4">
-          <!-- Enhanced Profile Card -->
+          <!-- Profile Summary Card -->
           <div class="card card-custom h-100 slide-up">
             <div class="card-body text-center p-4">
-              <!-- Enhanced Profile Picture -->
+              <!-- Profile Picture -->
               <div class="profile-picture-container">
                 <img id="profilePicture" 
                      src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
@@ -584,35 +739,35 @@ body {
               </div>
 
               <!-- User Info -->
-              <h3 class="h4 mb-2 fw-bold text-dark"><%= user.username %></h3>
-              <p class="text-muted mb-3">
-                <i class="bi bi-envelope me-2"></i><%= user.email %>
+              <h3 class="h5 mb-2 fw-bold text-dark"><%= user.username %></h3>
+              <p class="text-muted mb-3 small">
+                <i class="bi bi-envelope me-1"></i><%= user.email %>
               </p>
               
               <!-- Account Type -->
-              <div class="mb-4">
+              <div class="mb-3">
                 <span class="badge-modern bg-<%= user.role === 'admin' ? 'danger' : 'primary' %> text-white">
                   <i class="bi bi-<%= user.role === 'admin' ? 'shield-shaded' : 'person' %> me-1"></i>
-                  <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %> Account
+                  <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %> User
                 </span>
               </div>
 
               <!-- Member Since -->
-              <div class="text-muted small">
-                <i class="bi bi-calendar-event me-2"></i>
-                Member since <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+              <div class="text-muted small mb-3">
+                <i class="bi bi-calendar-event me-1"></i>
+                Joined <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
               </div>
 
               <!-- Quick Stats -->
-              <div class="mt-4 pt-3 border-top">
+              <div class="mt-3 pt-3 border-top">
                 <div class="row text-center">
                   <div class="col-6">
-                    <div class="h5 mb-1 fw-bold text-primary"><%= user.pet_count || 0 %></div>
+                    <div class="h6 mb-1 fw-bold text-primary"><%= user.pet_count || 0 %></div>
                     <small class="text-muted">Pets</small>
                   </div>
                   <div class="col-6">
-                    <div class="h5 mb-1 fw-bold text-warning"><%= user.upcoming_task_count || 0 %></div>
-                    <small class="text-muted">Tasks</small>
+                    <div class="h6 mb-1 fw-bold text-warning"><%= user.upcoming_task_count || 0 %></div>
+                    <small class="text-muted">Active Tasks</small>
                   </div>
                 </div>
               </div>
@@ -620,50 +775,185 @@ body {
           </div>
         </div>
 
-        <!-- Right Column - Stats & Settings -->
+        <!-- Right Column - Main Content -->
         <div class="col-lg-8">
-          <!-- Enhanced Stats Overview -->
+          <!-- Stats Overview -->
           <div class="row g-3 mb-4">
             <div class="col-md-4">
               <div class="card stats-card bg-primary slide-up" style="animation-delay: 0.1s;">
-                <div class="card-body text-center p-4">
+                <div class="card-body text-center">
                   <div class="stats-icon">
                     <i class="bi bi-heart-pulse"></i>
                   </div>
-                  <h3 class="h2 mb-1 fw-bold"><%= user.pet_count || 0 %></h3>
-                  <p class="mb-0 opacity-90">Registered Pets</p>
+                  <h4 class="h3 mb-1 fw-bold"><%= user.pet_count || 0 %></h4>
+                  <p class="mb-0 small opacity-90">Registered Pets</p>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
               <div class="card stats-card bg-warning slide-up" style="animation-delay: 0.2s;">
-                <div class="card-body text-center p-4">
+                <div class="card-body text-center">
                   <div class="stats-icon">
                     <i class="bi bi-calendar-check"></i>
                   </div>
-                  <h3 class="h2 mb-1 fw-bold"><%= user.upcoming_task_count || 0 %></h3>
-                  <p class="mb-0 opacity-90">Upcoming Tasks</p>
+                  <h4 class="h3 mb-1 fw-bold"><%= user.upcoming_task_count || 0 %></h4>
+                  <p class="mb-0 small opacity-90">Upcoming Tasks</p>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
               <div class="card stats-card bg-success slide-up" style="animation-delay: 0.3s;">
-                <div class="card-body text-center p-4">
+                <div class="card-body text-center">
                   <div class="stats-icon">
                     <i class="bi bi-clock-history"></i>
                   </div>
-                  <h3 class="h2 mb-1 fw-bold"><%= Math.floor((new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)) %></h3>
-                  <p class="mb-0 opacity-90">Days Active</p>
+                  <h4 class="h3 mb-1 fw-bold"><%= Math.floor((new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)) %></h4>
+                  <p class="mb-0 small opacity-90">Days Active</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Enhanced Bio Section -->
-          <div class="card card-custom bio-section slide-up" style="animation-delay: 0.4s;">
-            <div class="card-header bg-transparent border-bottom-0 px-4 pt-4 pb-0">
+          <!-- Personal Information Section -->
+          <div class="card card-custom slide-up" style="animation-delay: 0.4s;">
+            <div class="card-header">
               <h5 class="card-title mb-0 d-flex align-items-center">
-                <i class="bi bi-person-lines-fill text-primary me-2 fs-4"></i>
+                <i class="bi bi-person-gear text-primary me-2"></i>
+                Personal Information
+              </h5>
+            </div>
+            <div class="card-body">
+              <!-- Username Update -->
+              <div class="settings-item">
+                <div class="row align-items-center">
+                  <div class="col-md-4">
+                    <label class="form-label fw-semibold text-dark mb-1">Username</label>
+                    <p class="text-muted mb-0 small">Your public display name</p>
+                  </div>
+                  <div class="col-md-8">
+                    <form id="usernameForm" class="d-flex gap-2 align-items-start">
+                      <div class="flex-grow-1">
+                        <input type="text" 
+                               class="form-control form-control-modern" 
+                               id="usernameInput" 
+                               value="<%= user.username %>" 
+                               required 
+                               minlength="3"
+                               placeholder="Enter new username">
+                        <div class="form-text small">Minimum 3 characters</div>
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-modern" id="updateUsernameBtn">
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email Management -->
+              <div class="settings-item">
+                <div class="row">
+                  <div class="col-12">
+                    <label class="form-label fw-semibold text-dark mb-3">Email Address</label>
+                    
+                    <!-- Current Email Display -->
+                    <div class="email-status-container">
+                      <div class="current-email-display">
+                        <div class="email-info">
+                          <i class="bi bi-envelope text-primary"></i>
+                          <div>
+                            <strong><%= user.email %></strong>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                              <% if (user.is_verified) { %>
+                                <span class="badge bg-success">
+                                  <i class="bi bi-check-lg me-1"></i>Verified
+                                </span>
+                              <% } else { %>
+                                <span class="badge bg-warning">
+                                  <i class="bi bi-clock me-1"></i>Unverified
+                                </span>
+                                <button class="btn btn-outline-primary btn-sm" onclick="resendVerification()">
+                                  Resend Verification
+                                </button>
+                              <% } %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Pending Email Display (if any) -->
+                      <div id="pendingEmailContainer" style="display: none;">
+                        <div class="pending-email-display">
+                          <div class="email-info">
+                            <i class="bi bi-clock text-warning"></i>
+                            <div>
+                              <strong id="pendingEmailText"></strong>
+                              <div class="small text-muted mt-1">Pending verification - check your email</div>
+                            </div>
+                          </div>
+                          <div class="email-actions">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="cancelPendingEmail()">
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Email Update Form -->
+                    <form id="emailForm" class="mt-3">
+                      <div class="row g-2">
+                        <div class="col-md-8">
+                          <input type="email" 
+                                 class="form-control form-control-modern" 
+                                 id="emailInput" 
+                                 placeholder="Enter new email address"
+                                 required>
+                          <div class="form-text small">
+                            We'll send a verification link to your new email address
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <button type="submit" class="btn btn-primary btn-modern w-100" id="updateEmailBtn">
+                            Update Email
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile Picture Settings -->
+              <div class="settings-item">
+                <div class="row align-items-center">
+                  <div class="col-md-4">
+                    <label class="form-label fw-semibold text-dark mb-1">Profile Picture</label>
+                    <p class="text-muted mb-0 small">Your profile image</p>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="d-flex gap-2 justify-content-end">
+                      <label for="profilePictureInput" class="btn btn-outline-primary btn-modern">
+                        <i class="bi bi-upload me-2"></i>Upload Photo
+                      </label>
+                      <% if (user.profile_picture_url) { %>
+                        <button class="btn btn-outline-danger btn-modern" onclick="removeProfilePicture()">
+                          <i class="bi bi-trash me-2"></i>Remove
+                        </button>
+                      <% } %>
+                    </div>
+                    <div class="form-text text-end small">JPG, PNG up to 5MB</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bio Section -->
+          <div class="card card-custom mt-4 slide-up" style="animation-delay: 0.5s;">
+            <div class="card-header">
+              <h5 class="card-title mb-0 d-flex align-items-center">
+                <i class="bi bi-person-lines-fill text-primary me-2"></i>
                 About Me
                 <% if (user.bio && !user.bio_requires_moderation) { %>
                   <span class="badge-modern bg-success ms-2">
@@ -672,11 +962,11 @@ body {
                 <% } %>
               </h5>
             </div>
-            <div class="card-body p-4">
+            <div class="card-body">
               <!-- Bio moderation status -->
               <% if (user.bio_requires_moderation) { %>
                 <div class="alert alert-warning d-flex align-items-center mb-4">
-                  <i class="bi bi-clock-history me-2 fs-5"></i>
+                  <i class="bi bi-clock-history me-2"></i>
                   <div>
                     <strong>Pending Approval</strong>
                     <div class="small">Your bio will be visible once approved by an administrator.</div>
@@ -689,7 +979,7 @@ body {
                   <div class="col-lg-8">
                     <div class="mb-3">
                       <label class="form-label fw-semibold text-dark">Tell us about yourself and your pets</label>
-                      <textarea class="form-control bio-textarea" id="bioInput" rows="6" 
+                      <textarea class="form-control bio-textarea" id="bioInput" rows="4" 
                                 placeholder="Share your story, your pets' personalities, or your experience with pet care..."><%= user.bio || '' %></textarea>
                       <div class="form-text text-end">
                         <span id="bioCharCount">0</span>/500 characters
@@ -702,7 +992,7 @@ body {
                         <i class="bi bi-check-lg me-2"></i>Update Bio
                       </button>
                       <button type="button" class="btn btn-outline-secondary" id="cancelBioBtn" style="display: none;">
-                        Cancel Changes
+                        Cancel
                       </button>
                     </div>
                     <div class="mt-3 text-center">
@@ -722,117 +1012,41 @@ body {
               <!-- Current Bio Display -->
               <% if (user.bio && !user.bio_requires_moderation) { %>
                 <div class="bio-preview mt-4 fade-in">
-                  <h6 class="fw-semibold mb-3 text-dark">Current Bio:</h6>
+                  <h6 class="fw-semibold mb-2 text-dark">Current Bio:</h6>
                   <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.6;"><%= user.bio %></p>
                 </div>
               <% } %>
             </div>
           </div>
 
-          <!-- Enhanced Account Settings -->
-          <div class="card card-custom mt-4 slide-up" style="animation-delay: 0.5s;">
-            <div class="card-header bg-transparent border-bottom-0 px-4 pt-4">
-              <h5 class="card-title mb-0 d-flex align-items-center">
-                <i class="bi bi-gear-fill text-primary me-2 fs-4"></i>
-                Account Settings
-              </h5>
-            </div>
-            <div class="card-body p-4">
-              <!-- Username Update -->
-              <div class="settings-item">
-                <div class="row align-items-center">
-                  <div class="col-md-8">
-                    <label class="form-label fw-semibold text-dark mb-1">Username</label>
-                    <p class="text-muted mb-0 small">Your public display name across the platform</p>
-                  </div>
-                  <div class="col-md-4">
-                    <form id="usernameForm" class="d-flex gap-2">
-                      <input type="text" 
-                             class="form-control form-control-modern" 
-                             id="usernameInput" 
-                             value="<%= user.username %>" 
-                             required 
-                             minlength="3"
-                             placeholder="Enter new username">
-                      <button type="submit" class="btn btn-primary btn-modern" id="updateUsernameBtn">
-                        <i class="bi bi-check-lg"></i>
-                      </button>
-                    </form>
-                    <div class="form-text text-end small">Min. 3 characters</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Email Display -->
-              <div class="settings-item">
-                <div class="row align-items-center">
-                  <div class="col-md-8">
-                    <label class="form-label fw-semibold text-dark mb-1">Email Address</label>
-                    <p class="text-muted mb-0 small">Your primary contact email</p>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="alert alert-light border-0 mb-0 p-3">
-                      <i class="bi bi-envelope text-primary me-2"></i>
-                      <strong class="text-dark"><%= user.email %></strong>
-                    </div>
-                    <div class="form-text text-end small">Contact support to change</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Profile Picture Settings -->
-              <div class="settings-item">
-                <div class="row align-items-center">
-                  <div class="col-md-8">
-                    <label class="form-label fw-semibold text-dark mb-1">Profile Picture</label>
-                    <p class="text-muted mb-0 small">Update your profile photo</p>
-                  </div>
-                  <div class="col-md-4 text-end">
-                    <div class="d-flex gap-2 justify-content-end">
-                      <label for="profilePictureInput" class="btn btn-outline-primary btn-modern">
-                        <i class="bi bi-upload me-2"></i>Upload
-                      </label>
-                      <% if (user.profile_picture_url) { %>
-                        <button class="btn btn-outline-danger btn-modern" onclick="removeProfilePicture()">
-                          <i class="bi bi-trash me-2"></i>Remove
-                        </button>
-                      <% } %>
-                    </div>
-                    <div class="form-text text-end small">JPG, PNG up to 5MB</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Enhanced Quick Actions -->
+          <!-- Quick Actions -->
           <div class="card card-custom mt-4 slide-up" style="animation-delay: 0.6s;">
-            <div class="card-header bg-transparent border-bottom-0 px-4 pt-4">
+            <div class="card-header">
               <h5 class="card-title mb-0 d-flex align-items-center">
-                <i class="bi bi-lightning-fill text-warning me-2 fs-4"></i>
+                <i class="bi bi-lightning-fill text-warning me-2"></i>
                 Quick Actions
               </h5>
             </div>
-            <div class="card-body p-4">
+            <div class="card-body">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <a href="/pets/add" class="card quick-action-card h-100 text-decoration-none">
-                    <div class="card-body text-center p-4">
+                  <a href="/pets/add" class="card quick-action-card text-decoration-none">
+                    <div class="card-body text-center p-3">
                       <div class="quick-action-icon text-success">
-                        <i class="bi bi-plus-circle-fill"></i>
+                        <i class="bi bi-plus-circle"></i>
                       </div>
-                      <h6 class="card-title fw-bold text-dark mb-2">Add New Pet</h6>
+                      <h6 class="card-title fw-bold text-dark mb-1">Add New Pet</h6>
                       <p class="text-muted small mb-0">Register a new pet to your account</p>
                     </div>
                   </a>
                 </div>
                 <div class="col-md-6">
-                  <a href="/schedule-task" class="card quick-action-card h-100 text-decoration-none">
-                    <div class="card-body text-center p-4">
+                  <a href="/schedule-task" class="card quick-action-card text-decoration-none">
+                    <div class="card-body text-center p-3">
                       <div class="quick-action-icon text-primary">
-                        <i class="bi bi-calendar-plus-fill"></i>
+                        <i class="bi bi-calendar-plus"></i>
                       </div>
-                      <h6 class="card-title fw-bold text-dark mb-2">Schedule Task</h6>
+                      <h6 class="card-title fw-bold text-dark mb-1">Schedule Task</h6>
                       <p class="text-muted small mb-0">Create reminders and tasks</p>
                     </div>
                   </a>
@@ -854,102 +1068,243 @@ body {
 document.addEventListener('DOMContentLoaded', function () {
   console.log('Profile page loaded');
 
+  // Initialize pending email display
+  checkPendingEmailStatus();
+
+  // Bio character count
+  const bioInput = document.getElementById('bioInput');
+  const bioCharCount = document.getElementById('bioCharCount');
+  
+  if (bioInput && bioCharCount) {
+    bioCharCount.textContent = bioInput.value.length;
+    bioInput.addEventListener('input', function() {
+      bioCharCount.textContent = this.value.length;
+    });
+  }
+
+  // File input handling
   const fileInput = document.getElementById('profilePictureInput');
-  const profileImg = document.getElementById('profilePicture');
   const cameraLabel = document.querySelector('label[for="profilePictureInput"]');
 
-  if (!fileInput) {
-    console.error('❌ File input not found!');
-    return;
-  }
-
-  if (!cameraLabel) {
-    console.error('❌ Camera label not found!');
-    return;
-  }
-
-  // Add click handler to the camera button
-  cameraLabel.addEventListener('click', function (e) {
-    e.preventDefault();
-    console.log('Camera button clicked');
-    fileInput.click();
-  });
-
-  // Enhanced file input change handler
-  fileInput.addEventListener('change', function (e) {
-    console.log('File input changed');
-    if (this.files && this.files[0]) {
-      console.log('File selected:', this.files[0].name, this.files[0].size, 'bytes');
-      uploadProfilePicture(this.files[0]);
-    } else {
-      console.log('No file selected');
-    }
-  });
-
-  // Username form handling
-  const usernameForm = document.getElementById('usernameForm');
-  const usernameInput = document.getElementById('usernameInput');
-  const updateUsernameBtn = document.getElementById('updateUsernameBtn');
-
-  if (usernameForm) {
-    usernameForm.addEventListener('submit', async function(e) {
+  if (cameraLabel) {
+    cameraLabel.addEventListener('click', function (e) {
       e.preventDefault();
-      
-      const newUsername = usernameInput.value.trim();
-      
-      if (newUsername.length < 3) {
-        showAlert('Username must be at least 3 characters long', 'danger');
-        return;
-      }
+      fileInput.click();
+    });
+  }
 
-      if (newUsername === '<%= user.username %>') {
-        showAlert('Please enter a different username', 'info');
-        return;
-      }
-
-      // Disable button during request
-      updateUsernameBtn.disabled = true;
-      updateUsernameBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
-
-      try {
-        const response = await fetch('/profile/username', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username: newUsername })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          showAlert('Username updated successfully!', 'success');
-          
-          // Update displayed username
-          document.querySelector('h3.h4').textContent = newUsername;
-          
-          // Update session data in header
-          updateHeaderUsername(newUsername);
-        } else {
-          showAlert(result.error || 'Error updating username', 'danger');
-          // Reset input to original value on error
-          usernameInput.value = '<%= user.username %>';
-        }
-      } catch (error) {
-        console.error('Username update error:', error);
-        showAlert('Error updating username: ' + error.message, 'danger');
-        usernameInput.value = '<%= user.username %>';
-      } finally {
-        // Re-enable button
-        updateUsernameBtn.disabled = false;
-        updateUsernameBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+  if (fileInput) {
+    fileInput.addEventListener('change', function (e) {
+      if (this.files && this.files[0]) {
+        uploadProfilePicture(this.files[0]);
       }
     });
   }
 
-  console.log('Event listeners attached successfully');
+  // Username form handling
+  const usernameForm = document.getElementById('usernameForm');
+  if (usernameForm) {
+    usernameForm.addEventListener('submit', handleUsernameUpdate);
+  }
+
+  // Email form handling
+  const emailForm = document.getElementById('emailForm');
+  if (emailForm) {
+    emailForm.addEventListener('submit', handleEmailUpdate);
+  }
+
+  // Bio form handling
+  const bioForm = document.getElementById('bioForm');
+  if (bioForm) {
+    bioForm.addEventListener('submit', handleBioUpdate);
+  }
 });
 
+async function checkPendingEmailStatus() {
+  try {
+    const response = await fetch('/profile/email/pending');
+    const result = await response.json();
+    
+    if (result.success && result.hasPendingEmail) {
+      const container = document.getElementById('pendingEmailContainer');
+      const emailText = document.getElementById('pendingEmailText');
+      
+      container.style.display = 'block';
+      emailText.textContent = result.pendingEmail;
+      
+      showAlert(`Email change pending: ${result.pendingEmail}. Check your email to verify.`, 'warning');
+    }
+  } catch (error) {
+    console.error('Error checking pending email:', error);
+  }
+}
+
+async function handleUsernameUpdate(e) {
+  e.preventDefault();
+  
+  const usernameInput = document.getElementById('usernameInput');
+  const updateUsernameBtn = document.getElementById('updateUsernameBtn');
+  const newUsername = usernameInput.value.trim();
+  
+  if (newUsername.length < 3) {
+    showAlert('Username must be at least 3 characters long', 'danger');
+    return;
+  }
+
+  if (newUsername === '<%= user.username %>') {
+    showAlert('Please enter a different username', 'info');
+    return;
+  }
+
+  // Disable button during request
+  updateUsernameBtn.disabled = true;
+  updateUsernameBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
+
+  try {
+    const response = await fetch('/profile/username', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: newUsername })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showAlert('Username updated successfully!', 'success');
+      
+      // Update displayed username
+      document.querySelector('h3.h5').textContent = newUsername;
+      updateHeaderUsername(newUsername);
+    } else {
+      showAlert(result.error || 'Error updating username', 'danger');
+      usernameInput.value = '<%= user.username %>';
+    }
+  } catch (error) {
+    console.error('Username update error:', error);
+    showAlert('Error updating username: ' + error.message, 'danger');
+    usernameInput.value = '<%= user.username %>';
+  } finally {
+    // Re-enable button
+    updateUsernameBtn.disabled = false;
+    updateUsernameBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+  }
+}
+
+async function handleEmailUpdate(e) {
+  e.preventDefault();
+  
+  const emailInput = document.getElementById('emailInput');
+  const updateEmailBtn = document.getElementById('updateEmailBtn');
+  const newEmail = emailInput.value.trim();
+  
+  if (!newEmail) {
+    showAlert('Please enter an email address', 'danger');
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(newEmail)) {
+    showAlert('Please enter a valid email address', 'danger');
+    return;
+  }
+
+  if (newEmail === '<%= user.email %>') {
+    showAlert('Please enter a different email address', 'info');
+    return;
+  }
+
+  // Disable button during request
+  updateEmailBtn.disabled = true;
+  updateEmailBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i> Updating...';
+
+  try {
+    const response = await fetch('/profile/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: newEmail })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showAlert(result.message, 'success');
+      emailInput.value = '';
+      
+      // Update pending email display
+      setTimeout(() => {
+        checkPendingEmailStatus();
+      }, 1000);
+      
+    } else {
+      showAlert(result.error || 'Error updating email', 'danger');
+    }
+  } catch (error) {
+    console.error('Email update error:', error);
+    showAlert('Error updating email: ' + error.message, 'danger');
+  } finally {
+    // Re-enable button
+    updateEmailBtn.disabled = false;
+    updateEmailBtn.innerHTML = 'Update Email';
+  }
+}
+
+async function handleBioUpdate(e) {
+  e.preventDefault();
+  
+  const bioInput = document.getElementById('bioInput');
+  const updateBioBtn = document.getElementById('updateBioBtn');
+  const newBio = bioInput.value.trim();
+  const originalBio = '<%= user.bio || "" %>';
+  
+  if (newBio.length > 500) {
+    showAlert('Bio must be less than 500 characters', 'danger');
+    return;
+  }
+
+  if (newBio === originalBio) {
+    showAlert('Please make changes to update your bio', 'info');
+    return;
+  }
+
+  // Disable button during request
+  updateBioBtn.disabled = true;
+  updateBioBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm me-2"></i>Updating...';
+
+  try {
+    const response = await fetch('/profile/bio', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ bio: newBio })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showAlert(result.message, 'success');
+      document.getElementById('cancelBioBtn').style.display = 'none';
+      
+      // Reload page to show updated bio and moderation status
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      showAlert(result.error || 'Error updating bio', 'danger');
+    }
+  } catch (error) {
+    console.error('Bio update error:', error);
+    showAlert('Error updating bio: ' + error.message, 'danger');
+  } finally {
+    // Re-enable button
+    updateBioBtn.disabled = false;
+    updateBioBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Update Bio';
+  }
+}
+
+// Profile Picture Upload Function
 async function uploadProfilePicture(file) {
   if (!file) {
     console.log('No file provided');
@@ -1022,33 +1377,7 @@ async function uploadProfilePicture(file) {
   }
 }
 
-function updateHeaderProfilePicture(url) {
-  console.log('Updating header images with:', url);
-  // Update all profile pictures in the header
-  const headerImages = document.querySelectorAll('.navbar img, .user-avatar-modern');
-  headerImages.forEach(img => {
-    // Check if img has src property and it's not undefined
-    if (img.src && typeof img.src === 'string' && 
-        (img.src.includes('profile') || 
-         (img.alt && img.alt.includes('Profile')) || 
-         img.classList.contains('user-avatar-modern'))) {
-      img.src = url + '?t=' + Date.now();
-      console.log('Updated header image:', img);
-    }
-  });
-}
-
-function updateHeaderUsername(newUsername) {
-  // Update username in desktop header
-  const desktopUsername = document.querySelector('.header-icons.d-none.d-lg-flex .username-modern');
-  if (desktopUsername) {
-    desktopUsername.textContent = newUsername;
-  }
-  
-  // Update page title if it contains username
-  document.title = document.title.replace(/<%= user.username %>/g, newUsername);
-}
-
+// Remove Profile Picture Function
 async function removeProfilePicture() {
   if (!confirm('Are you sure you want to remove your profile picture?')) {
     return;
@@ -1080,6 +1409,7 @@ async function removeProfilePicture() {
   }
 }
 
+// Show Alert Function
 function showAlert(message, type) {
   console.log('Showing alert:', type, message);
 
@@ -1108,38 +1438,43 @@ function showAlert(message, type) {
   }
 }
 
-// Debug function to test upload
-function testUpload() {
-  console.log('=== UPLOAD DEBUG INFO ===');
-  console.log('File input:', document.getElementById('profilePictureInput'));
-  console.log('Profile image:', document.getElementById('profilePicture'));
-  console.log('Session userId:', '<%= userId %>');
-
-  // Create a test file input click
-  document.getElementById('profilePictureInput').click();
+// Update Header Profile Picture Function
+function updateHeaderProfilePicture(url) {
+  console.log('Updating header images with:', url);
+  // Update all profile pictures in the header
+  const headerImages = document.querySelectorAll('.navbar img, .user-avatar-modern');
+  headerImages.forEach(img => {
+    // Check if img has src property and it's not undefined
+    if (img.src && typeof img.src === 'string' && 
+        (img.src.includes('profile') || 
+         (img.alt && img.alt.includes('Profile')) || 
+         img.classList.contains('user-avatar-modern'))) {
+      img.src = url + '?t=' + Date.now();
+      console.log('Updated header image:', img);
+    }
+  });
 }
 
-// Add global error handler
-window.addEventListener('error', function (e) {
-  console.error('Global error:', e.error);
-  showAlert('An error occurred: ' + e.error.message, 'danger');
-
-
+// Update Header Username Function
+function updateHeaderUsername(newUsername) {
+  // Update username in desktop header
+  const desktopUsername = document.querySelector('.header-icons.d-none.d-lg-flex .username-modern');
+  if (desktopUsername) {
+    desktopUsername.textContent = newUsername;
+  }
+  
+  // Update page title if it contains username
+  document.title = document.title.replace(/<%= user.username %>/g, newUsername);
 }
 
-
-);
-
-// Bio functionality
+// Bio Cancel Button Handler
 document.addEventListener('DOMContentLoaded', function() {
-  const bioForm = document.getElementById('bioForm');
   const bioInput = document.getElementById('bioInput');
-  const updateBioBtn = document.getElementById('updateBioBtn');
   const cancelBioBtn = document.getElementById('cancelBioBtn');
   let originalBio = '<%= user.bio || "" %>';
 
   // Show/hide cancel button based on changes
-  if (bioInput) {
+  if (bioInput && cancelBioBtn) {
     bioInput.addEventListener('input', function() {
       const hasChanges = this.value !== originalBio;
       cancelBioBtn.style.display = hasChanges ? 'block' : 'none';
@@ -1151,60 +1486,252 @@ document.addEventListener('DOMContentLoaded', function() {
       this.style.display = 'none';
     });
   }
+});
 
-  // Bio form submission
-  if (bioForm) {
-    bioForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
+// Debug function to test upload
+function testUpload() {
+  console.log('=== UPLOAD DEBUG INFO ===');
+  console.log('File input:', document.getElementById('profilePictureInput'));
+  console.log('Profile image:', document.getElementById('profilePicture'));
+  console.log('Session userId:', '<%= userId %>');
+
+  // Create a test file input click
+  document.getElementById('profilePictureInput').click();
+}
+
+// Global Error Handler
+window.addEventListener('error', function (e) {
+  console.error('Global error:', e.error);
+  showAlert('An error occurred: ' + e.error.message, 'danger');
+});
+
+// Email Verification Status Check (for unverified emails)
+<% if (!user.is_verified) { %>
+  setInterval(async () => {
+    try {
+      const response = await fetch('/profile/email/status');
+      const result = await response.json();
       
-      const newBio = bioInput.value.trim();
+      if (result.success && result.isVerified) {
+        showAlert('Email verified successfully!', 'success');
+        setTimeout(() => location.reload(), 2000);
+      }
+    } catch (error) {
+      console.error('Email status check error:', error);
+    }
+  }, 30000); // Check every 30 seconds
+<% } %>
+
+// Enhanced Pending Email Status Check
+async function checkPendingEmailStatus() {
+  try {
+    const response = await fetch('/profile/email/pending');
+    const result = await response.json();
+    
+    if (result.success && result.hasPendingEmail) {
+      const container = document.getElementById('pendingEmailContainer');
+      const emailText = document.getElementById('pendingEmailText');
       
-      if (newBio.length > 500) {
-        showAlert('Bio must be less than 500 characters', 'danger');
-        return;
+      container.style.display = 'block';
+      emailText.textContent = result.pendingEmail;
+      
+      showAlert(`Email change pending: ${result.pendingEmail}. Check your email to verify.`, 'warning');
+      
+      // Add cancel button if not already present
+      const emailForm = document.getElementById('emailForm');
+      if (emailForm && !emailForm.querySelector('#cancelPendingBtn')) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.id = 'cancelPendingBtn';
+        cancelBtn.className = 'btn btn-outline-secondary btn-sm mt-2';
+        cancelBtn.innerHTML = '<i class="bi bi-x-circle me-2"></i>Cancel Pending Email Change';
+        cancelBtn.onclick = cancelPendingEmail;
+        emailForm.appendChild(cancelBtn);
       }
-
-      if (newBio === originalBio) {
-        showAlert('Please make changes to update your bio', 'info');
-        return;
+    } else {
+      // Hide pending email container if no pending email
+      const container = document.getElementById('pendingEmailContainer');
+      if (container) {
+        container.style.display = 'none';
       }
+      
+      // Remove cancel button if exists
+      const cancelBtn = document.getElementById('cancelPendingBtn');
+      if (cancelBtn) {
+        cancelBtn.remove();
+      }
+    }
+  } catch (error) {
+    console.error('Error checking pending email:', error);
+  }
+}
 
-      // Disable button during request
-      updateBioBtn.disabled = true;
-      updateBioBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm me-2"></i>Updating...';
+// Cancel Pending Email Function
+async function cancelPendingEmail() {
+  if (!confirm('Are you sure you want to cancel the pending email change?')) {
+    return;
+  }
 
-      try {
-        const response = await fetch('/profile/bio', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ bio: newBio })
-        });
+  try {
+    const response = await fetch('/profile/email/cancel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
 
-        const result = await response.json();
+    const result = await response.json();
 
-        if (result.success) {
-          showAlert(result.message, 'success');
-          originalBio = newBio;
-          cancelBioBtn.style.display = 'none';
-          
-          // Reload page to show updated bio and moderation status
-          setTimeout(() => location.reload(), 1500);
-        } else {
-          showAlert(result.error || 'Error updating bio', 'danger');
-        }
-      } catch (error) {
-        console.error('Bio update error:', error);
-        showAlert('Error updating bio: ' + error.message, 'danger');
-      } finally {
-        // Re-enable button
-        updateBioBtn.disabled = false;
-        updateBioBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Update Bio';
+    if (result.success) {
+      showAlert('Pending email change cancelled successfully', 'success');
+      location.reload();
+    } else {
+      showAlert(result.error || 'Error cancelling pending email', 'danger');
+    }
+  } catch (error) {
+    console.error('Cancel pending email error:', error);
+    showAlert('Error cancelling pending email: ' + error.message, 'danger');
+  }
+}
+
+// Resend Verification Email Function
+async function resendVerification() {
+  try {
+    showAlert('Sending verification email...', 'info');
+    
+    const response = await fetch('/auth/resend-verification', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showAlert('Verification email sent successfully! Please check your inbox.', 'success');
+    } else {
+      showAlert(result.error || 'Error sending verification email', 'danger');
+    }
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    showAlert('Error sending verification email: ' + error.message, 'danger');
+  }
+}
+
+// Initialize all functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Professional Profile Page Loaded');
+  
+  // Initialize pending email status
+  checkPendingEmailStatus();
+  
+  // Set up bio character counter
+  const bioInput = document.getElementById('bioInput');
+  const bioCharCount = document.getElementById('bioCharCount');
+  
+  if (bioInput && bioCharCount) {
+    bioCharCount.textContent = bioInput.value.length;
+    bioInput.addEventListener('input', function() {
+      bioCharCount.textContent = this.value.length;
+    });
+  }
+  
+  // Set up file upload handling
+  const fileInput = document.getElementById('profilePictureInput');
+  if (fileInput) {
+    fileInput.addEventListener('change', function(e) {
+      if (this.files && this.files[0]) {
+        uploadProfilePicture(this.files[0]);
       }
     });
   }
+  
+  // Set up form submissions
+  const usernameForm = document.getElementById('usernameForm');
+  if (usernameForm) {
+    usernameForm.addEventListener('submit', handleUsernameUpdate);
+  }
+  
+  const emailForm = document.getElementById('emailForm');
+  if (emailForm) {
+    emailForm.addEventListener('submit', handleEmailUpdate);
+  }
+  
+  const bioForm = document.getElementById('bioForm');
+  if (bioForm) {
+    bioForm.addEventListener('submit', handleBioUpdate);
+  }
+  
+  // Set up bio cancel button
+  const bioInputField = document.getElementById('bioInput');
+  const cancelBioBtn = document.getElementById('cancelBioBtn');
+  const originalBio = '<%= user.bio || "" %>';
+  
+  if (bioInputField && cancelBioBtn) {
+    bioInputField.addEventListener('input', function() {
+      const hasChanges = this.value !== originalBio;
+      cancelBioBtn.style.display = hasChanges ? 'block' : 'none';
+    });
+
+    cancelBioBtn.addEventListener('click', function() {
+      bioInputField.value = originalBio;
+      this.style.display = 'none';
+    });
+  }
 });
+
+async function cancelPendingEmail() {
+  if (!confirm('Are you sure you want to cancel the pending email change?')) {
+    return;
+  }
+
+  try {
+    const response = await fetch('/profile/email/cancel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showAlert('Pending email change cancelled successfully', 'success');
+      location.reload();
+    } else {
+      showAlert(result.error || 'Error cancelling pending email', 'danger');
+    }
+  } catch (error) {
+    console.error('Cancel pending email error:', error);
+    showAlert('Error cancelling pending email: ' + error.message, 'danger');
+  }
+}
+
+async function resendVerification() {
+  try {
+    const response = await fetch('/auth/resend-verification', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showAlert('Verification email sent successfully!', 'success');
+    } else {
+      showAlert(result.error || 'Error sending verification email', 'danger');
+    }
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    showAlert('Error sending verification email: ' + error.message, 'danger');
+  }
+}
+
+// Include all your existing utility functions here...
+// uploadProfilePicture, removeProfilePicture, showAlert, updateHeaderProfilePicture, updateHeaderUsername
 </script>
 
 <%- include('partials/footer') %>

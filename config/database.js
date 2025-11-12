@@ -1,4 +1,4 @@
-// In your config/database.js - REPLACE the entire file with this:
+// In config/database.js - REPLACE the entire file with this:
 
 const mysql = require('mysql2/promise');
 require('dotenv').config();
@@ -14,22 +14,14 @@ if (process.env.JAWSDB_URL) {
     database: url.pathname.replace('/', ''),
     port: url.port || 3306,
     waitForConnections: true,
-    connectionLimit: 5,
-    queueLimit: 0,
+    connectionLimit: 3, // REDUCED from 5 to 3
+    queueLimit: 10,
     charset: 'utf8mb4',
     timezone: '+00:00',
-    acquireTimeout: 10000,
-    timeout: 60000,
-    decimalNumbers: true,
-    supportBigNumbers: true,
-    bigNumberStrings: false,
-    // Add this to fix parameter issues
-    typeCast: function (field, next) {
-      if (field.type === 'TINY' && field.length === 1) {
-        return field.string() === '1';
-      }
-      return next();
-    }
+    // REMOVED invalid options: acquireTimeout, timeout, reconnect
+    idleTimeout: 60000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
   };
   console.log('✅ Using JawsDB connection on Heroku');
 } else {
@@ -40,24 +32,35 @@ if (process.env.JAWSDB_URL) {
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
-    connectionLimit: 5,
-    queueLimit: 0,
+    connectionLimit: 3, // REDUCED from 5 to 3
+    queueLimit: 10,
     charset: 'utf8mb4',
     timezone: '+00:00',
-    decimalNumbers: true,
-    supportBigNumbers: true,
-    bigNumberStrings: false,
-    typeCast: function (field, next) {
-      if (field.type === 'TINY' && field.length === 1) {
-        return field.string() === '1';
-      }
-      return next();
-    }
+    idleTimeout: 60000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
   };
   console.log('✅ Using local MySQL connection');
 }
 
 const pool = mysql.createPool(dbConfig);
+
+// Enhanced connection monitoring
+pool.on('acquire', (connection) => {
+  console.log(`Connection ${connection.threadId} acquired`);
+});
+
+pool.on('release', (connection) => {
+  console.log(`Connection ${connection.threadId} released`);
+});
+
+pool.on('enqueue', () => {
+  console.log('Waiting for available connection slot');
+});
+
+pool.on('error', (err) => {
+  console.error('Database pool error:', err);
+});
 
 // Test connection
 async function testConnection() {
@@ -65,6 +68,9 @@ async function testConnection() {
   try {
     connection = await pool.getConnection();
     console.log('✅ Connected to MySQL database successfully');
+    
+    // Test the connection
+    await connection.execute('SELECT 1');
     return true;
   } catch (error) {
     console.error('❌ Database connection failed:', error.message);
@@ -76,7 +82,7 @@ async function testConnection() {
   }
 }
 
-// SIMPLE query function - NO complex parameter processing
+// SIMPLE query function
 async function query(sql, params = []) {
   let connection;
   try {
@@ -85,10 +91,13 @@ async function query(sql, params = []) {
     console.log('Executing SQL:', sql);
     console.log('With params:', params);
     
-    // Simple parameter processing - just handle null/undefined
+    // Simple parameter processing
     const processedParams = params.map(param => {
       if (param === null || param === undefined) {
         return null;
+      }
+      if (param instanceof Date) {
+        return param.toISOString().slice(0, 19).replace('T', ' ');
       }
       return param;
     });
@@ -109,7 +118,7 @@ async function query(sql, params = []) {
   }
 }
 
-// NEW: Direct pagination query that uses template literals (bypasses parameter binding)
+// ADD BACK the queryPaginated function that's missing
 async function queryPaginated(sql, params = [], limit = 5, offset = 0) {
   let connection;
   try {
@@ -126,7 +135,7 @@ async function queryPaginated(sql, params = [], limit = 5, offset = 0) {
       offset: numOffset
     });
     
-    // Build the paginated SQL with direct values (bypass parameter binding for LIMIT/OFFSET)
+    // Build the paginated SQL with direct values
     const paginatedSQL = `${sql} LIMIT ${numLimit} OFFSET ${numOffset}`;
     
     console.log('📋 Final SQL:', paginatedSQL);
@@ -157,26 +166,11 @@ async function closePool() {
   }
 }
 
-// Connection monitoring (optional)
-if (process.env.NODE_ENV === 'development') {
-  pool.on('acquire', (connection) => {
-    console.log('Connection %d acquired', connection.threadId);
-  });
-
-  pool.on('release', (connection) => {
-    console.log('Connection %d released', connection.threadId);
-  });
-
-  pool.on('enqueue', () => {
-    console.log('Waiting for available connection slot');
-  });
-}
-
 module.exports = {
   pool,
   testConnection,
   query,
-  queryPaginated, // Export the new function
+  queryPaginated, // MAKE SURE THIS IS EXPORTED
   queryOne,
   closePool
 };

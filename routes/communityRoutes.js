@@ -8,12 +8,14 @@ function requireAuth(req, res, next) {
   return res.redirect('/login');
 }
 
-// GET /community - Community page
+
+
+// routes/communityRoutes.js - Update the GET /community route
 router.get('/', requireAuth, async (req, res) => {
     console.log('GET /community - Loading community page');
     
     try {
-        // CORRECTED QUERY: Remove JavaScript comments from SQL
+        // Get community posts with comments (existing code)
         const postsWithComments = await query(`
             SELECT 
                 cp.*, 
@@ -32,9 +34,8 @@ router.get('/', requireAuth, async (req, res) => {
             ORDER BY cp.created_at DESC, c.created_at ASC
         `, [req.session.userId]);
 
-        // Group comments by post
+        // Group comments by post (existing code)
         const postsMap = new Map();
-        
         postsWithComments.forEach(row => {
             if (!postsMap.has(row.post_id)) {
                 postsMap.set(row.post_id, {
@@ -59,16 +60,56 @@ router.get('/', requireAuth, async (req, res) => {
             }
         });
 
-        // Convert map to array for rendering
         const posts = Array.from(postsMap.values());
 
-        console.log(`✅ Loaded ${posts.length} community posts`);
+        // UPDATED: Get community users with their stats - EXCLUDE ADMINS
+        const communityUsers = await query(`
+            SELECT 
+                u.user_id,
+                u.username,
+                u.profile_picture_url,
+                u.bio,
+                u.bio_requires_moderation,
+                u.created_at,
+                u.role,
+                COUNT(p.pet_id) as pet_count
+            FROM users u
+            LEFT JOIN pets p ON u.user_id = p.user_id
+            WHERE u.is_verified = true 
+            AND u.role = 'regular'  -- EXCLUDE ADMIN USERS
+            GROUP BY u.user_id, u.username, u.profile_picture_url, u.bio, u.bio_requires_moderation, u.created_at, u.role
+            ORDER BY u.created_at DESC
+            LIMIT 20
+        `);
+
+        console.log(`✅ Loaded ${posts.length} community posts and ${communityUsers.length} regular users (admins hidden)`);
 
         res.render('community', {
             title: 'Community - Pet Care',
             username: req.session.username,
             profilePicture: req.session.profilePicture,
             posts: posts,
+            communityUsers: communityUsers,
+            calculatePetCareDuration: (createdAt) => {
+                const joinDate = new Date(createdAt);
+                const now = new Date();
+                const diffTime = Math.abs(now - joinDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays < 30) {
+                    return `${diffDays} day${diffDays === 1 ? '' : 's'}`;
+                } else if (diffDays < 365) {
+                    const months = Math.floor(diffDays / 30);
+                    return `${months} month${months === 1 ? '' : 's'}`;
+                } else {
+                    const years = Math.floor(diffDays / 365);
+                    const remainingMonths = Math.floor((diffDays % 365) / 30);
+                    if (remainingMonths > 0) {
+                        return `${years} year${years === 1 ? '' : 's'}, ${remainingMonths} month${remainingMonths === 1 ? '' : 's'}`;
+                    }
+                    return `${years} year${years === 1 ? '' : 's'}`;
+                }
+            },
             error: null,
             message: null
         });
@@ -82,6 +123,103 @@ router.get('/', requireAuth, async (req, res) => {
         });
     }
 });
+
+
+
+
+
+
+
+// GET /community/profile/:userId - View user profile
+router.get('/profile/:userId', requireAuth, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        
+        // Get user profile with stats - EXCLUDE ADMINS
+        const userProfile = await query(`
+            SELECT 
+                u.user_id,
+                u.username,
+                u.profile_picture_url,
+                u.bio,
+                u.bio_requires_moderation,
+                u.created_at,
+                u.role,
+                COUNT(p.pet_id) as pet_count,
+                AVG(p.age) as avg_pet_age,
+                GROUP_CONCAT(DISTINCT p.species) as pet_species
+            FROM users u
+            LEFT JOIN pets p ON u.user_id = p.user_id
+            WHERE u.user_id = ? 
+            AND u.is_verified = true
+            AND u.role = 'regular'  -- EXCLUDE ADMIN PROFILES
+            GROUP BY u.user_id, u.username, u.profile_picture_url, u.bio, u.bio_requires_moderation, u.created_at, u.role
+        `, [userId]);
+
+        if (userProfile.length === 0) {
+            return res.status(404).render('error', {
+                title: 'User Not Found',
+                message: 'The requested user profile was not found or is not accessible.',
+                error: {}
+            });
+        }
+
+        const profile = userProfile[0];
+        
+        // Get user's recent posts
+        const userPosts = await query(`
+            SELECT cp.*, COUNT(c.comment_id) as comment_count
+            FROM community_posts cp
+            LEFT JOIN comments c ON cp.post_id = c.post_id
+            WHERE cp.user_id = ? AND cp.is_approved = true
+            GROUP BY cp.post_id
+            ORDER BY cp.created_at DESC
+            LIMIT 5
+        `, [userId]);
+
+        // Calculate pet care duration
+        const joinDate = new Date(profile.created_at);
+        const now = new Date();
+        const diffTime = Math.abs(now - joinDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        let petCareDuration;
+        if (diffDays < 30) {
+            petCareDuration = `${diffDays} day${diffDays === 1 ? '' : 's'}`;
+        } else if (diffDays < 365) {
+            const months = Math.floor(diffDays / 30);
+            petCareDuration = `${months} month${months === 1 ? '' : 's'}`;
+        } else {
+            const years = Math.floor(diffDays / 365);
+            const remainingMonths = Math.floor((diffDays % 365) / 30);
+            if (remainingMonths > 0) {
+                petCareDuration = `${years} year${years === 1 ? '' : 's'}, ${remainingMonths} month${remainingMonths === 1 ? '' : 's'}`;
+            } else {
+                petCareDuration = `${years} year${years === 1 ? '' : 's'}`;
+            }
+        }
+
+        res.render('user-profile', {
+            title: `${profile.username}'s Profile - Pet Care`,
+            username: req.session.username,
+            profilePicture: req.session.profilePicture,
+            userProfile: profile,
+            userPosts: userPosts,
+            petCareDuration: petCareDuration,
+            isOwnProfile: parseInt(userId) === req.session.userId
+        });
+
+    } catch (error) {
+        console.error('User profile error:', error);
+        res.status(500).render('error', {
+            title: 'Error',
+            message: 'Error loading user profile.',
+            error: process.env.NODE_ENV === 'development' ? error : {}
+        });
+    }
+});
+
+
 
 // POST /community - Create a new post
 router.post('/', requireAuth, async (req, res) => {

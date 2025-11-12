@@ -17,36 +17,37 @@ function requireAdmin(req, res, next) {
   });
 }
 
-// GET /admin/pending-bios - View all pending bios
+// In your admin routes - enhance the pending bios view
 router.get('/pending-bios', requireAdmin, async (req, res) => {
-  try {
-    const users = await query(`
-      SELECT 
-        user_id, 
-        username, 
-        email, 
-        bio,
-        bio_requires_moderation,
-        created_at 
-      FROM users 
-      WHERE bio_requires_moderation = TRUE 
-      AND bio IS NOT NULL 
-      AND bio != ''
-      ORDER BY created_at DESC
-    `);
-    
-    res.render('admin/pending-bios', {
-      title: 'Pending Bio Approvals',
-      users
-    });
-  } catch (error) {
-    console.error('Pending bios error:', error);
-    res.status(500).render('error', {
-      title: 'Error',
-      message: 'Error loading pending bios.',
-      error: process.env.NODE_ENV === 'development' ? error : {}
-    });
-  }
+    try {
+        const pendingBios = await query(`
+            SELECT 
+                u.user_id,
+                u.username,
+                u.email,
+                u.bio,
+                u.created_at,
+                u.bio_requires_moderation,
+                COUNT(p.pet_id) as pet_count
+            FROM users u
+            LEFT JOIN pets p ON u.user_id = p.user_id
+            WHERE u.bio IS NOT NULL AND u.bio_requires_moderation = true
+            GROUP BY u.user_id, u.username, u.email, u.bio, u.created_at, u.bio_requires_moderation
+            ORDER BY u.created_at DESC
+        `);
+
+        res.render('admin/pending-bios', {
+            title: 'Pending Bio Approvals',
+            users: pendingBios
+        });
+    } catch (error) {
+        console.error('Pending bios error:', error);
+        res.status(500).render('error', {
+            title: 'Error',
+            message: 'Error loading pending bios.',
+            error: process.env.NODE_ENV === 'development' ? error : {}
+        });
+    }
 });
 
 // POST /admin/users/:id/bio - Admin update user bio

@@ -19,6 +19,37 @@ async function updateUsername(userId, newUsername) {
 
 
 
+
+// Update user bio
+async function updateUserBio(userId, bio) {
+  const sql = 'UPDATE users SET bio = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?';
+  return query(sql, [bio, userId]);
+}
+
+// Get user bio with moderation status
+async function getUserBio(userId) {
+  const sql = 'SELECT bio, bio_requires_moderation FROM users WHERE user_id = ?';
+  return queryOne(sql, [userId]);
+}
+
+// Update bio moderation status
+async function updateBioModerationStatus(userId, requiresModeration) {
+  const sql = 'UPDATE users SET bio_requires_moderation = ? WHERE user_id = ?';
+  return query(sql, [requiresModeration, userId]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 async function findByUsername(username) {
   return queryOne(`SELECT * FROM users WHERE username = ?`, [username]);
 }
@@ -86,5 +117,8 @@ module.exports = {
   getUserProfileWithStats,
   checkUserExistsExcludingCurrent,
   deleteUser,
-   updateUsername
+   updateUsername,
+    updateUserBio,
+  getUserBio,
+  updateBioModerationStatus
 };

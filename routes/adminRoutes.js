@@ -1,7 +1,12 @@
 const express = require('express');
 const { query, queryOne } = require('../config/database');
 const router = express.Router();
-const { updateUsername, checkUserExistsExcludingCurrent } = require('../models/userModel');
+const { 
+  updateUsername, 
+  checkUserExistsExcludingCurrent,
+  updateUserBio,
+  updateBioModerationStatus
+} = require('../models/userModel');
 
 // Admin authentication middleware
 function requireAdmin(req, res, next) {
@@ -11,6 +16,113 @@ function requireAdmin(req, res, next) {
     message: 'Admin privileges required to access this page.'
   });
 }
+
+// GET /admin/pending-bios - View all pending bios
+router.get('/pending-bios', requireAdmin, async (req, res) => {
+  try {
+    const users = await query(`
+      SELECT 
+        user_id, 
+        username, 
+        email, 
+        bio,
+        bio_requires_moderation,
+        created_at 
+      FROM users 
+      WHERE bio_requires_moderation = TRUE 
+      AND bio IS NOT NULL 
+      AND bio != ''
+      ORDER BY created_at DESC
+    `);
+    
+    res.render('admin/pending-bios', {
+      title: 'Pending Bio Approvals',
+      users
+    });
+  } catch (error) {
+    console.error('Pending bios error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Error loading pending bios.',
+      error: process.env.NODE_ENV === 'development' ? error : {}
+    });
+  }
+});
+
+// POST /admin/users/:id/bio - Admin update user bio
+router.post('/users/:id/bio', requireAdmin, async (req, res) => {
+  try {
+    const { bio } = req.body;
+    const targetUserId = req.params.id;
+
+    console.log("Admin updating bio for user:", targetUserId);
+    console.log("Bio content:", bio);
+
+    // Admin updates don't require moderation
+    await updateUserBio(targetUserId, bio);
+    await updateBioModerationStatus(targetUserId, false);
+
+    res.json({
+      success: true,
+      message: 'Bio updated successfully!'
+    });
+
+  } catch (error) {
+    console.error('Admin bio update error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error updating bio: ' + error.message
+    });
+  }
+});
+
+// POST /admin/users/:id/bio/approve - Approve user bio
+router.post('/users/:id/bio/approve', requireAdmin, async (req, res) => {
+  try {
+    const targetUserId = req.params.id;
+
+    await updateBioModerationStatus(targetUserId, false);
+
+    res.json({
+      success: true,
+      message: 'Bio approved successfully!'
+    });
+
+  } catch (error) {
+    console.error('Bio approval error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error approving bio'
+    });
+  }
+});
+
+// GET /admin/users-with-pending-bios - Get users with pending bios
+router.get('/users-with-pending-bios', requireAdmin, async (req, res) => {
+  try {
+    const users = await query(`
+      SELECT user_id, username, email, bio, created_at 
+      FROM users 
+      WHERE bio_requires_moderation = TRUE 
+      AND bio IS NOT NULL 
+      AND bio != ''
+      ORDER BY created_at DESC
+    `);
+    
+    res.json({
+      success: true,
+      users: users
+    });
+  } catch (error) {
+    console.error('Get pending bios error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error fetching users with pending bios'
+    });
+  }
+});
+
+
 
 
 
@@ -112,7 +224,15 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
 router.get('/users', requireAdmin, async (req, res) => {
   try {
     const users = await query(`
-      SELECT user_id, username, email, role, is_verified, created_at 
+      SELECT 
+        user_id, 
+        username, 
+        email, 
+        role, 
+        is_verified, 
+        bio,
+        bio_requires_moderation,
+        created_at 
       FROM users 
       ORDER BY created_at DESC
     `);

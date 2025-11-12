@@ -22,6 +22,12 @@
             </a>
           </li>
           <li class="nav-item">
+    <a class="nav-link" href="/admin/pending-bios">
+      <i class="bi bi-file-text me-2"></i>
+      Pending Bios
+    </a>
+  </li>
+          <li class="nav-item">
             <a class="nav-link" href="/admin/posts">
               <i class="bi bi-chat-dots me-2"></i>
               Post Moderation
@@ -41,66 +47,111 @@
       <div class="card">
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table table-striped table-hover">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Verified</th>
-                  <th>Joined</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (users && users.length > 0) { %>
-                  <% users.forEach(user => { %>
-                    <tr>
-                      <td><%= user.user_id %></td>
-                      <!-- Replace the username table cell in views/admin/users.ejs -->
-<td>
-  <div class="d-flex align-items-center">
-    <span class="me-2 username-display"><%= user.username %></span>
-    <button class="btn btn-sm btn-outline-secondary edit-username-btn" 
-            data-user-id="<%= user.user_id %>"
-            data-current-username="<%= user.username %>"
-            title="Edit username">
-      <i class="bi bi-pencil"></i>
-    </button>
-  </div>
-</td>
-                      <td><%= user.email %></td>
-                      <td>
-                        <select class="form-select form-select-sm role-select" 
-                                data-user-id="<%= user.user_id %>" 
-                                style="width: 120px;">
-                          <option value="regular" <%= user.role === 'regular' ? 'selected' : '' %>>Regular</option>
-                          <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
-                        </select>
-                      </td>
-                      <td>
-                        <span class="badge bg-<%= user.is_verified ? 'success' : 'warning' %>">
-                          <%= user.is_verified ? 'Yes' : 'No' %>
-                        </span>
-                      </td>
-                      <td><%= new Date(user.created_at).toLocaleDateString() %></td>
-                      <td>
-                        <button class="btn btn-sm btn-danger delete-user-btn" 
-                                data-user-id="<%= user.user_id %>"
-                                data-username="<%= user.username %>">
-                          <i class="bi bi-trash"></i> Delete
-                        </button>
-                      </td>
-                    </tr>
-                  <% }); %>
-                <% } else { %>
-                  <tr>
-                    <td colspan="7" class="text-center text-muted py-4">No users found</td>
-                  </tr>
-                <% } %>
-              </tbody>
-            </table>
+
+
+
+
+
+            <!-- Update the users table in admin/users.ejs to include bio column and actions -->
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Bio</th>
+      <th>Status</th>
+      <th>Role</th>
+      <th>Joined</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (users && users.length > 0) { %>
+      <% users.forEach(user => { %>
+        <tr>
+          <td><%= user.user_id %></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <span class="me-2 username-display"><%= user.username %></span>
+              <button class="btn btn-sm btn-outline-secondary edit-username-btn" 
+                      data-user-id="<%= user.user_id %>"
+                      data-current-username="<%= user.username %>"
+                      title="Edit username">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </div>
+          </td>
+          <td><%= user.email %></td>
+          <td>
+            <div class="bio-cell" style="max-width: 200px;">
+              <% if (user.bio) { %>
+                <div class="bio-preview text-truncate" title="<%= user.bio %>">
+                  <%= user.bio %>
+                </div>
+                <button class="btn btn-sm btn-outline-info mt-1 edit-bio-btn" 
+                        data-user-id="<%= user.user_id %>"
+                        data-current-bio="<%= user.bio %>"
+                        title="Edit bio">
+                  <i class="bi bi-pencil"></i> Edit Bio
+                </button>
+              <% } else { %>
+                <span class="text-muted">No bio</span>
+                <button class="btn btn-sm btn-outline-info mt-1 edit-bio-btn" 
+                        data-user-id="<%= user.user_id %>"
+                        data-current-bio=""
+                        title="Add bio">
+                  <i class="bi bi-plus"></i> Add Bio
+                </button>
+              <% } %>
+            </div>
+          </td>
+          <td>
+            <span class="badge bg-<%= user.is_verified ? 'success' : 'warning' %>">
+              <%= user.is_verified ? 'Verified' : 'Unverified' %>
+            </span>
+            <% if (user.bio_requires_moderation && user.bio) { %>
+              <span class="badge bg-warning mt-1">Bio Pending</span>
+            <% } %>
+          </td>
+          <td>
+            <select class="form-select form-select-sm role-select" 
+                    data-user-id="<%= user.user_id %>" 
+                    style="width: 120px;">
+              <option value="regular" <%= user.role === 'regular' ? 'selected' : '' %>>Regular</option>
+              <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+            </select>
+          </td>
+          <td><%= new Date(user.created_at).toLocaleDateString() %></td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <% if (user.bio_requires_moderation && user.bio) { %>
+                <button class="btn btn-success approve-bio-btn" 
+                        data-user-id="<%= user.user_id %>"
+                        title="Approve bio">
+                  <i class="bi bi-check-lg"></i> Approve Bio
+                </button>
+              <% } %>
+              <button class="btn btn-danger delete-user-btn" 
+                      data-user-id="<%= user.user_id %>"
+                      data-username="<%= user.username %>">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr>
+        <td colspan="8" class="text-center text-muted py-4">No users found</td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+
+
+
           </div>
         </div>
       </div>
@@ -252,6 +303,130 @@ document.addEventListener('DOMContentLoaded', function() {
     toast.addEventListener('hidden.bs.toast', () => {
       toast.remove();
     });
+  }
+});
+
+
+// Admin bio editing functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Bio editing
+  document.querySelectorAll('.edit-bio-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const userId = this.dataset.userId;
+      const currentBio = this.dataset.currentBio;
+      
+      const newBio = prompt('Enter new bio (max 500 characters):', currentBio);
+      
+      if (newBio !== null && newBio.length <= 500) {
+        updateUserBioAdmin(userId, newBio, this);
+      } else if (newBio && newBio.length > 500) {
+        alert('Bio must be 500 characters or less');
+      }
+    });
+  });
+
+  // Bio approval
+  document.querySelectorAll('.approve-bio-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const userId = this.dataset.userId;
+      approveUserBio(userId, this);
+    });
+  });
+
+  async function updateUserBioAdmin(userId, newBio, buttonElement) {
+    const originalText = buttonElement.innerHTML;
+    buttonElement.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
+    buttonElement.disabled = true;
+
+    try {
+      const response = await fetch(`/admin/users/${userId}/bio`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bio: newBio })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        showToast('Bio updated successfully!', 'success');
+        
+        // Update the displayed bio
+        const bioCell = buttonElement.closest('.bio-cell');
+        const bioPreview = bioCell.querySelector('.bio-preview');
+        
+        if (newBio) {
+          if (bioPreview) {
+            bioPreview.textContent = newBio;
+            bioPreview.title = newBio;
+          } else {
+            // Create bio preview if it doesn't exist
+                const newPreview = document.createElement('div');
+            newPreview.className = 'bio-preview text-truncate';
+            newPreview.textContent = newBio;
+            newPreview.title = newBio;
+            bioCell.insertBefore(newPreview, buttonElement);
+          }
+          
+          // Remove pending moderation badge if exists
+          const statusCell = buttonElement.closest('tr').querySelector('td:nth-child(5)');
+          const pendingBadge = statusCell.querySelector('.bg-warning');
+          if (pendingBadge) {
+            pendingBadge.remove();
+          }
+        }
+        
+        // Update the button's data attribute
+        buttonElement.dataset.currentBio = newBio;
+        
+      } else {
+        showToast('Error updating bio: ' + result.error, 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error updating bio', 'error');
+    } finally {
+      buttonElement.innerHTML = originalText;
+      buttonElement.disabled = false;
+    }
+  }
+
+  async function approveUserBio(userId, buttonElement) {
+    const originalText = buttonElement.innerHTML;
+    buttonElement.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
+    buttonElement.disabled = true;
+
+    try {
+      const response = await fetch(`/admin/users/${userId}/bio/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        showToast('Bio approved successfully!', 'success');
+        
+        // Remove the approve button and update status
+        buttonElement.remove();
+        const statusCell = buttonElement.closest('tr').querySelector('td:nth-child(5)');
+        const pendingBadge = statusCell.querySelector('.bg-warning');
+        if (pendingBadge) {
+          pendingBadge.remove();
+        }
+      } else {
+        showToast('Error approving bio: ' + result.error, 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error approving bio', 'error');
+    } finally {
+      buttonElement.innerHTML = originalText;
+      buttonElement.disabled = false;
+    }
   }
 });
 

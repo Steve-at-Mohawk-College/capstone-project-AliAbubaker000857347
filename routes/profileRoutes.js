@@ -1,7 +1,16 @@
 const express = require('express');
 const path = require('path');
 const upload = require('../config/upload');
-const { updateUserProfilePicture, getUserProfileWithStats } = require('../models/userModel');
+const { 
+  updateUserProfilePicture, 
+  getUserProfileWithStats,
+  updateUsername, 
+  checkUserExistsExcludingCurrent,
+  updateUserBio,
+  updateBioModerationStatus,
+  getUserBio,
+  getUserProfile
+} = require('../models/userModel');
 const { processProfilePicture } = require('../utils/imageProcessor');
 
 const router = express.Router();
@@ -11,8 +20,68 @@ function requireAuth(req, res, next) {
   return res.redirect('/login');
 }
 
+// POST /profile/bio - Update user bio
+router.post('/bio', requireAuth, async (req, res) => {
+  try {
+    const { bio } = req.body;
+    const userId = req.session.userId;
+    const userRole = req.session.role;
 
-const { updateUsername, checkUserExistsExcludingCurrent } = require('../models/userModel');
+    console.log("➡️ POST /profile/bio called");
+    console.log("User ID:", userId, "Role:", userRole);
+    console.log("Bio content:", bio);
+
+    // Determine if bio requires moderation
+    // For regular users, any bio update requires admin approval
+    // For admins, no moderation needed
+    const requiresModeration = userRole === 'regular';
+
+    // Update bio and moderation status
+    await updateUserBio(userId, bio);
+    await updateBioModerationStatus(userId, requiresModeration);
+
+    let message;
+    if (requiresModeration) {
+      message = 'Bio updated successfully! It will be visible after admin approval.';
+    } else {
+      message = 'Bio updated successfully!';
+    }
+
+    res.json({
+      success: true,
+      message: message,
+      requiresModeration: requiresModeration
+    });
+
+  } catch (error) {
+    console.error('Bio update error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error updating bio: ' + error.message
+    });
+  }
+});
+
+// GET /profile/bio - Get user bio
+router.get('/bio', requireAuth, async (req, res) => {
+  try {
+    const userId = req.params.userId || req.session.userId;
+    const bioData = await getUserBio(userId);
+    
+    res.json({
+      success: true,
+      bio: bioData?.bio || '',
+      requiresModeration: bioData?.bio_requires_moderation || false,
+      isApproved: !bioData?.bio_requires_moderation
+    });
+  } catch (error) {
+    console.error('Get bio error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Error fetching bio'
+    });
+  }
+});
 
 // POST /profile/username - Update username (for regular users)
 router.post('/username', requireAuth, async (req, res) => {
@@ -137,6 +206,7 @@ router.post('/picture', requireAuth, upload.single('profilePicture'), async (req
     });
   }
 });
+
 // DELETE /profile/picture - Remove profile picture
 router.delete('/picture', requireAuth, async (req, res) => {
   try {
@@ -153,45 +223,6 @@ router.delete('/picture', requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Delete error:', error);
     res.status(500).json({ error: 'Error removing profile picture' });
-  }
-});
-
-// GET /profile/debug - Debug endpoint
-router.get('/debug', requireAuth, async (req, res) => {
-  try {
-    const user = await getUserProfile(req.session.userId);
-    
-    // Check upload directory
-    const uploadsDir = path.join(__dirname, '../public/uploads');
-    const profilePicsDir = path.join(uploadsDir, 'profile-pictures');
-    
-    res.json({
-      session: {
-        userId: req.session.userId,
-        profilePicture: req.session.profilePicture
-      },
-      user: user,
-      directories: {
-        uploads: {
-          path: uploadsDir,
-          exists: fs.existsSync(uploadsDir),
-          writable: fs.accessSync ? (() => {
-            try { fs.accessSync(uploadsDir, fs.constants.W_OK); return true; } 
-            catch { return false; }
-          })() : 'unknown'
-        },
-        profilePics: {
-          path: profilePicsDir,
-          exists: fs.existsSync(profilePicsDir),
-          writable: fs.accessSync ? (() => {
-            try { fs.accessSync(profilePicsDir, fs.constants.W_OK); return true; } 
-            catch { return false; }
-          })() : 'unknown'
-        }
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
 });
 

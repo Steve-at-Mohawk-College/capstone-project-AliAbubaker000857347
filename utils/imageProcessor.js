@@ -1,32 +1,33 @@
 const sharp = require('sharp');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
-async function processProfilePicture(filePath) {
+async function processProfilePicture(inputPath) {
   try {
-    const processedFilePath = filePath.replace(path.extname(filePath), '-processed.jpg');
+    const outputPath = inputPath.replace(/(\.\w+)$/, '-processed$1');
     
-    await sharp(filePath)
-      .resize(300, 300, {
+    // Ensure the directory exists
+    const outputDir = path.dirname(outputPath);
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    await sharp(inputPath)
+      .resize(400, 400, {
         fit: 'cover',
         position: 'center'
       })
-      .jpeg({ 
-        quality: 80,
-        mozjpeg: true 
-      })
-      .toFile(processedFilePath);
+      .jpeg({ quality: 80 })
+      .toFile(outputPath);
+
+    // Delete the original file
+    fs.unlinkSync(inputPath);
     
-    // Remove original file
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-    
-    return processedFilePath;
+    return outputPath;
   } catch (error) {
     console.error('Error processing image:', error);
-    // If processing fails, return original file
-    return filePath;
+    // If processing fails, return the original path
+    return inputPath;
   }
 }
 

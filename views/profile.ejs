@@ -1,94 +1,557 @@
 <%- include('partials/header', {title: 'My Profile - Pet Care' }) %>
 <style>
-/* ===== PROFILE PAGE STYLES ===== */
-/* Remove fixed positioning from header on profile page */
+/* ===== ENHANCED PROFILE PAGE STYLES ===== */
+:root {
+  --primary: #4361ee;
+  --primary-light: #4895ef;
+  --secondary: #06d6a0;
+  --accent: #ff6b6b;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --gray: #6c757d;
+  --light-gray: #e9ecef;
+  --border-radius: 16px;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Layout */
+.profile-container {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
 .navbar-modern {
   position: relative !important;
   top: auto !important;
 }
 
-/* Remove body padding since header is no longer fixed */
 body {
   padding-top: 0 !important;
   margin: 0 !important;
   background: #f8f9fa;
-  min-height: 100vh;
-}
-
-.container-fluid {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
 }
 
 .container-fluid.py-4 {
-  padding: 1rem !important;
-  padding-top: 0 !important;
-  margin-top: 0 !important;
+  padding: 2rem 1rem !important;
 }
 
-/* Your existing profile styles */
-.hover-lift {
-  transition: all 0.3s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
+/* Enhanced Cards */
 .card-custom {
   border: none;
-  box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
 .card-custom:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-}
-.border-bottom {
-  border-bottom: 1px solid #e9ecef !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
-/* Remove any extra spacing */
-.row.justify-content-center {
-  margin-top: 0 !important;
+/* Profile Header */
+.profile-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
 }
 
-.d-flex.justify-content-between.align-items-center.mb-4 {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
+.profile-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Responsive */
+.profile-header-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Profile Picture Enhanced */
+.profile-picture-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.profile-picture {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: var(--transition);
+  object-fit: cover;
+}
+
+.profile-picture:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.profile-picture-actions {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.profile-picture-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.profile-picture-btn.upload {
+  background: rgba(67, 97, 238, 0.9);
+  color: white;
+}
+
+.profile-picture-btn.remove {
+  background: rgba(255, 107, 107, 0.9);
+  color: white;
+}
+
+.profile-picture-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Stats Cards Enhanced */
+.stats-card {
+  border-radius: var(--border-radius);
+  border: none;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.stats-card .card-body {
+  position: relative;
+  z-index: 2;
+}
+
+.stats-icon {
+  font-size: 2.5rem;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+/* Bio Section Enhanced */
+.bio-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.bio-textarea {
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  transition: var(--transition);
+  resize: vertical;
+  min-height: 120px;
+}
+
+.bio-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+.bio-preview {
+  background: rgba(67, 97, 238, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border-left: 4px solid var(--primary);
+}
+
+/* Settings Section */
+.settings-item {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: var(--transition);
+}
+
+.settings-item:hover {
+  background: rgba(67, 97, 238, 0.02);
+  border-radius: 8px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+/* Quick Actions */
+.quick-action-card {
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  color: inherit;
+}
+
+.quick-action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+  color: inherit;
+}
+
+.quick-action-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.quick-action-card:hover .quick-action-icon {
+  transform: scale(1.1);
+}
+
+/* Badges */
+.badge-modern {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Buttons */
+.btn-modern {
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: var(--transition);
+  border: 2px solid transparent;
+}
+
+.btn-modern-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border: none;
+  color: white;
+}
+
+.btn-modern-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+}
+
+/* Form Controls */
+.form-control-modern {
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  transition: var(--transition);
+}
+
+.form-control-modern:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .container-fluid.py-4 {
-    padding: 0.5rem !important;
+    padding: 1rem 0.5rem !important;
   }
+  
+  .profile-header {
+    padding: 1.5rem;
+    text-align: center;
+  }
+  
+  .profile-picture {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .stats-card .h2 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+
+
+/* ===== DARK MODE SUPPORT ===== */
+[data-theme="dark"] .profile-container {
+  background: linear-gradient(135deg, #1a1d23 0%, #212529 100%);
+}
+
+[data-theme="dark"] .card-custom {
+  background: rgba(33, 37, 41, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .bio-section {
+  background: linear-gradient(135deg, #212529 0%, #1a1d23 100%);
+}
+
+[data-theme="dark"] .text-dark {
+  color: #e9ecef !important;
+}
+
+[data-theme="dark"] .text-muted {
+  color: #adb5bd !important;
+}
+
+[data-theme="dark"] .form-control-modern {
+  background: #2d3035;
+  border-color: #495057;
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .form-control-modern:focus {
+  background: #2d3035;
+  border-color: var(--primary);
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .bio-textarea {
+  background: #2d3035;
+  border-color: #495057;
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .bio-textarea:focus {
+  background: #2d3035;
+  border-color: var(--primary);
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .bio-preview {
+  background: rgba(67, 97, 238, 0.1);
+  border-left: 4px solid var(--primary);
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .alert-light {
+  background: #2d3035;
+  border-color: #495057;
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .btn-light {
+  background: #495057;
+  border-color: #6c757d;
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .btn-light:hover {
+  background: #6c757d;
+  border-color: #adb5bd;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+[data-theme="dark"] .btn-outline-secondary {
+  color: #adb5bd;
+  border-color: #6c757d;
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+  background: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+[data-theme="dark"] .btn-outline-danger {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+[data-theme="dark"] .btn-outline-danger:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+[data-theme="dark"] .settings-item {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .settings-item:hover {
+  background: rgba(67, 97, 238, 0.05);
+}
+
+[data-theme="dark"] .quick-action-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(33, 37, 41, 0.95);
+}
+
+[data-theme="dark"] .quick-action-card:hover {
+  background: rgba(33, 37, 41, 1);
+}
+
+[data-theme="dark"] .form-label {
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .form-text {
+  color: #adb5bd !important;
+}
+
+[data-theme="dark"] .border-top {
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ensure text colors are properly set for dark mode */
+[data-theme="dark"] .card-title,
+[data-theme="dark"] .h3,
+[data-theme="dark"] .h4,
+[data-theme="dark"] .h5,
+[data-theme="dark"] .h6,
+[data-theme="dark"] .fw-bold,
+[data-theme="dark"] .fw-semibold {
+  color: #e9ecef !important;
+}
+
+[data-theme="dark"] .small {
+  color: #adb5bd !important;
+}
+
+/* Fix the email display in dark mode */
+[data-theme="dark"] .alert-light strong {
+  color: #e9ecef !important;
+}
+
+/* Fix the "Back to Dashboard" button text */
+[data-theme="dark"] .btn-light {
+  color: #e9ecef !important;
+}
+
+/* Fix bio character count */
+[data-theme="dark"] #bioCharCount {
+  color: #adb5bd !important;
+}
+
+/* Fix the bio approval info text */
+[data-theme="dark"] .text-muted small {
+  color: #adb5bd !important;
 }
 </style>
 
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 profile-container">
   <div class="row justify-content-center">
     <div class="col-xxl-10">
-      <!-- Header Section -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h1 class="h3 mb-1">My Profile</h1>
-          <p class="text-muted mb-0">Manage your account settings and preferences</p>
+      <!-- Enhanced Header Section -->
+      <div class="profile-header slide-up">
+        <div class="profile-header-content text-center text-lg-start">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h1 class="h2 mb-2 fw-bold">My Profile</h1>
+              <p class="mb-0 opacity-90">Manage your account settings and preferences</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+              <a href="/dashboard" class="btn btn-light btn-modern">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+              </a>
+            </div>
+          </div>
         </div>
-        <a href="/dashboard" class="btn btn-outline-secondary">
-          <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-        </a>
       </div>
 
       <!-- Alerts -->
       <% if (typeof message !=='undefined' && message) { %>
-        <div class="alert alert-info alert-dismissible fade show mb-4">
+        <div class="alert alert-info alert-dismissible fade show mb-4 fade-in">
           <i class="bi bi-info-circle me-2"></i><%= message %>
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       <% } %>
 
       <% if (typeof error !=='undefined' && error) { %>
-        <div class="alert alert-danger alert-dismissible fade show mb-4">
+        <div class="alert alert-danger alert-dismissible fade show mb-4 fade-in">
           <i class="bi bi-exclamation-triangle me-2"></i><%= error %>
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -97,55 +560,61 @@ body {
       <div class="row g-4">
         <!-- Left Column - Profile Overview -->
         <div class="col-lg-4">
-          <!-- Profile Card -->
-          <div class="card card-custom h-100">
+          <!-- Enhanced Profile Card -->
+          <div class="card card-custom h-100 slide-up">
             <div class="card-body text-center p-4">
-              <!-- Profile Picture -->
-              <div class="position-relative d-inline-block mb-4">
+              <!-- Enhanced Profile Picture -->
+              <div class="profile-picture-container">
                 <img id="profilePicture" 
                      src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
-                     class="rounded-circle shadow" 
-                     width="140" height="140"
-                     style="object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"
+                     class="profile-picture" 
                      onerror="this.onerror=null; this.src='/images/default-avatar.png'" 
                      alt="Profile Picture">
                 
-                <!-- Camera Button -->
-                <label for="profilePictureInput"
-                       class="btn btn-primary rounded-circle position-absolute bottom-0 end-0 shadow"
-                       style="cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
-                  <i class="bi bi-camera-fill"></i>
-                </label>
-                
-                <!-- Remove Button -->
-                <% if (user.profile_picture_url) { %>
-                  <button class="btn btn-danger rounded-circle position-absolute top-0 end-0 shadow"
-                          onclick="removeProfilePicture()" 
-                          title="Remove profile picture"
-                          style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                <% } %>
+                <div class="profile-picture-actions">
+                  <label for="profilePictureInput" class="profile-picture-btn upload" title="Upload photo">
+                    <i class="bi bi-camera-fill"></i>
+                  </label>
+                  <% if (user.profile_picture_url) { %>
+                    <button class="profile-picture-btn remove" onclick="removeProfilePicture()" title="Remove photo">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  <% } %>
+                </div>
               </div>
 
               <!-- User Info -->
-              <h3 class="h4 mb-2"><%= user.username %></h3>
+              <h3 class="h4 mb-2 fw-bold text-dark"><%= user.username %></h3>
               <p class="text-muted mb-3">
                 <i class="bi bi-envelope me-2"></i><%= user.email %>
               </p>
               
               <!-- Account Type -->
               <div class="mb-4">
-                <span class="badge bg-<%= user.role === 'admin' ? 'danger' : 'primary' %> px-3 py-2 fs-6">
+                <span class="badge-modern bg-<%= user.role === 'admin' ? 'danger' : 'primary' %> text-white">
                   <i class="bi bi-<%= user.role === 'admin' ? 'shield-shaded' : 'person' %> me-1"></i>
                   <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %> Account
                 </span>
               </div>
 
               <!-- Member Since -->
-              <div class="text-muted">
+              <div class="text-muted small">
                 <i class="bi bi-calendar-event me-2"></i>
                 Member since <%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+              </div>
+
+              <!-- Quick Stats -->
+              <div class="mt-4 pt-3 border-top">
+                <div class="row text-center">
+                  <div class="col-6">
+                    <div class="h5 mb-1 fw-bold text-primary"><%= user.pet_count || 0 %></div>
+                    <small class="text-muted">Pets</small>
+                  </div>
+                  <div class="col-6">
+                    <div class="h5 mb-1 fw-bold text-warning"><%= user.upcoming_task_count || 0 %></div>
+                    <small class="text-muted">Tasks</small>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -153,137 +622,217 @@ body {
 
         <!-- Right Column - Stats & Settings -->
         <div class="col-lg-8">
-          <!-- Stats Overview -->
+          <!-- Enhanced Stats Overview -->
           <div class="row g-3 mb-4">
             <div class="col-md-4">
-              <div class="card card-custom h-100 border-0 bg-primary text-white">
+              <div class="card stats-card bg-primary slide-up" style="animation-delay: 0.1s;">
                 <div class="card-body text-center p-4">
-                  <div class="mb-3">
-                    <i class="bi bi-heart-fill fs-1 opacity-75"></i>
+                  <div class="stats-icon">
+                    <i class="bi bi-heart-pulse"></i>
                   </div>
-                  <h3 class="h2 mb-1"><%= user.pet_count || 0 %></h3>
-                  <p class="mb-0 opacity-90">Pets</p>
+                  <h3 class="h2 mb-1 fw-bold"><%= user.pet_count || 0 %></h3>
+                  <p class="mb-0 opacity-90">Registered Pets</p>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
-              <div class="card card-custom h-100 border-0 bg-warning text-dark">
+              <div class="card stats-card bg-warning slide-up" style="animation-delay: 0.2s;">
                 <div class="card-body text-center p-4">
-                  <div class="mb-3">
-                    <i class="bi bi-calendar-check fs-1 opacity-75"></i>
+                  <div class="stats-icon">
+                    <i class="bi bi-calendar-check"></i>
                   </div>
-                  <h3 class="h2 mb-1"><%= user.upcoming_task_count || 0 %></h3>
+                  <h3 class="h2 mb-1 fw-bold"><%= user.upcoming_task_count || 0 %></h3>
                   <p class="mb-0 opacity-90">Upcoming Tasks</p>
                 </div>
               </div>
             </div>
             <div class="col-md-4">
-              <div class="card card-custom h-100 border-0 bg-success text-white">
+              <div class="card stats-card bg-success slide-up" style="animation-delay: 0.3s;">
                 <div class="card-body text-center p-4">
-                  <div class="mb-3">
-                    <i class="bi bi-clock-history fs-1 opacity-75"></i>
+                  <div class="stats-icon">
+                    <i class="bi bi-clock-history"></i>
                   </div>
-                  <h3 class="h2 mb-1"><%= Math.floor((new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)) %></h3>
+                  <h3 class="h2 mb-1 fw-bold"><%= Math.floor((new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)) %></h3>
                   <p class="mb-0 opacity-90">Days Active</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Account Settings -->
-          <div class="card card-custom">
+          <!-- Enhanced Bio Section -->
+          <div class="card card-custom bio-section slide-up" style="animation-delay: 0.4s;">
+            <div class="card-header bg-transparent border-bottom-0 px-4 pt-4 pb-0">
+              <h5 class="card-title mb-0 d-flex align-items-center">
+                <i class="bi bi-person-lines-fill text-primary me-2 fs-4"></i>
+                About Me
+                <% if (user.bio && !user.bio_requires_moderation) { %>
+                  <span class="badge-modern bg-success ms-2">
+                    <i class="bi bi-check-lg me-1"></i>Approved
+                  </span>
+                <% } %>
+              </h5>
+            </div>
+            <div class="card-body p-4">
+              <!-- Bio moderation status -->
+              <% if (user.bio_requires_moderation) { %>
+                <div class="alert alert-warning d-flex align-items-center mb-4">
+                  <i class="bi bi-clock-history me-2 fs-5"></i>
+                  <div>
+                    <strong>Pending Approval</strong>
+                    <div class="small">Your bio will be visible once approved by an administrator.</div>
+                  </div>
+                </div>
+              <% } %>
+
+              <form id="bioForm">
+                <div class="row">
+                  <div class="col-lg-8">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold text-dark">Tell us about yourself and your pets</label>
+                      <textarea class="form-control bio-textarea" id="bioInput" rows="6" 
+                                placeholder="Share your story, your pets' personalities, or your experience with pet care..."><%= user.bio || '' %></textarea>
+                      <div class="form-text text-end">
+                        <span id="bioCharCount">0</span>/500 characters
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-modern btn-modern-primary" id="updateBioBtn">
+                        <i class="bi bi-check-lg me-2"></i>Update Bio
+                      </button>
+                      <button type="button" class="btn btn-outline-secondary" id="cancelBioBtn" style="display: none;">
+                        Cancel Changes
+                      </button>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <% if (user.role === 'regular') { %>
+                          Bio requires admin approval
+                        <% } else { %>
+                          Instant visibility for admins
+                        <% } %>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              
+              <!-- Current Bio Display -->
+              <% if (user.bio && !user.bio_requires_moderation) { %>
+                <div class="bio-preview mt-4 fade-in">
+                  <h6 class="fw-semibold mb-3 text-dark">Current Bio:</h6>
+                  <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.6;"><%= user.bio %></p>
+                </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Enhanced Account Settings -->
+          <div class="card card-custom mt-4 slide-up" style="animation-delay: 0.5s;">
             <div class="card-header bg-transparent border-bottom-0 px-4 pt-4">
-              <h5 class="card-title mb-0">
-                <i class="bi bi-gear-fill text-primary me-2"></i>
+              <h5 class="card-title mb-0 d-flex align-items-center">
+                <i class="bi bi-gear-fill text-primary me-2 fs-4"></i>
                 Account Settings
               </h5>
             </div>
             <div class="card-body p-4">
               <!-- Username Update -->
-              <div class="row align-items-center mb-4 pb-3 border-bottom">
-                <div class="col-md-8">
-                  <label class="form-label fw-semibold">Username</label>
-                  <p class="text-muted mb-0">Your public display name</p>
-                </div>
-                <div class="col-md-4">
-                  <form id="usernameForm" class="d-flex gap-2">
-                    <input type="text" 
-                           class="form-control" 
-                           id="usernameInput" 
-                           value="<%= user.username %>" 
-                           required 
-                           minlength="3"
-                           placeholder="Enter new username">
-                    <button type="submit" class="btn btn-primary" id="updateUsernameBtn">
-                      <i class="bi bi-check-lg"></i>
-                    </button>
-                  </form>
-                  <div class="form-text text-end">Min. 3 characters</div>
+              <div class="settings-item">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <label class="form-label fw-semibold text-dark mb-1">Username</label>
+                    <p class="text-muted mb-0 small">Your public display name across the platform</p>
+                  </div>
+                  <div class="col-md-4">
+                    <form id="usernameForm" class="d-flex gap-2">
+                      <input type="text" 
+                             class="form-control form-control-modern" 
+                             id="usernameInput" 
+                             value="<%= user.username %>" 
+                             required 
+                             minlength="3"
+                             placeholder="Enter new username">
+                      <button type="submit" class="btn btn-primary btn-modern" id="updateUsernameBtn">
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                    </form>
+                    <div class="form-text text-end small">Min. 3 characters</div>
+                  </div>
                 </div>
               </div>
 
               <!-- Email Display -->
-              <div class="row align-items-center mb-4 pb-3 border-bottom">
-                <div class="col-md-8">
-                  <label class="form-label fw-semibold">Email Address</label>
-                  <p class="text-muted mb-0">Your account email</p>
-                </div>
-                <div class="col-md-4">
-                  <div class="alert alert-light border mb-0">
-                    <i class="bi bi-envelope me-2 text-muted"></i>
-                    <strong><%= user.email %></strong>
+              <div class="settings-item">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <label class="form-label fw-semibold text-dark mb-1">Email Address</label>
+                    <p class="text-muted mb-0 small">Your primary contact email</p>
                   </div>
-                  <div class="form-text text-end">Contact support to change</div>
+                  <div class="col-md-4">
+                    <div class="alert alert-light border-0 mb-0 p-3">
+                      <i class="bi bi-envelope text-primary me-2"></i>
+                      <strong class="text-dark"><%= user.email %></strong>
+                    </div>
+                    <div class="form-text text-end small">Contact support to change</div>
+                  </div>
                 </div>
               </div>
 
               <!-- Profile Picture Settings -->
-              <div class="row align-items-center">
-                <div class="col-md-8">
-                  <label class="form-label fw-semibold">Profile Picture</label>
-                  <p class="text-muted mb-0">Update your profile photo</p>
-                </div>
-                <div class="col-md-4 text-end">
-                  <div class="d-flex gap-2 justify-content-end">
-                    <label for="profilePictureInput" class="btn btn-outline-primary">
-                      <i class="bi bi-upload me-2"></i>Upload
-                    </label>
-                    <% if (user.profile_picture_url) { %>
-                      <button class="btn btn-outline-danger" onclick="removeProfilePicture()">
-                        <i class="bi bi-trash me-2"></i>Remove
-                      </button>
-                    <% } %>
+              <div class="settings-item">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <label class="form-label fw-semibold text-dark mb-1">Profile Picture</label>
+                    <p class="text-muted mb-0 small">Update your profile photo</p>
                   </div>
-                  <div class="form-text">JPG, PNG up to 5MB</div>
+                  <div class="col-md-4 text-end">
+                    <div class="d-flex gap-2 justify-content-end">
+                      <label for="profilePictureInput" class="btn btn-outline-primary btn-modern">
+                        <i class="bi bi-upload me-2"></i>Upload
+                      </label>
+                      <% if (user.profile_picture_url) { %>
+                        <button class="btn btn-outline-danger btn-modern" onclick="removeProfilePicture()">
+                          <i class="bi bi-trash me-2"></i>Remove
+                        </button>
+                      <% } %>
+                    </div>
+                    <div class="form-text text-end small">JPG, PNG up to 5MB</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Quick Actions -->
-          <div class="card card-custom mt-4">
+          <!-- Enhanced Quick Actions -->
+          <div class="card card-custom mt-4 slide-up" style="animation-delay: 0.6s;">
             <div class="card-header bg-transparent border-bottom-0 px-4 pt-4">
-              <h5 class="card-title mb-0">
-                <i class="bi bi-lightning-fill text-warning me-2"></i>
+              <h5 class="card-title mb-0 d-flex align-items-center">
+                <i class="bi bi-lightning-fill text-warning me-2 fs-4"></i>
                 Quick Actions
               </h5>
             </div>
             <div class="card-body p-4">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <a href="/pets/add" class="card card-custom h-100 text-decoration-none hover-lift">
+                  <a href="/pets/add" class="card quick-action-card h-100 text-decoration-none">
                     <div class="card-body text-center p-4">
-                      <i class="bi bi-plus-circle-fill text-success fs-1 mb-3"></i>
-                      <h6 class="card-title">Add New Pet</h6>
+                      <div class="quick-action-icon text-success">
+                        <i class="bi bi-plus-circle-fill"></i>
+                      </div>
+                      <h6 class="card-title fw-bold text-dark mb-2">Add New Pet</h6>
                       <p class="text-muted small mb-0">Register a new pet to your account</p>
                     </div>
                   </a>
                 </div>
                 <div class="col-md-6">
-                  <a href="/schedule-task" class="card card-custom h-100 text-decoration-none hover-lift">
+                  <a href="/schedule-task" class="card quick-action-card h-100 text-decoration-none">
                     <div class="card-body text-center p-4">
-                      <i class="bi bi-calendar-plus-fill text-primary fs-1 mb-3"></i>
-                      <h6 class="card-title">Schedule Task</h6>
+                      <div class="quick-action-icon text-primary">
+                        <i class="bi bi-calendar-plus-fill"></i>
+                      </div>
+                      <h6 class="card-title fw-bold text-dark mb-2">Schedule Task</h6>
                       <p class="text-muted small mb-0">Create reminders and tasks</p>
                     </div>
                   </a>
@@ -478,7 +1027,11 @@ function updateHeaderProfilePicture(url) {
   // Update all profile pictures in the header
   const headerImages = document.querySelectorAll('.navbar img, .user-avatar-modern');
   headerImages.forEach(img => {
-    if (img.src.includes('profile') || img.alt.includes('Profile') || img.classList.contains('user-avatar-modern')) {
+    // Check if img has src property and it's not undefined
+    if (img.src && typeof img.src === 'string' && 
+        (img.src.includes('profile') || 
+         (img.alt && img.alt.includes('Profile')) || 
+         img.classList.contains('user-avatar-modern'))) {
       img.src = url + '?t=' + Date.now();
       console.log('Updated header image:', img);
     }
@@ -570,6 +1123,87 @@ function testUpload() {
 window.addEventListener('error', function (e) {
   console.error('Global error:', e.error);
   showAlert('An error occurred: ' + e.error.message, 'danger');
+
+
+}
+
+
+);
+
+// Bio functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const bioForm = document.getElementById('bioForm');
+  const bioInput = document.getElementById('bioInput');
+  const updateBioBtn = document.getElementById('updateBioBtn');
+  const cancelBioBtn = document.getElementById('cancelBioBtn');
+  let originalBio = '<%= user.bio || "" %>';
+
+  // Show/hide cancel button based on changes
+  if (bioInput) {
+    bioInput.addEventListener('input', function() {
+      const hasChanges = this.value !== originalBio;
+      cancelBioBtn.style.display = hasChanges ? 'block' : 'none';
+    });
+
+    // Cancel button handler
+    cancelBioBtn.addEventListener('click', function() {
+      bioInput.value = originalBio;
+      this.style.display = 'none';
+    });
+  }
+
+  // Bio form submission
+  if (bioForm) {
+    bioForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const newBio = bioInput.value.trim();
+      
+      if (newBio.length > 500) {
+        showAlert('Bio must be less than 500 characters', 'danger');
+        return;
+      }
+
+      if (newBio === originalBio) {
+        showAlert('Please make changes to update your bio', 'info');
+        return;
+      }
+
+      // Disable button during request
+      updateBioBtn.disabled = true;
+      updateBioBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm me-2"></i>Updating...';
+
+      try {
+        const response = await fetch('/profile/bio', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ bio: newBio })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showAlert(result.message, 'success');
+          originalBio = newBio;
+          cancelBioBtn.style.display = 'none';
+          
+          // Reload page to show updated bio and moderation status
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          showAlert(result.error || 'Error updating bio', 'danger');
+        }
+      } catch (error) {
+        console.error('Bio update error:', error);
+        showAlert('Error updating bio: ' + error.message, 'danger');
+      } finally {
+        // Re-enable button
+        updateBioBtn.disabled = false;
+        updateBioBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Update Bio';
+      }
+    });
+  }
 });
 </script>
 

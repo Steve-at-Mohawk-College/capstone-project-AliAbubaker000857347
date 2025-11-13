@@ -7,7 +7,7 @@ const {
   updateUserBio,
   updateBioModerationStatus
 } = require('../models/userModel');
-
+const { uploadMultiple } = require('../config/upload'); 
 // Admin authentication middleware
 function requireAdmin(req, res, next) {
   if (req.session?.role === 'admin') return next();
@@ -16,6 +16,145 @@ function requireAdmin(req, res, next) {
     message: 'Admin privileges required to access this page.'
   });
 }
+
+
+// Admin gallery management
+router.get('/gallery', requireAdmin, async (req, res) => {
+    try {
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = 12;
+        const filters = {
+            search: req.query.search,
+            current_user_id: req.session.userId
+        };
+
+        // Get all photos (admin can see everything)
+        const photos = await photoModel.getPublicPhotos(page, limit, { ...filters, includeAll: true });
+        const pendingTags = await query('SELECT * FROM tags WHERE is_approved = 0');
+
+        res.render('admin/gallery', {
+            title: 'Gallery Management - Admin',
+            photos,
+            pendingTags,
+            currentPage: page,
+            currentSearch: req.query.search,
+            hasMore: photos.length === limit
+        });
+    } catch (error) {
+        console.error('Admin gallery error:', error);
+        res.status(500).render('error', {
+            title: 'Error',
+            message: 'Error loading gallery management.',
+            error: process.env.NODE_ENV === 'development' ? error : {}
+        });
+    }
+});
+
+// Admin bulk upload
+router.get('/gallery/bulk-upload', requireAdmin, (req, res) => {
+    res.render('admin/bulk-upload', {
+        title: 'Bulk Upload - Admin'
+    });
+});
+
+// Admin bulk upload route
+router.post('/gallery/bulk-upload', requireAdmin, (req, res, next) => {
+    uploadMultiple(req, res, function (err) {
+        if (err) {
+            return res.status(400).render('admin/bulk-upload', {
+                title: 'Bulk Upload - Admin',
+                error: err.message
+            });
+        }
+        handleBulkUpload(req, res);
+    });
+});
+
+async function handleBulkUpload(req, res) {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).render('admin/bulk-upload', {
+                title: 'Bulk Upload - Admin',
+                error: 'Please select photos to upload.'
+            });
+        }
+
+        const { title, description, tags } = req.body;
+        const results = [];
+
+        for (const file of req.files) {
+            try {
+                const photoId = await photoModel.createPhoto({
+                    user_id: req.session.userId,
+                    photo_url: `/uploads/gallery/${file.filename}`,
+                    title: title || `Admin Upload - ${file.originalname}`,
+                    description: description || '',
+                    is_public: 1
+                });
+
+                // Process tags if provided
+                if (tags) {
+                    const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+                    for (const tagName of tagList) {
+                        try {
+                            await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
+                        } catch (tagError) {
+                            console.log('Tag error:', tagError.message);
+                        }
+                    }
+                }
+
+                results.push({ success: true, file: file.originalname });
+            } catch (error) {
+                results.push({ success: false, file: file.originalname, error: error.message });
+            }
+        }
+
+        res.render('admin/bulk-upload', {
+            title: 'Bulk Upload - Admin',
+            message: `Uploaded ${req.files.length} photos`,
+            results
+        });
+    } catch (error) {
+        console.error('Bulk upload error:', error);
+        res.status(500).render('admin/bulk-upload', {
+            title: 'Bulk Upload - Admin',
+            error: 'Error during bulk upload: ' + error.message
+        });
+    }
+}
+// Admin tag management
+router.post('/tags/:id/approve', requireAdmin, async (req, res) => {
+    try {
+        await query('UPDATE tags SET is_approved = 1 WHERE tag_id = ?', [req.params.id]);
+        res.json({ success: true, message: 'Tag approved successfully' });
+    } catch (error) {
+        console.error('Approve tag error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.post('/tags/:id/reject', requireAdmin, async (req, res) => {
+    try {
+        await query('DELETE FROM tags WHERE tag_id = ? AND is_approved = 0', [req.params.id]);
+        res.json({ success: true, message: 'Tag rejected successfully' });
+    } catch (error) {
+        console.error('Reject tag error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Admin photo deletion
+router.post('/gallery/photo/:id/delete', requireAdmin, async (req, res) => {
+    try {
+        await query('DELETE FROM photos WHERE photo_id = ?', [req.params.id]);
+        res.json({ success: true, message: 'Photo deleted successfully' });
+    } catch (error) {
+        console.error('Admin delete photo error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 
 // In your admin routes - enhance the pending bios view
 router.get('/pending-bios', requireAdmin, async (req, res) => {

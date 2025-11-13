@@ -30,7 +30,7 @@ const profileRoutes = require('./routes/profileRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const { time } = require('console');
 const { title } = require('process');
-
+const galleryRoutes = require('./routes/galleryRoutes');
 
 // ===== Create Express app =====
 const app = express();
@@ -224,10 +224,10 @@ app.use('/health', requireAuth, healthRoutes);
 app.use('/community', requireAuth, communityRoutes);
 app.use('/profile', requireAuth, profileRoutes);
 app.use('/admin', adminRoutes);
-
+app.use('/gallery', requireAuth, galleryRoutes);
 const dashboardRoutes = require('./routes/dashboardRoutes');
 app.use('/dashboard', requireAuth, dashboardRoutes);
-
+const { upload } = require('./config/upload');
 
 
 // ===== Page Routes =====

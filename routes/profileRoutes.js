@@ -1,8 +1,15 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const upload = require('../config/upload');
+// const upload = require('../config/upload');
+
+
+
+const { uploadProfile } = require('../config/upload');
 const { query, queryOne } = require('../config/database');
+
+
+
 const { 
   updateUserProfilePicture, 
   getUserProfileWithStats,
@@ -230,77 +237,85 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 
-
-
-// In your profileRoutes.js - Update the upload section
-router.post('/picture', requireAuth, upload.single('profilePicture'), async (req, res) => {
-  try {
-    console.log("➡️ POST /profile/picture called");
-    console.log("Session userId:", req.session.userId);
+// Profile picture upload route - UPDATED VERSION
+router.post('/picture', requireAuth, (req, res, next) => {
+    console.log("➡️ POST /profile/picture route hit");
     
-    if (!req.file) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'No file uploaded or file too large' 
-      });
-    }
-
-    console.log("Uploaded file info:", {
-      filename: req.file.filename,
-      path: req.file.path,
-      size: req.file.size,
-      destination: req.file.destination
+    uploadProfile(req, res, function (err) {
+        if (err) {
+            console.error('Multer error:', err);
+            return res.status(400).json({ 
+                success: false, 
+                error: err.message 
+            });
+        }
+        
+        // Check if file was uploaded
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                error: 'No file selected'
+            });
+        }
+        
+        console.log("File uploaded successfully:", req.file);
+        
+        // Continue with profile picture processing
+        handleProfilePictureUpload(req, res);
     });
-
-    // Use the original file directly (skip processing for now)
-    let finalFilePath = req.file.path;
-    
-    // Optional: Only attempt processing if not in OneDrive
-    if (!req.file.path.includes('OneDrive')) {
-      try {
-        finalFilePath = await processProfilePicture(req.file.path);
-      } catch (processError) {
-        console.error('Image processing failed, using original:', processError.message);
-        finalFilePath = req.file.path;
-      }
-    }
-
-    // Get relative path for web access
-    const relativePath = path.relative(
-      path.join(__dirname, '../public'), 
-      finalFilePath
-    ).replace(/\\/g, '/');
-
-    const webPath = '/' + relativePath;
-
-    console.log('💾 Updating database with web path:', webPath);
-    
-    // Update DB
-    await updateUserProfilePicture(req.session.userId, webPath);
-
-    // Update session
-    req.session.profilePicture = webPath;
-    
-    console.log('✅ Profile picture updated successfully');
-
-    res.json({ 
-      success: true, 
-      message: 'Profile picture updated successfully',
-      imageUrl: webPath
-    });
-    
-  } catch (error) {
-    console.error('❌ Upload error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Error uploading profile picture: ' + error.message 
-    });
-  }
 });
 
 
 
 
+
+// Add this function to handle profile picture upload
+async function handleProfilePictureUpload(req, res) {
+    try {
+        console.log("➡️ handleProfilePictureUpload called");
+        console.log("File:", req.file);
+        console.log("User ID:", req.session.userId);
+
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                error: 'No file uploaded'
+            });
+        }
+
+        const userId = req.session.userId;
+        
+        // Process the image (resize, optimize)
+        const processedImagePath = await processProfilePicture(req.file.path);
+        console.log("Processed image path:", processedImagePath);
+
+        // Create web-accessible URL
+        const webPath = processedImagePath.replace(/^.*public[\\/]/, '');
+        const imageUrl = `/${webPath.replace(/\\/g, '/')}`;
+        
+        console.log("Web path:", webPath);
+        console.log("Image URL:", imageUrl);
+
+        // Update database
+        await updateUserProfilePicture(userId, imageUrl);
+
+        // Update session
+        req.session.profilePicture = imageUrl;
+
+        res.json({
+            success: true,
+            message: 'Profile picture updated successfully!',
+            imageUrl: imageUrl
+        });
+
+    } catch (error) {
+        console.error('Profile picture upload error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error uploading profile picture: ' + error.message
+        });
+    }
+}
 
 
 

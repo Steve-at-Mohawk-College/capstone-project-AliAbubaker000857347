@@ -50,6 +50,12 @@ Walking Through the Cypress & Axe Tests
 2. Task Scheduler Tests (`task-scheduler.cy.js` & `task-scheduler-accessibility.cy.js`). Functional Goal: Ensure `users can successfully schedule a new pet care task`.
 3. Calendar UI Tests (`calendar-ui.cy.js` & `calendar-ui-accessibility.cy.js`). Functional Goal: `Verify the calendar` renders correctly and is interactive.
 
+• '≥90% Jest coverage'
+>npm test -- --coverage
+
+Simple Summary:
+"We break the database on purpose to make sure our app doesn't crash and shows friendly error messages instead."
+
 Code Example: A Hurdle Overcome
 ================================
 # 1. inside `commands.js` i have

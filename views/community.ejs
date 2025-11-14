@@ -112,18 +112,23 @@
         }
 
         .post-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-            line-height: 1.3;
-        }
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+    text-align: left; /* Add this line */
+}
 
         .post-author {
-            color: var(--primary-color);
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
+    color: var(--primary-color);
+    font-weight: 600; /* Increased weight for better visibility */
+    font-size: 0.9rem;
+    background-color: rgba(67, 97, 238, 0.1); /* Light background for better contrast */
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    display: inline-block;
+}
 
         .post-time {
             color: #6c757d;
@@ -131,11 +136,14 @@
         }
 
         .post-content {
-            color: var(--dark-color);
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            white-space: pre-wrap;
-        }
+    color: var(--dark-color);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    white-space: pre-wrap; /* Keep this if you need line breaks */
+    word-wrap: break-word;
+    text-align: left; /* Force left alignment */
+    unicode-bidi: plaintext; /* Better handling of text direction */
+}
 
         /* ===== COMMENT STYLES ===== */
         .comments-section {
@@ -434,7 +442,9 @@
         [data-theme="dark"] .post-title,
         [data-theme="dark"] .post-author,
         [data-theme="dark"] .comment-author {
-            color: #e9ecef !important;
+             background-color: rgba(67, 97, 238, 0.2);
+    color: #8fa3ff !important;
+    text-align: left !important;
         }
 
         [data-theme="dark"] .post-time,
@@ -524,6 +534,92 @@
         [data-theme="dark"] .lead.text-muted {
             color: #adb5bd !important;
         }
+
+
+        /* Improve contrast for all interactive elements */
+.btn-primary-modern {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+/* Ensure proper focus states for better accessibility */
+.form-control-modern:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+}
+
+/* Improve contrast for post time */
+.post-time {
+    color: #6c757d;
+    font-size: 0.8rem;
+    font-weight: 500; /* Slightly bolder for better readability */
+}
+
+/* Dark mode time contrast */
+[data-theme="dark"] .post-time {
+    color: #ced4da !important; /* Lighter gray for dark mode */
+}
+
+/* Ensure proper contrast for placeholders */
+.form-control-modern::placeholder {
+    color: #6c757d;
+    opacity: 0.8;
+}
+
+[data-theme="dark"] .form-control-modern::placeholder {
+    color: #adb5bd;
+}
+/* Ensure button text has sufficient contrast */
+.btn-modern {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 600; /* Increased from 500 */
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.btn-outline-modern {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background: transparent;
+    font-weight: 600;
+}
+
+.btn-outline-modern:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.post-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+    text-align: left;
+}
+
+.post-content {
+    color: var(--dark-color);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: left;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .post-title {
+    color: #e9ecef !important;
+    text-align: left !important;
+}
+
+[data-theme="dark"] .post-content {
+    color: #e9ecef !important;
+    text-align: left !important;
+}
     </style>
 </head>
 <body class="community-page">
@@ -648,16 +744,22 @@
                                         <% } %>
 
                                         <!-- Comment Form -->
-                                        <form class="comment-form mt-3" data-post-id="<%= post.post_id %>">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control form-control-modern" 
-                                                       id="comment-<%= post.post_id %>" name="content" 
-                                                       placeholder="Write a comment..." required>
-                                                <button class="btn btn-primary-modern" type="submit">
-                                                    <i class="bi bi-send me-1"></i>Post
-                                                </button>
-                                            </div>
-                                        </form>
+                                        <!-- Comment Form -->
+<form class="comment-form mt-3" data-post-id="<%= post.post_id %>">
+    <div class="input-group">
+        <label for="comment-<%= post.post_id %>" class="visually-hidden">
+            Write a comment for <%= post.username %>'s post
+        </label>
+        <input type="text" class="form-control form-control-modern" 
+               id="comment-<%= post.post_id %>" name="content" 
+               placeholder="Write a comment..." 
+               aria-label="Write a comment for <%= post.username %>'s post"
+               required>
+        <button class="btn btn-primary-modern" type="submit">
+            <i class="bi bi-send me-1"></i>Post
+        </button>
+    </div>
+</form>
                                     </div>
                                 </div>
                             <% }); %>
@@ -897,44 +999,50 @@
                 });
             });
 
-            function addCommentToUI(comment, postId) {
-                const commentHTML = `
-                    <div class="comment">
-                        <div class="comment-header">
-                            <div class="comment-avatar">
-                                ${comment.profile_picture_url ? 
-                                    `<img src="${comment.profile_picture_url}" alt="${comment.username}">` :
-                                    `<div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-person text-muted" style="font-size: 0.8rem;"></i>
-                                    </div>`
-                                }
-                            </div>
-                            <span class="comment-author">${comment.username}</span>
-                            <span class="comment-time">
-                                ${new Date(comment.created_at).toLocaleString()}
-                            </span>
-                        </div>
-                        <div class="comment-content">
-                            ${comment.content}
-                        </div>
-                    </div>
-                `;
-                
-                const commentsContainer = document.getElementById(`comments-${postId}`);
-                const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
-                
-                if (commentsContainer) {
-                    commentsContainer.insertAdjacentHTML('beforeend', commentHTML);
-                    if (commentsContainer.style.display === 'none') {
-                        commentsContainer.style.display = 'block';
-                        const toggleBtn = commentToggle.querySelector('.toggle-comments-btn');
-                        if (toggleBtn) {
-                            toggleBtn.classList.add('expanded');
-                            toggleBtn.querySelector('.toggle-icon').style.transform = 'rotate(180deg)';
-                        }
+           function addCommentToUI(comment, postId) {
+    const commentHTML = `
+        <div class="comment">
+            <div class="comment-header">
+                <div class="comment-avatar">
+                    ${comment.profile_picture_url ? 
+                        `<img src="${comment.profile_picture_url}" alt="${comment.username}" loading="lazy">` :
+                        `<div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-person text-muted" style="font-size: 0.8rem;"></i>
+                        </div>`
                     }
-                }
+                </div>
+                <span class="comment-author">${comment.username}</span>
+                <span class="comment-time">
+                    ${new Date(comment.created_at).toLocaleString()}
+                </span>
+            </div>
+            <div class="comment-content">
+                ${comment.content}
+            </div>
+        </div>
+    `;
+    
+    const commentsContainer = document.getElementById(`comments-${postId}`);
+    const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);
+    
+    if (commentsContainer) {
+        commentsContainer.insertAdjacentHTML('beforeend', commentHTML);
+        if (commentsContainer.style.display === 'none') {
+            commentsContainer.style.display = 'block';
+            const toggleBtn = commentToggle.querySelector('.toggle-comments-btn');
+            if (toggleBtn) {
+                toggleBtn.classList.add('expanded');
+                toggleBtn.querySelector('.toggle-icon').style.transform = 'rotate(180deg)';
             }
+        }
+    }
+    
+    // Update the label for the comment input
+    const commentInput = document.querySelector(`#comment-${postId}`);
+    if (commentInput) {
+        commentInput.setAttribute('aria-label', `Write a comment for ${comment.username}'s post`);
+    }
+}
 
             function updateCommentCount(postId, increment = true) {
                 const commentToggle = document.querySelector(`.comment-toggle[data-post-id="${postId}"]`);

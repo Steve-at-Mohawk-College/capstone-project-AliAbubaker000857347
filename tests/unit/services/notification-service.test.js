@@ -4,7 +4,7 @@ const notificationRoutes = require('../../../routes/notificationRoutes');
 const notificationModel = require('../../../models/notificationModel');
 
 // Mock the notification model
-jest.mock('../models/notificationModel');
+jest.mock('../../../models/notificationModel');
 
 const app = express();
 app.use(express.json());

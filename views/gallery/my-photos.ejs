@@ -8,47 +8,381 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/theme.css">
     <style>
+        /* Base styles that work with both themes */
+        .gallery-container {
+            padding-top: 5rem;
+            padding-bottom: 2rem;
+        }
+        
         .photo-card {
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            border: 1px solid var(--bs-border-color);
             margin-bottom: 1.5rem;
+            height: 100%;
         }
+        
         .photo-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+        
         .photo-image {
-            height: 300px;
-           width: 100;
-        object-fit: cover;
-        max-width: 90%; /* Add this to prevent overflow */
-        width: 90%; /* Ensure it takes full container width */
-   
-            
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            cursor: pointer;
         }
+        
+        .photo-image-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+        
         .privacy-badge {
             position: absolute;
             top: 10px;
             right: 10px;
+            z-index: 10;
         }
+        
         .empty-state {
-            padding: 4rem 2rem;
+            padding: 3rem 1rem;
             text-align: center;
+            border-radius: 12px;
+            background-color: var(--bs-light);
+            margin: 2rem 0;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .photo-actions {
+            margin-top: 1rem;
+        }
+        
+        /* Header styles that work on all screens */
+        .gallery-header {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bs-body-bg);
+            border-radius: 12px;
+            border: 1px solid var(--bs-border-color);
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .header-title {
+            text-align: center;
+        }
+        
+        .header-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        /* Responsive design */
+        @media (min-width: 576px) {
+            .photo-image {
+                height: 280px;
+            }
+            
+            .action-group {
+                flex-direction: row;
+                max-width: 400px;
+            }
+            
+            .action-group .dropdown {
+                flex: 1;
+            }
+            
+            .action-group .btn {
+                flex: 1;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .header-title {
+                text-align: left;
+                flex: 1;
+            }
+            
+            .header-actions {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .action-group {
+                flex-direction: row;
+                max-width: none;
+                width: auto;
+            }
+            
+            .photo-image {
+                height: 300px;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .gallery-header {
+                padding: 2rem;
+            }
+            
+            .photo-image {
+                height: 320px;
+            }
+        }
+        
+        /* Grid system that works with Bootstrap */
+        .photos-grid .col-12 {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Dark theme compatibility */
+        [data-bs-theme="dark"] .photo-card {
+            border-color: #495057;
+        }
+        
+        [data-bs-theme="dark"] .photo-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        [data-bs-theme="dark"] .empty-state {
+            background-color: #2d3748;
+        }
+        
+        /* Ensure tags look good in both themes */
+        .tag-badge {
+            margin: 2px;
+            font-size: 0.75rem;
+        }
+        
+        /* Button improvements */
+        .btn-outline-primary, .btn-outline-secondary, .btn-outline-danger {
+            border-width: 1px;
+        }
+
+        /* FIXED: SCOPED Dropdown styles - ONLY affect gallery dropdowns */
+        .gallery-container .dropdown-menu {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .gallery-container .dropdown-item {
+            color: #212529 !important;
+        }
+
+        .gallery-container .dropdown-item:hover,
+        .gallery-container .dropdown-item:focus {
+            color: #212529 !important;
+            background-color: #f8f9fa !important;
+        }
+
+        .gallery-container .dropdown-item.active {
+            color: #ffffff !important;
+            background-color: #0d6efd !important;
+        }
+
+        /* Dark theme dropdown - FIXED and SCOPED */
+        [data-bs-theme="dark"] .gallery-container .dropdown-menu {
+            background-color: #000000 !important;
+            border-color: #333333 !important;
+        }
+
+        [data-bs-theme="dark"] .gallery-container .dropdown-item {
+            color: #ffffff !important;
+        }
+
+        [data-bs-theme="dark"] .gallery-container .dropdown-item:hover,
+        [data-bs-theme="dark"] .gallery-container .dropdown-item:focus {
+            color: #ffffff !important;
+            background-color: #333333 !important;
+        }
+
+        [data-bs-theme="dark"] .gallery-container .dropdown-item.active {
+            color: #ffffff !important;
+            background-color: #0d6efd !important;
+        }
+
+        [data-bs-theme="dark"] .gallery-container .dropdown-divider {
+            border-color: #444444 !important;
+        }
+
+        /* FIXED: Button contrast issues for dark theme */
+        [data-bs-theme="dark"] .btn-outline-danger {
+            color: #ff6b6b !important;
+            border-color: #ff6b6b !important;
+        }
+
+        [data-bs-theme="dark"] .btn-outline-danger:hover {
+            color: #000000 !important;
+            background-color: #ff6b6b !important;
+            border-color: #ff6b6b !important;
+        }
+
+        [data-bs-theme="dark"] .btn-outline-secondary {
+            color: #a7acb1 !important;
+            border-color: #a7acb1 !important;
+        }
+
+        [data-bs-theme="dark"] .btn-outline-secondary:hover {
+            color: #000000 !important;
+            background-color: #a7acb1 !important;
+            border-color: #a7acb1 !important;
+        }
+
+        /* FIXED: Ensure proper contrast for light theme buttons */
+        .btn-outline-danger {
+            color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .btn-outline-danger:hover {
+            color: #ffffff !important;
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .btn-outline-secondary {
+            color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+        .btn-outline-secondary:hover {
+            color: #ffffff !important;
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+        /* FIXED: Tag badges contrast in dark theme */
+        [data-bs-theme="dark"] .badge.bg-light {
+            background-color: #e9ecef !important;
+            color: #212529 !important;
+        }
+
+        /* FIXED: Privacy badges contrast */
+        .privacy-badge.bg-success {
+            background-color: #198754 !important;
+            color: white !important;
+        }
+
+        .privacy-badge.bg-secondary {
+            background-color: #6c757d !important;
+            color: white !important;
+        }
+
+        [data-bs-theme="dark"] .privacy-badge.bg-success {
+            background-color: #198754 !important;
+            color: white !important;
+        }
+
+        [data-bs-theme="dark"] .privacy-badge.bg-secondary {
+            background-color: #6c757d !important;
+            color: white !important;
+        }
+
+        /* FIXED: Text contrast improvements */
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        [data-bs-theme="dark"] .text-muted {
+            color: #a7acb1 !important;
+        }
+
+        /* FIXED: Focus styles for accessibility */
+        .btn:focus,
+        .dropdown-item:focus,
+        .photo-image-link:focus {
+            outline: 2px solid #0d6efd;
+            outline-offset: 2px;
+        }
+
+        /* FIXED: Screen reader only text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
     </style>
 </head>
 <body>
     <%- include('../partials/header') %>
     
-    <div class="container mt-4">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h1>My Photos</h1>
-                <p class="text-muted">Manage your uploaded photos</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <a href="/gallery/upload" class="btn btn-primary">
-                    <i class="bi bi-cloud-upload"></i> Upload New Photo
-                </a>
+    <div class="container gallery-container">
+        <!-- New Header Design -->
+        <div class="gallery-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1 class="h2 mb-2">My Photos</h1>
+                    <p class="text-muted mb-0">Manage your uploaded photos</p>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="action-group">
+                        <!-- Sorting Dropdown - This will be affected by our scoped CSS -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-sort-down"></i> 
+                                <% if (currentSort === 'newest') { %>Newest<% } %>
+                                <% if (currentSort === 'oldest') { %>Oldest<% } %>
+                                <% if (currentSort === 'popular') { %>Most Popular<% } %>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item <%= currentSort === 'newest' ? 'active' : '' %>" 
+                                       href="/gallery/my-photos?sort=newest">
+                                        <i class="bi bi-sort-down"></i> Newest First
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item <%= currentSort === 'oldest' ? 'active' : '' %>" 
+                                       href="/gallery/my-photos?sort=oldest">
+                                        <i class="bi bi-sort-up"></i> Oldest First
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item <%= currentSort === 'popular' ? 'active' : '' %>" 
+                                       href="/gallery/my-photos?sort=popular">
+                                        <i class="bi bi-heart"></i> Most Popular
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <a href="/gallery/upload" class="btn btn-primary">
+                            <i class="bi bi-cloud-upload"></i> Upload Photo
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -56,38 +390,39 @@
         <% if (typeof message !== 'undefined' && message) { %>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle"></i> <%= message %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <% } %>
 
         <!-- Photos Grid -->
-        <div class="row">
+        <div class="row photos-grid">
             <% if (photos.length > 0) { %>
                 <% photos.forEach(photo => { %>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="card photo-card">
                             <div class="position-relative">
-                                <img src="<%= photo.photo_url %>" 
-                                     class="card-img-top photo-image" 
-                                     alt="<%= photo.title %>"
-                                     style="cursor: pointer;"
-                                     onclick="window.location.href='/gallery/photo/<%= photo.photo_id %>'">
-                                
-                                <!-- Privacy Badge -->
-                                <span class="badge privacy-badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
-                                    <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
-                                    <%= photo.is_public ? 'Public' : 'Private' %>
-                                </span>
+                                <!-- FIXED: Replaced onclick with proper link -->
+                                <a href="/gallery/photo/<%= photo.photo_id %>" class="photo-image-link">
+                                    <img src="<%= photo.photo_url %>" 
+                                         class="photo-image" 
+                                         alt="<%= photo.title || 'Pet photo' %>">
+                                    
+                                    <!-- Privacy Badge -->
+                                    <span class="badge privacy-badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
+                                        <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
+                                        <%= photo.is_public ? 'Public' : 'Private' %>
+                                    </span>
+                                </a>
                             </div>
                             
                             <div class="card-body">
-                                <h6 class="card-title"><%= photo.title || 'Untitled' %></h6>
+                                <h6 class="card-title fw-semibold mb-2"><%= photo.title || 'Untitled' %></h6>
                                 
                                 <!-- Tags -->
                                 <% if (photo.tags) { %>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <% photo.tags.split(',').forEach(tag => { %>
-                                            <span class="badge bg-light text-dark small">
+                                            <span class="badge bg-light text-dark tag-badge">
                                                 #<%= tag %>
                                             </span>
                                         <% }); %>
@@ -95,25 +430,32 @@
                                 <% } %>
                                 
                                 <!-- Stats -->
-                                <div class="d-flex justify-content-between align-items-center text-muted small">
+                                <div class="d-flex justify-content-between align-items-center text-muted small mb-3">
                                     <div>
-                                        <i class="bi bi-heart"></i> <%= photo.favorite_count || 0 %>
+                                        <i class="bi bi-heart text-danger"></i> 
+                                        <span class="ms-1"><%= photo.favorite_count || 0 %></span>
                                     </div>
                                     <div>
-                                        <%= new Date(photo.created_at).toLocaleDateString() %>
+                                        <i class="bi bi-calendar"></i> 
+                                        <span class="ms-1"><%= new Date(photo.created_at).toLocaleDateString() %></span>
                                     </div>
                                 </div>
                                 
                                 <!-- Actions -->
-                                <div class="d-flex gap-1 mt-2">
-                                    <a href="/gallery/photo/<%= photo.photo_id %>" 
-                                       class="btn btn-sm btn-outline-primary flex-fill">
-                                        <i class="bi bi-eye"></i> View
-                                    </a>
-                                    <button class="btn btn-sm btn-outline-danger" 
-                                            onclick="deletePhoto(<%= photo.photo_id %>, '<%= photo.title %>')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                <div class="photo-actions">
+                                    <div class="d-flex gap-2">
+                                        <a href="/gallery/photo/<%= photo.photo_id %>" 
+                                           class="btn btn-sm btn-outline-primary flex-fill">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                        <!-- FIXED: Added accessible text to delete button -->
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                onclick="deletePhoto(<%= photo.photo_id %>, '<%= (photo.title || 'Untitled').replace(/'/g, "\\'") %>')"
+                                                aria-label="Delete <%= photo.title || 'photo' %>">
+                                            <i class="bi bi-trash"></i>
+                                            <span class="sr-only">Delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -122,8 +464,8 @@
             <% } else { %>
                 <div class="col-12">
                     <div class="empty-state">
-                        <i class="bi bi-camera display-1 text-muted"></i>
-                        <h3 class="mt-3 text-muted">No photos yet</h3>
+                        <i class="bi bi-camera display-1 text-muted mb-3"></i>
+                        <h3 class="text-muted mb-3">No photos yet</h3>
                         <p class="text-muted mb-4">Start sharing your pet photos with the community!</p>
                         <a href="/gallery/upload" class="btn btn-primary btn-lg">
                             <i class="bi bi-cloud-upload"></i> Upload Your First Photo
@@ -137,7 +479,7 @@
         <% if (hasMore) { %>
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <a href="/gallery/my-photos?page=<%= currentPage + 1 %>" 
+                <a href="/gallery/my-photos?page=<%= currentPage + 1 %><%= currentSort ? '&sort=' + currentSort : '' %>" 
                    class="btn btn-outline-primary">
                     Load More Photos
                 </a>
@@ -145,7 +487,8 @@
         </div>
         <% } %>
     </div>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         async function deletePhoto(photoId, photoTitle) {
             if (!confirm(`Are you sure you want to delete "${photoTitle}"? This action cannot be undone.`)) {
@@ -163,7 +506,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    location.reload(); // Reload to show updated list
+                    location.reload();
                 } else {
                     alert('Error deleting photo: ' + result.error);
                 }

@@ -38,6 +38,11 @@
     <%- include('../partials/header') %>
     
     <div class="container mt-4">
+       
+       
+       
+       
+       
         <!-- Header with Health Status Info -->
         <div class="row mb-4">
             <div class="col-md-8">
@@ -57,14 +62,49 @@
                 </h1>
                 <p class="text-muted">Photos of pets with specific health status</p>
             </div>
-            <div class="col-md-4 text-end">
-                <a href="/gallery" class="btn btn-outline-secondary me-2">
-                    <i class="bi bi-arrow-left"></i> Back to Gallery
-                </a>
-                <a href="/gallery/health-overview" class="btn btn-primary">
-                    <i class="bi bi-heart-pulse"></i> Health Overview
-                </a>
-            </div>
+
+
+
+           <div class="col-md-4 text-end">
+        <!-- Sorting Dropdown -->
+        <div class="dropdown d-inline-block me-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-sort-down"></i> 
+                <% if (currentSort === 'newest') { %>Newest<% } %>
+                <% if (currentSort === 'oldest') { %>Oldest<% } %>
+                <% if (currentSort === 'popular') { %>Most Popular<% } %>
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item <%= currentSort === 'newest' ? 'active' : '' %>" 
+                       href="/gallery/health-status/<%= currentHealthStatus %>?sort=newest">
+                        <i class="bi bi-sort-down"></i> Newest First
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item <%= currentSort === 'oldest' ? 'active' : '' %>" 
+                       href="/gallery/health-status/<%= currentHealthStatus %>?sort=oldest">
+                        <i class="bi bi-sort-up"></i> Oldest First
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item <%= currentSort === 'popular' ? 'active' : '' %>" 
+                       href="/gallery/health-status/<%= currentHealthStatus %>?sort=popular">
+                        <i class="bi bi-heart"></i> Most Popular
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <a href="/gallery" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left"></i> Back to Gallery
+        </a>
+        <a href="/gallery/health-overview" class="btn btn-primary">
+            <i class="bi bi-heart-pulse"></i> Health Overview
+        </a>
+    </div>
+</div>
         </div>
 
         <!-- Health Status Description -->
@@ -156,17 +196,16 @@
             <% } %>
         </div>
 
-        <!-- Load More -->
-        <% if (hasMore) { %>
-        <div class="row mt-4">
-            <div class="col-12 text-center">
-                <a href="/gallery/health-status/<%= currentHealthStatus %>?page=<%= currentPage + 1 %>" 
-                   class="btn btn-outline-primary">
-                    Load More Photos
-                </a>
-            </div>
-        </div>
-        <% } %>
+       <% if (hasMore) { %>
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <a href="/gallery?page=<%= currentPage + 1 %><%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %><%= currentSort ? '&sort=' + currentSort : '' %>" 
+           class="btn btn-outline-primary">
+            Load More Photos
+        </a>
+    </div>
+</div>
+<% } %>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

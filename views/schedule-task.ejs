@@ -75,6 +75,27 @@ header {
     color: white !important;
     transform: translateY(-1px);
 }
+
+
+.form-label {
+    color: var(--bs-body-color) !important;
+}
+
+/* Fix specific label that has inline styles */
+label[for="pet_id"] {
+    color: var(--bs-body-color) !important;
+    opacity: 1 !important;
+    background-color: transparent !important;
+}
+
+/* Ensure all form labels have proper contrast */
+label[for="task_type"],
+label[for="title"], 
+label[for="description"],
+label[for="due_date"],
+label[for="priority"] {
+    color: var(--bs-body-color) !important;
+}
 </style>
 
 <div class="row justify-content-center">

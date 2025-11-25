@@ -496,7 +496,249 @@ const photoModel = {
         `;
         
         return await query(sql);
+    },
+
+
+
+
+// Get public photos with sorting
+async getPublicPhotos(page = 1, limit = 12, filters = {}, sortBy = 'newest') {
+    const offset = (page - 1) * limit;
+    let whereClause = 'WHERE p.is_public = 1';
+    const params = [];
+    
+    if (filters.tag) {
+        whereClause += ' AND t.tag_name = ?';
+        params.push(filters.tag);
     }
+    
+    if (filters.user_id) {
+        whereClause += ' AND p.user_id = ?';
+        params.push(filters.user_id);
+    }
+    
+    if (filters.search) {
+        whereClause += ' AND (p.title LIKE ? OR p.description LIKE ?)';
+        params.push(`%${filters.search}%`, `%${filters.search}%`);
+    }
+
+    // Add sorting logic
+    let orderByClause = '';
+    switch (sortBy) {
+        case 'oldest':
+            orderByClause = 'ORDER BY p.created_at ASC';
+            break;
+        case 'popular':
+            orderByClause = 'ORDER BY favorite_count DESC, p.created_at DESC';
+            break;
+        case 'newest':
+        default:
+            orderByClause = 'ORDER BY p.created_at DESC';
+            break;
+    }
+
+    const numLimit = parseInt(limit);
+    const numOffset = parseInt(offset);
+    
+    const sql = `
+        SELECT 
+            p.*,
+            u.username,
+            u.profile_picture_url,
+            COALESCE(GROUP_CONCAT(DISTINCT t.tag_name), '') as tags,
+            COALESCE(COUNT(DISTINCT pf.favorite_id), 0) as favorite_count
+        FROM photos p
+        LEFT JOIN users u ON p.user_id = u.user_id
+        LEFT JOIN photo_tags pt ON p.photo_id = pt.photo_id
+        LEFT JOIN tags t ON pt.tag_id = t.tag_id
+        LEFT JOIN photo_favorites pf ON p.photo_id = pf.photo_id
+        ${whereClause}
+        GROUP BY p.photo_id, u.username, u.profile_picture_url
+        ${orderByClause}
+        LIMIT ${numLimit} OFFSET ${numOffset}
+    `;
+    
+    console.log('Executing gallery query with params:', params);
+    
+    try {
+        const photos = await query(sql, params);
+        
+        // Add is_favorited separately
+        if (filters.current_user_id) {
+            for (const photo of photos) {
+                const favoriteCheck = await queryOne(
+                    'SELECT 1 FROM photo_favorites WHERE photo_id = ? AND user_id = ?',
+                    [photo.photo_id, filters.current_user_id]
+                );
+                photo.is_favorited = favoriteCheck ? 1 : 0;
+            }
+        } else {
+            for (const photo of photos) {
+                photo.is_favorited = 0;
+            }
+        }
+        
+        return photos;
+    } catch (error) {
+        console.error('Error in getPublicPhotos:', error);
+        throw error;
+    }
+},
+
+// Get user's photos with sorting
+async getUserPhotos(userId, page = 1, limit = 12, sortBy = 'newest') {
+    const offset = (page - 1) * limit;
+    
+    // Add sorting logic
+    let orderByClause = '';
+    switch (sortBy) {
+        case 'oldest':
+            orderByClause = 'ORDER BY p.created_at ASC';
+            break;
+        case 'popular':
+            orderByClause = 'ORDER BY favorite_count DESC, p.created_at DESC';
+            break;
+        case 'newest':
+        default:
+            orderByClause = 'ORDER BY p.created_at DESC';
+            break;
+    }
+
+    const numLimit = parseInt(limit);
+    const numOffset = parseInt(offset);
+    
+    const sql = `
+        SELECT p.*, 
+               COALESCE(GROUP_CONCAT(DISTINCT t.tag_name), '') as tags,
+               COALESCE(COUNT(DISTINCT pf.favorite_id), 0) as favorite_count
+        FROM photos p
+        LEFT JOIN photo_tags pt ON p.photo_id = pt.photo_id
+        LEFT JOIN tags t ON pt.tag_id = t.tag_id
+        LEFT JOIN photo_favorites pf ON p.photo_id = pf.photo_id
+        WHERE p.user_id = ?
+        GROUP BY p.photo_id
+        ${orderByClause}
+        LIMIT ${numLimit} OFFSET ${numOffset}
+    `;
+    
+    const photos = await query(sql, [userId]);
+    
+    // Add is_favorited separately
+    for (const photo of photos) {
+        const favoriteCheck = await queryOne(
+            'SELECT 1 FROM photo_favorites WHERE photo_id = ? AND user_id = ?',
+            [photo.photo_id, userId]
+        );
+        photo.is_favorited = favoriteCheck ? 1 : 0;
+    }
+    
+    return photos;
+},
+
+// Get health status photos with sorting
+async getPhotosByHealthStatus(userId, healthStatus, page = 1, limit = 12, sortBy = 'newest') {
+    const offset = (page - 1) * limit;
+    const numLimit = parseInt(limit);
+    const numOffset = parseInt(offset);
+
+    let healthCondition = '';
+    const params = [userId];
+
+    // Fixed health status conditions
+    switch (healthStatus) {
+        case 'healthy':
+            healthCondition = `
+                AND (ht.weight IS NOT NULL AND ht.weight BETWEEN 1 AND 200)
+                AND (ht.vaccination_date IS NULL OR ht.vaccination_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+                AND (ht.next_vaccination_date IS NULL OR ht.next_vaccination_date >= CURDATE())
+            `;
+            break;
+        case 'needs_vaccination':
+            healthCondition = `
+                AND (ht.vaccination_date IS NULL OR ht.vaccination_date < DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+                AND (ht.next_vaccination_date IS NULL OR ht.next_vaccination_date < CURDATE())
+            `;
+            break;
+        case 'underweight':
+            healthCondition = 'AND ht.weight IS NOT NULL AND ht.weight < 1';
+            break;
+        case 'overweight':
+            healthCondition = 'AND ht.weight IS NOT NULL AND ht.weight > 200';
+            break;
+        case 'recent_vet_visit':
+            healthCondition = 'AND ht.vet_visit_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)';
+            break;
+        default:
+            healthCondition = '';
+    }
+
+    // Add sorting logic
+    let orderByClause = '';
+    switch (sortBy) {
+        case 'oldest':
+            orderByClause = 'ORDER BY p.created_at ASC';
+            break;
+        case 'popular':
+            orderByClause = 'ORDER BY favorite_count DESC, p.created_at DESC';
+            break;
+        case 'newest':
+        default:
+            orderByClause = 'ORDER BY p.created_at DESC';
+            break;
+    }
+
+    const sql = `
+        SELECT DISTINCT 
+            p.*,
+            u.username,
+            u.profile_picture_url,
+            COALESCE(GROUP_CONCAT(DISTINCT t.tag_name), '') as tags,
+            COALESCE(COUNT(DISTINCT pf.favorite_id), 0) as favorite_count,
+            ht.weight,
+            ht.vaccination_date,
+            ht.next_vaccination_date,
+            ht.vet_visit_date,
+            pet.name as pet_name
+        FROM photos p
+        INNER JOIN users u ON p.user_id = u.user_id
+        LEFT JOIN photo_tags pt ON p.photo_id = pt.photo_id
+        LEFT JOIN tags t ON pt.tag_id = t.tag_id
+        LEFT JOIN photo_favorites pf ON p.photo_id = pf.photo_id
+        LEFT JOIN pets pet ON p.pet_id = pet.pet_id
+        LEFT JOIN health_tracker ht ON pet.pet_id = ht.pet_id
+        WHERE p.user_id = ? 
+        AND p.is_public = 1
+        AND pet.pet_id IS NOT NULL
+        AND ht.health_id IS NOT NULL
+        ${healthCondition}
+        GROUP BY p.photo_id, u.username, u.profile_picture_url, 
+                 ht.weight, ht.vaccination_date, ht.next_vaccination_date, 
+                 ht.vet_visit_date, pet.name
+        ${orderByClause}
+        LIMIT ${numLimit} OFFSET ${numOffset}
+    `;
+
+    console.log('Health filter SQL:', sql);
+    console.log('Health filter params:', params);
+
+    try {
+        const photos = await query(sql, params);
+        
+        // Add is_favorited
+        for (const photo of photos) {
+            const favoriteCheck = await queryOne(
+                'SELECT 1 FROM photo_favorites WHERE photo_id = ? AND user_id = ?',
+                [photo.photo_id, userId]
+            );
+            photo.is_favorited = favoriteCheck ? 1 : 0;
+        }
+        
+        return photos;
+    } catch (error) {
+        console.error('Error in getPhotosByHealthStatus:', error);
+        return [];
+    }
+}
 };
 
 module.exports = photoModel;

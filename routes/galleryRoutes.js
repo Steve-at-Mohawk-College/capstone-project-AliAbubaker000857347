@@ -10,18 +10,22 @@ function requireAuth(req, res, next) {
     return res.redirect('/login');
 }
 
+// routes/galleryRoutes.js - Update the routes
+
 // Gallery homepage - public photos
 router.get('/', requireAuth, async (req, res) => {
     try {
         const page = Math.max(1, parseInt(req.query.page) || 1);
         const limit = 12;
+        const sortBy = req.query.sort || 'newest'; // Default to newest
+        
         const filters = {
             tag: req.query.tag,
             search: req.query.search,
             current_user_id: req.session.userId
         };
 
-        const photos = await photoModel.getPublicPhotos(page, limit, filters);
+        const photos = await photoModel.getPublicPhotos(page, limit, filters, sortBy);
         const popularTags = await photoModel.getPopularTags();
 
         res.render('gallery/index', {
@@ -31,6 +35,7 @@ router.get('/', requireAuth, async (req, res) => {
             currentPage: page,
             currentTag: req.query.tag,
             currentSearch: req.query.search,
+            currentSort: sortBy, // Pass current sort to template
             hasMore: photos.length === limit
         });
     } catch (error) {
@@ -48,13 +53,15 @@ router.get('/my-photos', requireAuth, async (req, res) => {
     try {
         const page = Math.max(1, parseInt(req.query.page) || 1);
         const limit = 12;
+        const sortBy = req.query.sort || 'newest'; // Default to newest
 
-        const photos = await photoModel.getUserPhotos(req.session.userId, page, limit);
+        const photos = await photoModel.getUserPhotos(req.session.userId, page, limit, sortBy);
 
         res.render('gallery/my-photos', {
             title: 'My Photos - Pet Care',
             photos,
             currentPage: page,
+            currentSort: sortBy, // Pass current sort to template
             hasMore: photos.length === limit
         });
     } catch (error) {
@@ -62,6 +69,65 @@ router.get('/my-photos', requireAuth, async (req, res) => {
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading your photos.',
+            error: process.env.NODE_ENV === 'development' ? error : {}
+        });
+    }
+});
+
+// Health-filtered gallery
+router.get('/health-status/:status', requireAuth, async (req, res) => {
+    try {
+        const healthStatus = req.params.status;
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = 12;
+        const sortBy = req.query.sort || 'newest'; // Default to newest
+        
+        const validStatuses = ['healthy', 'needs_vaccination', 'underweight', 'overweight', 'recent_vet_visit'];
+        
+        if (!validStatuses.includes(healthStatus)) {
+            return res.redirect('/gallery');
+        }
+
+        const filters = {
+            current_user_id: req.session.userId
+        };
+
+        const photos = await photoModel.getPhotosByHealthStatus(
+            req.session.userId, 
+            healthStatus, 
+            page, 
+            limit,
+            sortBy
+        );
+        
+        const popularTags = await photoModel.getPopularTags();
+        const healthSummary = await photoModel.getHealthStatusSummary(req.session.userId);
+
+        // Status labels for display
+        const statusLabels = {
+            'healthy': 'Healthy Pets',
+            'needs_vaccination': 'Needs Vaccination',
+            'underweight': 'Underweight Pets',
+            'overweight': 'Overweight Pets',
+            'recent_vet_visit': 'Recent Vet Visits'
+        };
+
+        res.render('gallery/health-gallery', {
+            title: `${statusLabels[healthStatus]} - Pet Care Gallery`,
+            photos,
+            popularTags,
+            healthSummary,
+            currentPage: page,
+            currentHealthStatus: healthStatus,
+            currentSort: sortBy, // Pass current sort to template
+            statusLabels,
+            hasMore: photos.length === limit
+        });
+    } catch (error) {
+        console.error('Health gallery error:', error);
+        res.status(500).render('error', {
+            title: 'Error',
+            message: 'Error loading health-filtered gallery.',
             error: process.env.NODE_ENV === 'development' ? error : {}
         });
     }
@@ -195,61 +261,6 @@ async function getUsersPets(userId) {
 }
 
 
-// Health-filtered gallery
-router.get('/health-status/:status', requireAuth, async (req, res) => {
-    try {
-        const healthStatus = req.params.status;
-        const page = Math.max(1, parseInt(req.query.page) || 1);
-        const limit = 12;
-        
-        const validStatuses = ['healthy', 'needs_vaccination', 'underweight', 'overweight', 'recent_vet_visit'];
-        
-        if (!validStatuses.includes(healthStatus)) {
-            return res.redirect('/gallery');
-        }
-
-        const filters = {
-            current_user_id: req.session.userId
-        };
-
-        const photos = await photoModel.getPhotosByHealthStatus(
-            req.session.userId, 
-            healthStatus, 
-            page, 
-            limit
-        );
-        
-        const popularTags = await photoModel.getPopularTags();
-        const healthSummary = await photoModel.getHealthStatusSummary(req.session.userId);
-
-        // Status labels for display
-        const statusLabels = {
-            'healthy': 'Healthy Pets',
-            'needs_vaccination': 'Needs Vaccination',
-            'underweight': 'Underweight Pets',
-            'overweight': 'Overweight Pets',
-            'recent_vet_visit': 'Recent Vet Visits'
-        };
-
-        res.render('gallery/health-gallery', {
-            title: `${statusLabels[healthStatus]} - Pet Care Gallery`,
-            photos,
-            popularTags,
-            healthSummary,
-            currentPage: page,
-            currentHealthStatus: healthStatus,
-            statusLabels,
-            hasMore: photos.length === limit
-        });
-    } catch (error) {
-        console.error('Health gallery error:', error);
-        res.status(500).render('error', {
-            title: 'Error',
-            message: 'Error loading health-filtered gallery.',
-            error: process.env.NODE_ENV === 'development' ? error : {}
-        });
-    }
-});
 
 // Health overview page
 router.get('/health-overview', requireAuth, async (req, res) => {

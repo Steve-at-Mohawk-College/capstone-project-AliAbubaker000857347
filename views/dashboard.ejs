@@ -8,7 +8,7 @@
   --light-card-hover: #e9ecef;
   --light-border: #dee2e6;
   --light-text: #212529;
-  --light-muted: #6c757d;
+   --light-muted: #495057; /* Improved contrast */
   --accent: #4361ee;
   --accent-hover: #3a56d4;
   --success: #28a745;
@@ -1194,6 +1194,111 @@ main, .main-content, .content {
     padding: 1rem 1.5rem;
   }
 }
+  /* FIXED: Improved contrast for all text elements */
+        .header-subtitle {
+            color: #495057 !important; /* Better contrast */
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+     
+        .stat-label {
+            color: #495057 !important; /* Better contrast */
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        
+          .task-description.text-muted {
+            color: #6c757d !important; /* Better contrast */
+        }
+
+        /* FIXED: Form labels with proper associations */
+        .form-label.small {
+            color: #495057 !important; /* Better contrast */
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        /* FIXED: Empty buttons with screen reader text */
+        .btn-edit, .btn-remove, .edit-task-btn {
+            position: relative;
+        }
+         .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* FIXED: Proper heading structure */
+        .filter-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .filter-group-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light-text);
+            margin-bottom: 1rem;
+        }
+
+        /* FIXED: Modal title */
+        #detailModalTitle:empty::before {
+            content: "Details";
+        }
+
+        /* Your existing styles remain the same below */
+        .dashboard-container {
+            min-height: 100vh;
+            padding: 1rem !important;
+            background: var(--light-bg);
+            margin-top: 0 !important;
+        }
+
+        .dashboard-header {
+            background: var(--light-card);
+            border: 1px solid var(--light-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            margin-top: 0 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ... rest of your existing CSS styles ... */
+
+        /* Dark theme overrides */
+        [data-theme="dark"] .header-subtitle {
+            color: #adb5bd !important;
+        }
+
+        [data-theme="dark"] .stat-label {
+            color: #adb5bd !important;
+        }
+
+        [data-theme="dark"] .task-description.text-muted {
+            color: #8a9bb0 !important;
+        }
+
+        [data-theme="dark"] .form-label.small {
+            color: #adb5bd !important;
+        }
 </style>
 
 <div class="dashboard-container">
@@ -1248,10 +1353,10 @@ main, .main-content, .content {
     <!-- Modern Filter System -->
     <div class="filter-section slide-in-right" style="animation-delay: 0.4s">
       <div class="filter-header">
-        <h3 class="filter-title">
+        <h2 class="filter-title">
           <i class="bi bi-funnel"></i>
           Advanced Filters
-        </h3>
+        </h2>
         <button class="btn btn-secondary btn-sm" id="clearAllFilters">
           <i class="bi bi-arrow-clockwise"></i> Reset
         </button>
@@ -1260,13 +1365,13 @@ main, .main-content, .content {
       <div class="row g-3">
         <!-- Pet Filters -->
         <div class="col-lg-6">
-          <h6 class="filter-group-title">
+          <h3 class="filter-group-title">
             <i class="bi bi-heart"></i>
             Pet Filters
-          </h6>
+          </h3>
           <div class="row g-2">
             <div class="col-md-6">
-              <label class="form-label small">Species</label>
+               <label for="filterSpecies" class="form-label small">Species</label> 
               <select class="form-select form-select-sm" id="filterSpecies">
                 <option value="">All Species</option>
                 <option value="dog">Dog</option>
@@ -1277,7 +1382,7 @@ main, .main-content, .content {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label small">Gender</label>
+              <label for="filterGender" class="form-label small">Gender</label> 
               <select class="form-select form-select-sm" id="filterGender">
                 <option value="">All Genders</option>
                 <option value="male">Male</option>
@@ -1286,13 +1391,13 @@ main, .main-content, .content {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label small">Min Age</label>
+              <label for="filterAgeMin" class="form-label small">Min Age</label> 
               <input type="number" step="0.1" min="0" max="50" 
                      class="form-control form-control-sm" 
                      id="filterAgeMin" placeholder="0">
             </div>
             <div class="col-md-6">
-              <label class="form-label small">Max Age</label>
+               <label for="filterAgeMax" class="form-label small">Max Age</label> 
               <input type="number" step="0.1" min="0" max="50" 
                      class="form-control form-control-sm" 
                      id="filterAgeMax" placeholder="50">
@@ -1302,13 +1407,13 @@ main, .main-content, .content {
 
         <!-- Task Filters -->
         <div class="col-lg-6">
-          <h6 class="filter-group-title">
+          <h3 class="filter-group-title">
             <i class="bi bi-list-task"></i>
             Task Filters
-          </h6>
+          </h3>
           <div class="row g-2">
             <div class="col-md-6">
-              <label class="form-label small">Priority</label>
+               <label for="filterPriority" class="form-label small">Priority</label>
               <select class="form-select form-select-sm" id="filterPriority">
                 <option value="">All Priorities</option>
                 <option value="high">High</option>
@@ -1317,7 +1422,7 @@ main, .main-content, .content {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label small">Task Type</label>
+              <label for="filterTaskType" class="form-label small">Task Type</label>
               <select class="form-select form-select-sm" id="filterTaskType">
                 <option value="">All Types</option>
                 <option value="feeding">Feeding</option>
@@ -1331,12 +1436,12 @@ main, .main-content, .content {
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label small">Due Date From</label>
+              <label for="filterDueDateFrom" class="form-label small">Due Date From</label>
               <input type="date" class="form-control form-control-sm" 
                      id="filterDueDateFrom">
             </div>
             <div class="col-md-6">
-              <label class="form-label small">Due Date To</label>
+              <label for="filterDueDateTo" class="form-label small">Due Date To</label>
               <input type="date" class="form-control form-control-sm" 
                      id="filterDueDateTo">
             </div>
@@ -1365,10 +1470,10 @@ main, .main-content, .content {
       <!-- Pets Section -->
       <div class="section-card slide-in-right" style="animation-delay: 0.5s">
         <div class="section-header">
-          <h3 class="section-title">
+          <h2 class="section-title">
             <i class="bi bi-heart-fill text-danger"></i>
             Your Pets
-          </h3>
+          </h2>
           <a href="/pets/add" class="btn btn-secondary btn-sm">
             <i class="bi bi-plus"></i>Add
           </a>
@@ -1389,7 +1494,7 @@ main, .main-content, .content {
                   <i class="bi bi-<%= pet.species === 'dog' ? 'heart' : pet.species === 'cat' ? 'star' : 'circle' %>-fill"></i>
                 </div>
                 <div class="pet-info">
-                  <h4 class="pet-name"><%= pet.name %></h4>
+                  <h3 class="pet-name"><%= pet.name %></h3>
                   <p class="pet-details">
                     <%= pet.breed || 'Unknown breed' %> • 
                     <% if (pet.age) { %>
@@ -1402,7 +1507,7 @@ main, .main-content, .content {
                 </div>
                 <div class="pet-actions">
                   <span class="badge me-2"><%= pet.gender || 'Unknown' %></span>
-                  <button class="btn btn-edit btn-sm edit-btn" data-pet-id="<%= pet.pet_id %>">
+                  <button class="btn btn-edit btn-sm edit-btn" data-pet-id="<%= pet.pet_id %>" aria-label="Edit <%= pet.name %>">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn btn-remove btn-sm remove-btn" 
@@ -1424,7 +1529,7 @@ main, .main-content, .content {
                              id="edit-age-<%= pet.pet_id %>" value="<%= pet.age %>">
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label small">Weight (kg)</label>
+                     <label for="edit-weight-<%= pet.pet_id %>" class="form-label small">Weight (kg)</label> 
                       <input type="number" step="0.1" min="0" max="200" 
                              class="form-control form-control-sm" 
                              id="edit-weight-<%= pet.pet_id %>" value="<%= pet.weight %>">
@@ -1480,7 +1585,7 @@ main, .main-content, .content {
               <div class="empty-icon">
                 <i class="bi bi-heart"></i>
               </div>
-              <h4>No Pets Registered</h4>
+              <h3>No Pets Registered</h3>
               <p class="mb-3">Begin by adding your first pet to the system</p>
               <a href="/pets/add" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Register First Pet
@@ -1493,10 +1598,10 @@ main, .main-content, .content {
       <!-- Tasks Section -->
       <div class="section-card slide-in-right" style="animation-delay: 0.6s">
         <div class="section-header">
-          <h3 class="section-title">
+          <h2 class="section-title">
             <i class="bi bi-calendar-check text-warning"></i>
             Upcoming Tasks
-          </h3>
+          </h2>
           <a href="/schedule-task" class="btn btn-secondary btn-sm">
             <i class="bi bi-plus"></i>Add
           </a>
@@ -1544,26 +1649,26 @@ main, .main-content, .content {
             <!-- Edit Form for Task -->
             <div id="edit-task-form-<%= task.task_id %>" class="edit-task-form" style="display: none;">
               <div class="edit-form-content p-3 rounded border">
-                <h5 class="mb-3">Edit Task</h5>
+                <h4 class="mb-3">Edit Task</h4>
                 <form class="row g-2">
                   <div class="col-12">
-                    <label class="form-label small">Title</label>
+                    <label for="edit-task-title-<%= task.task_id %>" class="form-label small">Title</label> 
                     <input type="text" class="form-control form-control-sm" 
                            id="edit-task-title-<%= task.task_id %>" value="<%= task.title %>">
                   </div>
                   <div class="col-12">
-                    <label class="form-label small">Description</label>
+                     <label for="edit-task-description-<%= task.task_id %>" class="form-label small">Description</label> 
                     <textarea class="form-control form-control-sm" 
                               id="edit-task-description-<%= task.task_id %>" rows="2"><%= task.description %></textarea>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label small">Due Date</label>
+                     <label for="edit-task-due-date-<%= task.task_id %>" class="form-label small">Due Date</label> 
                     <input type="datetime-local" class="form-control form-control-sm" 
                            id="edit-task-due-date-<%= task.task_id %>" 
                            value="<%= new Date(task.due_date).toISOString().slice(0, 16) %>">
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label small">Priority</label>
+                    <label for="edit-task-priority-<%= task.task_id %>" class="form-label small">Priority</label>
                     <select class="form-select form-select-sm" 
                             id="edit-task-priority-<%= task.task_id %>">
                       <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
@@ -1622,7 +1727,7 @@ main, .main-content, .content {
             <div class="empty-icon">
               <i class="bi bi-calendar-x"></i>
             </div>
-            <h4>No Tasks Scheduled</h4>
+            <h3>No Tasks Scheduled</h3>
             <p class="mb-3">Create your first care schedule</p>
             <a href="/schedule-task" class="btn btn-primary">
               <i class="bi bi-calendar-plus me-2"></i>Schedule Task
@@ -1634,10 +1739,10 @@ main, .main-content, .content {
 
     <!-- Quick Actions -->
     <div class="section-card slide-in-right" style="animation-delay: 0.8s">
-      <h3 class="section-title mb-4">
+      <h2 class="section-title mb-4">
         <i class="bi bi-lightning-charge text-info"></i>
         Quick Actions
-      </h3>
+      </h2>
       <div class="quick-actions">
         <a href="/pets/add" class="action-btn">
           <i class="bi bi-plus-circle action-icon"></i>
@@ -1666,7 +1771,7 @@ main, .main-content, .content {
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Confirm Removal</h5>
+        <h3 class="modal-title">Confirm Removal</h3>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -1684,7 +1789,7 @@ main, .main-content, .content {
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="detailModalTitle"></h5>
+        <h3 class="modal-title" id="detailModalTitle">Details</h3> 
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
       </div>
       <div class="modal-body" id="detailModalBody">

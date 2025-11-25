@@ -32,6 +32,46 @@
             width: 100%;
             object-fit: cover;
         }
+        /* ===== FIX MOBILE HEADING POSITION ===== */
+.container.mt-4 {
+    margin-top: 2rem !important;
+}
+
+/* For smaller mobile devices */
+@media (max-width: 576px) {
+    .container.mt-4 {
+        margin-top: 4rem !important;
+    }
+    
+    .row.mb-4 {
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
+    }
+    
+    .breadcrumb {
+        margin-top: 0.5rem !important;
+    }
+    
+    h1 {
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* For medium devices */
+@media (max-width: 768px) {
+    .row.mb-4 {
+        margin-top: 0.5rem !important;
+    }
+    
+    .col-md-4.text-end {
+        text-align: left !important;
+        margin-top: 1rem;
+    }
+    
+    .col-md-4.text-end .btn {
+        margin-bottom: 0.5rem;
+    }
+}
     </style>
 </head>
 <body>

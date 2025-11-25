@@ -34,6 +34,37 @@
             font-weight: bold;
             margin-bottom: 0;
         }
+        /* ===== FIX MOBILE HEADING POSITION ===== */
+.container.mt-4 {
+    margin-top: 2rem !important;
+}
+
+/* For smaller mobile devices */
+@media (max-width: 576px) {
+    .container.mt-4 {
+        margin-top: 5rem !important;
+    }
+    
+    .row.mb-4 {
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
+    }
+    
+    .breadcrumb {
+        margin-top: 0.5rem !important;
+    }
+    
+    h1 {
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* For medium devices */
+@media (max-width: 768px) {
+    .row.mb-4 {
+        margin-top: 0.5rem !important;
+    }
+}
     </style>
 </head>
 <body>

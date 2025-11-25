@@ -161,54 +161,55 @@ const photoModel = {
         return result.insertId;
     },
 
-    // In your photoModel.js - update the updatePhoto method
-async updatePhoto(photoId, userId, updates) {
-    const allowedFields = ['title', 'description', 'is_public', 'pet_id'];
-    const setClause = [];
-    const params = [];
-    
-    console.log('Updating photo with:', updates);
-    
-    allowedFields.forEach(field => {
-        if (updates[field] !== undefined) {
-            setClause.push(`${field} = ?`);
-            
-            // Handle boolean conversion for is_public
-            if (field === 'is_public') {
-                let value = updates[field];
-                if (typeof value === 'boolean') {
-                    params.push(value ? 1 : 0);
-                } else if (typeof value === 'string') {
-                    params.push(value === 'true' || value === '1' ? 1 : 0);
+    // Update photo
+    async updatePhoto(photoId, userId, updates) {
+        const allowedFields = ['title', 'description', 'is_public', 'pet_id'];
+        const setClause = [];
+        const params = [];
+        
+        console.log('Updating photo with:', updates);
+        
+        allowedFields.forEach(field => {
+            if (updates[field] !== undefined) {
+                setClause.push(`${field} = ?`);
+                
+                // Handle boolean conversion for is_public
+                if (field === 'is_public') {
+                    let value = updates[field];
+                    if (typeof value === 'boolean') {
+                        params.push(value ? 1 : 0);
+                    } else if (typeof value === 'string') {
+                        params.push(value === 'true' || value === '1' ? 1 : 0);
+                    } else {
+                        params.push(value ? 1 : 0);
+                    }
+                    console.log(`is_public field: ${value} -> ${params[params.length-1]}`);
                 } else {
-                    params.push(value ? 1 : 0);
+                    params.push(updates[field]);
                 }
-                console.log(`is_public field: ${value} -> ${params[params.length-1]}`);
-            } else {
-                params.push(updates[field]);
             }
+        });
+        
+        if (setClause.length === 0) {
+            throw new Error('No valid fields to update');
         }
-    });
-    
-    if (setClause.length === 0) {
-        throw new Error('No valid fields to update');
-    }
-    
-    params.push(photoId, userId);
-    
-    const sql = `UPDATE photos SET ${setClause.join(', ')} WHERE photo_id = ? AND user_id = ?`;
-    
-    console.log('Executing SQL:', sql);
-    console.log('With params:', params);
-    
-    const result = await query(sql, params);
-    
-    if (result.affectedRows === 0) {
-        throw new Error('Photo not found or access denied');
-    }
-    
-    return result;
-},
+        
+        params.push(photoId, userId);
+        
+        const sql = `UPDATE photos SET ${setClause.join(', ')} WHERE photo_id = ? AND user_id = ?`;
+        
+        console.log('Executing SQL:', sql);
+        console.log('With params:', params);
+        
+        const result = await query(sql, params);
+        
+        if (result.affectedRows === 0) {
+            throw new Error('Photo not found or access denied');
+        }
+        
+        return result;
+    },
+
     // Delete photo
     async deletePhoto(photoId, userId) {
         const sql = 'DELETE FROM photos WHERE photo_id = ? AND user_id = ?';
@@ -295,11 +296,10 @@ async updatePhoto(photoId, userId, updates) {
         return result.count;
     },
 
-    // Get popular tags - FIXED VERSION
+    // Get popular tags
     async getPopularTags(limit = 20) {
         const numLimit = parseInt(limit);
         
-        // Use direct value in LIMIT to avoid prepared statement issues
         const sql = `
             SELECT t.tag_name, COUNT(pt.photo_tag_id) as usage_count
             FROM tags t
@@ -317,7 +317,7 @@ async updatePhoto(photoId, userId, updates) {
         } catch (error) {
             console.error('Error in getPopularTags:', error);
             
-            // Fallback: try without GROUP BY if that's causing issues
+            // Fallback
             const fallbackSql = `
                 SELECT t.tag_name, COUNT(*) as usage_count
                 FROM tags t
@@ -330,6 +330,151 @@ async updatePhoto(photoId, userId, updates) {
             
             console.log('Trying fallback query for popular tags');
             return await query(fallbackSql);
+        }
+    },
+
+    // Get photos filtered by health status - FIXED VERSION
+    async getPhotosByHealthStatus(userId, healthStatus, page = 1, limit = 12) {
+        const offset = (page - 1) * limit;
+        const numLimit = parseInt(limit);
+        const numOffset = parseInt(offset);
+
+        let healthCondition = '';
+        const params = [userId];
+
+        // Fixed health status conditions
+        switch (healthStatus) {
+            case 'healthy':
+                healthCondition = `
+                    AND (ht.weight IS NOT NULL AND ht.weight BETWEEN 1 AND 200)
+                    AND (ht.vaccination_date IS NULL OR ht.vaccination_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+                    AND (ht.next_vaccination_date IS NULL OR ht.next_vaccination_date >= CURDATE())
+                `;
+                break;
+            case 'needs_vaccination':
+                healthCondition = `
+                    AND (ht.vaccination_date IS NULL OR ht.vaccination_date < DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+                    AND (ht.next_vaccination_date IS NULL OR ht.next_vaccination_date < CURDATE())
+                `;
+                break;
+            case 'underweight':
+                healthCondition = 'AND ht.weight IS NOT NULL AND ht.weight < 1';
+                break;
+            case 'overweight':
+                healthCondition = 'AND ht.weight IS NOT NULL AND ht.weight > 200';
+                break;
+            case 'recent_vet_visit':
+                healthCondition = 'AND ht.vet_visit_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)';
+                break;
+            default:
+                healthCondition = '';
+        }
+
+        // Fixed SQL query - simplified and corrected
+        const sql = `
+            SELECT DISTINCT 
+                p.*,
+                u.username,
+                u.profile_picture_url,
+                COALESCE(GROUP_CONCAT(DISTINCT t.tag_name), '') as tags,
+                COALESCE(COUNT(DISTINCT pf.favorite_id), 0) as favorite_count,
+                ht.weight,
+                ht.vaccination_date,
+                ht.next_vaccination_date,
+                ht.vet_visit_date,
+                pet.name as pet_name
+            FROM photos p
+            INNER JOIN users u ON p.user_id = u.user_id
+            LEFT JOIN photo_tags pt ON p.photo_id = pt.photo_id
+            LEFT JOIN tags t ON pt.tag_id = t.tag_id
+            LEFT JOIN photo_favorites pf ON p.photo_id = pf.photo_id
+            LEFT JOIN pets pet ON p.pet_id = pet.pet_id
+            LEFT JOIN health_tracker ht ON pet.pet_id = ht.pet_id
+            WHERE p.user_id = ? 
+            AND p.is_public = 1
+            AND pet.pet_id IS NOT NULL
+            AND ht.health_id IS NOT NULL
+            ${healthCondition}
+            GROUP BY p.photo_id, u.username, u.profile_picture_url, 
+                     ht.weight, ht.vaccination_date, ht.next_vaccination_date, 
+                     ht.vet_visit_date, pet.name
+            ORDER BY p.created_at DESC
+            LIMIT ${numLimit} OFFSET ${numOffset}
+        `;
+
+        console.log('Health filter SQL:', sql);
+        console.log('Health filter params:', params);
+
+        try {
+            const photos = await query(sql, params);
+            
+            // Add is_favorited
+            for (const photo of photos) {
+                const favoriteCheck = await queryOne(
+                    'SELECT 1 FROM photo_favorites WHERE photo_id = ? AND user_id = ?',
+                    [photo.photo_id, userId]
+                );
+                photo.is_favorited = favoriteCheck ? 1 : 0;
+            }
+            
+            return photos;
+        } catch (error) {
+            console.error('Error in getPhotosByHealthStatus:', error);
+            
+            // Return empty array instead of throwing error for better UX
+            return [];
+        }
+    },
+
+    // Get health status summary for a user's pets - FIXED VERSION
+    async getHealthStatusSummary(userId) {
+        const sql = `
+            SELECT 
+                COUNT(DISTINCT pet.pet_id) as total_pets,
+                SUM(CASE 
+                    WHEN ht.weight BETWEEN 1 AND 200 
+                    AND (ht.vaccination_date IS NULL OR ht.vaccination_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+                    AND (ht.next_vaccination_date IS NULL OR ht.next_vaccination_date >= CURDATE())
+                    THEN 1 ELSE 0 
+                END) as healthy_pets,
+                SUM(CASE WHEN ht.weight < 1 THEN 1 ELSE 0 END) as underweight_pets,
+                SUM(CASE WHEN ht.weight > 200 THEN 1 ELSE 0 END) as overweight_pets,
+                SUM(CASE 
+                    WHEN ht.vaccination_date < DATE_SUB(CURDATE(), INTERVAL 1 YEAR) 
+                    OR ht.next_vaccination_date < CURDATE() 
+                    THEN 1 ELSE 0 
+                END) as needs_vaccination_pets,
+                SUM(CASE WHEN ht.vet_visit_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as recent_vet_visit_pets
+            FROM pets pet
+            LEFT JOIN health_tracker ht ON pet.pet_id = ht.pet_id
+            WHERE pet.user_id = ?
+            AND ht.health_id IS NOT NULL
+        `;
+
+        try {
+            const result = await queryOne(sql, [userId]);
+            
+            // Ensure all values are numbers and handle null cases
+            return {
+                total_pets: parseInt(result?.total_pets || 0),
+                healthy_pets: parseInt(result?.healthy_pets || 0),
+                underweight_pets: parseInt(result?.underweight_pets || 0),
+                overweight_pets: parseInt(result?.overweight_pets || 0),
+                needs_vaccination_pets: parseInt(result?.needs_vaccination_pets || 0),
+                recent_vet_visit_pets: parseInt(result?.recent_vet_visit_pets || 0)
+            };
+        } catch (error) {
+            console.error('Error in getHealthStatusSummary:', error);
+            
+            // Return default values instead of throwing error
+            return {
+                total_pets: 0,
+                healthy_pets: 0,
+                underweight_pets: 0,
+                overweight_pets: 0,
+                needs_vaccination_pets: 0,
+                recent_vet_visit_pets: 0
+            };
         }
     },
 

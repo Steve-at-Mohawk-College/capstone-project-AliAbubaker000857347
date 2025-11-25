@@ -1,18 +1,8 @@
-
-
-
-
 const express = require('express');
 const router = express.Router();
-
-
-
-
-
-// const { uploadSingle, uploadMultiple } = require('../config/upload');
 const photoModel = require('../models/photoModel');
 const { query } = require('../config/database');
-const { uploadGallery } = require('../config/upload-cloudinary'); 
+const { uploadGallery } = require('../config/upload-cloudinary');
 
 // Middleware
 function requireAuth(req, res, next) {
@@ -78,23 +68,21 @@ router.get('/my-photos', requireAuth, async (req, res) => {
 });
 
 // Upload photo page
-
 router.get('/upload', requireAuth, async (req, res) => {
     try {
-        // Get user's pets for tagging
         let pets = [];
         try {
             pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
         } catch (dbError) {
             console.error('Error fetching pets:', dbError);
-            // Continue with empty pets array
         }
         
         res.render('gallery/upload', {
             title: 'Upload Photo - Pet Care',
             pets,
             error: null,
-            formData: {}
+            formData: {},
+            isAdmin: req.session?.role === 'admin'
         });
     } catch (error) {
         console.error('Upload form error:', error);
@@ -106,176 +94,183 @@ router.get('/upload', requireAuth, async (req, res) => {
     }
 });
 
-
-// // Handle photo upload (single for regular users)
-// router.post('/upload', requireAuth, upload.single('photo'), async (req, res) => {
-//     try {
-//         if (!req.file) {
-//             return res.status(400).render('gallery/upload', {
-//                 title: 'Upload Photo - Pet Care',
-//                 pets: await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]),
-//                 error: 'Please select a photo to upload.',
-//                 formData: req.body
-//             });
-//         }
-
-//         const { title, description, is_public, pet_id, tags } = req.body;
-        
-//         // Create photo record
-//         const photoId = await photoModel.createPhoto({
-//             user_id: req.session.userId,
-//             pet_id: pet_id || null,
-//             photo_url: `/uploads/profile-pictures/${req.file.filename}`,
-//             title: title || 'Untitled',
-//             description: description || '',
-//             is_public: is_public === 'on' ? 1 : 0
-//         });
-
-//         // Process tags
-//         if (tags) {
-//             const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-//             for (const tagName of tagList) {
-//                 try {
-//                     await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
-//                 } catch (tagError) {
-//                     console.log('Tag error (non-critical):', tagError.message);
-//                 }
-//             }
-//         }
-
-//         res.redirect('/gallery/my-photos?message=Photo uploaded successfully!');
-//     } catch (error) {
-//         console.error('Upload error:', error);
-//         res.status(500).render('gallery/upload', {
-//             title: 'Upload Photo - Pet Care',
-//             pets: await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]),
-//             error: 'Error uploading photo: ' + error.message,
-//             formData: req.body
-//         });
-//     }
-// });
-
-
+// Handle photo upload - SIMPLIFIED VERSION
 router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
     try {
-        console.log("Gallery upload - Cloudinary result:", req.cloudinaryResult);
-        console.log("Gallery upload - File:", req.file);
-
-        if (!req.cloudinaryResult) {
-            return res.status(400).render('gallery/upload', {
-                title: 'Upload Photo - Pet Care',
-                pets: await getUsersPets(req.session.userId),
-                error: 'Please select a photo to upload or upload failed.',
-                formData: req.body
-            });
+        const isAdmin = req.session?.role === 'admin';
+        
+        // Check if files were uploaded
+        if (isAdmin && (!req.cloudinaryResults || req.cloudinaryResults.length === 0)) {
+            return renderUploadError(res, 'Please select photos to upload.', req.body);
+        }
+        
+        if (!isAdmin && !req.cloudinaryResult) {
+            return renderUploadError(res, 'Please select a photo to upload.', req.body);
         }
 
         const { title, description, is_public, pet_id, tags } = req.body;
-        
-        // Get Cloudinary URL from the new approach
-        const photoUrl = req.cloudinaryResult.secure_url;
-        
-        console.log('Uploaded photo URL:', photoUrl);
 
-        // Create photo record
-        const photoId = await photoModel.createPhoto({
-            user_id: req.session.userId,
-            pet_id: pet_id || null,
-            photo_url: photoUrl, // Cloudinary URL
-            title: title || 'Untitled',
-            description: description || '',
-            is_public: is_public === 'on' ? 1 : 0
-        });
+        if (isAdmin) {
+            // Handle admin multiple upload
+            let successCount = 0;
+            let errorCount = 0;
 
-        // Process tags
-        if (tags) {
-            const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-            for (const tagName of tagList) {
+            for (const cloudinaryResult of req.cloudinaryResults) {
                 try {
-                    await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
-                } catch (tagError) {
-                    console.log('Tag error (non-critical):', tagError.message);
+                    const photoId = await photoModel.createPhoto({
+                        user_id: req.session.userId,
+                        pet_id: pet_id || null,
+                        photo_url: cloudinaryResult.secure_url,
+                        title: title || `Admin Upload ${successCount + 1}`,
+                        description: description || '',
+                        is_public: is_public === 'on' ? 1 : 0
+                    });
+
+                    await processTags(photoId, tags, req.session.userId);
+                    successCount++;
+                } catch (photoError) {
+                    console.error('Error creating photo record:', photoError);
+                    errorCount++;
                 }
             }
-        }
 
-        res.redirect('/gallery/my-photos?message=Photo uploaded successfully!');
+            const message = `Uploaded ${successCount} photos successfully${errorCount > 0 ? ` (${errorCount} failed)` : ''}`;
+            res.redirect(`/gallery/my-photos?message=${encodeURIComponent(message)}`);
+        } else {
+            // Handle regular user single upload
+            const photoUrl = req.cloudinaryResult.secure_url;
+
+            const photoId = await photoModel.createPhoto({
+                user_id: req.session.userId,
+                pet_id: pet_id || null,
+                photo_url: photoUrl,
+                title: title || 'Untitled',
+                description: description || '',
+                is_public: is_public === 'on' ? 1 : 0
+            });
+
+            await processTags(photoId, tags, req.session.userId);
+            res.redirect('/gallery/my-photos?message=Photo uploaded successfully!');
+        }
     } catch (error) {
         console.error('Upload error:', error);
-        res.status(500).render('gallery/upload', {
-            title: 'Upload Photo - Pet Care',
-            pets: await getUsersPets(req.session.userId),
-            error: 'Error uploading photo: ' + error.message,
-            formData: req.body
+        renderUploadError(res, 'Error uploading photo: ' + error.message, req.body);
+    }
+});
+
+// Helper function to process tags
+async function processTags(photoId, tags, userId) {
+    if (tags) {
+        const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        for (const tagName of tagList) {
+            try {
+                await photoModel.addTagToPhoto(photoId, tagName, userId);
+            } catch (tagError) {
+                console.log('Tag error (non-critical):', tagError.message);
+            }
+        }
+    }
+}
+
+// Helper function to render upload error page
+async function renderUploadError(res, errorMessage, formData = {}) {
+    const pets = await getUsersPets(res.locals.userId);
+    res.status(500).render('gallery/upload', {
+        title: 'Upload Photo - Pet Care',
+        pets,
+        error: errorMessage,
+        formData,
+        isAdmin: res.locals.role === 'admin'
+    });
+}
+
+// Helper function to get user's pets
+async function getUsersPets(userId) {
+    try {
+        return await query('SELECT * FROM pets WHERE user_id = ?', [userId]);
+    } catch (error) {
+        console.error('Error fetching pets:', error);
+        return [];
+    }
+}
+
+
+// Health-filtered gallery
+router.get('/health-status/:status', requireAuth, async (req, res) => {
+    try {
+        const healthStatus = req.params.status;
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = 12;
+        
+        const validStatuses = ['healthy', 'needs_vaccination', 'underweight', 'overweight', 'recent_vet_visit'];
+        
+        if (!validStatuses.includes(healthStatus)) {
+            return res.redirect('/gallery');
+        }
+
+        const filters = {
+            current_user_id: req.session.userId
+        };
+
+        const photos = await photoModel.getPhotosByHealthStatus(
+            req.session.userId, 
+            healthStatus, 
+            page, 
+            limit
+        );
+        
+        const popularTags = await photoModel.getPopularTags();
+        const healthSummary = await photoModel.getHealthStatusSummary(req.session.userId);
+
+        // Status labels for display
+        const statusLabels = {
+            'healthy': 'Healthy Pets',
+            'needs_vaccination': 'Needs Vaccination',
+            'underweight': 'Underweight Pets',
+            'overweight': 'Overweight Pets',
+            'recent_vet_visit': 'Recent Vet Visits'
+        };
+
+        res.render('gallery/health-gallery', {
+            title: `${statusLabels[healthStatus]} - Pet Care Gallery`,
+            photos,
+            popularTags,
+            healthSummary,
+            currentPage: page,
+            currentHealthStatus: healthStatus,
+            statusLabels,
+            hasMore: photos.length === limit
+        });
+    } catch (error) {
+        console.error('Health gallery error:', error);
+        res.status(500).render('error', {
+            title: 'Error',
+            message: 'Error loading health-filtered gallery.',
+            error: process.env.NODE_ENV === 'development' ? error : {}
+        });
+    }
+});
+
+// Health overview page
+router.get('/health-overview', requireAuth, async (req, res) => {
+    try {
+        const healthSummary = await photoModel.getHealthStatusSummary(req.session.userId);
+        
+        res.render('gallery/health-overview', {
+            title: 'Pet Health Overview - Gallery',
+            healthSummary
+        });
+    } catch (error) {
+        console.error('Health overview error:', error);
+        res.status(500).render('error', {
+            title: 'Error',
+            message: 'Error loading health overview.',
+            error: process.env.NODE_ENV === 'development' ? error : {}
         });
     }
 });
 
 
-
-// async function handlePhotoUpload(req, res) {
-//     try {
-//         if (!req.file) {
-//             return res.status(400).render('gallery/upload', {
-//                 title: 'Upload Photo - Pet Care',
-//                 pets: await getUsersPets(req.session.userId),
-//                 error: 'Please select a photo to upload.',
-//                 formData: req.body
-//             });
-//         }
-
-//         const { title, description, is_public, pet_id, tags } = req.body;
-        
-//         // Create photo record
-//         const photoId = await photoModel.createPhoto({
-//             user_id: req.session.userId,
-//             pet_id: pet_id || null,
-//             photo_url: `/uploads/gallery/${req.file.filename}`, // Note: gallery directory
-//             title: title || 'Untitled',
-//             description: description || '',
-//             is_public: is_public === 'on' ? 1 : 0
-//         });
-
-//         // Process tags
-//         if (tags) {
-//             const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-//             for (const tagName of tagList) {
-//                 try {
-//                     await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
-//                 } catch (tagError) {
-//                     console.log('Tag error (non-critical):', tagError.message);
-//                 }
-//             }
-//         }
-
-//         res.redirect('/gallery/my-photos?message=Photo uploaded successfully!');
-//     } catch (error) {
-//         console.error('Upload error:', error);
-//         res.status(500).render('gallery/upload', {
-//             title: 'Upload Photo - Pet Care',
-//             pets: await getUsersPets(req.session.userId),
-//             error: 'Error uploading photo: ' + error.message,
-//             formData: req.body
-//         });
-//     }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Helper function to get user's pets
-async function getUsersPets(userId) {
-    return await query('SELECT * FROM pets WHERE user_id = ?', [userId]);
-}
 
 
 

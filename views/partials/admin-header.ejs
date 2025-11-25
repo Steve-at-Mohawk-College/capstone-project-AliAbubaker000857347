@@ -116,7 +116,24 @@
                 justify-content: center;
                 margin: 0.5rem 0;
             }
+             .navbar-toggler {
+    display: block !important;
+  }
         }
+
+        /* Hide navbar-toggler on desktop screens */
+@media (min-width: 992px) {
+  .navbar-toggler {
+    display: none !important;
+  }
+}
+
+/* Show navbar-toggler only on mobile */
+@media (max-width: 991.98px) {
+  .navbar-toggler {
+    display: block !important;
+  }
+}
     </style>
 </head>
 <body>

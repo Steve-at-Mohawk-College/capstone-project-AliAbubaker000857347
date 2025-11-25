@@ -190,5 +190,16 @@ npm run test:runners:all
 For browser demos: npm run cypress:open
 
 ==================================================
-Last Updated: $(date)
+Last Updated: 11/24/2025
 ==================================================
+
+Jest is in your devDependencies, use npx to run it:
+
+# Run unit tests
+npx jest tests/unit/ --verbose
+
+# Run integration tests
+npx jest tests/integration/ --verbose --testTimeout=30000
+
+# Run specific test
+npx jest tests/unit/models/ --verbose

@@ -51,6 +51,18 @@
         .card-img-top {
             max-height: 900px;
         }
+        .health-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+.health-healthy { background-color: #28a745; }
+.health-needs_vaccination { background-color: #ffc107; }
+.health-underweight { background-color: #17a2b8; }
+.health-overweight { background-color: #fd7e14; }
+.health-recent_vet_visit { background-color: #6f42c1; }
     </style>
 </head>
 <body>
@@ -73,19 +85,52 @@
             </div>
         </div>
 
-        <!-- Search and Filters -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <form class="d-flex">
-                    <input type="text" name="search" class="form-control me-2" 
-                           placeholder="Search photos..." value="<%= currentSearch || '' %>">
-                    <button type="submit" class="btn btn-outline-primary">Search</button>
-                    <% if (currentSearch || currentTag) { %>
-                        <a href="/gallery" class="btn btn-outline-secondary ms-2">Clear</a>
-                    <% } %>
-                </form>
+       
+
+        <!-- Health Status Filter -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form class="d-flex">
+            <input type="text" name="search" class="form-control me-2" 
+                   placeholder="Search photos..." value="<%= currentSearch || '' %>">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+            <% if (currentSearch || currentTag) { %>
+                <a href="/gallery" class="btn btn-outline-secondary ms-2">Clear</a>
+            <% } %>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex justify-content-end">
+            <div class="dropdown">
+                <button class="btn btn-outline-info dropdown-toggle" type="button" 
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-heart-pulse"></i> Filter by Health Status
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/gallery/health-overview">
+                        <i class="bi bi-grid-3x3-gap"></i> Health Overview
+                    </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/gallery/health-status/healthy">
+                        <span class="health-indicator health-healthy"></span> Healthy Pets
+                    </a></li>
+                    <li><a class="dropdown-item" href="/gallery/health-status/needs_vaccination">
+                        <span class="health-indicator health-needs_vaccination"></span> Needs Vaccination
+                    </a></li>
+                    <li><a class="dropdown-item" href="/gallery/health-status/underweight">
+                        <span class="health-indicator health-underweight"></span> Underweight
+                    </a></li>
+                    <li><a class="dropdown-item" href="/gallery/health-status/overweight">
+                        <span class="health-indicator health-overweight"></span> Overweight
+                    </a></li>
+                    <li><a class="dropdown-item" href="/gallery/health-status/recent_vet_visit">
+                        <span class="health-indicator health-recent_vet_visit"></span> Recent Vet Visits
+                    </a></li>
+                </ul>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- Popular Tags -->
         <% if (popularTags.length > 0) { %>

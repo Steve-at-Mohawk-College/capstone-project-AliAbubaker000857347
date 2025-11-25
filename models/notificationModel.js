@@ -90,6 +90,10 @@ class NotificationModel {
     `;
     return query(sql, [userId, userId]);
   }
+
+  
 }
+
+
 
 module.exports = new NotificationModel();

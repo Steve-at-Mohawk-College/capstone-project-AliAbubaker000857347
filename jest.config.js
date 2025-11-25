@@ -3,7 +3,7 @@ module.exports = {
   testMatch: [
     '**/tests/unit/**/*.test.js',
     '**/tests/integration/**/*.test.js',
-    '**/tests/legacy/**/*.test.js'  // Add this line
+    '**/tests/legacy/**/*.test.js'
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
@@ -14,5 +14,9 @@ module.exports = {
   ],
   verbose: true,
   testTimeout: 30000,
-  setupFilesAfterEnv: ['<rootDir>/tests/helpers/setup.js']
+  setupFilesAfterEnv: ['<rootDir>/tests/helpers/setup.js'],
+
+  watch: false,
+  watchAll: false,
+  watchman: false
 };

@@ -1,5 +1,4 @@
-Step 1: Prepare for Deployment
-cmd
+
 # Remove Cypress to avoid deployment conflicts
 npm uninstall cypress
 
@@ -12,8 +11,7 @@ copy package-heroku.json package.json
 git add package.json package-lock.json
 git add .
 git commit -m "Deploy: Remove Cypress for production"
-Step 2: Deploy to Heroku
-cmd
+
 # Push to Heroku
 git push heroku main
 

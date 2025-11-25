@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .health-card {
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .health-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .health-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .health-healthy { background-color: #28a745; }
+        .health-needs_vaccination { background-color: #ffc107; }
+        .health-underweight { background-color: #17a2b8; }
+        .health-overweight { background-color: #fd7e14; }
+        .health-recent_vet_visit { background-color: #6f42c1; }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/gallery">Gallery</a></li>
+                        <li class="breadcrumb-item active">Health Overview</li>
+                    </ol>
+                </nav>
+                <h1><i class="bi bi-heart-pulse text-danger"></i> Pet Health Overview</h1>
+                <p class="text-muted">View photos filtered by your pets' health status</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/gallery" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Gallery
+                </a>
+            </div>
+        </div>
+
+        <!-- Health Status Cards -->
+        <div class="row">
+            <!-- Healthy Pets -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card health-card h-100">
+                    <div class="card-body text-center">
+                        <span class="health-indicator health-healthy"></span>
+                        <h5 class="card-title">Healthy Pets</h5>
+                        <p class="stat-number text-success"><%= healthSummary.healthy_pets || 0 %></p>
+                        <p class="card-text text-muted">Pets with normal weight and up-to-date vaccinations</p>
+                        <a href="/gallery/health-status/healthy" class="btn btn-success">
+                            <i class="bi bi-eye"></i> View Photos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Needs Vaccination -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card health-card h-100">
+                    <div class="card-body text-center">
+                        <span class="health-indicator health-needs_vaccination"></span>
+                        <h5 class="card-title">Needs Vaccination</h5>
+                        <p class="stat-number text-warning"><%= healthSummary.needs_vaccination_pets || 0 %></p>
+                        <p class="card-text text-muted">Pets with overdue or upcoming vaccinations</p>
+                        <a href="/gallery/health-status/needs_vaccination" class="btn btn-warning">
+                            <i class="bi bi-eye"></i> View Photos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Underweight -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card health-card h-100">
+                    <div class="card-body text-center">
+                        <span class="health-indicator health-underweight"></span>
+                        <h5 class="card-title">Underweight</h5>
+                        <p class="stat-number text-info"><%= healthSummary.underweight_pets || 0 %></p>
+                        <p class="card-text text-muted">Pets weighing less than 1kg</p>
+                        <a href="/gallery/health-status/underweight" class="btn btn-info">
+                            <i class="bi bi-eye"></i> View Photos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overweight -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card health-card h-100">
+                    <div class="card-body text-center">
+                        <span class="health-indicator health-overweight"></span>
+                        <h5 class="card-title">Overweight</h5>
+                        <p class="stat-number text-orange"><%= healthSummary.overweight_pets || 0 %></p>
+                        <p class="card-text text-muted">Pets weighing more than 200kg</p>
+                        <a href="/gallery/health-status/overweight" class="btn btn-orange" style="background-color: #fd7e14; color: white;">
+                            <i class="bi bi-eye"></i> View Photos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Vet Visits -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card health-card h-100">
+                    <div class="card-body text-center">
+                        <span class="health-indicator health-recent_vet_visit"></span>
+                        <h5 class="card-title">Recent Vet Visits</h5>
+                        <p class="stat-number text-purple"><%= healthSummary.recent_vet_visit_pets || 0 %></p>
+                        <p class="card-text text-muted">Pets with vet visits in last 30 days</p>
+                        <a href="/gallery/health-status/recent_vet_visit" class="btn btn-purple" style="background-color: #6f42c1; color: white;">
+                            <i class="bi bi-eye"></i> View Photos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Pets -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card health-card h-100 bg-light">
+                    <div class="card-body text-center">
+                        <i class="bi bi-pets display-4 text-primary"></i>
+                        <h5 class="card-title mt-2">Total Pets Tracked</h5>
+                        <p class="stat-number text-primary"><%= healthSummary.total_pets || 0 %></p>
+                        <p class="card-text text-muted">Pets with health records in the system</p>
+                        <a href="/health-tracker" class="btn btn-outline-primary">
+                            <i class="bi bi-clipboard-plus"></i> Manage Health
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <a href="/health-tracker/add" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-plus-circle"></i> Add Health Record
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <a href="/health-tracker-history" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-clock-history"></i> View Health History
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <a href="/gallery/upload" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-cloud-upload"></i> Upload New Photo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

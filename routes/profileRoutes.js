@@ -1,15 +1,9 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-// const upload = require('../config/upload');
+const { uploadProfile } = require('../config/upload-cloudinary');
 
-
-
-const { uploadProfile } = require('../config/upload');
 const { query, queryOne } = require('../config/database');
-
-
-
 const { 
   updateUserProfilePicture, 
   getUserProfileWithStats,
@@ -19,14 +13,13 @@ const {
   updateBioModerationStatus,
   getUserBio,
   getUserProfile,
-   updateUserEmail, 
+  updateUserEmail, 
   checkEmailExistsExcludingCurrent, 
   findById,
   getPendingEmail,           
   cancelPendingEmail,        
   verifyPendingEmail 
 } = require('../models/userModel');
-const { processProfilePicture } = require('../utils/imageProcessor');
 
 const router = express.Router();
 
@@ -237,75 +230,36 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 
-// Profile picture upload route - UPDATED VERSION
-router.post('/picture', requireAuth, (req, res, next) => {
-    console.log("➡️ POST /profile/picture route hit");
-    
-    uploadProfile(req, res, function (err) {
-        if (err) {
-            console.error('Multer error:', err);
-            return res.status(400).json({ 
-                success: false, 
-                error: err.message 
-            });
-        }
-        
-        // Check if file was uploaded
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                error: 'No file selected'
-            });
-        }
-        
-        console.log("File uploaded successfully:", req.file);
-        
-        // Continue with profile picture processing
-        handleProfilePictureUpload(req, res);
-    });
-});
-
-
-
-
-
-// Add this function to handle profile picture upload
-async function handleProfilePictureUpload(req, res) {
+router.post('/picture', requireAuth, uploadProfile, async (req, res) => {
     try {
-        console.log("➡️ handleProfilePictureUpload called");
-        console.log("File:", req.file);
+        console.log("➡️ POST /profile/picture route hit");
+        console.log("Cloudinary result:", req.cloudinaryResult);
         console.log("User ID:", req.session.userId);
 
-        if (!req.file) {
+        if (!req.cloudinaryResult) {
             return res.status(400).json({
                 success: false,
-                error: 'No file uploaded'
+                error: 'No file uploaded or upload failed'
             });
         }
 
         const userId = req.session.userId;
         
-        // Process the image (resize, optimize)
-        const processedImagePath = await processProfilePicture(req.file.path);
-        console.log("Processed image path:", processedImagePath);
-
-        // Create web-accessible URL
-        const webPath = processedImagePath.replace(/^.*public[\\/]/, '');
-        const imageUrl = `/${webPath.replace(/\\/g, '/')}`;
+        // Get Cloudinary URL - it's already processed and optimized
+        const profilePictureUrl = req.cloudinaryResult.secure_url;
         
-        console.log("Web path:", webPath);
-        console.log("Image URL:", imageUrl);
+        console.log("Cloudinary URL:", profilePictureUrl);
 
-        // Update database
-        await updateUserProfilePicture(userId, imageUrl);
+        // Update database with Cloudinary URL
+        await updateUserProfilePicture(userId, profilePictureUrl);
 
         // Update session
-        req.session.profilePicture = imageUrl;
+        req.session.profilePicture = profilePictureUrl;
 
         res.json({
             success: true,
             message: 'Profile picture updated successfully!',
-            imageUrl: imageUrl
+            profilePicture: profilePictureUrl
         });
 
     } catch (error) {
@@ -315,7 +269,60 @@ async function handleProfilePictureUpload(req, res) {
             error: 'Error uploading profile picture: ' + error.message
         });
     }
-}
+});
+
+
+
+
+
+
+// // Add this function to handle profile picture upload
+// async function handleProfilePictureUpload(req, res) {
+//     try {
+//         console.log("➡️ handleProfilePictureUpload called");
+//         console.log("File:", req.file);
+//         console.log("User ID:", req.session.userId);
+
+//         if (!req.file) {
+//             return res.status(400).json({
+//                 success: false,
+//                 error: 'No file uploaded'
+//             });
+//         }
+
+//         const userId = req.session.userId;
+        
+//         // Process the image (resize, optimize)
+//         const processedImagePath = await processProfilePicture(req.file.path);
+//         console.log("Processed image path:", processedImagePath);
+
+//         // Create web-accessible URL
+//         const webPath = processedImagePath.replace(/^.*public[\\/]/, '');
+//         const imageUrl = `/${webPath.replace(/\\/g, '/')}`;
+        
+//         console.log("Web path:", webPath);
+//         console.log("Image URL:", imageUrl);
+
+//         // Update database
+//         await updateUserProfilePicture(userId, imageUrl);
+
+//         // Update session
+//         req.session.profilePicture = imageUrl;
+
+//         res.json({
+//             success: true,
+//             message: 'Profile picture updated successfully!',
+//             imageUrl: imageUrl
+//         });
+
+//     } catch (error) {
+//         console.error('Profile picture upload error:', error);
+//         res.status(500).json({
+//             success: false,
+//             error: 'Error uploading profile picture: ' + error.message
+//         });
+//     }
+// }
 
 
 
@@ -546,13 +553,30 @@ router.get('/email/status', requireAuth, async (req, res) => {
   }
 });
 
-// DELETE /profile/picture - Remove profile picture
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// DELETE /profile/picture - Remove profile picture (Updated for Cloudinary)
 router.delete('/picture', requireAuth, async (req, res) => {
   try {
     console.log("➡️ DELETE /profile/picture called");
     console.log("Session userId:", req.session.userId);
 
+    // Set profile picture to null in database
     await updateUserProfilePicture(req.session.userId, null);
+    
+    // Clear from session
     req.session.profilePicture = null;
 
     res.json({ 
@@ -564,5 +588,6 @@ router.delete('/picture', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Error removing profile picture' });
   }
 });
+
 
 module.exports = router;

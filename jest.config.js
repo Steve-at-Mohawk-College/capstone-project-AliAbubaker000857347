@@ -2,15 +2,15 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: [
     '**/tests/unit/**/*.test.js',
-    '**/tests/integration/**/*.test.js'
+    '**/tests/integration/**/*.test.js',
+    '**/tests/legacy/**/*.test.js'  // Add this line
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
     '/tests/e2e/',
     '/tests/helpers/',
     '/tests/runners/',
-    '/tests/python/',
-    '/tests/legacy/'
+    '/tests/python/'
   ],
   verbose: true,
   testTimeout: 30000,

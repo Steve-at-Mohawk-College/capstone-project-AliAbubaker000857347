@@ -6,6 +6,39 @@ Development Timeline
 
 ![Development Timeline](mil3.png)
 
+milestion report covers:
+
+week 5 for bot testing only
+1. End-to-End (E2E) 
+2. Accessibility testing
+Week 6 2025-10-13 to 
+2025-10-19 
+• Health Tracking - Weight/diet records - Chart.js integration - Data entry 
+• PyTest DB tests 
+• Edge case testing 
+• feat: health
+api 
+• fix: chart
+responsive 
+Week 7 2025-10-20 to 
+2025-10-26 
+• Community - User 
+posts/comments - Admin moderation - Reporting 
+• WAVE accessibility 
+• Burp Suite scan 
+• 
+PR: community
+feature → main 
+Week 8 2025-10-27 to 
+2025-11-02 
+• Milestone 3: Polish - UI/UX refinements - API optimization - Stress tests 
+• ≥90% Jest coverage 
+• SQL profiling 
+• Tag: v2.0
+feature
+complete 
+
+
 Progress Update: Weeks 5:
 =========================
 1. End-to-End (E2E) 
@@ -26,8 +59,6 @@ Progress Update: Weeks 7: (Community features, including user posts, comments, a
 
 Demonstration of Core Functionality
 ==================================
-1. The Dashboard
-2. Task Scheduler
 3. The Calendar
 4. Health Tracking
 5. coumunity page
@@ -37,6 +68,7 @@ Development Stack & Testing Architecture
 ================================
 1. Task Scheduler - `npx cypress open`  (e2e + Accessibility testing)
 2.  Health Tracking - GUI-based API testing using `Postman` (Health Record CRUD Operations(POST /health,GET /health/records,PUT /health/:id,DELETE /health/:id), Data Validation (user input), Database Integration,Chart.js Integration).
+
 NOTE: MAKE SURE YOU login and get the cookie-id before testing the health tracking page.
 3. The community -  `WAVE` accessibility both automatic + ZAP scan (manual + automated)
 1. npm run test:week7

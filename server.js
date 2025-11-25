@@ -10,6 +10,7 @@ const rateLimit = require('express-rate-limit');
 const session = require('express-session');
 const fs = require('fs');
 require('dotenv').config();
+require('./config/cloudinary')
 
 
 
@@ -227,9 +228,9 @@ app.use('/admin', adminRoutes);
 app.use('/gallery', requireAuth, galleryRoutes);
 const dashboardRoutes = require('./routes/dashboardRoutes');
 app.use('/dashboard', requireAuth, dashboardRoutes);
-const { upload } = require('./config/upload');
+// const { upload } = require('./config/upload');
 
-
+const { uploadGallery, uploadProfile } = require('./config/upload-cloudinary');
 // ===== Page Routes =====
 // Landing page route
 app.get('/', (req, res) => {

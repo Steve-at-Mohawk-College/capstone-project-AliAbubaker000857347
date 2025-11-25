@@ -10,6 +10,7 @@ copy package-heroku.json package.json
 
 # Commit the changes
 git add package.json package-lock.json
+git add .
 git commit -m "Deploy: Remove Cypress for production"
 Step 2: Deploy to Heroku
 cmd

@@ -9,9 +9,10 @@ const router = express.Router();
 
 
 
-const { uploadSingle, uploadMultiple } = require('../config/upload');
+// const { uploadSingle, uploadMultiple } = require('../config/upload');
 const photoModel = require('../models/photoModel');
 const { query } = require('../config/database');
+const { uploadGallery } = require('../config/upload-cloudinary'); 
 
 // Middleware
 function requireAuth(req, res, next) {
@@ -155,45 +156,32 @@ router.get('/upload', requireAuth, async (req, res) => {
 // });
 
 
-// Regular user upload (single file)
-router.post('/upload', requireAuth, (req, res, next) => {
-    uploadSingle(req, res, function (err) {
-        if (err) {
-            // Handle upload errors
-            return res.status(400).render('gallery/upload', {
-                title: 'Upload Photo - Pet Care',
-                pets: [], // You'll need to fetch pets here
-                error: err.message,
-                formData: req.body
-            });
-        }
-        // Continue with your upload logic
-        handlePhotoUpload(req, res);
-    });
-});
-
-
-
-
-
-async function handlePhotoUpload(req, res) {
+router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
     try {
-        if (!req.file) {
+        console.log("Gallery upload - Cloudinary result:", req.cloudinaryResult);
+        console.log("Gallery upload - File:", req.file);
+
+        if (!req.cloudinaryResult) {
             return res.status(400).render('gallery/upload', {
                 title: 'Upload Photo - Pet Care',
                 pets: await getUsersPets(req.session.userId),
-                error: 'Please select a photo to upload.',
+                error: 'Please select a photo to upload or upload failed.',
                 formData: req.body
             });
         }
 
         const { title, description, is_public, pet_id, tags } = req.body;
         
+        // Get Cloudinary URL from the new approach
+        const photoUrl = req.cloudinaryResult.secure_url;
+        
+        console.log('Uploaded photo URL:', photoUrl);
+
         // Create photo record
         const photoId = await photoModel.createPhoto({
             user_id: req.session.userId,
             pet_id: pet_id || null,
-            photo_url: `/uploads/gallery/${req.file.filename}`, // Note: gallery directory
+            photo_url: photoUrl, // Cloudinary URL
             title: title || 'Untitled',
             description: description || '',
             is_public: is_public === 'on' ? 1 : 0
@@ -221,7 +209,56 @@ async function handlePhotoUpload(req, res) {
             formData: req.body
         });
     }
-}
+});
+
+
+
+// async function handlePhotoUpload(req, res) {
+//     try {
+//         if (!req.file) {
+//             return res.status(400).render('gallery/upload', {
+//                 title: 'Upload Photo - Pet Care',
+//                 pets: await getUsersPets(req.session.userId),
+//                 error: 'Please select a photo to upload.',
+//                 formData: req.body
+//             });
+//         }
+
+//         const { title, description, is_public, pet_id, tags } = req.body;
+        
+//         // Create photo record
+//         const photoId = await photoModel.createPhoto({
+//             user_id: req.session.userId,
+//             pet_id: pet_id || null,
+//             photo_url: `/uploads/gallery/${req.file.filename}`, // Note: gallery directory
+//             title: title || 'Untitled',
+//             description: description || '',
+//             is_public: is_public === 'on' ? 1 : 0
+//         });
+
+//         // Process tags
+//         if (tags) {
+//             const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+//             for (const tagName of tagList) {
+//                 try {
+//                     await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
+//                 } catch (tagError) {
+//                     console.log('Tag error (non-critical):', tagError.message);
+//                 }
+//             }
+//         }
+
+//         res.redirect('/gallery/my-photos?message=Photo uploaded successfully!');
+//     } catch (error) {
+//         console.error('Upload error:', error);
+//         res.status(500).render('gallery/upload', {
+//             title: 'Upload Photo - Pet Care',
+//             pets: await getUsersPets(req.session.userId),
+//             error: 'Error uploading photo: ' + error.message,
+//             formData: req.body
+//         });
+//     }
+// }
 
 
 

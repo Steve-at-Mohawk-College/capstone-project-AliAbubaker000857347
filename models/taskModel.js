@@ -107,7 +107,7 @@ async function createTask(userId, taskData) {
 // Remove the if block that converts to ISO string
 // Just use the dueDate as provided by the form
 
-console.log('📅 Due date stored as:', dueDate);
+// console.log('📅 Due date stored as:', dueDate);
 
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, priority)
@@ -164,7 +164,7 @@ async function updateTask(taskId, userId, taskData) {
   if (dueDate && !dueDate.includes('Z') && !dueDate.includes('+')) {
     const localDate = new Date(dueDate);
     dueDate = localDate.toISOString();
-    console.log('🕒 Timezone conversion (update):', taskData.due_date, '→', dueDate);
+    // console.log('🕒 Timezone conversion (update):', taskData.due_date, '→', dueDate);
   }
 
   const sql = `

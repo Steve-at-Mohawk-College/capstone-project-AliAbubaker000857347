@@ -41,7 +41,7 @@ router.get('/gallery', requireAdmin, async (req, res) => {
             hasMore: photos.length === limit
         });
     } catch (error) {
-        console.error('Admin gallery error:', error);
+        // console.error('Admin gallery error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading gallery management.',
@@ -99,7 +99,7 @@ async function handleBulkUpload(req, res) {
                         try {
                             await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
                         } catch (tagError) {
-                            console.log('Tag error:', tagError.message);
+                            // console.log('Tag error:', tagError.message);
                         }
                     }
                 }
@@ -116,7 +116,7 @@ async function handleBulkUpload(req, res) {
             results
         });
     } catch (error) {
-        console.error('Bulk upload error:', error);
+        // console.error('Bulk upload error:', error);
         res.status(500).render('admin/bulk-upload', {
             title: 'Bulk Upload - Admin',
             error: 'Error during bulk upload: ' + error.message
@@ -129,7 +129,7 @@ router.post('/tags/:id/approve', requireAdmin, async (req, res) => {
         await query('UPDATE tags SET is_approved = 1 WHERE tag_id = ?', [req.params.id]);
         res.json({ success: true, message: 'Tag approved successfully' });
     } catch (error) {
-        console.error('Approve tag error:', error);
+        // console.error('Approve tag error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -139,7 +139,7 @@ router.post('/tags/:id/reject', requireAdmin, async (req, res) => {
         await query('DELETE FROM tags WHERE tag_id = ? AND is_approved = 0', [req.params.id]);
         res.json({ success: true, message: 'Tag rejected successfully' });
     } catch (error) {
-        console.error('Reject tag error:', error);
+        // console.error('Reject tag error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -150,7 +150,7 @@ router.post('/gallery/photo/:id/delete', requireAdmin, async (req, res) => {
         await query('DELETE FROM photos WHERE photo_id = ?', [req.params.id]);
         res.json({ success: true, message: 'Photo deleted successfully' });
     } catch (error) {
-        console.error('Admin delete photo error:', error);
+        // console.error('Admin delete photo error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -180,7 +180,7 @@ router.get('/pending-bios', requireAdmin, async (req, res) => {
             users: pendingBios
         });
     } catch (error) {
-        console.error('Pending bios error:', error);
+        // console.error('Pending bios error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading pending bios.',
@@ -195,8 +195,8 @@ router.post('/users/:id/bio', requireAdmin, async (req, res) => {
     const { bio } = req.body;
     const targetUserId = req.params.id;
 
-    console.log("Admin updating bio for user:", targetUserId);
-    console.log("Bio content:", bio);
+    // console.log("Admin updating bio for user:", targetUserId);
+    // console.log("Bio content:", bio);
 
     // Admin updates don't require moderation
     await updateUserBio(targetUserId, bio);
@@ -208,7 +208,7 @@ router.post('/users/:id/bio', requireAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Admin bio update error:', error);
+    // console.error('Admin bio update error:', error);
     res.status(500).json({
       success: false,
       error: 'Error updating bio: ' + error.message
@@ -229,7 +229,7 @@ router.post('/users/:id/bio/approve', requireAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Bio approval error:', error);
+    // console.error('Bio approval error:', error);
     res.status(500).json({
       success: false,
       error: 'Error approving bio'
@@ -254,7 +254,7 @@ router.get('/users-with-pending-bios', requireAdmin, async (req, res) => {
       users: users
     });
   } catch (error) {
-    console.error('Get pending bios error:', error);
+    // console.error('Get pending bios error:', error);
     res.status(500).json({
       success: false,
       error: 'Error fetching users with pending bios'
@@ -301,7 +301,7 @@ router.post('/users/:id/username', requireAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Admin username update error:', error);
+    // console.error('Admin username update error:', error);
     res.status(500).json({
       success: false,
       error: 'Error updating username'
@@ -350,7 +350,7 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
       username: req.session.username
     });
   } catch (error) {
-    console.error('Admin dashboard error:', error);
+    // console.error('Admin dashboard error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading admin dashboard.',
@@ -382,7 +382,7 @@ router.get('/users', requireAdmin, async (req, res) => {
       users
     });
   } catch (error) {
-     console.error('User management error:', error);
+    //  console.error('User management error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading user management.',
@@ -406,7 +406,7 @@ router.get('/posts', requireAdmin, async (req, res) => {
       posts
     });
   } catch (error) {
-   console.error('Post moderation error:', error);
+  //  console.error('Post moderation error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading post moderation.',
@@ -418,12 +418,12 @@ router.get('/posts', requireAdmin, async (req, res) => {
 // Update your approve post route
 router.post('/posts/:id/approve', requireAdmin, async (req, res) => {
   try {
-    console.log('Approving post ID:', req.params.id);
+    // console.log('Approving post ID:', req.params.id);
     const result = await query('UPDATE community_posts SET is_approved = TRUE WHERE post_id = ?', [req.params.id]);
-    console.log('Update result:', result);
+    // console.log('Update result:', result);
     res.json({ success: true });
   } catch (error) {
-    console.error('Approve post error:', error);
+    // console.error('Approve post error:', error);
     res.status(500).json({ success: false, error: 'Error approving post' });
   }
 });
@@ -431,12 +431,12 @@ router.post('/posts/:id/approve', requireAdmin, async (req, res) => {
 // Update your delete post route
 router.post('/posts/:id/delete', requireAdmin, async (req, res) => {
   try {
-    console.log('Deleting post ID:', req.params.id);
+    // console.log('Deleting post ID:', req.params.id);
     const result = await query('DELETE FROM community_posts WHERE post_id = ?', [req.params.id]);
-    console.log('Delete result:', result);
+    // console.log('Delete result:', result);
     res.json({ success: true });
   } catch (error) {
-    console.error('Delete post error:', error);
+    // console.error('Delete post error:', error);
     res.status(500).json({ success: false, error: 'Error deleting post' });
   }
 });
@@ -447,19 +447,19 @@ router.post('/posts/:id/delete', requireAdmin, async (req, res) => {
 router.post('/users/:id/delete', requireAdmin, async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log('Deleting user ID:', userId);
+    // console.log('Deleting user ID:', userId);
     
     // Prevent admin from deleting themselves
     if (parseInt(userId) === req.session.userId) {
-      console.log('Prevented self-deletion attempt');
+      // console.log('Prevented self-deletion attempt');
       return res.status(400).json({ success: false, error: 'Cannot delete your own account' });
     }
     
     const result = await query('DELETE FROM users WHERE user_id = ?', [userId]);
-    console.log('User delete result:', result);
+    // console.log('User delete result:', result);
     res.json({ success: true });
   } catch (error) {
-    console.error('Delete user error:', error);
+    // console.error('Delete user error:', error);
     res.status(500).json({ success: false, error: 'Error deleting user' });
   }
 });
@@ -478,7 +478,7 @@ router.get('/users/:id', requireAdmin, async (req, res) => {
     
     res.json(user);
   } catch (error) {
-    console.error('Get user error:', error);
+    // console.error('Get user error:', error);
     res.status(500).json({ error: 'Error fetching user' });
   }
 });
@@ -502,7 +502,7 @@ router.post('/users/:id/role', requireAdmin, async (req, res) => {
     await query('UPDATE users SET role = ? WHERE user_id = ?', [role, userId]);
     res.json({ success: true });
   } catch (error) {
-    console.error('Update role error:', error);
+    // console.error('Update role error:', error);
     res.status(500).json({ success: false, error: 'Error updating user role' });
   }
 });

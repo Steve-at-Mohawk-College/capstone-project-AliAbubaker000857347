@@ -2,7 +2,7 @@ const { query } = require('../config/database');
 
 // Validation functions for health records
 function validateWeight(weight) {
-  if (weight === undefined || weight === null || weight === '') return true; // Optional field
+  if (weight === undefined || weight === null || weight === '') return true;
   const weightNum = parseFloat(weight);
   return !isNaN(weightNum) && weightNum >= 0.1 && weightNum <= 200;
 }
@@ -11,34 +11,34 @@ function validateDateRecorded(date) {
   if (!date) return false;
   const dateObj = new Date(date);
   const today = new Date();
-  today.setHours(23, 59, 59, 999); // End of today
+  today.setHours(23, 59, 59, 999);
   return !isNaN(dateObj.getTime()) && dateObj <= today;
 }
 
 function validateFutureDate(date) {
-  if (!date) return true; // Optional field
+  if (!date) return true;
   const dateObj = new Date(date);
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Start of today
+  today.setHours(0, 0, 0, 0);
   return !isNaN(dateObj.getTime()) && dateObj >= today;
 }
 
 function validatePastDate(date) {
-  if (!date) return true; // Optional field
+  if (!date) return true;
   const dateObj = new Date(date);
   const today = new Date();
-  today.setHours(23, 59, 59, 999); // End of today
+  today.setHours(23, 59, 59, 999);
   return !isNaN(dateObj.getTime()) && dateObj <= today;
 }
 
 function validateDiet(diet) {
-  if (!diet || diet.trim() === '') return true; // Optional field
+  if (!diet || diet.trim() === '') return true;
   const trimmed = diet.trim();
   return trimmed.length <= 255;
 }
 
 function validateMedicalNotes(notes) {
-  if (!notes || notes.trim() === '') return true; // Optional field
+  if (!notes || notes.trim() === '') return true;
   const trimmed = notes.trim();
   return trimmed.length <= 1000;
 }
@@ -60,18 +60,15 @@ async function getHealthRecordById(recordId) {
 async function addHealthRecord(recordData, userId) {
   const { pet_id, weight, diet, medical_notes, vet_visit_date, vaccination_date, next_vaccination_date, date_recorded } = recordData;
   
-  // Validate required fields
   if (!pet_id || !date_recorded) {
     throw new Error('Pet and record date are required');
   }
   
-  // Validate pet belongs to user
   const petExists = await validatePetExists(pet_id, userId);
   if (!petExists) {
     throw new Error('Pet not found or does not belong to user');
   }
   
-  // Validate field formats
   if (!validateWeight(weight)) {
     throw new Error('Weight must be between 0.1 and 200 kg');
   }
@@ -105,7 +102,6 @@ async function addHealthRecord(recordData, userId) {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
   
-  // Clean data before insertion
   const cleanData = [
     pet_id,
     weight ? parseFloat(weight).toFixed(2) : null,
@@ -123,7 +119,6 @@ async function addHealthRecord(recordData, userId) {
 async function updateHealthRecord(recordId, recordData, userId) {
   const { weight, diet, medical_notes, vet_visit_date, vaccination_date, next_vaccination_date, date_recorded } = recordData;
   
-  // Validate the record belongs to user
   const record = await query(`
     SELECT ht.* FROM health_tracker ht
     JOIN pets p ON ht.pet_id = p.pet_id
@@ -134,7 +129,6 @@ async function updateHealthRecord(recordId, recordData, userId) {
     throw new Error('Health record not found or access denied');
   }
   
-  // Validate fields (same as addHealthRecord)
   if (date_recorded && !validateDateRecorded(date_recorded)) {
     throw new Error('Record date cannot be in the future');
   }
@@ -143,7 +137,6 @@ async function updateHealthRecord(recordId, recordData, userId) {
     throw new Error('Weight must be between 0.1 and 200 kg');
   }
   
-  // Build dynamic update query
   const updates = [];
   const params = [];
   
@@ -193,7 +186,6 @@ async function updateHealthRecord(recordId, recordData, userId) {
 }
 
 async function deleteHealthRecord(recordId, userId) {
-  // Verify record belongs to user
   const record = await query(`
     SELECT ht.* FROM health_tracker ht
     JOIN pets p ON ht.pet_id = p.pet_id
@@ -213,7 +205,6 @@ module.exports = {
   addHealthRecord,
   updateHealthRecord,
   deleteHealthRecord,
-  // Export validation functions for testing
   validateWeight,
   validateDateRecorded,
   validateFutureDate,

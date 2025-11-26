@@ -982,7 +982,7 @@
                             showAlert('Error: ' + result.error, 'danger');
                         }
                     } catch (error) {
-                        console.error('Network error:', error);
+                        // console.error('Network error:', error);
                         showAlert('Network error posting comment. Please try again.', 'danger');
                     } finally {
                         submitButton.innerHTML = originalText;

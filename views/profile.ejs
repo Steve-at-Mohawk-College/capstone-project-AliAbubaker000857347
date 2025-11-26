@@ -1149,739 +1149,539 @@ body {
 
 <script>
 // Enhanced profile picture handling
-document.addEventListener('DOMContentLoaded', function () {
-  console.log('Profile page loaded');
-
-  // Initialize pending email display
-  checkPendingEmailStatus();
-
-  // Bio character count
-  const bioInput = document.getElementById('bioInput');
-  const bioCharCount = document.getElementById('bioCharCount');
-  
-  if (bioInput && bioCharCount) {
-    bioCharCount.textContent = bioInput.value.length;
-    bioInput.addEventListener('input', function() {
-      bioCharCount.textContent = this.value.length;
-    });
-  }
-
-  // File input handling
-  const fileInput = document.getElementById('profilePictureInput');
-  const cameraLabel = document.querySelector('label[for="profilePictureInput"]');
-
-  if (cameraLabel) {
-    cameraLabel.addEventListener('click', function (e) {
-      e.preventDefault();
-      fileInput.click();
-    });
-  }
-
-  if (fileInput) {
-    fileInput.addEventListener('change', function (e) {
-      if (this.files && this.files[0]) {
-        uploadProfilePicture(this.files[0]);
-      }
-    });
-  }
-
-  // Username form handling
-  const usernameForm = document.getElementById('usernameForm');
-  if (usernameForm) {
-    usernameForm.addEventListener('submit', handleUsernameUpdate);
-  }
-
-  // Email form handling
-  const emailForm = document.getElementById('emailForm');
-  if (emailForm) {
-    emailForm.addEventListener('submit', handleEmailUpdate);
-  }
-
-  // Bio form handling
-  const bioForm = document.getElementById('bioForm');
-  if (bioForm) {
-    bioForm.addEventListener('submit', handleBioUpdate);
-  }
-});
-
-async function checkPendingEmailStatus() {
-  try {
-    const response = await fetch('/profile/email/pending');
-    const result = await response.json();
-    
-    if (result.success && result.hasPendingEmail) {
-      const container = document.getElementById('pendingEmailContainer');
-      const emailText = document.getElementById('pendingEmailText');
-      
-      container.style.display = 'block';
-      emailText.textContent = result.pendingEmail;
-      
-      showAlert(`Email change pending: ${result.pendingEmail}. Check your email to verify.`, 'warning');
-    }
-  } catch (error) {
-    console.error('Error checking pending email:', error);
-  }
-}
-
-async function handleUsernameUpdate(e) {
-  e.preventDefault();
-  
-  const usernameInput = document.getElementById('usernameInput');
-  const updateUsernameBtn = document.getElementById('updateUsernameBtn');
-  const newUsername = usernameInput.value.trim();
-  
-  if (newUsername.length < 3) {
-    showAlert('Username must be at least 3 characters long', 'danger');
-    return;
-  }
-
-  if (newUsername === '<%= user.username %>') {
-    showAlert('Please enter a different username', 'info');
-    return;
-  }
-
-  // Disable button during request
-  updateUsernameBtn.disabled = true;
-  updateUsernameBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
-
-  try {
-    const response = await fetch('/profile/username', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username: newUsername })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showAlert('Username updated successfully!', 'success');
-      
-      // Update displayed username
-      document.querySelector('h3.h5').textContent = newUsername;
-      updateHeaderUsername(newUsername);
-    } else {
-      showAlert(result.error || 'Error updating username', 'danger');
-      usernameInput.value = '<%= user.username %>';
-    }
-  } catch (error) {
-    console.error('Username update error:', error);
-    showAlert('Error updating username: ' + error.message, 'danger');
-    usernameInput.value = '<%= user.username %>';
-  } finally {
-    // Re-enable button
-    updateUsernameBtn.disabled = false;
-    updateUsernameBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
-  }
-}
-
-async function handleEmailUpdate(e) {
-  e.preventDefault();
-  
-  const emailInput = document.getElementById('emailInput');
-  const updateEmailBtn = document.getElementById('updateEmailBtn');
-  const newEmail = emailInput.value.trim();
-  
-  if (!newEmail) {
-    showAlert('Please enter an email address', 'danger');
-    return;
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(newEmail)) {
-    showAlert('Please enter a valid email address', 'danger');
-    return;
-  }
-
-  if (newEmail === '<%= user.email %>') {
-    showAlert('Please enter a different email address', 'info');
-    return;
-  }
-
-  // Disable button during request
-  updateEmailBtn.disabled = true;
-  updateEmailBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i> Updating...';
-
-  try {
-    const response = await fetch('/profile/email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: newEmail })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showAlert(result.message, 'success');
-      emailInput.value = '';
-      
-      // Update pending email display
-      setTimeout(() => {
-        checkPendingEmailStatus();
-      }, 1000);
-      
-    } else {
-      showAlert(result.error || 'Error updating email', 'danger');
-    }
-  } catch (error) {
-    console.error('Email update error:', error);
-    showAlert('Error updating email: ' + error.message, 'danger');
-  } finally {
-    // Re-enable button
-    updateEmailBtn.disabled = false;
-    updateEmailBtn.innerHTML = 'Update Email';
-  }
-}
-
-async function handleBioUpdate(e) {
-  e.preventDefault();
-  
-  const bioInput = document.getElementById('bioInput');
-  const updateBioBtn = document.getElementById('updateBioBtn');
-  const newBio = bioInput.value.trim();
-  const originalBio = '<%= user.bio || "" %>';
-  
-  if (newBio.length > 500) {
-    showAlert('Bio must be less than 500 characters', 'danger');
-    return;
-  }
-
-  if (newBio === originalBio) {
-    showAlert('Please make changes to update your bio', 'info');
-    return;
-  }
-
-  // Disable button during request
-  updateBioBtn.disabled = true;
-  updateBioBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm me-2"></i>Updating...';
-
-  try {
-    const response = await fetch('/profile/bio', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ bio: newBio })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showAlert(result.message, 'success');
-      document.getElementById('cancelBioBtn').style.display = 'none';
-      
-      // Reload page to show updated bio and moderation status
-      setTimeout(() => location.reload(), 1500);
-    } else {
-      showAlert(result.error || 'Error updating bio', 'danger');
-    }
-  } catch (error) {
-    console.error('Bio update error:', error);
-    showAlert('Error updating bio: ' + error.message, 'danger');
-  } finally {
-    // Re-enable button
-    updateBioBtn.disabled = false;
-    updateBioBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Update Bio';
-  }
-}
-
-
-// Enhanced function to update all profile pictures on the page
-function updateAllProfilePictures(url) {
-  console.log('Updating all profile pictures with:', url);
-  
-  // Update header images
-  const headerImages = document.querySelectorAll('.user-avatar-modern');
-  headerImages.forEach(img => {
-    if (img.tagName === 'IMG') {
-      img.src = url + '?t=' + Date.now();
-    } else if (img.classList.contains('user-avatar-modern')) {
-      // Replace the icon with an image
-      const newImg = document.createElement('img');
-      newImg.src = url + '?t=' + Date.now();
-      newImg.alt = 'Profile';
-      newImg.className = 'user-avatar-modern';
-      newImg.onerror = function() {
-        this.onerror = null;
-        this.src = '/images/default-avatar.png';
-      };
-      img.parentNode.replaceChild(newImg, img);
-    }
-  });
-  
-  // Update any other profile pictures on the page
-  const profilePics = document.querySelectorAll('img[src*="profile"], .profile-picture');
-  profilePics.forEach(img => {
-    if (img.src.includes('profile') || img.classList.contains('profile-picture')) {
-      img.src = url + '?t=' + Date.now();
-    }
-  });
-}
-
-
-// Profile Picture Upload Function - IMPROVED VERSION
 let isUploading = false;
 
+// Enhanced Profile Picture Upload Function
 async function uploadProfilePicture(file) {
-  if (!file) {
-    console.log('No file provided');
-    return;
-  }
-
-  // Prevent multiple simultaneous uploads
-  if (isUploading) {
-    console.log('⚠️ Upload already in progress, skipping...');
-    return;
-  }
-
-  // Validate file size (5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    showAlert('File size must be less than 5MB', 'danger');
-    return;
-  }
-
-  console.log('Starting upload for:', file.name);
-
-  // Show loading state and disable upload button
-  const profileImg = document.getElementById('profilePicture');
-  const uploadButton = document.querySelector('label[for="profilePictureInput"]');
-  const originalOpacity = profileImg.style.opacity;
-  
-  profileImg.style.opacity = '0.5';
-  profileImg.style.filter = 'grayscale(50%)';
-  
-  if (uploadButton) {
-    uploadButton.style.pointerEvents = 'none';
-    uploadButton.style.opacity = '0.6';
-  }
-
-  isUploading = true;
-
-  const formData = new FormData();
-  formData.append('profilePicture', file);
-
-  try {
-    console.log('Uploading to /profile/picture...');
-
-    const response = await fetch('/profile/picture', {
-      method: 'POST',
-      body: formData
-    });
-
-    console.log('Response received:', response.status);
-
-    const result = await response.json();
-    console.log('Upload response:', result);
-
-    if (result.success) {
-      console.log('✅ Upload successful');
-      
-      // Update all profile pictures on the page
-      updateAllProfilePictures(result.imageUrl);
-      
-      // Show success message
-      showAlert('Profile picture updated successfully!', 'success');
-      
-    } else {
-      console.error('❌ Upload failed:', result.error);
-      showAlert(result.error || 'Error uploading picture', 'danger');
+    if (!file) {
+        // console.log('No file provided');
+        return;
     }
-  } catch (error) {
-    console.error('❌ Upload error:', error);
-    showAlert('Error uploading profile picture: ' + error.message, 'danger');
-  } finally {
-    // Reset UI states
-    profileImg.style.opacity = originalOpacity;
-    profileImg.style.filter = 'none';
+
+    if (isUploading) {
+        // console.log('⚠️ Upload already in progress, skipping...');
+        return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showAlert('File size must be less than 5MB', 'danger');
+        return;
+    }
+
+    // console.log('Starting upload for:', file.name);
+
+    // Show loading state
+    const profileImg = document.getElementById('profilePicture');
+    const uploadButton = document.querySelector('label[for="profilePictureInput"]');
+    const originalSrc = profileImg.src;
+    
+    profileImg.style.opacity = '0.5';
+    profileImg.style.filter = 'grayscale(50%)';
     
     if (uploadButton) {
-      uploadButton.style.pointerEvents = 'auto';
-      uploadButton.style.opacity = '1';
+        uploadButton.style.pointerEvents = 'none';
+        uploadButton.style.opacity = '0.6';
     }
-    
-    // Always reset the file input
-    document.getElementById('profilePictureInput').value = '';
-    
-    // Reset upload flag
-    isUploading = false;
-    console.log('File input reset and upload completed');
-  }
+
+    isUploading = true;
+
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+
+    try {
+        // console.log('Uploading to /profile/picture...');
+
+        const response = await fetch('/profile/picture', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
+
+        // console.log('Response received:', response.status);
+
+        const result = await response.json();
+        // console.log('Upload response:', result);
+
+        if (result.success) {
+            // console.log('✅ Upload successful');
+            
+            // Create new image URL with cache busting
+            const timestamp = Date.now();
+            const newImageUrl = result.profilePicture.split('?')[0] + '?t=' + timestamp;
+            
+            // console.log('🔄 Setting new image URL:', newImageUrl);
+            
+            // Update the profile picture immediately
+            profileImg.src = newImageUrl;
+            
+            // Update all other profile pictures on the page
+            updateAllProfilePictures(newImageUrl);
+            
+            showAlert('Profile picture updated successfully!', 'success');
+            
+        } else {
+            // console.error('❌ Upload failed:', result.error);
+            showAlert(result.error || 'Error uploading picture', 'danger');
+            // Restore original image on error
+            profileImg.src = originalSrc;
+        }
+    } catch (error) {
+        // console.error('❌ Upload error:', error);
+        showAlert('Error uploading profile picture: ' + error.message, 'danger');
+        // Restore original image on error
+        profileImg.src = originalSrc;
+    } finally {
+        // Reset UI states
+        profileImg.style.opacity = '1';
+        profileImg.style.filter = 'none';
+        
+        if (uploadButton) {
+            uploadButton.style.pointerEvents = 'auto';
+            uploadButton.style.opacity = '1';
+        }
+        
+        // Reset file input
+        document.getElementById('profilePictureInput').value = '';
+        
+        // Reset upload flag
+        isUploading = false;
+        // console.log('File input reset and upload completed');
+    }
 }
 
-// Update file input event listener to prevent multiple triggers
-document.addEventListener('DOMContentLoaded', function() {
-  const fileInput = document.getElementById('profilePictureInput');
-  
-  if (fileInput) {
-    fileInput.addEventListener('change', function(e) {
-      if (this.files && this.files[0]) {
-        uploadProfilePicture(this.files[0]);
-      }
+// Enhanced function to update all profile pictures
+function updateAllProfilePictures(url) {
+    // console.log('🔄 Updating all profile pictures with:', url);
+    
+    // Update main profile picture
+    const mainProfileImg = document.getElementById('profilePicture');
+    if (mainProfileImg) {
+        mainProfileImg.src = url;
+    }
+    
+    // Update header images with cache busting
+    const headerImages = document.querySelectorAll('.user-avatar-modern, .navbar img, img[alt*="Profile"], img[src*="profile"]');
+    headerImages.forEach(img => {
+        if (img.tagName === 'IMG' && img !== mainProfileImg) {
+            img.src = url;
+            // console.log('✅ Updated header image');
+        }
     });
-  }
-});
-
-
-
+}
 
 // Remove Profile Picture Function
 async function removeProfilePicture() {
-  if (!confirm('Are you sure you want to remove your profile picture?')) {
-    return;
-  }
-
-  console.log('Removing profile picture...');
-
-  try {
-    const response = await fetch('/profile/picture', {
-      method: 'DELETE'
-    });
-
-    const result = await response.json();
-    console.log('Delete response:', result);
-
-    if (result.success) {
-      console.log('✅ Removal successful');
-      showAlert('Profile picture removed successfully!', 'success');
-      
-      // Reload page to reflect changes
-      setTimeout(() => location.reload(), 1000);
-    } else {
-      console.error('❌ Removal failed:', result.error);
-      showAlert(result.error || 'Error removing picture', 'danger');
+    if (!confirm('Are you sure you want to remove your profile picture?')) {
+        return;
     }
-  } catch (error) {
-    console.error('❌ Delete error:', error);
-    showAlert('Error removing profile picture: ' + error.message, 'danger');
-  }
+
+    // console.log('Removing profile picture...');
+
+    try {
+        const response = await fetch('/profile/picture', {
+            method: 'DELETE'
+        });
+
+        const result = await response.json();
+        // console.log('Delete response:', result);
+
+        if (result.success) {
+            // console.log('✅ Removal successful');
+            showAlert('Profile picture removed successfully!', 'success');
+            
+            // Update all profile pictures to default
+            const defaultImage = '/images/default-avatar.png?t=' + Date.now();
+            updateAllProfilePictures(defaultImage);
+            
+        } else {
+            // console.error('❌ Removal failed:', result.error);
+            showAlert(result.error || 'Error removing picture', 'danger');
+        }
+    } catch (error) {
+        // console.error('❌ Delete error:', error);
+        showAlert('Error removing profile picture: ' + error.message, 'danger');
+    }
 }
 
 // Show Alert Function
 function showAlert(message, type) {
-  console.log('Showing alert:', type, message);
+    // console.log('Showing alert:', type, message);
 
-  // Remove existing alerts
-  const existingAlerts = document.querySelectorAll('.alert');
-  existingAlerts.forEach(alert => alert.remove());
+    // Remove existing alerts
+    const existingAlerts = document.querySelectorAll('.alert');
+    existingAlerts.forEach(alert => alert.remove());
 
-  const alertDiv = document.createElement('div');
-  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-  alertDiv.innerHTML = `
-    <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-    ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  `;
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
 
-  const container = document.querySelector('.container-fluid');
-  if (container) {
-    container.insertBefore(alertDiv, container.firstChild);
+    const container = document.querySelector('.container-fluid');
+    if (container) {
+        container.insertBefore(alertDiv, container.firstChild);
 
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      if (alertDiv.parentNode) {
-        alertDiv.remove();
-      }
-    }, 5000);
-  }
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
 }
 
 // Update Header Profile Picture Function
 function updateHeaderProfilePicture(url) {
-  console.log('Updating header images with:', url);
-  // Update all profile pictures in the header
-  const headerImages = document.querySelectorAll('.navbar img, .user-avatar-modern');
-  headerImages.forEach(img => {
-    // Check if img has src property and it's not undefined
-    if (img.src && typeof img.src === 'string' && 
-        (img.src.includes('profile') || 
-         (img.alt && img.alt.includes('Profile')) || 
-         img.classList.contains('user-avatar-modern'))) {
-      img.src = url + '?t=' + Date.now();
-      console.log('Updated header image:', img);
-    }
-  });
+    // console.log('Updating header images with:', url);
+    const headerImages = document.querySelectorAll('.navbar img, .user-avatar-modern');
+    headerImages.forEach(img => {
+        if (img.src && typeof img.src === 'string' && 
+            (img.src.includes('profile') || 
+             (img.alt && img.alt.includes('Profile')) || 
+             img.classList.contains('user-avatar-modern'))) {
+            img.src = url + '?t=' + Date.now();
+        }
+    });
 }
 
 // Update Header Username Function
 function updateHeaderUsername(newUsername) {
-  // Update username in desktop header
-  const desktopUsername = document.querySelector('.header-icons.d-none.d-lg-flex .username-modern');
-  if (desktopUsername) {
-    desktopUsername.textContent = newUsername;
-  }
-  
-  // Update page title if it contains username
-  document.title = document.title.replace(/<%= user.username %>/g, newUsername);
+    const desktopUsername = document.querySelector('.header-icons.d-none.d-lg-flex .username-modern');
+    if (desktopUsername) {
+        desktopUsername.textContent = newUsername;
+    }
+    
+    document.title = document.title.replace(/<%= user.username %>/g, newUsername);
 }
 
-// Bio Cancel Button Handler
+// Form Handlers
+async function handleUsernameUpdate(e) {
+    e.preventDefault();
+    
+    const usernameInput = document.getElementById('usernameInput');
+    const updateUsernameBtn = document.getElementById('updateUsernameBtn');
+    const newUsername = usernameInput.value.trim();
+    
+    if (newUsername.length < 3) {
+        showAlert('Username must be at least 3 characters long', 'danger');
+        return;
+    }
+
+    if (newUsername === '<%= user.username %>') {
+        showAlert('Please enter a different username', 'info');
+        return;
+    }
+
+    updateUsernameBtn.disabled = true;
+    updateUsernameBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i>';
+
+    try {
+        const response = await fetch('/profile/username', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: newUsername })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert('Username updated successfully!', 'success');
+            document.querySelector('h3.h5').textContent = newUsername;
+            updateHeaderUsername(newUsername);
+        } else {
+            showAlert(result.error || 'Error updating username', 'danger');
+            usernameInput.value = '<%= user.username %>';
+        }
+    } catch (error) {
+        // console.error('Username update error:', error);
+        showAlert('Error updating username: ' + error.message, 'danger');
+        usernameInput.value = '<%= user.username %>';
+    } finally {
+        updateUsernameBtn.disabled = false;
+        updateUsernameBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+    }
+}
+
+async function handleEmailUpdate(e) {
+    e.preventDefault();
+    
+    const emailInput = document.getElementById('emailInput');
+    const updateEmailBtn = document.getElementById('updateEmailBtn');
+    const newEmail = emailInput.value.trim();
+    
+    if (!newEmail) {
+        showAlert('Please enter an email address', 'danger');
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+        showAlert('Please enter a valid email address', 'danger');
+        return;
+    }
+
+    if (newEmail === '<%= user.email %>') {
+        showAlert('Please enter a different email address', 'info');
+        return;
+    }
+
+    updateEmailBtn.disabled = true;
+    updateEmailBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm"></i> Updating...';
+
+    try {
+        const response = await fetch('/profile/email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: newEmail })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert(result.message, 'success');
+            emailInput.value = '';
+            setTimeout(() => {
+                checkPendingEmailStatus();
+            }, 1000);
+            
+        } else {
+            showAlert(result.error || 'Error updating email', 'danger');
+        }
+    } catch (error) {
+        // console.error('Email update error:', error);
+        showAlert('Error updating email: ' + error.message, 'danger');
+    } finally {
+        updateEmailBtn.disabled = false;
+        updateEmailBtn.innerHTML = 'Update Email';
+    }
+}
+
+async function handleBioUpdate(e) {
+    e.preventDefault();
+    
+    const bioInput = document.getElementById('bioInput');
+    const updateBioBtn = document.getElementById('updateBioBtn');
+    const newBio = bioInput.value.trim();
+    const originalBio = '<%= user.bio || "" %>';
+    
+    if (newBio.length > 500) {
+        showAlert('Bio must be less than 500 characters', 'danger');
+        return;
+    }
+
+    if (newBio === originalBio) {
+        showAlert('Please make changes to update your bio', 'info');
+        return;
+    }
+
+    updateBioBtn.disabled = true;
+    updateBioBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner-border spinner-border-sm me-2"></i>Updating...';
+
+    try {
+        const response = await fetch('/profile/bio', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bio: newBio })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert(result.message, 'success');
+            document.getElementById('cancelBioBtn').style.display = 'none';
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showAlert(result.error || 'Error updating bio', 'danger');
+        }
+    } catch (error) {
+        // console.error('Bio update error:', error);
+        showAlert('Error updating bio: ' + error.message, 'danger');
+    } finally {
+        updateBioBtn.disabled = false;
+        updateBioBtn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Update Bio';
+    }
+}
+
+// Email Status Functions
+async function checkPendingEmailStatus() {
+    try {
+        const response = await fetch('/profile/email/pending');
+        const result = await response.json();
+        
+        if (result.success && result.hasPendingEmail) {
+            const container = document.getElementById('pendingEmailContainer');
+            const emailText = document.getElementById('pendingEmailText');
+            
+            container.style.display = 'block';
+            emailText.textContent = result.pendingEmail;
+            
+            showAlert(`Email change pending: ${result.pendingEmail}. Check your email to verify.`, 'warning');
+        }
+    } catch (error) {
+        // console.error('Error checking pending email:', error);
+    }
+}
+
+async function cancelPendingEmail() {
+    if (!confirm('Are you sure you want to cancel the pending email change?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/profile/email/cancel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert('Pending email change cancelled successfully', 'success');
+            location.reload();
+        } else {
+            showAlert(result.error || 'Error cancelling pending email', 'danger');
+        }
+    } catch (error) {
+        // console.error('Cancel pending email error:', error);
+        showAlert('Error cancelling pending email: ' + error.message, 'danger');
+    }
+}
+
+async function resendVerification() {
+    try {
+        showAlert('Sending verification email...', 'info');
+        
+        const response = await fetch('/auth/resend-verification', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showAlert('Verification email sent successfully! Please check your inbox.', 'success');
+        } else {
+            showAlert(result.error || 'Error sending verification email', 'danger');
+        }
+    } catch (error) {
+        // console.error('Resend verification error:', error);
+        showAlert('Error sending verification email: ' + error.message, 'danger');
+    }
+}
+
+// SINGLE DOMContentLoaded Event Listener - This is the key fix
 document.addEventListener('DOMContentLoaded', function() {
-  const bioInput = document.getElementById('bioInput');
-  const cancelBioBtn = document.getElementById('cancelBioBtn');
-  let originalBio = '<%= user.bio || "" %>';
+    // console.log('Professional Profile Page Loaded');
+    
+    // Initialize pending email status
+    checkPendingEmailStatus();
+    
+    // Bio character count
+    const bioInput = document.getElementById('bioInput');
+    const bioCharCount = document.getElementById('bioCharCount');
+    
+    if (bioInput && bioCharCount) {
+        bioCharCount.textContent = bioInput.value.length;
+        bioInput.addEventListener('input', function() {
+            bioCharCount.textContent = this.value.length;
+        });
+    }
 
-  // Show/hide cancel button based on changes
-  if (bioInput && cancelBioBtn) {
-    bioInput.addEventListener('input', function() {
-      const hasChanges = this.value !== originalBio;
-      cancelBioBtn.style.display = hasChanges ? 'block' : 'none';
-    });
+    // File input handling - SET UP ONLY ONCE
+    const fileInput = document.getElementById('profilePictureInput');
+    const cameraLabel = document.querySelector('label[for="profilePictureInput"]');
 
-    // Cancel button handler
-    cancelBioBtn.addEventListener('click', function() {
-      bioInput.value = originalBio;
-      this.style.display = 'none';
-    });
-  }
+    // Only set up camera label click if it exists
+    if (cameraLabel) {
+        cameraLabel.addEventListener('click', function (e) {
+            e.preventDefault();
+            // Only trigger file input if it exists and we're not already uploading
+            if (fileInput && !isUploading) {
+                fileInput.click();
+            }
+        });
+    }
+
+    // File input change handler - SET UP ONLY ONCE
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0] && !isUploading) {
+                uploadProfilePicture(this.files[0]);
+            }
+        });
+    }
+
+    // Form submissions
+    const usernameForm = document.getElementById('usernameForm');
+    if (usernameForm) {
+        usernameForm.addEventListener('submit', handleUsernameUpdate);
+    }
+    
+    const emailForm = document.getElementById('emailForm');
+    if (emailForm) {
+        emailForm.addEventListener('submit', handleEmailUpdate);
+    }
+    
+    const bioForm = document.getElementById('bioForm');
+    if (bioForm) {
+        bioForm.addEventListener('submit', handleBioUpdate);
+    }
+    
+    // Bio cancel button
+    const bioInputField = document.getElementById('bioInput');
+    const cancelBioBtn = document.getElementById('cancelBioBtn');
+    const originalBio = '<%= user.bio || "" %>';
+    
+    if (bioInputField && cancelBioBtn) {
+        bioInputField.addEventListener('input', function() {
+            const hasChanges = this.value !== originalBio;
+            cancelBioBtn.style.display = hasChanges ? 'block' : 'none';
+        });
+
+        cancelBioBtn.addEventListener('click', function() {
+            bioInputField.value = originalBio;
+            this.style.display = 'none';
+        });
+    }
 });
 
-// Debug function to test upload
-function testUpload() {
-  console.log('=== UPLOAD DEBUG INFO ===');
-  console.log('File input:', document.getElementById('profilePictureInput'));
-  console.log('Profile image:', document.getElementById('profilePicture'));
-  console.log('Session userId:', '<%= userId %>');
-
-  // Create a test file input click
-  document.getElementById('profilePictureInput').click();
-}
+// Email verification status check
+<% if (!user.is_verified) { %>
+    setInterval(async () => {
+        try {
+            const response = await fetch('/profile/email/status');
+            const result = await response.json();
+            
+            if (result.success && result.isVerified) {
+                showAlert('Email verified successfully!', 'success');
+                setTimeout(() => location.reload(), 2000);
+            }
+        } catch (error) {
+            // console.error('Email status check error:', error);
+        }
+    }, 30000);
+<% } %>
 
 // Global Error Handler
 window.addEventListener('error', function (e) {
-  console.error('Global error:', e.error);
-  showAlert('An error occurred: ' + e.error.message, 'danger');
+    // console.error('Global error:', e.error);
+    showAlert('An error occurred: ' + e.error.message, 'danger');
 });
-
-// Email Verification Status Check (for unverified emails)
-<% if (!user.is_verified) { %>
-  setInterval(async () => {
-    try {
-      const response = await fetch('/profile/email/status');
-      const result = await response.json();
-      
-      if (result.success && result.isVerified) {
-        showAlert('Email verified successfully!', 'success');
-        setTimeout(() => location.reload(), 2000);
-      }
-    } catch (error) {
-      console.error('Email status check error:', error);
-    }
-  }, 30000); // Check every 30 seconds
-<% } %>
-
-// Enhanced Pending Email Status Check
-async function checkPendingEmailStatus() {
-  try {
-    const response = await fetch('/profile/email/pending');
-    const result = await response.json();
-    
-    if (result.success && result.hasPendingEmail) {
-      const container = document.getElementById('pendingEmailContainer');
-      const emailText = document.getElementById('pendingEmailText');
-      
-      container.style.display = 'block';
-      emailText.textContent = result.pendingEmail;
-      
-      showAlert(`Email change pending: ${result.pendingEmail}. Check your email to verify.`, 'warning');
-      
-      // Add cancel button if not already present
-      const emailForm = document.getElementById('emailForm');
-      if (emailForm && !emailForm.querySelector('#cancelPendingBtn')) {
-        const cancelBtn = document.createElement('button');
-        cancelBtn.type = 'button';
-        cancelBtn.id = 'cancelPendingBtn';
-        cancelBtn.className = 'btn btn-outline-secondary btn-sm mt-2';
-        cancelBtn.innerHTML = '<i class="bi bi-x-circle me-2"></i>Cancel Pending Email Change';
-        cancelBtn.onclick = cancelPendingEmail;
-        emailForm.appendChild(cancelBtn);
-      }
-    } else {
-      // Hide pending email container if no pending email
-      const container = document.getElementById('pendingEmailContainer');
-      if (container) {
-        container.style.display = 'none';
-      }
-      
-      // Remove cancel button if exists
-      const cancelBtn = document.getElementById('cancelPendingBtn');
-      if (cancelBtn) {
-        cancelBtn.remove();
-      }
-    }
-  } catch (error) {
-    console.error('Error checking pending email:', error);
-  }
-}
-
-// Cancel Pending Email Function
-async function cancelPendingEmail() {
-  if (!confirm('Are you sure you want to cancel the pending email change?')) {
-    return;
-  }
-
-  try {
-    const response = await fetch('/profile/email/cancel', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showAlert('Pending email change cancelled successfully', 'success');
-      location.reload();
-    } else {
-      showAlert(result.error || 'Error cancelling pending email', 'danger');
-    }
-  } catch (error) {
-    console.error('Cancel pending email error:', error);
-    showAlert('Error cancelling pending email: ' + error.message, 'danger');
-  }
-}
-
-// Resend Verification Email Function
-async function resendVerification() {
-  try {
-    showAlert('Sending verification email...', 'info');
-    
-    const response = await fetch('/auth/resend-verification', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showAlert('Verification email sent successfully! Please check your inbox.', 'success');
-    } else {
-      showAlert(result.error || 'Error sending verification email', 'danger');
-    }
-  } catch (error) {
-    console.error('Resend verification error:', error);
-    showAlert('Error sending verification email: ' + error.message, 'danger');
-  }
-}
-
-// Initialize all functionality when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Professional Profile Page Loaded');
-  
-  // Initialize pending email status
-  checkPendingEmailStatus();
-  
-  // Set up bio character counter
-  const bioInput = document.getElementById('bioInput');
-  const bioCharCount = document.getElementById('bioCharCount');
-  
-  if (bioInput && bioCharCount) {
-    bioCharCount.textContent = bioInput.value.length;
-    bioInput.addEventListener('input', function() {
-      bioCharCount.textContent = this.value.length;
-    });
-  }
-  
-  // Set up file upload handling
-  const fileInput = document.getElementById('profilePictureInput');
-  if (fileInput) {
-    fileInput.addEventListener('change', function(e) {
-      if (this.files && this.files[0]) {
-        uploadProfilePicture(this.files[0]);
-      }
-    });
-  }
-  
-  // Set up form submissions
-  const usernameForm = document.getElementById('usernameForm');
-  if (usernameForm) {
-    usernameForm.addEventListener('submit', handleUsernameUpdate);
-  }
-  
-  const emailForm = document.getElementById('emailForm');
-  if (emailForm) {
-    emailForm.addEventListener('submit', handleEmailUpdate);
-  }
-  
-  const bioForm = document.getElementById('bioForm');
-  if (bioForm) {
-    bioForm.addEventListener('submit', handleBioUpdate);
-  }
-  
-  // Set up bio cancel button
-  const bioInputField = document.getElementById('bioInput');
-  const cancelBioBtn = document.getElementById('cancelBioBtn');
-  const originalBio = '<%= user.bio || "" %>';
-  
-  if (bioInputField && cancelBioBtn) {
-    bioInputField.addEventListener('input', function() {
-      const hasChanges = this.value !== originalBio;
-      cancelBioBtn.style.display = hasChanges ? 'block' : 'none';
-    });
-
-    cancelBioBtn.addEventListener('click', function() {
-      bioInputField.value = originalBio;
-      this.style.display = 'none';
-    });
-  }
-});
-
-async function cancelPendingEmail() {
-  if (!confirm('Are you sure you want to cancel the pending email change?')) {
-    return;
-  }
-
-  try {
-    const response = await fetch('/profile/email/cancel', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showAlert('Pending email change cancelled successfully', 'success');
-      location.reload();
-    } else {
-      showAlert(result.error || 'Error cancelling pending email', 'danger');
-    }
-  } catch (error) {
-    console.error('Cancel pending email error:', error);
-    showAlert('Error cancelling pending email: ' + error.message, 'danger');
-  }
-}
-
-async function resendVerification() {
-  try {
-    const response = await fetch('/auth/resend-verification', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showAlert('Verification email sent successfully!', 'success');
-    } else {
-      showAlert(result.error || 'Error sending verification email', 'danger');
-    }
-  } catch (error) {
-    console.error('Resend verification error:', error);
-    showAlert('Error sending verification email: ' + error.message, 'danger');
-  }
-}
-
-// Include all your existing utility functions here...
-// uploadProfilePicture, removeProfilePicture, showAlert, updateHeaderProfilePicture, updateHeaderUsername
 </script>
 
 <%- include('partials/footer') %>

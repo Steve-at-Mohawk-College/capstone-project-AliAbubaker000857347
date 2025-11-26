@@ -309,7 +309,7 @@ document.querySelectorAll('.view-record').forEach(btn => {
         alert('Error loading record details');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       alert('Error loading record details');
     }
   });
@@ -347,7 +347,7 @@ document.querySelectorAll('.delete-record').forEach(btn => {
         }
       })
       .catch(error => {
-        console.error('Error:', error);
+        // console.error('Error:', error);
         alert('Error deleting record');
       });
     }

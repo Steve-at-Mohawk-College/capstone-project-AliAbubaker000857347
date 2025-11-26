@@ -10,7 +10,7 @@ function requireAuth(req, res, next) {
     return res.redirect('/login');
 }
 
-// routes/galleryRoutes.js - Update the routes
+
 
 // Gallery homepage - public photos
 router.get('/', requireAuth, async (req, res) => {
@@ -39,7 +39,7 @@ router.get('/', requireAuth, async (req, res) => {
             hasMore: photos.length === limit
         });
     } catch (error) {
-        console.error('Gallery error:', error);
+        // console.error('Gallery error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading gallery.',
@@ -65,7 +65,7 @@ router.get('/my-photos', requireAuth, async (req, res) => {
             hasMore: photos.length === limit
         });
     } catch (error) {
-        console.error('My photos error:', error);
+        // console.error('My photos error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading your photos.',
@@ -124,7 +124,7 @@ router.get('/health-status/:status', requireAuth, async (req, res) => {
             hasMore: photos.length === limit
         });
     } catch (error) {
-        console.error('Health gallery error:', error);
+        // console.error('Health gallery error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading health-filtered gallery.',
@@ -140,7 +140,7 @@ router.get('/upload', requireAuth, async (req, res) => {
         try {
             pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
         } catch (dbError) {
-            console.error('Error fetching pets:', dbError);
+            // console.error('Error fetching pets:', dbError);
         }
         
         res.render('gallery/upload', {
@@ -151,7 +151,7 @@ router.get('/upload', requireAuth, async (req, res) => {
             isAdmin: req.session?.role === 'admin'
         });
     } catch (error) {
-        console.error('Upload form error:', error);
+        // console.error('Upload form error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading upload form.',
@@ -195,7 +195,7 @@ router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
                     await processTags(photoId, tags, req.session.userId);
                     successCount++;
                 } catch (photoError) {
-                    console.error('Error creating photo record:', photoError);
+                    // console.error('Error creating photo record:', photoError);
                     errorCount++;
                 }
             }
@@ -219,7 +219,7 @@ router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
             res.redirect('/gallery/my-photos?message=Photo uploaded successfully!');
         }
     } catch (error) {
-        console.error('Upload error:', error);
+        // console.error('Upload error:', error);
         renderUploadError(res, 'Error uploading photo: ' + error.message, req.body);
     }
 });
@@ -232,7 +232,7 @@ async function processTags(photoId, tags, userId) {
             try {
                 await photoModel.addTagToPhoto(photoId, tagName, userId);
             } catch (tagError) {
-                console.log('Tag error (non-critical):', tagError.message);
+                // console.log('Tag error (non-critical):', tagError.message);
             }
         }
     }
@@ -255,7 +255,7 @@ async function getUsersPets(userId) {
     try {
         return await query('SELECT * FROM pets WHERE user_id = ?', [userId]);
     } catch (error) {
-        console.error('Error fetching pets:', error);
+        // console.error('Error fetching pets:', error);
         return [];
     }
 }
@@ -272,7 +272,7 @@ router.get('/health-overview', requireAuth, async (req, res) => {
             healthSummary
         });
     } catch (error) {
-        console.error('Health overview error:', error);
+        // console.error('Health overview error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading health overview.',
@@ -303,7 +303,7 @@ router.get('/photo/:id', requireAuth, async (req, res) => {
             photo
         });
     } catch (error) {
-        console.error('Photo detail error:', error);
+        // console.error('Photo detail error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading photo.',
@@ -320,7 +320,7 @@ router.post('/photo/:id/favorite', requireAuth, async (req, res) => {
         const result = await photoModel.toggleFavorite(req.params.id, req.session.userId);
         res.json({ success: true, ...result });
     } catch (error) {
-        console.error('Favorite error:', error);
+        // console.error('Favorite error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -337,7 +337,7 @@ router.post('/photo/:id/tags', requireAuth, async (req, res) => {
         await photoModel.addTagToPhoto(req.params.id, tag.trim(), req.session.userId);
         res.json({ success: true, message: 'Tag added successfully' });
     } catch (error) {
-        console.error('Add tag error:', error);
+        // console.error('Add tag error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -357,7 +357,7 @@ router.delete('/photo/:photoId/tags/:tagId', requireAuth, async (req, res) => {
             res.status(404).json({ success: false, error: 'Tag not found or access denied' });
         }
     } catch (error) {
-        console.error('Remove tag error:', error);
+        // console.error('Remove tag error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -368,15 +368,15 @@ router.put('/photo/:id', requireAuth, async (req, res) => {
     try {
         const { title, description, is_public, pet_id } = req.body;
         
-        console.log('Update photo request:', {
-            photoId: req.params.id,
-            userId: req.session.userId,
-            title,
-            description,
-            is_public,
-            is_public_type: typeof is_public,
-            pet_id
-        });
+        // console.log('Update photo request:', {
+        //     photoId: req.params.id,
+        //     userId: req.session.userId,
+        //     title,
+        //     description,
+        //     is_public,
+        //     is_public_type: typeof is_public,
+        //     pet_id
+        // });
 
         // Convert is_public to proper boolean/INT for MySQL
         let isPublicValue;
@@ -390,7 +390,7 @@ router.put('/photo/:id', requireAuth, async (req, res) => {
             isPublicValue = 0; // Default to private if unclear
         }
 
-        console.log('Processed is_public value:', isPublicValue);
+        // console.log('Processed is_public value:', isPublicValue);
 
         await photoModel.updatePhoto(req.params.id, req.session.userId, {
             title,
@@ -405,7 +405,7 @@ router.put('/photo/:id', requireAuth, async (req, res) => {
             updatedFields: { title, description, is_public: isPublicValue }
         });
     } catch (error) {
-        console.error('Update photo error:', error);
+        // console.error('Update photo error:', error);
         res.status(500).json({ 
             success: false, 
             error: error.message,
@@ -420,7 +420,7 @@ router.delete('/photo/:id', requireAuth, async (req, res) => {
         await photoModel.deletePhoto(req.params.id, req.session.userId);
         res.json({ success: true, message: 'Photo deleted successfully' });
     } catch (error) {
-        console.error('Delete photo error:', error);
+        // console.error('Delete photo error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });

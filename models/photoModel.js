@@ -45,7 +45,7 @@ const photoModel = {
             LIMIT ${numLimit} OFFSET ${numOffset}
         `;
         
-        console.log('Executing gallery query with params:', params);
+        // console.log('Executing gallery query with params:', params);
         
         try {
             const photos = await query(sql, params);
@@ -167,7 +167,7 @@ const photoModel = {
         const setClause = [];
         const params = [];
         
-        console.log('Updating photo with:', updates);
+        // console.log('Updating photo with:', updates);
         
         allowedFields.forEach(field => {
             if (updates[field] !== undefined) {
@@ -183,7 +183,7 @@ const photoModel = {
                     } else {
                         params.push(value ? 1 : 0);
                     }
-                    console.log(`is_public field: ${value} -> ${params[params.length-1]}`);
+                    // console.log(`is_public field: ${value} -> ${params[params.length-1]}`);
                 } else {
                     params.push(updates[field]);
                 }
@@ -198,8 +198,8 @@ const photoModel = {
         
         const sql = `UPDATE photos SET ${setClause.join(', ')} WHERE photo_id = ? AND user_id = ?`;
         
-        console.log('Executing SQL:', sql);
-        console.log('With params:', params);
+        // console.log('Executing SQL:', sql);
+        // console.log('With params:', params);
         
         const result = await query(sql, params);
         
@@ -310,12 +310,12 @@ const photoModel = {
             LIMIT ${numLimit}
         `;
         
-        console.log('Executing popular tags query with limit:', numLimit);
+        // console.log('Executing popular tags query with limit:', numLimit);
         
         try {
             return await query(sql);
         } catch (error) {
-            console.error('Error in getPopularTags:', error);
+            // console.error('Error in getPopularTags:', error);
             
             // Fallback
             const fallbackSql = `
@@ -328,7 +328,7 @@ const photoModel = {
                 LIMIT ${numLimit}
             `;
             
-            console.log('Trying fallback query for popular tags');
+            // console.log('Trying fallback query for popular tags');
             return await query(fallbackSql);
         }
     },
@@ -402,8 +402,8 @@ const photoModel = {
             LIMIT ${numLimit} OFFSET ${numOffset}
         `;
 
-        console.log('Health filter SQL:', sql);
-        console.log('Health filter params:', params);
+        // console.log('Health filter SQL:', sql);
+        // console.log('Health filter params:', params);
 
         try {
             const photos = await query(sql, params);
@@ -419,7 +419,7 @@ const photoModel = {
             
             return photos;
         } catch (error) {
-            console.error('Error in getPhotosByHealthStatus:', error);
+            // console.error('Error in getPhotosByHealthStatus:', error);
             
             // Return empty array instead of throwing error for better UX
             return [];
@@ -464,7 +464,7 @@ const photoModel = {
                 recent_vet_visit_pets: parseInt(result?.recent_vet_visit_pets || 0)
             };
         } catch (error) {
-            console.error('Error in getHealthStatusSummary:', error);
+            // console.error('Error in getHealthStatusSummary:', error);
             
             // Return default values instead of throwing error
             return {
@@ -558,7 +558,7 @@ async getPublicPhotos(page = 1, limit = 12, filters = {}, sortBy = 'newest') {
         LIMIT ${numLimit} OFFSET ${numOffset}
     `;
     
-    console.log('Executing gallery query with params:', params);
+//    console.log('Executing gallery query with params:', params); 
     
     try {
         const photos = await query(sql, params);

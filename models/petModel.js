@@ -92,7 +92,7 @@ async function createPet(userId, { name, breed, age, species, gender, weight }) 
 }
 
 async function updatePet(petId, { name, breed, age, species, gender, weight }) {
-    console.log('📝 updatePet called with:', { petId, name, breed, age, species, gender, weight });
+    // console.log('📝 updatePet called with:', { petId, name, breed, age, species, gender, weight });
     
     // Validate provided fields (only validate fields that are being updated)
     if (name !== undefined && !validatePetName(name)) {
@@ -163,12 +163,12 @@ async function updatePet(petId, { name, breed, age, species, gender, weight }) {
     
     const sql = `UPDATE pets SET ${updates.join(', ')} WHERE pet_id = ?`;
     
-    console.log('🚀 Executing SQL:', sql);
-    console.log('📋 With params:', params);
+    // console.log('🚀 Executing SQL:', sql);
+    // console.log('📋 With params:', params);
     
     const result = await query(sql, params);
     
-    console.log('✅ SQL result:', result);
+    // console.log('✅ SQL result:', result);
     
     // Check if any rows were affected (pet exists)
     if (result.affectedRows === 0) {

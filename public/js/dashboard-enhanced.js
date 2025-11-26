@@ -5,24 +5,24 @@ class EnhancedDashboard {
     }
 
     init() {
-        console.log('🚀 Enhanced Dashboard initialized');
+        // console.log('🚀 Enhanced Dashboard initialized');
         this.bindEvents();
         this.initializeFilterSystem();
         this.testEditButtons();
     }
 
     bindEvents() {
-        console.log('🔗 Binding events...');
+        // console.log('🔗 Binding events...');
         
         // Use event delegation for dynamic elements
         document.addEventListener('click', (e) => {
-            console.log('🎯 Click event on:', e.target);
+            // console.log('🎯 Click event on:', e.target);
             
             // Edit pet buttons
             if (e.target.closest('.edit-btn')) {
                 const button = e.target.closest('.edit-btn');
                 const petId = button.getAttribute('data-pet-id');
-                console.log('✏️ Edit pet button clicked:', petId);
+                // console.log('✏️ Edit pet button clicked:', petId);
                 this.togglePetEditForm(petId);
             }
 
@@ -30,7 +30,7 @@ class EnhancedDashboard {
             if (e.target.closest('.save-edit-btn')) {
                 const button = e.target.closest('.save-edit-btn');
                 const petId = button.getAttribute('data-pet-id');
-                console.log('💾 Save pet edit button clicked:', petId);
+                // console.log('💾 Save pet edit button clicked:', petId);
                 this.savePetEdit(petId, button);
             }
 
@@ -38,7 +38,7 @@ class EnhancedDashboard {
             if (e.target.closest('.cancel-edit-btn')) {
                 const button = e.target.closest('.cancel-edit-btn');
                 const petId = button.getAttribute('data-pet-id');
-                console.log('❌ Cancel pet edit button clicked:', petId);
+                // console.log('❌ Cancel pet edit button clicked:', petId);
                 this.hidePetEditForm(petId);
             }
 
@@ -46,12 +46,12 @@ class EnhancedDashboard {
             if (e.target.closest('.edit-task-btn')) {
                 const button = e.target.closest('.edit-task-btn');
                 const taskId = button.getAttribute('data-task-id');
-                console.log('✏️ Edit task button clicked:', taskId);
-                console.log('🔍 Button details:', {
-                    className: button.className,
-                    dataset: button.dataset,
-                    parentElement: button.parentElement?.className
-                });
+                // console.log('✏️ Edit task button clicked:', taskId);
+                // console.log('🔍 Button details:', {
+                //     className: button.className,
+                //     dataset: button.dataset,
+                //     parentElement: button.parentElement?.className
+                // });
                 this.toggleTaskEditForm(taskId);
             }
 
@@ -85,46 +85,46 @@ class EnhancedDashboard {
     }
 
     testEditButtons() {
-        console.log('🧪 Testing edit buttons...');
+        // console.log('🧪 Testing edit buttons...');
         
         // Test pet edit buttons
         const petEditButtons = document.querySelectorAll('.edit-btn');
-        console.log(`🐕 Found ${petEditButtons.length} pet edit buttons`);
+        // console.log(`🐕 Found ${petEditButtons.length} pet edit buttons`);
         petEditButtons.forEach((btn, index) => {
-            console.log(`Pet Edit Button ${index + 1}:`, {
-                class: btn.className,
-                'data-pet-id': btn.getAttribute('data-pet-id'),
-                exists: !!btn
-            });
+            // console.log(`Pet Edit Button ${index + 1}:`, {
+            //     class: btn.className,
+            //     'data-pet-id': btn.getAttribute('data-pet-id'),
+            //     exists: !!btn
+            // });
         });
 
         // Test task edit buttons
         const taskEditButtons = document.querySelectorAll('.edit-task-btn');
-        console.log(`📝 Found ${taskEditButtons.length} task edit buttons`);
+        // console.log(`📝 Found ${taskEditButtons.length} task edit buttons`);
         taskEditButtons.forEach((btn, index) => {
-            console.log(`Task Edit Button ${index + 1}:`, {
-                class: btn.className,
-                'data-task-id': btn.getAttribute('data-task-id'),
-                exists: !!btn,
-                parent: btn.parentElement?.className,
-                isVisible: btn.offsetParent !== null
-            });
+            // console.log(`Task Edit Button ${index + 1}:`, {
+            //     class: btn.className,
+            //     'data-task-id': btn.getAttribute('data-task-id'),
+            //     exists: !!btn,
+            //     parent: btn.parentElement?.className,
+            //     isVisible: btn.offsetParent !== null
+            // });
         });
 
         // Test if task edit forms exist
         const taskEditForms = document.querySelectorAll('[id^="edit-task-form-"]');
-        console.log(`📋 Found ${taskEditForms.length} task edit forms`);
+        // console.log(`📋 Found ${taskEditForms.length} task edit forms`);
         taskEditForms.forEach((form, index) => {
-            console.log(`Task Edit Form ${index + 1}:`, {
-                id: form.id,
-                style: form.style.display,
-                exists: !!form
-            });
+            // console.log(`Task Edit Form ${index + 1}:`, {
+            //     id: form.id,
+            //     style: form.style.display,
+            //     exists: !!form
+            // });
         });
     }
 
     togglePetEditForm(petId) {
-        console.log('🔄 Toggling pet edit form for:', petId);
+        // console.log('🔄 Toggling pet edit form for:', petId);
         const editForm = document.getElementById(`edit-form-${petId}`);
         
         if (!editForm) {
@@ -610,6 +610,6 @@ class EnhancedDashboard {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOM fully loaded, initializing Enhanced Dashboard...');
+    // console.log('📄 DOM fully loaded, initializing Enhanced Dashboard...');
     window.enhancedDashboard = new EnhancedDashboard();
 });

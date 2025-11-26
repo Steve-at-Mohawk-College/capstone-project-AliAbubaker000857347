@@ -128,7 +128,7 @@ async function queryWithRetry(sql, params, maxRetries = 3) {
       return await query(sql, params);
     } catch (error) {
       if (error.code === 'ER_USER_LIMIT_REACHED' && attempt < maxRetries) {
-        console.log(`Database connection limit reached, retrying... (${attempt}/${maxRetries})`);
+        // console.log(`Database connection limit reached, retrying... (${attempt}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
         continue;
       }

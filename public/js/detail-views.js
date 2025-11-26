@@ -1,6 +1,6 @@
 // Detail View Handler - Fixed version
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 Detail views script loaded - checking for modal...');
+    
     
     const detailModalElement = document.getElementById('detailModal');
     if (!detailModalElement) {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const detailModalBody = document.getElementById('detailModalBody');
     const detailEditBtn = document.getElementById('detailEditBtn');
 
-    console.log('✅ Modal elements found:', { detailModalTitle, detailModalBody, detailEditBtn });
+    // console.log('✅ Modal elements found:', { detailModalTitle, detailModalBody, detailEditBtn });
 
     // Proper modal event listeners to handle focus
     detailModalElement.addEventListener('show.bs.modal', function () {

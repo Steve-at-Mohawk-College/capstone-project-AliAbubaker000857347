@@ -12,7 +12,7 @@ function requireAuth(req, res, next) {
 
 // routes/communityRoutes.js - Update the GET /community route
 router.get('/', requireAuth, async (req, res) => {
-    console.log('GET /community - Loading community page');
+    // console.log('GET /community - Loading community page');
     
     try {
         // Get community posts with comments (existing code)
@@ -82,7 +82,7 @@ router.get('/', requireAuth, async (req, res) => {
             LIMIT 20
         `);
 
-        console.log(`✅ Loaded ${posts.length} community posts and ${communityUsers.length} regular users (admins hidden)`);
+        // console.log(`✅ Loaded ${posts.length} community posts and ${communityUsers.length} regular users (admins hidden)`);
 
         res.render('community', {
             title: 'Community - Pet Care',
@@ -115,7 +115,7 @@ router.get('/', requireAuth, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Community page error:', error);
+        // console.error('Community page error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading community page.',
@@ -210,7 +210,7 @@ router.get('/profile/:userId', requireAuth, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('User profile error:', error);
+        // console.error('User profile error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading user profile.',
@@ -223,13 +223,13 @@ router.get('/profile/:userId', requireAuth, async (req, res) => {
 
 // POST /community - Create a new post
 router.post('/', requireAuth, async (req, res) => {
-    console.log('POST /community - Creating new post');
+    // console.log('POST /community - Creating new post');
     
     try {
         const { title, content } = req.body;
         const userId = req.session.userId;
 
-        console.log('New post data:', { title, content, userId });
+        // console.log('New post data:', { title, content, userId });
 
         if (!title || !content) {
             return res.status(400).render('community', {
@@ -246,10 +246,10 @@ router.post('/', requireAuth, async (req, res) => {
             [userId, title, content, true] // Auto-approve for now
         );
 
-        console.log('Post created successfully');
+        // console.log('Post created successfully');
         res.redirect('/community');
     } catch (error) {
-        console.error('Create post error:', error);
+        // console.error('Create post error:', error);
         res.status(500).render('community', {
             title: 'Community - Pet Care',
             error: 'Error creating post',
@@ -262,18 +262,18 @@ router.post('/', requireAuth, async (req, res) => {
 
 // POST /community/comments/:postId - Add comment to a post
 router.post('/comments/:postId', requireAuth, async (req, res) => {
-    console.log('POST /community/comments/:postId - Adding comment');
+    // console.log('POST /community/comments/:postId - Adding comment');
     
     try {
         const { content } = req.body;
         const { postId } = req.params;
         const userId = req.session.userId;
 
-        console.log('Comment data:', { content, postId, userId });
+        // console.log('Comment data:', { content, postId, userId });
 
         // Validation
         if (!content) {
-            console.log('No content provided');
+            // console.log('No content provided');
             return res.status(400).json({ 
                 success: false, 
                 error: 'Content is required' 
@@ -281,7 +281,7 @@ router.post('/comments/:postId', requireAuth, async (req, res) => {
         }
 
         if (!postId || isNaN(postId)) {
-            console.log('Invalid post ID:', postId);
+            // console.log('Invalid post ID:', postId);
             return res.status(400).json({ 
                 success: false, 
                 error: 'Invalid post ID' 
@@ -295,7 +295,7 @@ router.post('/comments/:postId', requireAuth, async (req, res) => {
         );
 
         if (post.length === 0) {
-            console.log('Post not found or not approved:', postId);
+            // console.log('Post not found or not approved:', postId);
             return res.status(404).json({ 
                 success: false, 
                 error: 'Post not found' 
@@ -308,7 +308,7 @@ router.post('/comments/:postId', requireAuth, async (req, res) => {
             [userId, postId, content]
         );
 
-        console.log('Comment inserted successfully:', result.insertId);
+        // console.log('Comment inserted successfully:', result.insertId);
 
         // Get the new comment with username AND profile_picture_url
         const newComment = await query(`
@@ -324,7 +324,7 @@ router.post('/comments/:postId', requireAuth, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Add comment error:', error);
+        // console.error('Add comment error:', error);
         res.status(500).json({ 
             success: false, 
             error: 'Error posting comment' 
@@ -345,7 +345,7 @@ router.get('/posts', requireAuth, async (req, res) => {
         
         res.json({ success: true, posts });
     } catch (error) {
-        console.error('Get posts API error:', error);
+        // console.error('Get posts API error:', error);
         res.status(500).json({ success: false, error: 'Error fetching posts' });
     }
 });
@@ -365,7 +365,7 @@ router.get('/comments/:postId', requireAuth, async (req, res) => {
         
         res.json({ success: true, comments });
     } catch (error) {
-        console.error('Get comments API error:', error);
+        // console.error('Get comments API error:', error);
         res.status(500).json({ success: false, error: 'Error fetching comments' });
     }
 });

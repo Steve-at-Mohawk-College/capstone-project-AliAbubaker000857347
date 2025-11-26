@@ -60,6 +60,24 @@ app.use(
 );
 
 
+// Add cache control for profile images
+app.use('/profile/picture', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+});
+
+// Also add for static profile images
+app.use('/uploads/profile-pictures', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+});
+
+
 
 
 // Add session timeout middleware

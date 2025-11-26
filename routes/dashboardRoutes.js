@@ -11,7 +11,7 @@ function requireAuth(req, res, next) {
 // GET /dashboard - Dashboard page
 router.get('/', requireAuth, async (req, res) => {
   try {
-    console.log('📊 Dashboard route called - checking variables being passed');
+    // console.log('📊 Dashboard route called - checking variables being passed');
     
     const userId = req.session.userId;
     
@@ -24,9 +24,9 @@ router.get('/', requireAuth, async (req, res) => {
     const petOffset = (petPage - 1) * itemsPerPage;
     const taskOffset = (taskPage - 1) * itemsPerPage;
 
-    console.log('🔢 Pagination parameters:', {
-      userId, petPage, taskPage, itemsPerPage, petOffset, taskOffset
-    });
+    // console.log('🔢 Pagination parameters:', {
+    //   userId, petPage, taskPage, itemsPerPage, petOffset, taskOffset
+    // });
 
     // Get paginated pets
     const pets = await queryPaginated(
@@ -93,7 +93,7 @@ router.get('/', requireAuth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Dashboard error:', error);
+    // console.error('Dashboard error:', error);
     
     // Fallback without pagination
     try {
@@ -121,7 +121,7 @@ router.get('/', requireAuth, async (req, res) => {
         error: 'Pagination temporarily disabled'
       });
     } catch (fallbackError) {
-      console.error('Fallback also failed:', fallbackError);
+      // console.error('Fallback also failed:', fallbackError);
       res.status(500).render('dashboard', {
         title: 'Pet Dashboard',
         username: req.session.username,

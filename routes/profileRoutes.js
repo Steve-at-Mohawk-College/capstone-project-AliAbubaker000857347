@@ -35,9 +35,9 @@ router.post('/bio', requireAuth, async (req, res) => {
     const userId = req.session.userId;
     const userRole = req.session.role;
 
-    console.log("➡️ POST /profile/bio called");
-    console.log("User ID:", userId, "Role:", userRole);
-    console.log("Bio content:", bio);
+    // console.log("➡️ POST /profile/bio called");
+    // console.log("User ID:", userId, "Role:", userRole);
+    // console.log("Bio content:", bio);
 
     // Determine if bio requires moderation
     // For regular users, any bio update requires admin approval
@@ -62,7 +62,7 @@ router.post('/bio', requireAuth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Bio update error:', error);
+    // console.error('Bio update error:', error);
     res.status(500).json({
       success: false,
       error: 'Error updating bio: ' + error.message
@@ -121,7 +121,7 @@ router.get('/verify-email-change', async (req, res) => {
       message: 'Your email has been successfully updated and verified!'
     });
   } catch (error) {
-    console.error('Email change verification error:', error);
+    // console.error('Email change verification error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Database error during email verification.',
@@ -149,7 +149,7 @@ router.get('/bio', requireAuth, async (req, res) => {
       isApproved: !bioData?.bio_requires_moderation
     });
   } catch (error) {
-    console.error('Get bio error:', error);
+    // console.error('Get bio error:', error);
     res.status(500).json({
       success: false,
       error: 'Error fetching bio'
@@ -194,7 +194,7 @@ router.post('/username', requireAuth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Username update error:', error);
+    // console.error('Username update error:', error);
     res.status(500).json({
       success: false,
       error: 'Error updating username'
@@ -207,9 +207,9 @@ router.get('/', requireAuth, async (req, res) => {
   try {
     const userProfile = await getUserProfileWithStats(req.session.userId);
 
-    console.log("➡️ GET /profile called");
-    console.log("Session userId:", req.session.userId);
-    console.log("User profile:", userProfile);
+    // console.log("➡️ GET /profile called");
+    // console.log("Session userId:", req.session.userId);
+    // console.log("User profile:", userProfile);
 
     res.render('profile', {
       title: 'My Profile - Pet Care',
@@ -220,7 +220,7 @@ router.get('/', requireAuth, async (req, res) => {
       message: null
     });
   } catch (error) {
-    console.error('Profile error:', error);
+    // console.error('Profile error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading profile.',
@@ -230,11 +230,13 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 
+
+// POST /profile/picture - Update with better session handling
 router.post('/picture', requireAuth, uploadProfile, async (req, res) => {
     try {
-        console.log("➡️ POST /profile/picture route hit");
-        console.log("Cloudinary result:", req.cloudinaryResult);
-        console.log("User ID:", req.session.userId);
+        // console.log("➡️ POST /profile/picture route hit");
+        // console.log("Cloudinary result:", req.cloudinaryResult);
+        // console.log("User ID:", req.session.userId);
 
         if (!req.cloudinaryResult) {
             return res.status(400).json({
@@ -245,25 +247,40 @@ router.post('/picture', requireAuth, uploadProfile, async (req, res) => {
 
         const userId = req.session.userId;
         
-        // Get Cloudinary URL - it's already processed and optimized
+        // Get Cloudinary URL WITHOUT cache busting parameter here
+        // Let the frontend handle cache busting
         const profilePictureUrl = req.cloudinaryResult.secure_url;
         
-        console.log("Cloudinary URL:", profilePictureUrl);
+        // console.log("Cloudinary URL:", profilePictureUrl);
 
         // Update database with Cloudinary URL
         await updateUserProfilePicture(userId, profilePictureUrl);
 
-        // Update session
+        // Update session IMMEDIATELY
         req.session.profilePicture = profilePictureUrl;
-
+        
+        // Force session save
+        await new Promise((resolve, reject) => {
+            req.session.save((err) => {
+                if (err) {
+                    // console.error('Session save error:', err);
+                    reject(err);
+                } else {
+                    // console.log('✅ Session saved successfully');
+                    resolve();
+                }
+            });
+        });
+        
         res.json({
             success: true,
             message: 'Profile picture updated successfully!',
-            profilePicture: profilePictureUrl
+            profilePicture: profilePictureUrl,
+            timestamp: Date.now()
         });
 
     } catch (error) {
-        console.error('Profile picture upload error:', error);
+        // console.error('Profile picture upload error:', error);
         res.status(500).json({
             success: false,
             error: 'Error uploading profile picture: ' + error.message
@@ -275,54 +292,6 @@ router.post('/picture', requireAuth, uploadProfile, async (req, res) => {
 
 
 
-
-// // Add this function to handle profile picture upload
-// async function handleProfilePictureUpload(req, res) {
-//     try {
-//         console.log("➡️ handleProfilePictureUpload called");
-//         console.log("File:", req.file);
-//         console.log("User ID:", req.session.userId);
-
-//         if (!req.file) {
-//             return res.status(400).json({
-//                 success: false,
-//                 error: 'No file uploaded'
-//             });
-//         }
-
-//         const userId = req.session.userId;
-        
-//         // Process the image (resize, optimize)
-//         const processedImagePath = await processProfilePicture(req.file.path);
-//         console.log("Processed image path:", processedImagePath);
-
-//         // Create web-accessible URL
-//         const webPath = processedImagePath.replace(/^.*public[\\/]/, '');
-//         const imageUrl = `/${webPath.replace(/\\/g, '/')}`;
-        
-//         console.log("Web path:", webPath);
-//         console.log("Image URL:", imageUrl);
-
-//         // Update database
-//         await updateUserProfilePicture(userId, imageUrl);
-
-//         // Update session
-//         req.session.profilePicture = imageUrl;
-
-//         res.json({
-//             success: true,
-//             message: 'Profile picture updated successfully!',
-//             imageUrl: imageUrl
-//         });
-
-//     } catch (error) {
-//         console.error('Profile picture upload error:', error);
-//         res.status(500).json({
-//             success: false,
-//             error: 'Error uploading profile picture: ' + error.message
-//         });
-//     }
-// }
 
 
 
@@ -339,9 +308,9 @@ router.post('/email', requireAuth, async (req, res) => {
     const userId = req.session.userId;
     const currentEmail = req.session.email;
 
-    console.log("➡️ POST /profile/email called");
-    console.log("User ID:", userId, "Current email:", currentEmail);
-    console.log("New email:", email);
+    // console.log("➡️ POST /profile/email called");
+    // console.log("User ID:", userId, "Current email:", currentEmail);
+    // console.log("New email:", email);
 
     if (!email || !email.trim()) {
       return res.status(400).json({
@@ -399,10 +368,10 @@ router.post('/email', requireAuth, async (req, res) => {
       );
 
       if (!emailSent) {
-        console.error('Failed to send verification email');
+        // console.error('Failed to send verification email');
       }
     } catch (emailError) {
-      console.error('Email sending error:', emailError);
+      // console.error('Email sending error:', emailError);
       // Don't fail the request if email fails
     }
 
@@ -414,7 +383,7 @@ router.post('/email', requireAuth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Email update error:', error);
+    // console.error('Email update error:', error);
     
     if (error.message === 'EMAIL_IN_USE') {
       return res.status(400).json({
@@ -451,7 +420,7 @@ router.get('/email/pending', requireAuth, async (req, res) => {
           return result;
         } catch (error) {
           if (error.code === 'ER_USER_LIMIT_REACHED' && i < retries - 1) {
-            console.log(`Retrying pending email check... (${i + 1}/${retries})`);
+            // console.log(`Retrying pending email check... (${i + 1}/${retries})`);
             await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1))); // Longer delay
             continue;
           }
@@ -469,7 +438,7 @@ router.get('/email/pending', requireAuth, async (req, res) => {
       expiresAt: pendingEmail?.pending_email_expiry || null
     });
   } catch (error) {
-    console.error('Pending email status error:', error);
+    // console.error('Pending email status error:', error);
     
     // Don't crash the page if we can't check pending status
     // Return a safe default response
@@ -494,7 +463,7 @@ router.post('/email/cancel', requireAuth, async (req, res) => {
       message: 'Pending email change cancelled successfully'
     });
   } catch (error) {
-    console.error('Cancel pending email error:', error);
+    // console.error('Cancel pending email error:', error);
     res.status(500).json({
       success: false,
       error: 'Error cancelling pending email change'

@@ -16,7 +16,7 @@ function requireAuth(req, res, next) {
 // POST /health - Add a new health record with comprehensive validation
 router.post('/', requireAuth, async (req, res) => {
   try {
-    console.log('Request body:', req.body);
+    // console.log('Request body:', req.body);
     
     if (!req.body || Object.keys(req.body).length === 0) {
       throw new Error('Form data not received. Check body parsing middleware.');
@@ -115,7 +115,7 @@ router.post('/', requireAuth, async (req, res) => {
     res.redirect('/health-tracker-history?message=Health record added successfully!');
     
   } catch (error) {
-    console.error('Add health record error:', error);
+    // console.error('Add health record error:', error);
     
     // Get pets again for the form
     const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
@@ -248,7 +248,7 @@ router.post('/:recordId', requireAuth, async (req, res) => {
     }
     
   } catch (error) {
-    console.error('Update health record error:', error);
+    // console.error('Update health record error:', error);
     
     // Get data for the form
     const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
@@ -302,7 +302,7 @@ router.put('/:recordId', requireAuth, async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Update health record error:', error);
+    // console.error('Update health record error:', error);
     res.status(500).json({ error: 'Error updating health record: ' + error.message });
   }
 });
@@ -313,7 +313,7 @@ router.delete('/:recordId', requireAuth, async (req, res) => {
     await deleteHealthRecord(req.params.recordId, req.session.userId);
     res.json({ ok: true, message: 'Health record deleted successfully' });
   } catch (error) {
-    console.error('Delete health record error:', error);
+    // console.error('Delete health record error:', error);
     res.status(500).json({ error: 'Error deleting health record: ' + error.message });
   }
 });
@@ -348,7 +348,7 @@ router.get('/records', requireAuth, async (req, res) => {
     
     res.json(recordsByPet);
   } catch (error) {
-    console.error('Get health records error:', error);
+    // console.error('Get health records error:', error);
     res.status(500).json({ error: 'Error fetching health records' });
   }
 });
@@ -396,7 +396,7 @@ router.get('/edit/:recordId', requireAuth, async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Edit health record form error:', error);
+    // console.error('Edit health record form error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading edit form.',
@@ -447,7 +447,7 @@ router.get('/records/:recordId', requireAuth, async (req, res) => {
     
     res.json(response);
   } catch (error) {
-    console.error('Get health record error:', error);
+    // console.error('Get health record error:', error);
     res.status(500).json({ error: 'Error fetching health record' });
   }
 });

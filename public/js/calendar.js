@@ -7,7 +7,7 @@ class CalendarManager {
     }
 
     async init() {
-        console.log('🗓️ Calendar Manager initialized');
+        // console.log('🗓️ Calendar Manager initialized');
         await this.loadCalendarData();
         this.renderCalendar();
         this.bindEvents();
@@ -16,7 +16,7 @@ class CalendarManager {
 
     async loadCalendarData() {
     try {
-        console.log('📡 Fetching calendar data...');
+        // console.log('📡 Fetching calendar data...');
         const response = await fetch('/tasks/calendar');
         
         if (!response.ok) {
@@ -28,11 +28,11 @@ class CalendarManager {
         // Ensure tasks is always an array
         this.tasks = Array.isArray(data) ? data : [];
         
-        console.log('📅 Loaded tasks for calendar:', this.tasks);
+        // console.log('📅 Loaded tasks for calendar:', this.tasks);
         
         this.renderCalendar();
     } catch (error) {
-        console.error('❌ Error loading calendar data:', error);
+        // console.error('❌ Error loading calendar data:', error);
         this.tasks = []; // Ensure it's always an array
         this.renderCalendar(); // Render calendar even with empty data
     }
@@ -41,7 +41,7 @@ class CalendarManager {
     renderCalendar() {
     const calendarElement = document.getElementById('calendarGrid');
     if (!calendarElement) {
-        console.error('❌ Calendar grid element not found');
+        // console.error('❌ Calendar grid element not found');
         return;
     }
 
@@ -341,6 +341,6 @@ getTasksForDate(dateString) {
 
 // Initialize calendar when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOM loaded, initializing calendar...');
+    // console.log('📄 DOM loaded, initializing calendar...');
     window.calendarManager = new CalendarManager();
 });

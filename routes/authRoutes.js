@@ -42,7 +42,7 @@ router.post('/logout', (req, res) => {
     
     req.session.destroy(err => {
         if (err) {
-            console.error('Logout error:', err);
+            // console.error('Logout error:', err);
             return res.status(500).render('error', {
                 title: 'Error',
                 message: 'Error logging out.',
@@ -95,7 +95,7 @@ router.post('/forgot-password', async (req, res) => {
       error: null
     });
   } catch (error) {
-    console.error('Password reset error:', error);
+    // console.error('Password reset error:', error);
     res.render('forgot-password', {
       title: 'Forgot Password - Pet Care',
       error: 'An error occurred. Please try again.',
@@ -132,7 +132,7 @@ router.get('/reset-password', async (req, res) => {
       token 
     });
   } catch (error) {
-    console.error('Reset password error:', error);
+    // console.error('Reset password error:', error);
     res.render('reset-password', {
       title: 'Reset Password - Pet Care',
       error: 'An error occurred. Please try again.',
@@ -170,7 +170,7 @@ router.post('/reset-password', async (req, res) => {
 
     res.redirect('/login?message=Password reset successfully. Please login with your new password.');
   } catch (error) {
-    console.error('Password reset error:', error);
+    // console.error('Password reset error:', error);
     res.render('reset-password', {
       title: 'Reset Password - Pet Care',
       error: 'An error occurred. Please try again.',
@@ -238,7 +238,7 @@ router.post('/register', async (req, res) => {
       formData: {} // Clear form on success
     });
   } catch (e) {
-    console.error('Registration error:', e);
+    // console.error('Registration error:', e);
     res.status(500).render('register', { 
       title: 'Register - Pet Care Management',
       error: 'Server error during registration.',
@@ -299,7 +299,7 @@ router.get('/verify-email-change', async (req, res) => {
       message: 'Your email has been successfully updated and verified!'
     });
   } catch (error) {
-    console.error('Email change verification error:', error);
+    // console.error('Email change verification error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Database error during email verification.',
@@ -353,7 +353,7 @@ router.get('/verify', async (req, res) => {
       message: 'Your email has been successfully verified.'
     });
   } catch (e) {
-    console.error('Verification error:', e);
+    // console.error('Verification error:', e);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Database error during verification.',
@@ -435,7 +435,7 @@ router.post('/login', async (req, res) => {
     // Regular user login
     res.redirect('/dashboard');
   } catch (e) {
-    console.error('Login error:', e);
+    // console.error('Login error:', e);
     res.status(500).render('login', { 
       title: 'Login - Pet Care Management',
       error: 'Database error during login.' 
@@ -448,7 +448,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
-      console.error('Logout error:', err);
+      // console.error('Logout error:', err);
       return res.status(500).render('error', {
         title: 'Error',
         message: 'Error logging out.',

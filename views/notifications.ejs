@@ -131,7 +131,7 @@ class NotificationsPage {
       
       await this.loadNotifications(); // Reload
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      // console.error('Error marking notification as read:', error);
       this.showError('Failed to mark notification as read');
     }
   }
@@ -144,7 +144,7 @@ class NotificationsPage {
       
       await this.loadNotifications(); // Reload
     } catch (error) {
-      console.error('Error marking all as read:', error);
+      // console.error('Error marking all as read:', error);
       this.showError('Failed to mark all as read');
     }
   }
@@ -161,7 +161,7 @@ class NotificationsPage {
       
       await this.loadNotifications(); // Reload
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      // console.error('Error deleting notification:', error);
       this.showError('Failed to delete notification');
     }
   }

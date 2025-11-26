@@ -73,9 +73,7 @@
           "script": {
             "exec": [
               "// Enhanced login test script with debugging",
-              "console.log('=== LOGIN TEST DEBUG ===');",
-              "console.log('Response status:', pm.response.code);",
-              "console.log('Response headers:', JSON.stringify(pm.response.headers, null, 2));",
+              
               "",
               "// Check if login was successful",
               "if (pm.response.code === 302) {",

@@ -1299,6 +1299,179 @@ main, .main-content, .content {
         [data-theme="dark"] .form-label.small {
             color: #adb5bd !important;
         }
+
+        /* Fix missing form labels - ensure all form controls have proper labels */
+.form-label.small {
+    color: #495057 !important;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: block;
+    cursor: pointer; /* Makes it clear the label is clickable */
+}
+
+/* Ensure all form controls have visible labels */
+input[type="number"], input[type="date"], input[type="text"], select {
+    margin-top: 0.25rem !important; /* Space between label and input */
+}
+
+/* Fix orphaned form labels */
+.form-label:not([for]) {
+    color: #6c757d !important;
+    font-style: italic;
+}
+/* Fix empty buttons - add screen reader text */
+.btn-edit, .btn-remove, .edit-task-btn {
+    position: relative;
+}
+
+/* Screen reader only text for buttons */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Ensure buttons have proper hover states for visibility */
+.btn-edit:hover::after, .btn-remove:hover::after {
+    content: attr(aria-label);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+/* Fix very low contrast text */
+.text-muted {
+    color: #6c757d !important; /* Much better contrast ratio */
+}
+
+.task-description.text-muted {
+    color: #5a6268 !important; /* Even darker for task descriptions */
+}
+
+.small.text-muted {
+    color: #5a6268 !important; /* Better contrast for small text */
+}
+
+/* Ensure results counter has good contrast */
+#resultsCounter {
+    color: #495057 !important;
+    font-weight: 500;
+}
+/* Fix heading hierarchy */
+.filter-title, .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.filter-group-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--light-text);
+    margin-bottom: 1rem;
+}
+
+/* Ensure modal titles are proper headings */
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Fix the edit form heading */
+.edit-form-content h5,
+.edit-form-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+/* Fix very low contrast form labels with inline styles */
+.form-label.small[style*="color: rgb(108, 117, 125)"] {
+    color: #495057 !important; /* Much darker for better contrast */
+    opacity: 1 !important;
+}
+
+/* Also fix the background if needed */
+.form-label.small[style*="background-color: rgb(248, 249, 250)"] {
+    background-color: transparent !important; /* Remove light background */
+}
+
+/* Ensure all form labels have good contrast */
+.form-label.small {
+    color: #495057 !important; /* Dark gray for good contrast */
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: block;
+    cursor: pointer;
+}
+
+/* Dark mode fixes */
+[data-theme="dark"] .form-label.small[style*="color: rgb(108, 117, 125)"] {
+    color: #adb5bd !important; /* Lighter gray for dark mode */
+}
+
+[data-theme="dark"] .form-label.small {
+    color: #adb5bd !important;
+}
+
+/* Fix very low contrast results counter in dark mode */
+[data-theme="dark"] #resultsCounter[style*="color: rgb(73, 80, 87)"] {
+    color: #adb5bd !important; /* Much lighter gray for better contrast */
+    opacity: 1 !important;
+}
+
+/* Also fix the background if needed */
+[data-theme="dark"] #resultsCounter[style*="background-color: rgb(21, 26, 45)"] {
+    background-color: transparent !important; /* Remove dark background */
+}
+
+/* Ensure all results counter text has good contrast in dark mode */
+[data-theme="dark"] #resultsCounter {
+    color: #adb5bd !important; /* Light gray for good contrast */
+    font-weight: 500;
+}
+/* Ensure screen reader text is properly hidden in both light and dark modes */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: transparent !important;
+}
+
+/* Additional protection for dark mode */
+[data-theme="dark"] .sr-only {
+    background: transparent !important;
+    color: transparent !important;
+    opacity: 0 !important;
+}
+
+/* Ensure no background or color inheritance */
+.btn .sr-only,
+.pet-actions .sr-only,
+.task-actions .sr-only {
+    background: transparent !important;
+    color: transparent !important;
+}
+
 </style>
 
 <div class="dashboard-container">
@@ -1507,13 +1680,20 @@ main, .main-content, .content {
                 </div>
                 <div class="pet-actions">
                   <span class="badge me-2"><%= pet.gender || 'Unknown' %></span>
-                  <button class="btn btn-edit btn-sm edit-btn" data-pet-id="<%= pet.pet_id %>" aria-label="Edit <%= pet.name %>">
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button class="btn btn-remove btn-sm remove-btn" 
-                          data-type="pet" data-id="<%= pet.pet_id %>" data-name="<%= pet.name %>">
-                    <i class="bi bi-trash"></i>
-                  </button>
+                 <button class="btn btn-edit btn-sm edit-btn" data-pet-id="<%= pet.pet_id %>" 
+        aria-label="Edit <%= pet.name %>">
+    <i class="bi bi-pencil"></i>
+    <span class="sr-only">Edit <%= pet.name %></span>
+</button>
+
+
+
+                <button class="btn btn-remove btn-sm remove-btn" 
+        data-type="pet" data-id="<%= pet.pet_id %>" data-name="<%= pet.name %>"
+        aria-label="Remove <%= pet.name %>">
+    <i class="bi bi-trash"></i>
+    <span class="sr-only">Remove <%= pet.name %></span>
+</button>
                 </div>
               </div>
 
@@ -1636,13 +1816,17 @@ main, .main-content, .content {
                 <span class="badge badge-<%= task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success' %> me-2">
                   <%= task.priority %>
                 </span>
-                <button class="btn btn-edit btn-sm edit-task-btn" data-task-id="<%= task.task_id %>">
-                  <i class="bi bi-pencil"></i>
-                </button>
+                <button class="btn btn-edit btn-sm edit-task-btn" data-task-id="<%= task.task_id %>" 
+        aria-label="Edit task: <%= task.title %>">
+    <i class="bi bi-pencil"></i>
+    <span class="sr-only">Edit <%= task.title %></span>
+</button>
                 <button class="btn btn-remove btn-sm remove-btn" 
-                        data-type="task" data-id="<%= task.task_id %>" data-name="<%= task.title %>">
-                  <i class="bi bi-trash"></i>
-                </button>
+        data-type="task" data-id="<%= task.task_id %>" data-name="<%= task.title %>"
+        aria-label="Remove task: <%= task.title %>">
+    <i class="bi bi-trash"></i>
+    <span class="sr-only">Remove <%= task.title %></span>
+</button>
               </div>
             </div>
 

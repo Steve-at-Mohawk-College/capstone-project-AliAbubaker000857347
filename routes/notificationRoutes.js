@@ -15,7 +15,7 @@ router.get('/', requireAuth, async (req, res) => {
     const notifications = await notificationModel.getNotificationsByUser(req.session.userId, limit);
     res.json(notifications);
   } catch (error) {
-    console.error('Get notifications error:', error);
+    // console.error('Get notifications error:', error);
     res.status(500).json({ error: 'Error fetching notifications' });
   }
 });
@@ -26,7 +26,7 @@ router.get('/unread-count', requireAuth, async (req, res) => {
     const count = await notificationModel.getUnreadCount(req.session.userId);
     res.json({ count });
   } catch (error) {
-    console.error('Get unread count error:', error);
+    // console.error('Get unread count error:', error);
     res.status(500).json({ error: 'Error fetching unread count' });
   }
 });
@@ -43,7 +43,7 @@ router.put('/:id/read', requireAuth, async (req, res) => {
     await notificationModel.markAsRead(notificationId, req.session.userId);
     res.json({ ok: true });
   } catch (error) {
-    console.error('Mark as read error:', error);
+    // console.error('Mark as read error:', error);
     res.status(500).json({ error: 'Error marking notification as read' });
   }
 });
@@ -54,7 +54,7 @@ router.put('/read-all', requireAuth, async (req, res) => {
     await notificationModel.markAllAsRead(req.session.userId);
     res.json({ ok: true });
   } catch (error) {
-    console.error('Mark all as read error:', error);
+    // console.error('Mark all as read error:', error);
     res.status(500).json({ error: 'Error marking all notifications as read' });
   }
 });
@@ -71,7 +71,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
     await notificationModel.deleteNotification(notificationId, req.session.userId);
     res.json({ ok: true });
   } catch (error) {
-    console.error('Delete notification error:', error);
+    // console.error('Delete notification error:', error);
     res.status(500).json({ error: 'Error deleting notification' });
   }
 });

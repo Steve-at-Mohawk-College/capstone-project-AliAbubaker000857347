@@ -32,6 +32,68 @@
         .tag-badge {
             cursor: pointer;
         }
+
+        /* ===== FIX MOBILE BACK BUTTON POSITION ===== */
+.container.mt-4 {
+    margin-top: 2rem !important;
+}
+
+/* For smaller mobile devices */
+@media (max-width: 576px) {
+    .container.mt-4 {
+        margin-top: 4rem !important;
+    }
+    
+    .photo-container {
+        margin-top: 1rem !important;
+    }
+    
+    .mb-4 {
+        margin-top: 1rem !important;
+        padding-top: 0.5rem !important;
+    }
+}
+
+/* For medium devices */
+@media (max-width: 768px) {
+    .photo-container {
+        margin-top: 4rem !important;
+    }
+}
+/* Ensure buttons with only icons are accessible */
+.btn[aria-label] {
+    position: relative;
+}
+
+/* Hide the visual text but keep it accessible to screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Alternative approach for icon buttons */
+.btn .bi::before {
+    /* Ensure proper announcement */
+    speak: none;
+}
+
+/* For buttons that only contain icons */
+.btn:has(.bi:only-child) {
+    min-width: 2.5rem; /* Ensure adequate touch target */
+}
+
+/* Ensure focus states are visible for accessibility */
+.btn:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
     </style>
 </head>
 <body>
@@ -84,11 +146,15 @@
                             </div>
                             <div class="d-flex gap-2">
                                 <!-- Favorite Button -->
+                               
+                               
+                               
                                 <button class="btn btn-outline-danger action-btn <%= photo.is_favorited ? 'active' : '' %>" 
-                                        onclick="toggleFavorite(<%= photo.photo_id %>, this)">
-                                    <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
-                                    <span class="favorite-count"><%= photo.favorite_count || 0 %></span>
-                                </button>
+        onclick="toggleFavorite(<%= photo.photo_id %>, this)"
+        aria-label="<%= photo.is_favorited ? 'Remove from favorites' : 'Add to favorites' %>">
+    <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
+    <span class="favorite-count"><%= photo.favorite_count || 0 %></span>
+</button>
                             </div>
                         </div>
 
@@ -155,7 +221,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Photo Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editForm">
@@ -228,7 +294,7 @@
                     countSpan.textContent = result.favorite_count;
                 }
             } catch (error) {
-                console.error('Favorite error:', error);
+                // console.error('Favorite error:', error);
                 alert('Error updating favorite');
             }
         }
@@ -257,7 +323,7 @@
                     alert('Error adding tag: ' + result.error);
                 }
             } catch (error) {
-                console.error('Add tag error:', error);
+                // console.error('Add tag error:', error);
                 alert('Error adding tag');
             }
         }
@@ -265,8 +331,8 @@
         // In your photo-detail.ejs, update the editPhoto function:
 function editPhoto(photoId) {
     // Debug current state
-    console.log('Current photo is_public:', <%= photo.is_public %>);
-    console.log('Current photo is_public type:', typeof <%= photo.is_public %>);
+    // console.log('Current photo is_public:', <%= photo.is_public %>);
+    // console.log('Current photo is_public type:', typeof <%= photo.is_public %>);
     
     // Populate modal with current data
     document.getElementById('editTitle').value = '<%= photo.title || "" %>';
@@ -274,7 +340,7 @@ function editPhoto(photoId) {
     document.getElementById('editIsPublic').checked = <%= photo.is_public %>;
     
     // Debug the checkbox state
-    console.log('Checkbox checked:', document.getElementById('editIsPublic').checked);
+    // console.log('Checkbox checked:', document.getElementById('editIsPublic').checked);
     
     // Store photo ID for the save function
     document.getElementById('editForm').dataset.photoId = photoId;
@@ -289,7 +355,7 @@ function editPhoto(photoId) {
             editModal = new bootstrap.Modal(modalElement);
             editModal.show();
         } else {
-            console.error('Bootstrap not loaded');
+            // console.error('Bootstrap not loaded');
             alert('Error: Page components not loaded properly. Please refresh the page.');
         }
     }
@@ -333,7 +399,7 @@ function editPhoto(photoId) {
                     alert('Error updating photo: ' + result.error);
                 }
             } catch (error) {
-                console.error('Update error:', error);
+                // console.error('Update error:', error);
                 alert('Error updating photo: ' + error.message);
             }
         }
@@ -359,7 +425,7 @@ function editPhoto(photoId) {
                     alert('Error deleting photo: ' + result.error);
                 }
             } catch (error) {
-                console.error('Delete error:', error);
+                // console.error('Delete error:', error);
                 alert('Error deleting photo: ' + error.message);
             }
         }

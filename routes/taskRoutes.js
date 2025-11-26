@@ -44,7 +44,7 @@ router.get('/schedule', requireAuth, async (req, res) => {
       pets 
     });
   } catch (err) {
-    console.error('Schedule task form error:', err);
+    // console.error('Schedule task form error:', err);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading task form.',
@@ -64,7 +64,7 @@ router.get('/upcoming', requireAuth, async (req, res) => {
     
     res.json(tasks);
   } catch (error) {
-    console.error('Get upcoming tasks error:', error);
+    // console.error('Get upcoming tasks error:', error);
     res.status(500).json({ error: 'Error fetching upcoming tasks' });
   }
 });
@@ -118,7 +118,7 @@ router.get('/', requireAuth, async (req, res) => {
     const tasks = await getTasksByUser(req.session.userId);
     res.json(tasks);
   } catch (error) {
-    console.error('Get tasks error:', error);
+    // console.error('Get tasks error:', error);
     res.status(500).json({ error: 'Error fetching tasks.' });
   }
 });
@@ -160,7 +160,7 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
     
     res.redirect('/dashboard?message=Task created successfully');
   } catch (error) {
-    console.error('Create task error:', error);
+    // console.error('Create task error:', error);
     
     // Handle specific errors
     let errorMessage = 'Error creating task. Please try again.';
@@ -242,7 +242,7 @@ router.put('/:taskId', requireAuth, [
     
     res.json({ ok: true });
   } catch (error) {
-    console.error('Update task error:', error);
+    // console.error('Update task error:', error);
     
     let errorMessage = 'Error updating task.';
     if (error.message.includes('not found') || error.message.includes('access denied')) {
@@ -263,7 +263,7 @@ router.delete('/:taskId', requireAuth, async (req, res) => {
     await deleteTask(req.params.taskId, req.session.userId);
     res.json({ ok: true });
   } catch (error) {
-    console.error('Delete task error:', error);
+    // console.error('Delete task error:', error);
     
     let errorMessage = 'Error deleting task.';
     if (error.message.includes('not found') || error.message.includes('access denied')) {
@@ -281,7 +281,7 @@ router.get('/calendar', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
         
-        console.log('📅 Calendar tasks API called for user:', userId);
+        // console.log('📅 Calendar tasks API called for user:', userId);
         
         // Get tasks for a wider date range to ensure we see data
         const now = new Date();
@@ -304,25 +304,25 @@ router.get('/calendar', requireAuth, async (req, res) => {
             ORDER BY t.due_date ASC
         `;
         
-        console.log('📅 Query date range:', pastDate, 'to', futureDate);
+        // console.log('📅 Query date range:', pastDate, 'to', futureDate);
         
         const tasks = await query(sql, [userId, pastDate, futureDate]);
         
-        console.log('✅ Calendar tasks found:', tasks.length);
+        // console.log('✅ Calendar tasks found:', tasks.length);
         
         // Log sample tasks for debugging
         tasks.slice(0, 3).forEach((task, index) => {
-            console.log(`📝 Task ${index + 1}:`, {
-                title: task.title,
-                due_date: task.due_date,
-                due_date_date: task.due_date_date,
-                pet_name: task.pet_name
-            });
+            // console.log(`📝 Task ${index + 1}:`, {
+            //     title: task.title,
+            //     due_date: task.due_date,
+            //     due_date_date: task.due_date_date,
+            //     pet_name: task.pet_name
+            // });
         });
         
         res.json(tasks);
     } catch (error) {
-        console.error('❌ Calendar tasks API error:', error);
+        // console.error('❌ Calendar tasks API error:', error);
         res.status(500).json({ error: 'Failed to load calendar data' });
     }
 });
@@ -353,7 +353,7 @@ router.get('/:taskId', requireAuth, async (req, res) => {
     
     res.json(task);
   } catch (error) {
-    console.error('Get task error:', error);
+    // console.error('Get task error:', error);
     res.status(500).json({ 
       error: 'Error fetching task.' 
     });
@@ -364,7 +364,7 @@ router.get('/:taskId', requireAuth, async (req, res) => {
 router.get('/api/tasks/overview', requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
-    console.log('🔍 Fetching task overview for user:', userId);
+    // console.log('🔍 Fetching task overview for user:', userId);
     
     // Get all tasks first for debugging
     const allTasks = await query(`
@@ -375,9 +375,9 @@ router.get('/api/tasks/overview', requireAuth, async (req, res) => {
       ORDER BY t.due_date ASC
     `, [userId]);
     
-    console.log('🔍 All tasks for user:', allTasks.length);
+    // console.log('🔍 All tasks for user:', allTasks.length);
     allTasks.forEach(task => {
-      console.log(`- ${task.title}: due=${task.due_date}, completed=${task.completed}`);
+      // console.log(`- ${task.title}: due=${task.due_date}, completed=${task.completed}`);
     });
 
     // Get overdue tasks (simpler approach)
@@ -424,12 +424,12 @@ router.get('/api/tasks/overview', requireAuth, async (req, res) => {
   LIMIT 50
 `, [userId]);
 
-    console.log('📊 Task overview results:', {
-      overdue: overdueTasks.length,
-      today: todayTasks.length,
-      tomorrow: tomorrowTasks.length,
-      completed: completedTasks.length
-    });
+    // console.log('📊 Task overview results:', {
+    //   overdue: overdueTasks.length,
+    //   today: todayTasks.length,
+    //   tomorrow: tomorrowTasks.length,
+    //   completed: completedTasks.length
+    // });
 
     res.json({
       stats: {
@@ -444,7 +444,7 @@ router.get('/api/tasks/overview', requireAuth, async (req, res) => {
       completed: completedTasks
     });
   } catch (error) {
-    console.error('❌ Get tasks overview error:', error);
+    // console.error('❌ Get tasks overview error:', error);
     res.status(500).json({ 
       error: 'Error fetching tasks overview: ' + error.message 
     });
@@ -457,7 +457,7 @@ router.put('/:taskId/complete', requireAuth, async (req, res) => {
     await completeTask(req.params.taskId, req.session.userId);
     res.json({ ok: true });
   } catch (error) {
-    console.error('Complete task error:', error);
+    // console.error('Complete task error:', error);
     
     let errorMessage = 'Error completing task.';
     if (error.message.includes('not found') || error.message.includes('access denied')) {

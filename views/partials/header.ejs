@@ -799,19 +799,19 @@ function setupThemeToggle() {
 }
 
 // Mobile menu handling
+// Mobile menu handling - FIXED VERSION
 function setupMobileMenu() {
   const navbarToggler = document.querySelector('.navbar-toggler-modern');
   const navbarCollapse = document.querySelector('.navbar-collapse-modern');
   
   if (navbarToggler && navbarCollapse) {
-    navbarToggler.addEventListener('click', function() {
-      const isExpanded = this.getAttribute('aria-expanded') === 'true';
-      
-      if (isExpanded) {
-        document.body.classList.remove('mobile-menu-open');
-      } else {
-        document.body.classList.add('mobile-menu-open');
-      }
+    // Use Bootstrap's built-in events instead of click event
+    navbarCollapse.addEventListener('show.bs.collapse', function() {
+      document.body.classList.add('mobile-menu-open');
+    });
+    
+    navbarCollapse.addEventListener('hide.bs.collapse', function() {
+      document.body.classList.remove('mobile-menu-open');
     });
     
     // Close mobile menu when clicking on regular nav links
@@ -819,9 +819,9 @@ function setupMobileMenu() {
     navLinks.forEach(link => {
       link.addEventListener('click', function() {
         if (window.innerWidth < 992) {
-          navbarCollapse.classList.remove('show');
-          document.body.classList.remove('mobile-menu-open');
-          navbarToggler.setAttribute('aria-expanded', 'false');
+          // Use Bootstrap's collapse method to properly close the menu
+          const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+          bsCollapse.hide();
         }
       });
     });
@@ -829,6 +829,19 @@ function setupMobileMenu() {
     // Close mobile menu when window is resized to desktop
     window.addEventListener('resize', function() {
       if (window.innerWidth >= 992) {
+        document.body.classList.remove('mobile-menu-open');
+        // Ensure the collapse state is reset for desktop
+        navbarCollapse.classList.remove('show');
+        navbarToggler.setAttribute('aria-expanded', 'false');
+      }
+    });
+    
+    // Additional safety: remove the class when clicking outside the menu
+    document.addEventListener('click', function(event) {
+      if (window.innerWidth < 992 && 
+          !navbarCollapse.contains(event.target) && 
+          !navbarToggler.contains(event.target) &&
+          navbarCollapse.classList.contains('show')) {
         document.body.classList.remove('mobile-menu-open');
       }
     });

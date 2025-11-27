@@ -1,8 +1,4 @@
 
-
-
-
-
 <%- include('partials/header', {title: 'My Profile - Pet Care' }) %>
 <style>
 /* ===== ENHANCED PROFESSIONAL PROFILE STYLES ===== */
@@ -705,6 +701,97 @@ body {
 
 [data-theme="dark"] .bg-light .text-muted {
   color: #adb5bd !important;
+}
+/* ===== DARK MODE MOBILE MENU FIX FOR PROFILE PAGE ===== */
+[data-theme="dark"] .navbar-collapse-modern {
+  background: #1a1d21 !important;
+  border-right: 1px solid #2d3239 !important;
+}
+
+[data-theme="dark"] .navbar-nav-modern {
+  background: #1a1d21 !important;
+}
+
+[data-theme="dark"] .nav-link-modern {
+  color: #e9ecef !important;
+  border-bottom: 1px solid #2d3239 !important;
+  background: #1a1d21 !important;
+}
+
+[data-theme="dark"] .nav-link-modern:hover,
+[data-theme="dark"] .nav-link-modern:focus {
+  color: #6ea8fe !important;
+  background-color: rgba(110, 168, 254, 0.1) !important;
+}
+
+[data-theme="dark"] .nav-link-modern.active {
+  color: #6ea8fe !important;
+  background-color: rgba(110, 168, 254, 0.15) !important;
+  border-left: 4px solid #6ea8fe !important;
+}
+
+[data-theme="dark"] .navbar-collapse-modern .dropdown-menu {
+  background: #1a1d21 !important;
+  border: 1px solid #2d3239 !important;
+}
+
+[data-theme="dark"] .navbar-collapse-modern .dropdown-item {
+  color: #e9ecef !important;
+  background: #1a1d21 !important;
+  border-bottom: 1px solid #2d3239 !important;
+}
+
+[data-theme="dark"] .navbar-collapse-modern .dropdown-item:hover {
+  background-color: rgba(110, 168, 254, 0.1) !important;
+  color: #6ea8fe !important;
+}
+
+/* Mobile header icons dark mode */
+[data-theme="dark"] .header-icons-mobile .profile-modern,
+[data-theme="dark"] .header-icons-mobile .theme-toggle-modern,
+[data-theme="dark"] .header-icons-mobile .notification-bell {
+  background: rgba(67, 97, 238, 0.15) !important;
+  border: 1px solid rgba(67, 97, 238, 0.3) !important;
+  color: #e9ecef !important;
+}
+
+[data-theme="dark"] .header-icons-mobile .profile-modern:hover,
+[data-theme="dark"] .header-icons-mobile .theme-toggle-modern:hover,
+[data-theme="dark"] .header-icons-mobile .notification-bell:hover {
+  background: rgba(67, 97, 238, 0.25) !important;
+  color: #6ea8fe !important;
+}
+/* ===== DARK MODE SUPPORT ===== */
+[data-theme="dark"] .profile-container {
+  background: linear-gradient(135deg, #1a1d23 0%, #212529 100%);
+}
+
+[data-theme="dark"] .card-custom {
+  background: rgba(33, 37, 41, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e9ecef;
+}
+
+/* ===== DARK MODE HAMBURGER MENU ICON FIX ===== */
+[data-theme="dark"] .navbar-toggler-modern {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-theme="dark"] .navbar-toggler-modern .navbar-toggler-icon,
+[data-theme="dark"] .navbar-toggler-modern .navbar-toggler-icon::before,
+[data-theme="dark"] .navbar-toggler-modern .navbar-toggler-icon::after {
+  background-color: #ffffff !important;
+}
+
+[data-theme="dark"] .navbar-toggler-modern:hover {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-theme="dark"] .navbar-toggler-modern:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25) !important;
+  outline: none;
 }
 
 </style>

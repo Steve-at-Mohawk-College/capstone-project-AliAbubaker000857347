@@ -12,88 +12,329 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        .photo-image {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        
+        /* Photo image styling */
+        .photo-image-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 1.5rem;
         }
+        
+        .photo-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: block;
+        }
+
+        /* Beautiful Love Icon Design - FIXED POSITIONING */
+        .love-icon-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .love-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            border: none;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            font-size: 1.6rem;
+        }
+
+        .love-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #ff8e8e, #ff6b6b);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .love-btn:hover {
+            transform: scale(1.2) translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.7);
+        }
+
+        .love-btn:hover::before {
+            opacity: 1;
+        }
+
+        .love-btn:active {
+            transform: scale(1.1) translateY(-1px);
+        }
+
+        /* When not favorited */
+        .love-btn:not(.active) {
+            background: rgba(255, 255, 255, 0.95);
+            color: #6c757d;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .love-btn:not(.active):hover {
+            background: white;
+            color: #dc3545;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .love-btn .bi {
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .love-btn.active .bi {
+            animation: heartBeat 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.4); }
+            50% { transform: scale(0.9); }
+            75% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Love count badge - MOVED OUTSIDE IMAGE */
+        .love-count-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 10px;
+            padding: 0 20px;
+        }
+
+        .love-count-badge {
+            background: linear-gradient(135deg, #ff4757, #ff3838);
+            color: white;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            border: 3px solid white;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .love-count-badge .bi {
+            font-size: 1.1rem;
+        }
+
+        /* Pulse animation for attention */
+        @keyframes pulseGlow {
+            0% { 
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2),
+                          0 0 0 0 rgba(255, 107, 107, 0.7); 
+            }
+            70% { 
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2),
+                          0 0 0 12px rgba(255, 107, 107, 0); 
+            }
+            100% { 
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2),
+                          0 0 0 0 rgba(255, 107, 107, 0); 
+            }
+        }
+
+        .love-btn.pulse {
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* Dark theme support */
+        [data-bs-theme="dark"] .love-btn:not(.active) {
+            background: rgba(0, 0, 0, 0.85);
+            color: #a7acb1;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-bs-theme="dark"] .love-btn:not(.active):hover {
+            background: rgba(0, 0, 0, 0.95);
+            color: #ff6b6b;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        [data-bs-theme="dark"] .love-count-badge {
+            border-color: #2d3748;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .love-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 1.4rem;
+            }
+            
+            .love-count-badge {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+                min-width: 35px;
+            }
+            
+            .love-icon-container {
+                top: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .love-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+            
+            .love-count-badge {
+                padding: 0.35rem 0.7rem;
+                font-size: 0.85rem;
+                min-width: 32px;
+            }
+            
+            .love-icon-container {
+                top: 12px;
+                right: 12px;
+            }
+            
+            .photo-image {
+                border-radius: 10px;
+            }
+
+            .love-count-container {
+                padding: 0 12px;
+                margin-top: 8px;
+            }
+        }
+
+        /* Other existing styles */
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
         }
+        
         .action-btn {
             transition: all 0.2s;
         }
+        
         .action-btn:hover {
             transform: scale(1.1);
         }
+        
         .tag-badge {
             cursor: pointer;
         }
 
-        /* ===== FIX MOBILE BACK BUTTON POSITION ===== */
-.container.mt-4 {
-    margin-top: 2rem !important;
+        /* Fix container spacing */
+        .container.mt-4 {
+            margin-top: 2rem !important;
+        }
+
+        @media (max-width: 576px) {
+            .container.mt-4 {
+                margin-top: 4rem !important;
+            }
+        }
+
+        /* Remove any old favorite button styles */
+        .btn-outline-danger.action-btn {
+            display: none !important;
+        }
+
+        /* Ensure proper spacing */
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Mobile fixes */
+        @media (max-width: 420px) {
+            .card-body .d-flex.justify-content-between.align-items-start {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .card-body .d-flex.align-items-center.text-muted {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .card-body .d-flex.align-items-center.text-muted .mx-2 {
+                display: none;
+            }
+            
+            .card-title {
+                font-size: 1.25rem;
+                line-height: 1.3;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+       @media (max-width: 576px) {
+    .container.mt-4 .alert {
+        margin-top: 2rem !important;
+    }
+    
+    .container.mt-4 .text-center.mt-4 {
+        margin-top: 2.5rem !important;
+    }
 }
 
-/* For smaller mobile devices */
-@media (max-width: 576px) {
+@media (max-width: 420px) {
+    .container.mt-4 .alert {
+        margin-top: 2.5rem !important;
+    }
+    
+    .container.mt-4 .text-center.mt-4 {
+        margin-top: 3rem !important;
+    }
+} 
+    @media (max-width: 576px) {
     .container.mt-4 {
-        margin-top: 4rem !important;
-    }
-    
-    .photo-container {
-        margin-top: 1rem !important;
-    }
-    
-    .mb-4 {
-        margin-top: 1rem !important;
-        padding-top: 0.5rem !important;
+        margin-top: 6rem !important;
     }
 }
 
-/* For medium devices */
-@media (max-width: 768px) {
-    .photo-container {
-        margin-top: 4rem !important;
+@media (max-width: 420px) {
+    .container.mt-4 {
+        margin-top: 7rem !important;
     }
 }
-/* Ensure buttons with only icons are accessible */
-.btn[aria-label] {
-    position: relative;
+
+@media (max-width: 900px) {
+    .container.mt-4 {
+        margin-top: 7rem !important;
+    }
 }
 
-/* Hide the visual text but keep it accessible to screen readers */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* Alternative approach for icon buttons */
-.btn .bi::before {
-    /* Ensure proper announcement */
-    speak: none;
-}
-
-/* For buttons that only contain icons */
-.btn:has(.bi:only-child) {
-    min-width: 2.5rem; /* Ensure adequate touch target */
-}
-
-/* Ensure focus states are visible for accessibility */
-.btn:focus {
-    outline: 2px solid #0d6efd;
-    outline-offset: 2px;
-}
     </style>
 </head>
 <body>
@@ -116,45 +357,48 @@
                     </a>
                 </div>
 
-                <!-- Photo -->
-                <div class="text-center mb-4">
+                <!-- Photo with Love Icon INSIDE the image -->
+                <div class="photo-image-wrapper">
                     <img src="<%= photo.photo_url %>" 
                          class="photo-image" 
                          alt="<%= photo.title %>">
+                    
+                    <!-- Beautiful Love Icon - INSIDE IMAGE -->
+                    <div class="love-icon-container">
+                        <button class="love-btn <%= photo.is_favorited ? 'active' : '' %> <%= !photo.is_favorited ? 'pulse' : '' %>" 
+                                onclick="toggleFavorite(<%= photo.photo_id %>, this)"
+                                aria-label="<%= photo.is_favorited ? 'Remove from favorites' : 'Add to favorites' %>">
+                            <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Love Count - NOW OUTSIDE THE IMAGE -->
+                <div class="love-count-container">
+                    <span class="love-count-badge" id="loveCountBadge">
+                        <i class="bi bi-heart-fill"></i>
+                        <span><%= photo.favorite_count || 0 %></span>
+                    </span>
                 </div>
 
                 <!-- Photo Info -->
                 <div class="card">
                     <div class="card-body">
-                        <!-- Header with title and actions -->
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div>
-                                <h2 class="card-title mb-1"><%= photo.title || 'Untitled' %></h2>
-                                <div class="d-flex align-items-center text-muted">
-                                    <img src="<%= photo.profile_picture_url || '/images/default-avatar.png' %>" 
-                                         class="user-avatar me-2" 
-                                         alt="<%= photo.username %>">
-                                    <span>By <%= photo.username %></span>
-                                    <span class="mx-2">•</span>
-                                    <span><%= new Date(photo.created_at).toLocaleDateString() %></span>
-                                    <span class="mx-2">•</span>
-                                    <span class="badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
-                                        <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
-                                        <%= photo.is_public ? 'Public' : 'Private' %>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <!-- Favorite Button -->
-                               
-                               
-                               
-                                <button class="btn btn-outline-danger action-btn <%= photo.is_favorited ? 'active' : '' %>" 
-        onclick="toggleFavorite(<%= photo.photo_id %>, this)"
-        aria-label="<%= photo.is_favorited ? 'Remove from favorites' : 'Add to favorites' %>">
-    <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
-    <span class="favorite-count"><%= photo.favorite_count || 0 %></span>
-</button>
+                        <!-- Header with title - REMOVED OLD FAVORITE BUTTON -->
+                        <div class="mb-3">
+                            <h2 class="card-title mb-2"><%= photo.title || 'Untitled' %></h2>
+                            <div class="d-flex align-items-center text-muted">
+                                <img src="<%= photo.profile_picture_url || '/images/default-avatar.png' %>" 
+                                     class="user-avatar me-2" 
+                                     alt="<%= photo.username %>">
+                                <span>By <%= photo.username %></span>
+                                <span class="mx-2">•</span>
+                                <span><%= new Date(photo.created_at).toLocaleDateString() %></span>
+                                <span class="mx-2">•</span>
+                                <span class="badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
+                                    <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
+                                    <%= photo.is_public ? 'Public' : 'Private' %>
+                                </span>
                             </div>
                         </div>
 
@@ -279,22 +523,30 @@
                 
                 if (result.success) {
                     const icon = button.querySelector('i');
-                    const countSpan = button.querySelector('.favorite-count');
+                    const countBadge = document.getElementById('loveCountBadge');
                     
                     if (result.action === 'added') {
                         icon.classList.remove('bi-heart');
                         icon.classList.add('bi-heart-fill');
                         button.classList.add('active');
+                        button.classList.remove('pulse');
                     } else {
                         icon.classList.remove('bi-heart-fill');
                         icon.classList.add('bi-heart');
                         button.classList.remove('active');
+                        button.classList.add('pulse');
                     }
                     
-                    countSpan.textContent = result.favorite_count;
+                    // Update the favorite count badge (now outside the image)
+                    if (countBadge) {
+                        const countSpan = countBadge.querySelector('span');
+                        if (countSpan) {
+                            countSpan.textContent = result.favorite_count;
+                        }
+                    }
                 }
             } catch (error) {
-                // console.error('Favorite error:', error);
+                console.error('Favorite error:', error);
                 alert('Error updating favorite');
             }
         }
@@ -318,48 +570,26 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    location.reload(); // Reload to show new tag
+                    location.reload();
                 } else {
                     alert('Error adding tag: ' + result.error);
                 }
             } catch (error) {
-                // console.error('Add tag error:', error);
+                console.error('Add tag error:', error);
                 alert('Error adding tag');
             }
         }
 
-        // In your photo-detail.ejs, update the editPhoto function:
-function editPhoto(photoId) {
-    // Debug current state
-    // console.log('Current photo is_public:', <%= photo.is_public %>);
-    // console.log('Current photo is_public type:', typeof <%= photo.is_public %>);
-    
-    // Populate modal with current data
-    document.getElementById('editTitle').value = '<%= photo.title || "" %>';
-    document.getElementById('editDescription').value = '<%= photo.description || "" %>';
-    document.getElementById('editIsPublic').checked = <%= photo.is_public %>;
-    
-    // Debug the checkbox state
-    // console.log('Checkbox checked:', document.getElementById('editIsPublic').checked);
-    
-    // Store photo ID for the save function
-    document.getElementById('editForm').dataset.photoId = photoId;
-    
-    // Show modal using the stored instance
-    if (editModal) {
-        editModal.show();
-    } else {
-        // Fallback: try to create modal instance
-        const modalElement = document.getElementById('editModal');
-        if (modalElement && typeof bootstrap !== 'undefined') {
-            editModal = new bootstrap.Modal(modalElement);
-            editModal.show();
-        } else {
-            // console.error('Bootstrap not loaded');
-            alert('Error: Page components not loaded properly. Please refresh the page.');
+        function editPhoto(photoId) {
+            document.getElementById('editTitle').value = '<%= photo.title || "" %>';
+            document.getElementById('editDescription').value = '<%= photo.description || "" %>';
+            document.getElementById('editIsPublic').checked = <%= photo.is_public %>;
+            document.getElementById('editForm').dataset.photoId = photoId;
+            
+            if (editModal) {
+                editModal.show();
+            }
         }
-    }
-}
 
         async function savePhotoChanges() {
             const photoId = document.getElementById('editForm').dataset.photoId;
@@ -367,7 +597,6 @@ function editPhoto(photoId) {
             const description = document.getElementById('editDescription').value;
             const is_public = document.getElementById('editIsPublic').checked;
 
-            // Basic validation
             if (!title.trim()) {
                 alert('Please enter a title');
                 return;
@@ -389,17 +618,13 @@ function editPhoto(photoId) {
                 const result = await response.json();
                 
                 if (result.success) {
-                    // Hide modal first
-                    if (editModal) {
-                        editModal.hide();
-                    }
-                    // Then reload to show changes
+                    if (editModal) editModal.hide();
                     location.reload();
                 } else {
                     alert('Error updating photo: ' + result.error);
                 }
             } catch (error) {
-                // console.error('Update error:', error);
+                console.error('Update error:', error);
                 alert('Error updating photo: ' + error.message);
             }
         }
@@ -425,12 +650,11 @@ function editPhoto(photoId) {
                     alert('Error deleting photo: ' + result.error);
                 }
             } catch (error) {
-                // console.error('Delete error:', error);
+                console.error('Delete error:', error);
                 alert('Error deleting photo: ' + error.message);
             }
         }
 
-        // Close modal when clicking outside or pressing ESC
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape' && editModal) {
                 editModal.hide();

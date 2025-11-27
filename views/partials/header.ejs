@@ -742,6 +742,516 @@ html {
     width: 250px !important;
   }
 }
+
+
+/* Fix dropdown background in dark mode */
+[data-theme="dark"] .dropdown-menu {
+    background-color: black !important;
+    border-color: var(--light-gray) !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+    background-color: black !important;
+    color: white !important;
+}
+
+
+
+[data-theme="dark"] .dropdown-divider {
+    border-color: var(--light-gray) !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ===== ENHANCED NOTIFICATION BELL VISIBILITY ===== */
+
+/* Notification Bell Base Styles */
+.notification-bell {
+  position: relative;
+  background: rgba(67, 97, 238, 0.15) !important;
+  border: 2px solid rgba(67, 97, 238, 0.3) !important;
+  transition: var(--transition);
+}
+
+.notification-bell:hover {
+  background: rgba(67, 97, 238, 0.25) !important;
+  border-color: rgba(67, 97, 238, 0.5) !important;
+  transform: scale(1.1);
+}
+
+/* Notification Icon - Light Mode */
+.notification-bell i {
+  color: var(--primary) !important;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Notification Icon - Dark Mode */
+[data-theme="dark"] .notification-bell i {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  filter: brightness(1.2);
+}
+
+/* Notification Badge - Enhanced Visibility */
+.notification-bell .badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.3rem 0.4rem;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--light);
+  background: linear-gradient(135deg, #ff4757, #ff3742) !important;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  animation: pulse 2s infinite;
+}
+
+/* Dark mode badge border */
+[data-theme="dark"] .notification-bell .badge {
+  border: 2px solid var(--dark) !important;
+  box-shadow: 0 2px 10px rgba(255, 71, 87, 0.6);
+}
+
+/* Pulsing animation for urgency */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 3px 12px rgba(255, 71, 87, 0.6);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  }
+}
+
+/* Mobile-specific notification styles */
+@media (max-width: 991.98px) {
+  .header-icons-mobile .notification-bell {
+    background: rgba(67, 97, 238, 0.2) !important;
+    border: 2px solid rgba(67, 97, 238, 0.4) !important;
+  }
+  
+  .header-icons-mobile .notification-bell i {
+    font-size: 1.3rem;
+  }
+  
+  .header-icons-mobile .notification-bell .badge {
+    top: -6px;
+    right: -6px;
+    font-size: 0.75rem;
+    min-width: 22px;
+    height: 22px;
+  }
+}
+
+/* Desktop-specific notification styles */
+@media (min-width: 992px) {
+  .header-icons-desktop .notification-bell {
+    background: rgba(67, 97, 238, 0.12) !important;
+    border: 2px solid rgba(67, 97, 238, 0.25) !important;
+  }
+  
+  .header-icons-desktop .notification-bell:hover {
+    background: rgba(67, 97, 238, 0.2) !important;
+    border-color: rgba(67, 97, 238, 0.4) !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .notification-bell {
+    background: var(--primary) !important;
+    border: 3px solid var(--primary-dark) !important;
+  }
+  
+  .notification-bell i {
+    color: white !important;
+    filter: none;
+  }
+  
+  .notification-bell .badge {
+    background: #ff0000 !important;
+    border: 2px solid white !important;
+    color: white !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .notification-bell .badge {
+    animation: none;
+  }
+  
+  .notification-bell:hover {
+    transform: none;
+  }
+}
+
+/* Focus states for accessibility */
+.notification-bell:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.3);
+}
+
+/* Active state when dropdown is open */
+.notification-bell.show {
+  background: rgba(67, 97, 238, 0.25) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+/* Ensure badge text is always visible and readable */
+.notification-bell .badge {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Hover effect on badge */
+.notification-bell:hover .badge {
+  transform: scale(1.15);
+  transition: transform 0.2s ease;
+}
+
+/* Specific dark mode enhancements */
+[data-theme="dark"] .notification-bell {
+  background: rgba(67, 97, 238, 0.25) !important;
+  border: 2px solid rgba(67, 97, 238, 0.4) !important;
+}
+
+[data-theme="dark"] .notification-bell:hover {
+  background: rgba(67, 97, 238, 0.35) !important;
+  border-color: rgba(67, 97, 238, 0.6) !important;
+  box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+}
+
+/* Make sure the bell icon stands out in both themes */
+.notification-bell i.bi-bell {
+  font-weight: 900;
+  -webkit-text-stroke: 0.5px transparent;
+}
+
+/* Optional: Add a subtle ring when there are notifications */
+.notification-bell.has-notifications {
+  position: relative;
+}
+
+.notification-bell.has-notifications::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #ff6b6b, #4361ee, #06d6a0, #ff6b6b);
+  animation: rotate 3s linear infinite;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+
+
+
+
+/* ===== FIX FOR MOBILE NOTIFICATION VISIBILITY ===== */
+
+/* Ensure notification bell is always visible on mobile */
+@media (max-width: 1160px) {
+  .header-icons-mobile .notification-bell {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(67, 97, 238, 0.2) !important;
+    border: 2px solid rgba(67, 97, 238, 0.4) !important;
+    color: var(--primary);
+    transition: var(--transition);
+    text-decoration: none;
+    position: relative;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .header-icons-mobile .notification-bell i {
+    color: var(--primary) !important;
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+
+  .header-icons-mobile .notification-bell .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.3rem 0.4rem;
+    min-width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--light);
+    background: linear-gradient(135deg, #ff4757, #ff3742) !important;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+    animation: pulse 2s infinite;
+    color: white !important;
+  }
+
+  /* Dark mode for mobile notifications */
+  [data-theme="dark"] .header-icons-mobile .notification-bell {
+    background: rgba(67, 97, 238, 0.25) !important;
+    border: 2px solid rgba(67, 97, 238, 0.5) !important;
+  }
+
+  [data-theme="dark"] .header-icons-mobile .notification-bell i {
+    color: #ffffff !important;
+    filter: brightness(1.2);
+  }
+
+  [data-theme="dark"] .header-icons-mobile .notification-bell .badge {
+    border: 2px solid var(--dark) !important;
+    box-shadow: 0 2px 10px rgba(255, 71, 87, 0.6);
+  }
+}
+
+/* Fix for tablet screens (768px - 1160px) */
+@media (min-width: 768px) and (max-width: 1160px) {
+  .header-icons-mobile .notification-bell {
+    width: 46px;
+    height: 46px;
+  }
+
+  .header-icons-mobile .notification-bell i {
+    font-size: 1.4rem;
+  }
+
+  .header-icons-mobile .notification-bell .badge {
+    top: -5px;
+    right: -5px;
+    min-width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Fix for very small mobile screens */
+@media (max-width: 400px) {
+  .header-icons-mobile .notification-bell {
+    width: 42px;
+    height: 42px;
+  }
+
+  .header-icons-mobile .notification-bell i {
+    font-size: 1.2rem;
+  }
+
+  .header-icons-mobile .notification-bell .badge {
+    top: -4px;
+    right: -4px;
+    min-width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+}
+
+/* Ensure header icons container displays properly */
+@media (max-width: 991.98px) {
+  .header-icons-mobile {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    order: 2;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .header-icons-mobile .notification-bell {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Override any potential hiding styles */
+.header-icons-mobile .notification-bell {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix for the mobile header layout */
+.navbar-modern .container-fluid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+/* Ensure the notification bell is in the correct order in mobile header */
+@media (max-width: 991.98px) {
+  .navbar-modern .container-fluid {
+    padding: 0 0.75rem;
+  }
+
+  /* Make sure all header icons are visible */
+  .header-icons-mobile > * {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Debug styles - remove if everything works */
+.header-icons-mobile .notification-bell::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Force visibility for any screen size below 1160px */
+@media (max-width: 1160px) {
+  .header-icons-mobile {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .header-icons-mobile .notification-bell {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+
+
+/* ===== MOBILE PROFILE AVATAR ENHANCEMENTS ===== */
+@media (max-width: 991.98px) {
+  .header-icons-mobile .profile-modern .user-avatar-modern {
+    width: 42px;
+    height: 42px;
+    border: 3px solid var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    animation: pulse-mobile 2s infinite;
+  }
+
+  .header-icons-mobile .profile-modern .user-avatar-modern i {
+    font-size: 1.3rem;
+    color: white !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+
+  .header-icons-mobile .profile-modern .user-avatar-modern img {
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Different background color for mobile profile */
+  .header-icons-mobile .profile-modern {
+    background: rgba(255, 107, 107, 0.15) !important;
+    border: 2px solid rgba(255, 107, 107, 0.3) !important;
+  }
+
+  .header-icons-mobile .profile-modern:hover {
+    background: rgba(255, 107, 107, 0.25) !important;
+    border-color: rgba(255, 107, 107, 0.5) !important;
+  }
+}
+
+/* Dark mode adjustments for mobile profile */
+@media (max-width: 991.98px) {
+  [data-theme="dark"] .header-icons-mobile .profile-modern .user-avatar-modern {
+    border-color: var(--secondary);
+    box-shadow: 0 4px 15px rgba(6, 214, 160, 0.4);
+  }
+
+  [data-theme="dark"] .header-icons-mobile .profile-modern {
+    background: rgba(6, 214, 160, 0.15) !important;
+    border: 2px solid rgba(6, 214, 160, 0.3) !important;
+  }
+
+  [data-theme="dark"] .header-icons-mobile .profile-modern:hover {
+    background: rgba(6, 214, 160, 0.25) !important;
+    border-color: rgba(6, 214, 160, 0.5) !important;
+  }
+}
+
+/* Pulsing animation for mobile profile */
+@keyframes pulse-mobile {
+  0% {
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(67, 97, 238, 0.6);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  }
+}
+
+
+
+@media (max-width: 991.98px) {
+  .header-icons-mobile .profile-modern .user-avatar-modern i {
+    content: "\F4E5" !important; 
+  }
+  
+  .header-icons-mobile .profile-modern .user-avatar-modern i::before {
+    content: "\F4E5" !important; 
+  }
+}
+
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .header-icons-mobile .profile-modern .user-avatar-modern {
+    animation: none;
+  }
+}
+
+
+
+
 </style>
 </head>
 <body>
@@ -756,7 +1266,7 @@ html {
     <!-- Brand Logo -->
     <a class="navbar-brand navbar-brand-modern" href="/landing">
       <i class="bi bi-heart-pulse-fill"></i>
-      <span>PetCare</span>
+      <span>Pet Care</span>
     </a>
 
     <!-- Mobile Header Icons -->
@@ -764,11 +1274,29 @@ html {
       <!-- Mobile Profile -->
       <div class="profile-modern dropdown">
         <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-label="User profile">
-          <% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
-            <img src="<%= profilePicture %>" class="user-avatar-modern" alt="Profile" onerror="this.onerror=null; this.src='/images/default-avatar.png'">
-          <% } else { %>
-            <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
-          <% } %>
+
+
+
+
+
+
+
+<% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
+  <div class="user-avatar-modern">
+    <img src="<%= profilePicture %>" 
+         alt="Profile" 
+         loading="eager"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+         onload="this.style.display='block'; this.nextElementSibling.style.display='none';">
+    <i class="bi bi-person-fill" style="display: none;"></i>
+  </div>
+<% } else { %>
+  <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+<% } %>
+
+
+
+
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
           <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>Profile</a></li>
@@ -876,11 +1404,28 @@ html {
         <div class="profile-modern dropdown">
           <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="me-2 fw-semibold"><%= typeof username !== 'undefined' ? username : 'User' %></span>
-            <% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
-              <img src="<%= profilePicture %>" class="user-avatar-modern" alt="Profile" onerror="this.onerror=null; this.src='/images/default-avatar.png'">
-            <% } else { %>
-              <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
-            <% } %>
+           
+           
+           
+           
+           
+
+
+<% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
+  <div class="user-avatar-modern">
+    <img src="<%= profilePicture %>" 
+         alt="Profile" 
+         loading="eager"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+         onload="this.style.display='block'; this.nextElementSibling.style.display='none';">
+    <i class="bi bi-person-fill" style="display: none;"></i>
+  </div>
+<% } else { %>
+  <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+<% } %>
+
+
+
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>Profile</a></li>
@@ -1070,32 +1615,42 @@ class NotificationSystem {
     }
   }
 
-  updateNotificationBadge(upcomingTasks) {
-    // Update both mobile and desktop badges
-    const badgeMobile = document.getElementById('notificationBadgeMobile');
-    const badgeDesktop = document.getElementById('notificationBadgeDesktop');
-    
-    const urgentTasks = upcomingTasks.filter(task => {
-      const dueDate = new Date(task.due_date);
-      const now = new Date();
-      const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-      return daysUntilDue <= 1; // Only count urgent tasks (today/tomorrow)
-    });
-    
-    if (urgentTasks.length > 0) {
-      if (badgeMobile) {
-        badgeMobile.textContent = urgentTasks.length;
-        badgeMobile.style.display = 'block';
-      }
-      if (badgeDesktop) {
-        badgeDesktop.textContent = urgentTasks.length;
-        badgeDesktop.style.display = 'block';
-      }
-    } else {
-      if (badgeMobile) badgeMobile.style.display = 'none';
-      if (badgeDesktop) badgeDesktop.style.display = 'none';
+ updateNotificationBadge(upcomingTasks) {
+  // Update both mobile and desktop badges
+  const badgeMobile = document.getElementById('notificationBadgeMobile');
+  const badgeDesktop = document.getElementById('notificationBadgeDesktop');
+  const bellMobile = document.querySelector('.header-icons-mobile .notification-bell');
+  const bellDesktop = document.querySelector('.header-icons-desktop .notification-bell');
+  
+  const urgentTasks = upcomingTasks.filter(task => {
+    const dueDate = new Date(task.due_date);
+    const now = new Date();
+    const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+    return daysUntilDue <= 1; // Only count urgent tasks (today/tomorrow)
+  });
+  
+  if (urgentTasks.length > 0) {
+    if (badgeMobile) {
+      badgeMobile.textContent = urgentTasks.length;
+      badgeMobile.style.display = 'flex'; // Changed to flex for better centering
     }
+    if (badgeDesktop) {
+      badgeDesktop.textContent = urgentTasks.length;
+      badgeDesktop.style.display = 'flex'; // Changed to flex for better centering
+    }
+    
+    // Add has-notifications class for visual enhancement
+    if (bellMobile) bellMobile.classList.add('has-notifications');
+    if (bellDesktop) bellDesktop.classList.add('has-notifications');
+  } else {
+    if (badgeMobile) badgeMobile.style.display = 'none';
+    if (badgeDesktop) badgeDesktop.style.display = 'none';
+    
+    // Remove has-notifications class
+    if (bellMobile) bellMobile.classList.remove('has-notifications');
+    if (bellDesktop) bellDesktop.classList.remove('has-notifications');
   }
+}
 
   renderUpcomingTasks(tasks) {
     // Update both mobile and desktop notification lists
@@ -1205,6 +1760,10 @@ class NotificationSystem {
   }
 }
 </script>
+
+
+
+
 
 </body>
 </html>

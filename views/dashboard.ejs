@@ -1729,36 +1729,50 @@ input[type="number"], input[type="date"], input[type="text"], select {
               </div>
             <% }); %>
 
+
+
+
+            
+
             <!-- Pets Pagination -->
-            <% if (petPagination && petPagination.totalPages > 1) { %>
-              <div class="pagination">
-                <% if (petPagination.hasPrev) { %>
-                  <a href="?petPage=<%= petPagination.currentPage - 1 %>&taskPage=<%= taskPagination.currentPage %>" 
-                     class="pagination-btn">
-                    <i class="bi bi-chevron-left"></i>Previous
-                  </a>
-                <% } else { %>
-                  <button class="pagination-btn" disabled>
-                    <i class="bi bi-chevron-left"></i>Previous
-                  </button>
-                <% } %>
-                
-                <span class="pagination-info">
-                  Page <%= petPagination.currentPage %> of <%= petPagination.totalPages %>
-                </span>
-                
-                <% if (petPagination.hasNext) { %>
-                  <a href="?petPage=<%= petPagination.currentPage + 1 %>&taskPage=<%= taskPagination.currentPage %>" 
-                     class="pagination-btn">
-                    Next<i class="bi bi-chevron-right"></i>
-                  </a>
-                <% } else { %>
-                  <button class="pagination-btn" disabled>
-                    Next<i class="bi bi-chevron-right"></i>
-                  </button>
-                <% } %>
-              </div>
-            <% } %>
+<% if (petPagination && petPagination.totalPages > 1) { %>
+  <div class="pagination">
+    <% if (petPagination.hasPrev) { %>
+      <a href="javascript:void(0)" class="pagination-btn pagination-pet" 
+         data-page="<%= petPagination.currentPage - 1 %>">
+        <i class="bi bi-chevron-left"></i>Previous
+      </a>
+    <% } else { %>
+      <button class="pagination-btn" disabled>
+        <i class="bi bi-chevron-left"></i>Previous
+      </button>
+    <% } %>
+    
+    <span class="pagination-info">
+      Page <%= petPagination.currentPage %> of <%= petPagination.totalPages %>
+    </span>
+    
+    <% if (petPagination.hasNext) { %>
+      <a href="javascript:void(0)" class="pagination-btn pagination-pet" 
+         data-page="<%= petPagination.currentPage + 1 %>">
+        Next<i class="bi bi-chevron-right"></i>
+      </a>
+    <% } else { %>
+      <button class="pagination-btn" disabled>
+        Next<i class="bi bi-chevron-right"></i>
+      </button>
+    <% } %>
+  </div>
+<% } %>
+
+
+
+
+
+
+
+
+
 
           <% } else { %>
             <div class="empty-state">
@@ -1875,36 +1889,53 @@ input[type="number"], input[type="date"], input[type="text"], select {
             </div>
           <% }); %>
 
+
+
+
+
+
+
+
+
+
+
           <!-- Tasks Pagination -->
-          <% if (taskPagination && taskPagination.totalPages > 1) { %>
-            <div class="pagination">
-              <% if (taskPagination.hasPrev) { %>
-                <a href="?petPage=<%= petPagination.currentPage %>&taskPage=<%= taskPagination.currentPage - 1 %>" 
-                   class="pagination-btn">
-                  <i class="bi bi-chevron-left"></i>Previous
-                </a>
-              <% } else { %>
-                <button class="pagination-btn" disabled>
-                  <i class="bi bi-chevron-left"></i>Previous
-                </button>
-              <% } %>
-              
-              <span class="pagination-info">
-                Page <%= taskPagination.currentPage %> of <%= taskPagination.totalPages %>
-              </span>
-              
-              <% if (taskPagination.hasNext) { %>
-                <a href="?petPage=<%= petPagination.currentPage %>&taskPage=<%= taskPagination.currentPage + 1 %>" 
-                   class="pagination-btn">
-                  Next<i class="bi bi-chevron-right"></i>
-                </a>
-              <% } else { %>
-                <button class="pagination-btn" disabled>
-                  Next<i class="bi bi-chevron-right"></i>
-                </button>
-              <% } %>
-            </div>
-          <% } %>
+<% if (taskPagination && taskPagination.totalPages > 1) { %>
+  <div class="pagination">
+    <% if (taskPagination.hasPrev) { %>
+      <a href="javascript:void(0)" class="pagination-btn pagination-task" 
+         data-page="<%= taskPagination.currentPage - 1 %>">
+        <i class="bi bi-chevron-left"></i>Previous
+      </a>
+    <% } else { %>
+      <button class="pagination-btn" disabled>
+        <i class="bi bi-chevron-left"></i>Previous
+      </button>
+    <% } %>
+    
+    <span class="pagination-info">
+      Page <%= taskPagination.currentPage %> of <%= taskPagination.totalPages %>
+    </span>
+    
+    <% if (taskPagination.hasNext) { %>
+      <a href="javascript:void(0)" class="pagination-btn pagination-task" 
+         data-page="<%= taskPagination.currentPage + 1 %>">
+        Next<i class="bi bi-chevron-right"></i>
+      </a>
+    <% } else { %>
+      <button class="pagination-btn" disabled>
+        Next<i class="bi bi-chevron-right"></i>
+      </button>
+    <% } %>
+  </div>
+<% } %>
+
+
+
+
+
+
+
 
         <% } else { %>
           <div class="empty-state">
@@ -1992,5 +2023,6 @@ input[type="number"], input[type="date"], input[type="text"], select {
 <script src="/js/detail-views.js"></script>
 <script src="/js/dashboard-filters-enhanced.js"></script>
 <script src="/js/dashboard-enhanced.js"></script>
+<script src="/js/dashboard-pagination-enhanced.js"></script>
 
 <%- include('partials/footer') %>

@@ -6,413 +6,508 @@
     <title><%= title %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <style>
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Add padding to account for fixed header */
-    .container {
-        margin-top: 80px !important;
-    }
-
-    .photo-card {
-        transition: transform 0.2s;
-        margin-bottom: 1.5rem;
-    }
-    .photo-card:hover {
-        transform: translateY(-5px);
-    }
-   .photo-image {
-    height: 300px;
-    width: 100%;
-    object-fit: cover;
-    max-width: 100%;
-    width: 100%;
-}
-    .tag-badge {
-        cursor: pointer;
-        margin: 2px;
-    }
-    .favorite-btn {
-        border: none;
-        background: none;
-        color: #6c757d;
-        transition: color 0.2s;
-    }
-    .favorite-btn:hover, .favorite-btn.active {
-        color: #dc3545;
-    }
-    .card-img-top {
-        max-height: 900px;
-    }
-    .health-indicator {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 5px;
-    }
-    .health-healthy { background-color: #28a745; }
-    .health-needs_vaccination { background-color: #ffc107; }
-    .health-underweight { background-color: #17a2b8; }
-    .health-overweight { background-color: #fd7e14; }
-    .health-recent_vet_visit { background-color: #6f42c1; }
-
-    /* Ensure health indicators remain visible */
-    .dropdown-item .health-indicator {
-        margin-right: 8px;
-        vertical-align: middle;
-    }
-    .photo-card {
-        transition: transform 0.2s;
-        margin-bottom: 1.5rem;
-    }
-    .photo-card:hover {
-        transform: translateY(-5px);
-    }
-    .photo-image {
-        height: 300px;
-        width: 100;
-        object-fit: cover;
-        max-width: 90%;
-        width: 90%;
-    }
-    .privacy-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-    }
-    .empty-state {
-        padding: 4rem 2rem;
-        text-align: center;
-    }
-
-    /* Mobile Responsive Styles */
-    @media (min-width: 400px) and (max-width: 500px) {
-        .photo-grid-column {
-            flex: 0 0 50% !important;
-            max-width: 50% !important;
-            width: 50% !important;
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
         }
-        
-        .photo-image {
-            height: 200px !important;
-            max-width: 100% !important;
-            width: 100% !important;
+
+        /* Add padding to account for fixed header */
+        .container {
+            margin-top: 80px !important;
         }
-        
+
         .photo-card {
-            margin-bottom: 1rem !important;
+            transition: transform 0.2s;
+            margin-bottom: 1.5rem;
         }
-        
-        .card-body {
-            padding: 0.75rem !important;
+        .photo-card:hover {
+            transform: translateY(-5px);
         }
-        
-        .card-title {
-            font-size: 0.9rem !important;
-        }
-        
-        .badge {
-            font-size: 0.7rem !important;
-        }
-        
-        .btn-sm {
-            font-size: 0.8rem !important;
-            padding: 0.25rem 0.5rem !important;
-        }
-    }
-
-    @media (max-width: 399px) {
-        .photo-grid-column {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
-            width: 100% !important;
-        }
-        
         .photo-image {
-            height: 250px !important;
-            max-width: 100% !important;
-            width: 100% !important;
-        }
-        
-        .photo-card {
-            margin-bottom: 1rem !important;
-        }
-    }
-
-    @media (max-width: 576px) and (min-width: 501px) {
-        .photo-image {
-            height: 250px;
+            height: 300px;
+            width: 100%;
+            object-fit: cover;
             max-width: 100%;
             width: 100%;
         }
-        
-        .photo-card {
-            margin-bottom: 1rem;
+        .tag-badge {
+            cursor: pointer;
+            margin: 2px;
         }
-    }
+        
+        /* ===== UPDATED: LOVE ICON INSIDE IMAGE ONLY ===== */
+        .photo-card .position-relative {
+            position: relative;
+            overflow: hidden;
+        }
 
-    @media (min-width: 300px) and (max-width: 580px) {
-        .photo-grid-column {
-            flex: 0 0 50% !important;
-            max-width: 50% !important;
-            width: 50% !important;
-            float: left !important;
+        /* Love button positioned inside the image - CLEAN DESIGN */
+        .love-btn-inside {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        .love-btn-inside:hover {
+            background: rgba(255, 255, 255, 1);
+            color: #dc3545;
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .love-btn-inside.active {
+            background: rgba(220, 53, 69, 0.15);
+            color: #dc3545;
+        }
+
+        .love-btn-inside.active:hover {
+            background: rgba(220, 53, 69, 0.25);
+        }
+
+        .love-btn-inside .bi {
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .love-btn-inside.active .bi {
+            animation: heartBeat 0.6s ease;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(0.9); }
+            75% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* ===== FAVORITE COUNT OUTSIDE IMAGE ===== */
+        .favorite-count-outside {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .favorite-count-outside .bi {
+            color: #dc3545;
+        }
+
+        /* Dark theme support */
+        [data-bs-theme="dark"] .love-btn-inside {
+            background: rgba(0, 0, 0, 0.7);
+            color: #a7acb1;
+        }
+
+        [data-bs-theme="dark"] .love-btn-inside:hover {
+            background: rgba(0, 0, 0, 0.9);
+            color: #ff6b6b;
+        }
+
+        [data-bs-theme="dark"] .love-btn-inside.active {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .love-btn-inside {
+                width: 45px;
+                height: 45px;
+                top: 12px;
+                left: 12px;
+            }
+            
+            .love-btn-inside .bi {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .love-btn-inside {
+                width: 40px;
+                height: 40px;
+                top: 10px;
+                left: 10px;
+            }
+            
+            .love-btn-inside .bi {
+                font-size: 1.1rem;
+            }
+            
+            .favorite-count-outside {
+                font-size: 0.8rem;
+                gap: 0.3rem;
+            }
+        }
+
+        /* Remove any old favorite button styles */
+        .favorite-btn, .favorite-overlay-btn, .favorite-count-badge {
+            display: none !important;
+        }
+
+        /* Adjust privacy badge position */
+        .privacy-badge {
+            top: 15px;
+            right: 15px;
+        }
+
+        /* Rest of your existing styles */
+        .card-img-top {
+            max-height: 900px;
+        }
+        .health-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .health-healthy { background-color: #28a745; }
+        .health-needs_vaccination { background-color: #ffc107; }
+        .health-underweight { background-color: #17a2b8; }
+        .health-overweight { background-color: #fd7e14; }
+        .health-recent_vet_visit { background-color: #6f42c1; }
+
+        /* Ensure health indicators remain visible */
+        .dropdown-item .health-indicator {
+            margin-right: 8px;
+            vertical-align: middle;
         }
         
-        .photo-image {
-            height: 180px !important;
-            max-width: 100% !important;
-            width: 100% !important;
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
         }
-        
-        .photo-card {
-            margin-bottom: 0.75rem !important;
-            margin-left: 0.25rem !important;
-            margin-right: 0.25rem !important;
+
+        /* Mobile Responsive Styles */
+        @media (min-width: 400px) and (max-width: 500px) {
+            .photo-grid-column {
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
+                width: 50% !important;
+            }
+            
+            .photo-image {
+                height: 200px !important;
+            }
+            
+            .photo-card {
+                margin-bottom: 1rem !important;
+            }
+            
+            .card-body {
+                padding: 0.75rem !important;
+            }
+            
+            .card-title {
+                font-size: 0.9rem !important;
+            }
+            
+            .badge {
+                font-size: 0.7rem !important;
+            }
+            
+            .btn-sm {
+                font-size: 0.8rem !important;
+                padding: 0.25rem 0.5rem !important;
+            }
         }
-        
-        .card-body {
-            padding: 0.5rem !important;
+
+        @media (max-width: 399px) {
+            .photo-grid-column {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            
+            .photo-image {
+                height: 250px !important;
+            }
+            
+            .photo-card {
+                margin-bottom: 1rem !important;
+            }
         }
-        
-        .card-title {
-            font-size: 0.8rem !important;
-            margin-bottom: 0.25rem !important;
+
+        @media (max-width: 576px) and (min-width: 501px) {
+            .photo-image {
+                height: 250px;
+            }
+            
+            .photo-card {
+                margin-bottom: 1rem;
+            }
         }
-        
-        .badge {
-            font-size: 0.6rem !important;
+
+        @media (min-width: 300px) and (max-width: 580px) {
+            .photo-grid-column {
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
+                width: 50% !important;
+                float: left !important;
+            }
+            
+            .photo-image {
+                height: 180px !important;
+            }
+            
+            .photo-card {
+                margin-bottom: 0.75rem !important;
+                margin-left: 0.25rem !important;
+                margin-right: 0.25rem !important;
+            }
+            
+            .card-body {
+                padding: 0.5rem !important;
+            }
+            
+            .card-title {
+                font-size: 0.8rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
+            .badge {
+                font-size: 0.6rem !important;
+            }
+            
+            .btn-sm {
+                font-size: 0.7rem !important;
+                padding: 0.2rem 0.4rem !important;
+            }
+            
+            .text-muted {
+                font-size: 0.7rem !important;
+            }
         }
-        
-        .btn-sm {
-            font-size: 0.7rem !important;
-            padding: 0.2rem 0.4rem !important;
+
+        @media (max-width: 299px) {
+            .photo-grid-column {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                float: none !important;
+            }
+            
+            .photo-image {
+                height: 200px !important;
+            }
         }
-        
-        .favorite-count {
-            font-size: 0.7rem !important;
+
+        @media (min-width: 581px) {
+            .photo-grid-column {
+                float: none !important;
+            }
         }
-        
+
+        /* Button Styles */
+        .btn-outline-primary {
+            color: #0d6efd;
+            border-color: #0d6efd;
+            background-color: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .btn-outline-secondary {
+            color: #6c757d;
+            border-color: #6c757d;
+            background-color: transparent;
+        }
+
+        .btn-outline-secondary:hover {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-outline-info {
+            color: #0dcaf0;
+            border-color: #0dcaf0;
+            background-color: transparent;
+        }
+
+        .btn-outline-info:hover {
+            color: #000;
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+        }
+
+        /* Text and Contrast */
         .text-muted {
-            font-size: 0.7rem !important;
+            color: #6c757d !important;
         }
-    }
 
-    @media (max-width: 299px) {
-        .photo-grid-column {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
-            width: 100% !important;
-            float: none !important;
+        /* Dark Theme Styles */
+        [data-bs-theme="dark"] .btn-outline-primary {
+            color: #6ea8fe;
+            border-color: #6ea8fe;
         }
-        
-        .photo-image {
-            height: 200px !important;
-            max-width: 100% !important;
-            width: 100% !important;
+
+        [data-bs-theme="dark"] .btn-outline-primary:hover {
+            color: #000;
+            background-color: #6ea8fe;
         }
-    }
 
-    @media (min-width: 581px) {
-        .photo-grid-column {
-            float: none !important;
+        [data-bs-theme="dark"] .btn-outline-secondary {
+            color: #a7acb1;
+            border-color: #a7acb1;
         }
-    }
 
-    /* Button Styles */
-    .btn-outline-primary {
-        color: #0d6efd;
-        border-color: #0d6efd;
-        background-color: transparent;
-    }
+        [data-bs-theme="dark"] .btn-outline-secondary:hover {
+            color: #000;
+            background-color: #a7acb1;
+        }
 
-    .btn-outline-primary:hover {
-        color: #fff;
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
+        [data-bs-theme="dark"] .text-muted {
+            color: #a7acb1 !important;
+        }
 
-    .btn-outline-secondary {
-        color: #6c757d;
-        border-color: #6c757d;
-        background-color: transparent;
-    }
+        /* Privacy Badges */
+        [data-bs-theme="dark"] .privacy-badge.bg-success {
+            background-color: #198754 !important;
+            color: white !important;
+        }
 
-    .btn-outline-secondary:hover {
-        color: #fff;
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
+        [data-bs-theme="dark"] .privacy-badge.bg-secondary {
+            background-color: #6c757d !important;
+            color: white !important;
+        }
 
-    .btn-outline-info {
-        color: #0dcaf0;
-        border-color: #0dcaf0;
-        background-color: transparent;
-    }
+        .privacy-badge.bg-success {
+            background-color: #198754 !important;
+            color: white !important;
+        }
 
-    .btn-outline-info:hover {
-        color: #000;
-        background-color: #0dcaf0;
-        border-color: #0dcaf0;
-    }
+        .privacy-badge.bg-secondary {
+            background-color: #6c757d !important;
+            color: white !important;
+        }
 
-    /* Text and Contrast */
-    .text-muted {
-        color: #6c757d !important;
-    }
+        /* Tag Badges */
+        [data-bs-theme="dark"] .badge.bg-light {
+            background-color: #e9ecef !important;
+            color: #212529 !important;
+        }
 
-    /* Dark Theme Styles */
-    [data-bs-theme="dark"] .btn-outline-primary {
-        color: #6ea8fe;
-        border-color: #6ea8fe;
-    }
+        /* FIXED: SCOPED Dropdown Styles - Only affect gallery dropdowns */
+        .container .dropdown-menu {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(0, 0, 0, 0.15) !important;
+        }
 
-    [data-bs-theme="dark"] .btn-outline-primary:hover {
-        color: #000;
-        background-color: #6ea8fe;
-    }
+        .container .dropdown-item {
+            color: #212529 !important;
+        }
 
-    [data-bs-theme="dark"] .btn-outline-secondary {
-        color: #a7acb1;
-        border-color: #a7acb1;
-    }
+        .container .dropdown-item:hover,
+        .container .dropdown-item:focus {
+            color: #212529 !important;
+            background-color: #f8f9fa !important;
+        }
 
-    [data-bs-theme="dark"] .btn-outline-secondary:hover {
-        color: #000;
-        background-color: #a7acb1;
-    }
+        .container .dropdown-item.active {
+            color: #ffffff !important;
+            background-color: #0d6efd !important;
+        }
 
-    [data-bs-theme="dark"] .text-muted {
-        color: #a7acb1 !important;
-    }
+        /* Dark theme dropdown - FIXED and SCOPED */
+        [data-bs-theme="dark"] .container .dropdown-menu {
+            background-color: #000000 !important;
+            border-color: #333333 !important;
+        }
 
-    /* Privacy Badges */
-    [data-bs-theme="dark"] .privacy-badge.bg-success {
-        background-color: #198754 !important;
-        color: white !important;
-    }
+        [data-bs-theme="dark"] .container .dropdown-item {
+            color: #ffffff !important;
+        }
 
-    [data-bs-theme="dark"] .privacy-badge.bg-secondary {
-        background-color: #6c757d !important;
-        color: white !important;
-    }
+        [data-bs-theme="dark"] .container .dropdown-item:hover,
+        [data-bs-theme="dark"] .container .dropdown-item:focus {
+            color: #ffffff !important;
+            background-color: #333333 !important;
+        }
 
-    .privacy-badge.bg-success {
-        background-color: #198754 !important;
-        color: white !important;
-    }
+        [data-bs-theme="dark"] .container .dropdown-item.active {
+            color: #ffffff !important;
+            background-color: #0d6efd !important;
+        }
 
-    .privacy-badge.bg-secondary {
-        background-color: #6c757d !important;
-        color: white !important;
-    }
+        [data-bs-theme="dark"] .container .dropdown-divider {
+            border-color: #444444 !important;
+        }
 
-    /* Tag Badges */
-    [data-bs-theme="dark"] .badge.bg-light {
-        background-color: #e9ecef !important;
-        color: #212529 !important;
-    }
+        /* Additional Contrast Fixes */
+        .btn-outline-secondary {
+            color: #5a6268 !important;
+            border-color: #5a6268 !important;
+        }
 
-    /* FIXED: SCOPED Dropdown Styles - Only affect gallery dropdowns */
-    .container .dropdown-menu {
-        background-color: #ffffff !important;
-        border: 1px solid rgba(0, 0, 0, 0.15) !important;
-    }
+        .btn-outline-secondary:hover {
+            color: #fff !important;
+            background-color: #5a6268 !important;
+            border-color: #5a6268 !important;
+        }
 
-    .container .dropdown-item {
-        color: #212529 !important;
-    }
+        .btn-outline-info {
+            color: #0b7285 !important;
+            border-color: #0b7285 !important;
+        }
 
-    .container .dropdown-item:hover,
-    .container .dropdown-item:focus {
-        color: #212529 !important;
-        background-color: #f8f9fa !important;
-    }
+        .btn-outline-info:hover {
+            color: #fff !important;
+            background-color: #0b7285 !important;
+            border-color: #0b7285 !important;
+        }
 
-    .container .dropdown-item.active {
-        color: #ffffff !important;
-        background-color: #0d6efd !important;
-    }
+        .btn-outline-secondary.dropdown-toggle,
+        .btn-outline-info.dropdown-toggle {
+            color: inherit !important;
+        }
 
-    /* Dark theme dropdown - FIXED and SCOPED */
-    [data-bs-theme="dark"] .container .dropdown-menu {
-        background-color: #000000 !important;
-        border-color: #333333 !important;
-    }
+        .btn-outline-primary,
+        .btn-outline-secondary,
+        .btn-outline-info {
+            font-weight: 500;
+        }
 
-    [data-bs-theme="dark"] .container .dropdown-item {
-        color: #ffffff !important;
-    }
+        .row.mb-4 .text-muted {
+            background-color: transparent !important;
+        }
 
-    [data-bs-theme="dark"] .container .dropdown-item:hover,
-    [data-bs-theme="dark"] .container .dropdown-item:focus {
-        color: #ffffff !important;
-        background-color: #333333 !important;
-    }
+        /* Dark theme dropdown buttons */
+        [data-bs-theme="dark"] .btn-outline-info {
+            color: #6ea8fe;
+            border-color: #6ea8fe;
+        }
 
-    [data-bs-theme="dark"] .container .dropdown-item.active {
-        color: #ffffff !important;
-        background-color: #0d6efd !important;
-    }
-
-    [data-bs-theme="dark"] .container .dropdown-divider {
-        border-color: #444444 !important;
-    }
-
-    /* Additional Contrast Fixes */
-    .btn-outline-secondary {
-        color: #5a6268 !important;
-        border-color: #5a6268 !important;
-    }
-
-    .btn-outline-secondary:hover {
-        color: #fff !important;
-        background-color: #5a6268 !important;
-        border-color: #5a6268 !important;
-    }
-
-    .btn-outline-info {
-        color: #0b7285 !important;
-        border-color: #0b7285 !important;
-    }
-
-    .btn-outline-info:hover {
-        color: #fff !important;
-        background-color: #0b7285 !important;
-        border-color: #0b7285 !important;
-    }
-
-    .btn-outline-secondary.dropdown-toggle,
-    .btn-outline-info.dropdown-toggle {
-        color: inherit !important;
-    }
-
-    .btn-outline-primary,
-    .btn-outline-secondary,
-    .btn-outline-info {
-        font-weight: 500;
-    }
-
-    .row.mb-4 .text-muted {
-        background-color: transparent !important;
-    }
-
-    /* Dark theme dropdown buttons */
-    [data-bs-theme="dark"] .btn-outline-info {
-        color: #6ea8fe;
-        border-color: #6ea8fe;
-    }
-
-    [data-bs-theme="dark"] .btn-outline-info:hover {
-        color: #000;
-        background-color: #6ea8fe;
-        border-color: #6ea8fe;
-    }
-</style>
+        [data-bs-theme="dark"] .btn-outline-info:hover {
+            color: #000;
+            background-color: #6ea8fe;
+            border-color: #6ea8fe;
+        }
+    </style>
 </head>
 <body>
     <%- include('../partials/header') %>
@@ -434,88 +529,85 @@
             </div>
         </div>
 
-       
-
-
-<!-- Sorting Controls -->
-<div class="row mb-4">
-    <div class="col-md-6">
-    <form class="d-flex">
-        <div class="flex-grow-1">
-            <label for="searchInput" class="visually-hidden">Search photos</label>
-            <input type="text" name="search" id="searchInput" class="form-control me-2" 
-                   placeholder="Search photos..." value="<%= currentSearch || '' %>">
-        </div>
-        <button type="submit" class="btn btn-primary">Search</button>
-        <% if (currentSearch || currentTag) { %>
-            <a href="/gallery" class="btn btn-outline-secondary ms-2">Clear</a>
-        <% } %>
-    </form>
-</div>
-    <div class="col-md-6">
-        <div class="d-flex justify-content-end">
-            <!-- Sorting Dropdown -->
-            <div class="dropdown me-2">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-sort-down"></i> 
-                    <% if (currentSort === 'newest') { %>Newest<% } %>
-                    <% if (currentSort === 'oldest') { %>Oldest<% } %>
-                    <% if (currentSort === 'popular') { %>Most Popular<% } %>
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item <%= currentSort === 'newest' ? 'active' : '' %>" 
-                           href="/gallery?sort=newest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
-                            <i class="bi bi-sort-down"></i> Newest First
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item <%= currentSort === 'oldest' ? 'active' : '' %>" 
-                           href="/gallery?sort=oldest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
-                            <i class="bi bi-sort-up"></i> Oldest First
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item <%= currentSort === 'popular' ? 'active' : '' %>" 
-                           href="/gallery?sort=popular<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
-                            <i class="bi bi-heart"></i> Most Popular
-                        </a>
-                    </li>
-                </ul>
+        <!-- Sorting Controls -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form class="d-flex">
+                    <div class="flex-grow-1">
+                        <label for="searchInput" class="visually-hidden">Search photos</label>
+                        <input type="text" name="search" id="searchInput" class="form-control me-2" 
+                               placeholder="Search photos..." value="<%= currentSearch || '' %>">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <% if (currentSearch || currentTag) { %>
+                        <a href="/gallery" class="btn btn-outline-secondary ms-2">Clear</a>
+                    <% } %>
+                </form>
             </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-end">
+                    <!-- Sorting Dropdown -->
+                    <div class="dropdown me-2">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-sort-down"></i> 
+                            <% if (currentSort === 'newest') { %>Newest<% } %>
+                            <% if (currentSort === 'oldest') { %>Oldest<% } %>
+                            <% if (currentSort === 'popular') { %>Most Popular<% } %>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item <%= currentSort === 'newest' ? 'active' : '' %>" 
+                                   href="/gallery?sort=newest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
+                                    <i class="bi bi-sort-down"></i> Newest First
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item <%= currentSort === 'oldest' ? 'active' : '' %>" 
+                                   href="/gallery?sort=oldest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
+                                    <i class="bi bi-sort-up"></i> Oldest First
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item <%= currentSort === 'popular' ? 'active' : '' %>" 
+                                   href="/gallery?sort=popular<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
+                                    <i class="bi bi-heart"></i> Most Popular
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
-            <!-- Health Status Filter -->
-            <div class="dropdown">
-                <button class="btn btn-outline-info dropdown-toggle" type="button" 
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-heart-pulse"></i> Filter by Health Status
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/gallery/health-overview">
-                        <i class="bi bi-grid-3x3-gap"></i> Health Overview
-                    </a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/gallery/health-status/healthy">
-                        <span class="health-indicator health-healthy"></span> Healthy Pets
-                    </a></li>
-                    <li><a class="dropdown-item" href="/gallery/health-status/needs_vaccination">
-                        <span class="health-indicator health-needs_vaccination"></span> Needs Vaccination
-                    </a></li>
-                    <li><a class="dropdown-item" href="/gallery/health-status/underweight">
-                        <span class="health-indicator health-underweight"></span> Underweight
-                    </a></li>
-                    <li><a class="dropdown-item" href="/gallery/health-status/overweight">
-                        <span class="health-indicator health-overweight"></span> Overweight
-                    </a></li>
-                    <li><a class="dropdown-item" href="/gallery/health-status/recent_vet_visit">
-                        <span class="health-indicator health-recent_vet_visit"></span> Recent Vet Visits
-                    </a></li>
-                </ul>
+                    <!-- Health Status Filter -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-info dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-heart-pulse"></i> Filter by Health Status
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/gallery/health-overview">
+                                <i class="bi bi-grid-3x3-gap"></i> Health Overview
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/gallery/health-status/healthy">
+                                <span class="health-indicator health-healthy"></span> Healthy Pets
+                            </a></li>
+                            <li><a class="dropdown-item" href="/gallery/health-status/needs_vaccination">
+                                <span class="health-indicator health-needs_vaccination"></span> Needs Vaccination
+                            </a></li>
+                            <li><a class="dropdown-item" href="/gallery/health-status/underweight">
+                                <span class="health-indicator health-underweight"></span> Underweight
+                            </a></li>
+                            <li><a class="dropdown-item" href="/gallery/health-status/overweight">
+                                <span class="health-indicator health-overweight"></span> Overweight
+                            </a></li>
+                            <li><a class="dropdown-item" href="/gallery/health-status/recent_vet_visit">
+                                <span class="health-indicator health-recent_vet_visit"></span> Recent Vet Visits
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
         <!-- Popular Tags -->
         <% if (popularTags.length > 0) { %>
@@ -534,90 +626,95 @@
         </div>
         <% } %>
 
-
-
-<!-- Photos Grid -->
-<div class="row">
-    <% if (photos.length > 0) { %>
-        <% photos.forEach(photo => { %>
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12 photo-grid-column">
-                <div class="card photo-card">
-                    <a href="/gallery/photo/<%= photo.photo_id %>" class="d-block position-relative">
-                        <img src="<%= photo.photo_url %>" 
-                             class="card-img-top photo-image" 
-                             alt="<%= photo.title ? 'Photo: ' + photo.title : 'Pet photo by ' + photo.username %>">
-                        
-                        <!-- Privacy Badge -->
-                        <span class="badge privacy-badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
-                            <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
-                            <%= photo.is_public ? 'Public' : 'Private' %>
-                        </span>
-                    </a>
-                    
-                    <div class="card-body">
-                        <h5 class="card-title h6"><%= photo.title %></h5>
-                        <p class="card-text small text-muted">
-                            By <%= photo.username %>
-                        </p>
-                        
-                        <!-- Tags -->
-                        <% if (photo.tags) { %>
-                            <div class="mb-2">
-                                <% photo.tags.split(',').forEach(tag => { %>
-                                    <a href="/gallery?tag=<%= tag %>" class="badge bg-light text-dark tag-badge text-decoration-none me-1 mb-1">
-                                        #<%= tag %>
-                                    </a>
-                                <% }); %>
+        <!-- Photos Grid -->
+        <div class="row">
+            <% if (photos.length > 0) { %>
+                <% photos.forEach(photo => { %>
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12 photo-grid-column">
+                        <div class="card photo-card">
+                            <div class="position-relative">
+                                <a href="/gallery/photo/<%= photo.photo_id %>" class="d-block position-relative">
+                                    <img src="<%= photo.photo_url %>" 
+                                         class="card-img-top photo-image" 
+                                         alt="<%= photo.title ? 'Photo: ' + photo.title : 'Pet photo by ' + photo.username %>">
+                                    
+                                    <!-- Love Icon INSIDE Image Only (No Count) -->
+                                    <button class="love-btn-inside <%= photo.is_favorited ? 'active' : '' %>" 
+                                            onclick="event.preventDefault(); toggleFavorite(<%= photo.photo_id %>, this)"
+                                            aria-label="<%= photo.is_favorited ? 'Remove from favorites' : 'Add to favorites' %>">
+                                        <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
+                                    </button>
+                                    
+                                    <!-- Privacy Badge -->
+                                    <span class="badge privacy-badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
+                                        <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
+                                        <%= photo.is_public ? 'Public' : 'Private' %>
+                                    </span>
+                                </a>
                             </div>
-                        <% } %>
-                        
-                        <!-- Actions -->
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button class="favorite-btn <%= photo.is_favorited ? 'active' : '' %>" 
-                                    onclick="toggleFavorite(<%= photo.photo_id %>, this)">
-                                <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
-                                <span class="favorite-count"><%= photo.favorite_count || 0 %></span>
-                            </button>
-                            <small class="text-muted">
-                                <%= new Date(photo.created_at).toLocaleDateString() %>
-                            </small>
+                            
+                            <div class="card-body">
+                                <h5 class="card-title h6"><%= photo.title %></h5>
+                                <p class="card-text small text-muted">
+                                    By <%= photo.username %>
+                                </p>
+                                
+                                <!-- Tags -->
+                                <% if (photo.tags) { %>
+                                    <div class="mb-2">
+                                        <% photo.tags.split(',').forEach(tag => { %>
+                                            <a href="/gallery?tag=<%= tag %>" class="badge bg-light text-dark tag-badge text-decoration-none me-1 mb-1">
+                                                #<%= tag %>
+                                            </a>
+                                        <% }); %>
+                                    </div>
+                                <% } %>
+                                
+                                <!-- Stats Row - Favorite Count OUTSIDE Image -->
+                                <div class="d-flex justify-content-between align-items-center text-muted small">
+                                    <div class="favorite-count-outside">
+                                        <i class="bi bi-heart-fill"></i>
+                                        <span><%= photo.favorite_count || 0 %> favorites</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-calendar"></i> 
+                                        <%= new Date(photo.created_at).toLocaleDateString() %>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-camera display-1 text-muted"></i>
+                    <h2 class="h4 mt-3 text-muted">No photos found</h2>
+                    <p class="text-muted">
+                        <% if (currentSearch || currentTag) { %>
+                            Try adjusting your search criteria
+                        <% } else { %>
+                            Be the first to share a photo!
+                        <% } %>
+                    </p>
+                    <a href="/gallery/upload" class="btn btn-primary">Upload First Photo</a>
                 </div>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <div class="col-12 text-center py-5">
-            <i class="bi bi-camera display-1 text-muted"></i>
-            <h2 class="h4 mt-3 text-muted">No photos found</h2>
-            <p class="text-muted">
-                <% if (currentSearch || currentTag) { %>
-                    Try adjusting your search criteria
-                <% } else { %>
-                    Be the first to share a photo!
-                <% } %>
-            </p>
-            <a href="/gallery/upload" class="btn btn-primary">Upload First Photo</a>
+            <% } %>
         </div>
-    <% } %>
-</div>
 
-
-
-        
-
-      <% if (hasMore) { %>
-<div class="row mt-4">
-    <div class="col-12 text-center">
-        <a href="/gallery?page=<%= currentPage + 1 %><%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %><%= currentSort ? '&sort=' + currentSort : '' %>" 
-           class="btn btn-outline-primary">
-            Load More Photos
-        </a>
+        <!-- Load More -->
+        <% if (hasMore) { %>
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <a href="/gallery?page=<%= currentPage + 1 %><%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %><%= currentSort ? '&sort=' + currentSort : '' %>" 
+                   class="btn btn-outline-primary">
+                    Load More Photos
+                </a>
+            </div>
+        </div>
+        <% } %>
     </div>
-</div>
-<% } %>
-    </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         async function toggleFavorite(photoId, button) {
             try {
@@ -632,7 +729,7 @@
                 
                 if (result.success) {
                     const icon = button.querySelector('i');
-                    const countSpan = button.querySelector('.favorite-count');
+                    const favoriteCountElement = button.closest('.photo-card').querySelector('.favorite-count-outside span');
                     
                     if (result.action === 'added') {
                         icon.classList.remove('bi-heart');
@@ -644,10 +741,13 @@
                         button.classList.remove('active');
                     }
                     
-                    countSpan.textContent = result.favorite_count;
+                    // Update the favorite count outside the image
+                    if (favoriteCountElement) {
+                        favoriteCountElement.textContent = result.favorite_count + ' favorites';
+                    }
                 }
             } catch (error) {
-                // console.error('Favorite error:', error);
+                console.error('Favorite error:', error);
                 alert('Error updating favorite');
             }
         }

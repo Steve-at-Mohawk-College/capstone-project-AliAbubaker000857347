@@ -577,6 +577,171 @@ body.mobile-menu-open {
 html {
   scroll-behavior: smooth;
 }
+/* ===== MOBILE DROPDOWN FIXES FOR ALL SIZES ===== */
+@media (max-width: 991.98px) {
+  /* Mobile Header Layout */
+  .navbar-modern .container-fluid {
+    padding: 0 0.75rem;
+  }
+
+  /* Profile dropdown positioning fix for ALL mobile screens */
+  .header-icons-mobile .profile-modern .dropdown-menu {
+    position: fixed !important;
+    top: 70px !important;
+    right: 1rem !important;
+    left: auto !important;
+    width: 200px !important;
+    max-width: 85vw;
+    transform: none !important;
+    margin: 0 !important;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--glass-border);
+    background: var(--light);
+    z-index: 1070;
+    padding: 0.5rem 0;
+  }
+
+  /* Notification dropdown positioning */
+  .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
+    position: fixed !important;
+    top: 70px !important;
+    right: 1rem !important;
+    left: auto !important;
+    width: 280px !important;
+    max-width: 85vw;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--glass-border);
+    z-index: 1060;
+  }
+
+  /* Profile dropdown items styling */
+  .header-icons-mobile .profile-modern .dropdown-item {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9rem;
+    border-radius: 0;
+    border-bottom: 1px solid var(--light-gray);
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+  }
+
+  .header-icons-mobile .profile-modern .dropdown-item:last-child {
+    border-bottom: none;
+  }
+
+  .header-icons-mobile .profile-modern .dropdown-item:hover {
+    background-color: rgba(67, 97, 238, 0.08);
+    color: var(--primary);
+  }
+
+  .header-icons-mobile .profile-modern .dropdown-item i {
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Ensure dropdown is properly positioned and visible */
+  .header-icons-mobile .dropdown-menu[data-bs-popper] {
+    top: 100% !important;
+    left: auto !important;
+    right: 0 !important;
+    margin-top: 0.5rem !important;
+  }
+}
+
+/* ===== EXTRA SMALL MOBILE STYLES ===== */
+@media (max-width: 400px) {
+  /* Mobile Header Layout for very small screens */
+  .navbar-modern .container-fluid {
+    padding: 0 0.5rem;
+  }
+  
+  /* Adjust header icons spacing for very small screens */
+  .header-icons-mobile {
+    gap: 0.25rem;
+  }
+  
+  /* Profile dropdown positioning for very small screens */
+  .header-icons-mobile .profile-modern .dropdown-menu {
+    right: 0.5rem !important;
+    width: 180px !important;
+    max-width: 90vw;
+  }
+  
+  /* Make profile icon slightly smaller on very small screens */
+  .header-icons-mobile .profile-modern,
+  .header-icons-mobile .theme-toggle-modern,
+  .header-icons-mobile .notification-bell {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .user-avatar-modern {
+    width: 32px;
+    height: 32px;
+  }
+  
+  /* Brand logo adjustment */
+  .navbar-brand-modern {
+    font-size: 1.3rem;
+  }
+  
+  .navbar-brand-modern i {
+    font-size: 1.6rem;
+  }
+  
+  /* Notification dropdown also needs adjustment */
+  .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
+    right: 0.5rem !important;
+    width: 260px !important;
+    max-width: 90vw;
+  }
+}
+
+/* ===== SUPER SMALL SCREENS (Below 350px) ===== */
+@media (max-width: 350px) {
+  .navbar-modern .container-fluid {
+    padding: 0 0.25rem;
+  }
+  
+  .header-icons-mobile {
+    gap: 0.15rem;
+  }
+  
+  .header-icons-mobile .profile-modern,
+  .header-icons-mobile .theme-toggle-modern,
+  .header-icons-mobile .notification-bell {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .user-avatar-modern {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .navbar-brand-modern {
+    font-size: 1.2rem;
+  }
+  
+  .navbar-brand-modern i {
+    font-size: 1.5rem;
+  }
+  
+  .navbar-brand-modern span {
+    font-size: 1.1rem;
+  }
+  
+  /* Even smaller dropdowns */
+  .header-icons-mobile .profile-modern .dropdown-menu {
+    width: 170px !important;
+  }
+  
+  .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
+    width: 250px !important;
+  }
+}
 </style>
 </head>
 <body>

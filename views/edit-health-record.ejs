@@ -1,6 +1,49 @@
 
 <%- include('partials/header', {title: 'Edit Health Record'}) %>
+<style>
+/* Move heading down for screens under 1000px */
+@media (max-width: 1000px) {
+  .h3.mb-4.text-center {
+    margin-top: 5rem !important;
+    padding-top: 2rem !important;
+  }
+}
 
+/* For very small mobile devices */
+@media (max-width: 576px) {
+  .h3.mb-4.text-center {
+    margin-top: 6rem !important;
+    padding-top: 3rem !important;
+  }
+}
+
+/* Fix dark mode contrast for form labels */
+[data-theme="dark"] .form-label {
+    color: #e9ecef !important; /* Light color for dark mode */
+    opacity: 1 !important;
+    background-color: transparent !important; /* Remove dark background */
+}
+
+/* Fix any inline styles overriding dark mode */
+[data-theme="dark"] .form-label[style*="color: rgb(44, 62, 80)"] {
+    color: #e9ecef !important;
+    background-color: transparent !important;
+}
+
+[data-theme="dark"] .form-label[style*="background-color: rgb(18, 18, 18)"] {
+    background-color: transparent !important;
+}
+
+/* Also fix form text for dark mode */
+[data-theme="dark"] .form-text {
+    color: #adb5bd !important; /* Lighter gray for better contrast */
+}
+
+/* Fix invalid feedback text in dark mode */
+[data-theme="dark"] .invalid-feedback {
+    color: #f8d7da !important; /* Lighter red for better contrast */
+}
+</style>
 
 <div class="row justify-content-center">
   <div class="col-md-8 col-lg-6">

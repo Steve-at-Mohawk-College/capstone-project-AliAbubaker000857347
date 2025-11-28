@@ -167,33 +167,42 @@ label[for="priority"] {
               <small class="form-text text-muted"><span id="charCount">0</span>/500 characters</small>
             </div>
 
-            <div class="mb-3">
-              <label for="due_date" class="form-label">Due Date *</label>
-              <%
-                const now = new Date();
-                const maxDate = new Date();
-                maxDate.setFullYear(now.getFullYear() + 1);
-                
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                
-                const maxYear = maxDate.getFullYear();
-                const maxMonth = String(maxDate.getMonth() + 1).padStart(2, '0');
-                const maxDay = String(maxDate.getDate()).padStart(2, '0');
-                
-                const localMin = `${year}-${month}-${day}T${hours}:${minutes}`;
-                const localMax = `${maxYear}-${maxMonth}-${maxDay}T23:59`;
-              %>
 
-              <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
-                     required min="<%= localMin %>" max="<%= localMax %>"
-                     value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>">
-              <div class="invalid-feedback">Due date must be within the next year and cannot be in the past.</div>
-              <small class="form-text text-muted">Select a future date and time (within 1 year).</small>
-            </div>
+
+
+
+
+
+
+
+
+        <div class="mb-3">
+  <label for="due_date" class="form-label">Due Date *</label>
+  <%
+    const now = new Date();
+    const maxDate = new Date();
+    maxDate.setFullYear(now.getFullYear() + 1);
+    
+    // Set min to current date (not time) to be more lenient
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    
+    const maxYear = maxDate.getFullYear();
+    const maxMonth = String(maxDate.getMonth() + 1).padStart(2, '0');
+    const maxDay = String(maxDate.getDate()).padStart(2, '0');
+    
+    // Only use date for min, not time
+    const localMin = `${year}-${month}-${day}T00:00`;
+    const localMax = `${maxYear}-${maxMonth}-${maxDay}T23:59`;
+  %>
+
+  <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
+         required min="<%= localMin %>" max="<%= localMax %>"
+         value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>" step="300">
+  <div class="invalid-feedback">Due date must be within the next year and cannot be in the past.</div>
+  <small class="form-text text-muted">Select a future date and time (within 1 year).</small>
+</div>
 
             <div class="mb-4">
               <label for="priority" class="form-label">Priority</label>
@@ -236,26 +245,45 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Enhanced due date validation
-  function validateDueDate() {
-    const dueDate = new Date(dueDateInput.value);
-    const now = new Date();
-    const maxDate = new Date();
-    maxDate.setFullYear(now.getFullYear() + 1);
-
-    if (dueDate < now) {
-      dueDateInput.setCustomValidity('Due date cannot be in the past');
-      dueDateInput.classList.add('is-invalid');
-      return false;
-    } else if (dueDate > maxDate) {
-      dueDateInput.setCustomValidity('Due date cannot be more than 1 year in the future');
-      dueDateInput.classList.add('is-invalid');
-      return false;
-    } else {
-      dueDateInput.setCustomValidity('');
-      dueDateInput.classList.remove('is-invalid');
-      return true;
-    }
+  
+function validateDueDate() {
+  if (!dueDateInput.value) {
+    dueDateInput.setCustomValidity('Due date is required');
+    dueDateInput.classList.add('is-invalid');
+    return false;
   }
+
+  const dueDate = new Date(dueDateInput.value);
+  const now = new Date();
+  
+  // Add 10 minute buffer to prevent "in the past" errors
+  const bufferTime = 10 * 60 * 1000; // 10 minutes
+  const nowWithBuffer = new Date(now.getTime() - bufferTime);
+  
+  const maxDate = new Date();
+  maxDate.setFullYear(now.getFullYear() + 1);
+
+  // console.log('🕒 FRONTEND VALIDATION:');
+  // console.log('Due Date Input:', dueDateInput.value);
+  // console.log('Parsed Due Date:', dueDate);
+  // console.log('Current Time:', now);
+  // console.log('Current with Buffer:', nowWithBuffer);
+  // console.log('Max Date:', maxDate);
+
+  if (dueDate <= nowWithBuffer) {
+    dueDateInput.setCustomValidity('Due date cannot be in the past. Please select a future time.');
+    dueDateInput.classList.add('is-invalid');
+    return false;
+  } else if (dueDate > maxDate) {
+    dueDateInput.setCustomValidity('Due date cannot be more than 1 year in the future');
+    dueDateInput.classList.add('is-invalid');
+    return false;
+  } else {
+    dueDateInput.setCustomValidity('');
+    dueDateInput.classList.remove('is-invalid');
+    return true;
+  }
+}
 
   // Real-time validation
   dueDateInput.addEventListener('change', validateDueDate);

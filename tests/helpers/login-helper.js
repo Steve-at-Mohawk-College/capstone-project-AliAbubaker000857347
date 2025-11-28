@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 
 async function robustLogin(page, baseUrl, email, password) {
-  console.log('🔐 Attempting robust login...');
+  // console.log('🔐 Attempting robust login...');
   
   try {
     // Navigate to login page
@@ -25,10 +25,10 @@ async function robustLogin(page, baseUrl, email, password) {
       page.click('button[type="submit"], input[type="submit"]')
     ]);
 
-    console.log('✅ Login successful');
+    // console.log('✅ Login successful');
     return true;
   } catch (error) {
-    console.log('❌ Login failed:', error.message);
+    // console.log('❌ Login failed:', error.message);
     return false;
   }
 }

@@ -8,11 +8,11 @@ class NotificationWorker {
 
   start() {
     if (this.isRunning) {
-      console.log('Notification worker is already running');
+      // console.log('Notification worker is already running');
       return;
     }
 
-    console.log('🚀 Starting notification worker...');
+    // console.log('🚀 Starting notification worker...');
     this.isRunning = true;
 
     // Check for due tasks every minute
@@ -44,7 +44,7 @@ class NotificationWorker {
   }
 
   stop() {
-    console.log('🛑 Stopping notification worker...');
+    // console.log('🛑 Stopping notification worker...');
     this.isRunning = false;
     this.intervals.forEach(interval => clearInterval(interval));
     this.intervals = [];
@@ -52,7 +52,7 @@ class NotificationWorker {
 
   // Manual trigger for testing
   async manualCheck() {
-    console.log('🔍 Manual notification check triggered');
+    // console.log('🔍 Manual notification check triggered');
     const dueCount = await notificationService.checkDueTasks();
     const tomorrowCount = await notificationService.checkTomorrowTasks();
     

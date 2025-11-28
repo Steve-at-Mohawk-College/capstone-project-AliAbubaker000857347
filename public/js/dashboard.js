@@ -12,7 +12,7 @@ class DashboardManager {
         this.initializeFilterSystem();
         this.bindEvents();
         this.formatDueDates();
-        console.log('🚀 Dashboard Manager initialized');
+        // console.log('🚀 Dashboard Manager initialized');
     }
 
     initializeSessionTimeout() {
@@ -51,7 +51,7 @@ class DashboardManager {
                 this.itemId = button.getAttribute('data-id');
                 const itemName = button.getAttribute('data-name');
                 
-                console.log('Remove button clicked:', this.itemType, this.itemId, itemName);
+                // console.log('Remove button clicked:', this.itemType, this.itemId, itemName);
                 
                 const message = `Are you sure you want to remove ${this.itemType === 'pet' ? 'pet' : 'task'} "${itemName}"? This action cannot be undone.`;
                 document.getElementById('confirmationMessage').textContent = message;
@@ -68,9 +68,9 @@ class DashboardManager {
     }
 
     handleRemoveConfirmation() {
-        console.log('Confirm remove button clicked');
+        // console.log('Confirm remove button clicked');
         if (this.itemType && this.itemId) {
-            console.log(`Sending DELETE request to /${this.itemType}s/${this.itemId}`);
+            // console.log(`Sending DELETE request to /${this.itemType}s/${this.itemId}`);
             
             // Show loading state
             const removeBtn = document.getElementById('confirmRemoveBtn');
@@ -86,9 +86,9 @@ class DashboardManager {
                 }
             })
             .then(response => {
-                console.log('Response received:', response.status, response.statusText);
+                // console.log('Response received:', response.status, response.statusText);
                 if (response.ok) {
-                    console.log('Delete successful');
+                    // console.log('Delete successful');
                     this.showSuccessMessage(`${this.itemType === 'pet' ? 'Pet' : 'Task'} has been removed successfully.`);
                     
                     // Reload the page after a short delay
@@ -243,7 +243,7 @@ class DashboardManager {
     }
 
     async savePetEdit(petId, buttonElement) {
-    console.log('💾 Saving pet edit for ID:', petId);
+    // console.log('💾 Saving pet edit for ID:', petId);
     
     const ageInput = document.getElementById(`edit-age-${petId}`);
     const weightInput = document.getElementById(`edit-weight-${petId}`);
@@ -251,7 +251,7 @@ class DashboardManager {
     const newAge = parseFloat(ageInput.value);
     const newWeight = parseFloat(weightInput.value);
     
-    console.log('📊 New values:', { newAge, newWeight });
+    // console.log('📊 New values:', { newAge, newWeight });
     
     // Validation
     if (isNaN(newAge) || newAge <= 0) {
@@ -268,26 +268,26 @@ class DashboardManager {
     this.setButtonLoading(buttonElement, true);
     
     try {
-        console.log('📤 Sending update request...');
+        // console.log('📤 Sending update request...');
         const response = await fetch(`/pets/${petId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ age: newAge, weight: newWeight })
         });
         
-        console.log('📥 Response received, status:', response.status);
+        // console.log('📥 Response received, status:', response.status);
         const data = await response.json();
-        console.log('📦 Response data:', data);
+        // console.log('📦 Response data:', data);
         
         if (response.ok && data.ok) {
-            console.log('✅ Update successful, updating display...');
+            // console.log('✅ Update successful, updating display...');
             this.updatePetDisplay(petId, newAge, newWeight);
             this.hideEditForm(petId, 'edit-form');
             this.showAlert('Pet details updated successfully!', 'success');
             
             // Optional: Reload the page to ensure all data is fresh
             setTimeout(() => {
-                console.log('🔄 Reloading page to refresh data...');
+                // console.log('🔄 Reloading page to refresh data...');
                 window.location.reload();
             }, 1000);
             
@@ -375,7 +375,7 @@ class DashboardManager {
     }
 
     updatePetDisplay(petId, newAge, newWeight) {
-    console.log('🔄 Updating pet display for pet ID:', petId);
+    // console.log('🔄 Updating pet display for pet ID:', petId);
     
     try {
         let ageDisplay;
@@ -392,7 +392,7 @@ class DashboardManager {
         const ageElement = document.getElementById(`age-display-${petId}`);
         if (ageElement) {
             ageElement.textContent = ageDisplay;
-            console.log('✅ Updated age display:', ageDisplay);
+            // console.log('✅ Updated age display:', ageDisplay);
         } else {
             console.warn('⚠️ Age display element not found for pet ID:', petId);
         }
@@ -401,7 +401,7 @@ class DashboardManager {
         const weightElement = document.getElementById(`weight-display-${petId}`);
         if (weightElement) {
             weightElement.textContent = newWeight + ' kg';
-            console.log('✅ Updated weight display:', newWeight + ' kg');
+            // console.log('✅ Updated weight display:', newWeight + ' kg');
         } else {
             console.warn('⚠️ Weight display element not found for pet ID:', petId);
         }
@@ -413,7 +413,7 @@ class DashboardManager {
 }
 
     updateTaskDisplay(taskId, newTitle, newDescription, newDueDate, newPriority) {
-    console.log('🔄 Updating task display for task:', taskId);
+    // console.log('🔄 Updating task display for task:', taskId);
     
     try {
         // Find the task element using multiple selectors for better reliability
@@ -437,7 +437,7 @@ class DashboardManager {
                 // Fallback: update the entire content
                 titleElement.textContent = newTitle;
             }
-            console.log('✅ Updated title:', newTitle);
+            // console.log('✅ Updated title:', newTitle);
         }
 
         // Update priority badge - use more specific selector
@@ -455,7 +455,7 @@ class DashboardManager {
             
             priorityBadge.classList.add(priorityClass);
             priorityBadge.textContent = newPriority;
-            console.log('✅ Updated priority:', newPriority);
+            // console.log('✅ Updated priority:', newPriority);
         }
 
         // Update due date - use more specific selector
@@ -470,7 +470,7 @@ class DashboardManager {
                 minute: '2-digit'
             });
             dueDateSpan.textContent = formattedDate;
-            console.log('✅ Updated due date:', formattedDate);
+            // console.log('✅ Updated due date:', formattedDate);
         }
 
         // Update description if it exists and there's a description element
@@ -480,12 +480,12 @@ class DashboardManager {
                 const descriptionText = descriptionElement.querySelector('p');
                 if (descriptionText) {
                     descriptionText.textContent = newDescription;
-                    console.log('✅ Updated description');
+                    // console.log('✅ Updated description');
                 }
             }
         }
 
-        console.log('✅ Task display updated successfully');
+        // console.log('✅ Task display updated successfully');
 
     } catch (error) {
         console.error('❌ Error updating task display:', error);
@@ -494,7 +494,7 @@ class DashboardManager {
 }
 
 async saveTaskEdit(taskId, buttonElement) {
-    console.log('💾 Saving task edit for:', taskId);
+    // console.log('💾 Saving task edit for:', taskId);
     
     const titleInput = document.getElementById(`edit-task-title-${taskId}`);
     const descriptionInput = document.getElementById(`edit-task-description-${taskId}`);

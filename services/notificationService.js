@@ -5,7 +5,7 @@ class NotificationService {
   // Check for due tasks and create notifications
   async checkDueTasks() {
     try {
-      console.log('🔔 Checking for due tasks...');
+      // console.log('🔔 Checking for due tasks...');
       
       // Get tasks that are due in the next hour or are overdue
       const now = new Date();
@@ -23,7 +23,7 @@ class NotificationService {
       
       const dueTasks = await query(sql, [now, oneHourFromNow]);
       
-      console.log(`📋 Found ${dueTasks.length} due tasks`);
+      // console.log(`📋 Found ${dueTasks.length} due tasks`);
       
       for (const task of dueTasks) {
         await this.createTaskDueNotification(task);
@@ -71,7 +71,7 @@ class NotificationService {
       task.task_id ? parseInt(task.task_id) : null // Ensure task_id is number
     );
 
-    console.log(`📢 Created notification for task: ${task.title}`);
+    // console.log(`📢 Created notification for task: ${task.title}`);
   }
 
   formatTaskMessage(task, minutesUntilDue, urgency) {

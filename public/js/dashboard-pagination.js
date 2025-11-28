@@ -6,7 +6,7 @@ class DashboardPagination {
 
   init() {
     this.bindEvents();
-    console.log('🔄 Pagination system initialized');
+    // console.log('🔄 Pagination system initialized');
   }
 
   bindEvents() {
@@ -90,7 +90,7 @@ class DashboardPagination {
 
   showSuccess(message) {
     // Optional: Show a small success message
-    console.log('✅', message);
+    // console.log('✅', message);
   }
 
   updateURL(url) {

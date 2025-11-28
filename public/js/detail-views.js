@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Proper modal event listeners to handle focus
     detailModalElement.addEventListener('show.bs.modal', function () {
-        console.log('📱 Modal opening - setting up accessibility');
+        // console.log('📱 Modal opening - setting up accessibility');
     });
 
     detailModalElement.addEventListener('hidden.bs.modal', function () {
-        console.log('📱 Modal closed - cleaning up');
+        // console.log('📱 Modal closed - cleaning up');
         detailModalBody.innerHTML = '';
         detailModalTitle.innerHTML = '';
     });
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.closest('.cancel-edit-btn') ||
             e.target.closest('.save-task-edit-btn') ||
             e.target.closest('.cancel-task-edit-btn')) {
-            console.log('🔧 Action button clicked - skipping detail view');
+            // console.log('🔧 Action button clicked - skipping detail view');
             return; // Don't show detail view for action buttons
         }
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = item.dataset.type;
             const id = item.dataset.id;
             
-            console.log('📝 Item clicked:', { type, id });
+            // console.log('📝 Item clicked:', { type, id });
             
             if (type === 'pet') {
                 showSimplePetDetails(item);
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Global functions remain the same...
 window.editPet = function(petId) {
-    console.log('✏️ Editing pet:', petId);
+    // console.log('✏️ Editing pet:', petId);
     const editBtn = document.querySelector(`.edit-btn[data-pet-id="${petId}"]`);
     if (editBtn) {
         editBtn.click();
@@ -237,12 +237,12 @@ window.editPet = function(petId) {
 }
 
 window.scheduleTaskForPet = function(petId) {
-    console.log('📅 Scheduling task for pet:', petId);
+    // console.log('📅 Scheduling task for pet:', petId);
     window.location.href = `/schedule-task?petId=${petId}`;
 }
 
 window.editTask = function(taskId) {
-    console.log('✏️ Editing task:', taskId);
+    // console.log('✏️ Editing task:', taskId);
     const editBtn = document.querySelector(`.edit-task-btn[data-task-id="${taskId}"]`);
     if (editBtn) {
         editBtn.click();
@@ -252,7 +252,7 @@ window.editTask = function(taskId) {
 }
 
 window.completeTask = function(taskId) {
-    console.log('✅ Completing task:', taskId);
+    // console.log('✅ Completing task:', taskId);
     
     fetch(`/tasks/${taskId}/complete`, {
         method: 'PUT',

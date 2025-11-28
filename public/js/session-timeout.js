@@ -17,7 +17,7 @@ class SessionTimeout {
     init() {
         this.setupEventListeners();
         this.resetTimers();
-        console.log('Session timeout handler initialized');
+        // console.log('Session timeout handler initialized');
     }
     
     setupEventListeners() {
@@ -145,7 +145,7 @@ class SessionTimeout {
         })
         .then(response => {
             if (response.ok) {
-                console.log('Session extended');
+                // console.log('Session extended');
                 this.resetTimers();
             } else {
                 console.error('Failed to extend session');

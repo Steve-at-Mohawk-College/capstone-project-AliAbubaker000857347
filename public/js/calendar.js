@@ -38,10 +38,10 @@ class CalendarManager {
     }
 }
 
-    renderCalendar() {
-    const calendarElement = document.getElementById('calendarGrid');
+renderCalendar() {
+   const calendarElement = document.getElementById('calendarDaysGrid'); // Changed this line
     if (!calendarElement) {
-        // console.error('❌ Calendar grid element not found');
+        console.error('❌ Calendar days grid element not found');
         return;
     }
 
@@ -63,25 +63,16 @@ class CalendarManager {
 
     let calendarHTML = '';
 
-    // Day headers
-    calendarHTML += `<div class="calendar-week">`;
-    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
-        calendarHTML += `<div class="calendar-day-header">${day}</div>`;
-    });
-    calendarHTML += `</div>`;
-
-    // Calendar days
+    // Calendar days only (headers are already in HTML)
     let dayCount = 1;
     for (let i = 0; i < 6; i++) {
-        calendarHTML += `<div class="calendar-week">`;
-        
         for (let j = 0; j < 7; j++) {
             if (i === 0 && j < startingDay) {
                 // Empty cells before first day
-                calendarHTML += `<div class="calendar-day empty"></div>`;
+                calendarHTML += `<div class="calendar-day-card empty"></div>`;
             } else if (dayCount > daysInMonth) {
                 // Empty cells after last day
-                calendarHTML += `<div class="calendar-day empty"></div>`;
+                calendarHTML += `<div class="calendar-day-card empty"></div>`;
             } else {
                 // Create date without timezone issues
                 const currentDate = new Date(year, month, dayCount);
@@ -92,7 +83,7 @@ class CalendarManager {
                 const isSelected = this.isSelectedDate(currentDate);
                 
                 calendarHTML += `
-                    <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
+                    <div class="calendar-day-card ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
                          data-date="${dateString}">
                         <div class="day-number">${dayCount}</div>
                         ${dayTasks.length > 0 ? `
@@ -111,22 +102,50 @@ class CalendarManager {
                 dayCount++;
             }
         }
-        calendarHTML += `</div>`;
         
         if (dayCount > daysInMonth) break;
     }
 
-    calendarElement.innerHTML = calendarHTML;
+    // Clear only the calendar days (keep the headers)
+    const existingDayElements = calendarElement.querySelectorAll('.calendar-day-card, .calendar-day-card.empty');
+    existingDayElements.forEach(el => el.remove());
+    
+    // Add the new calendar days
+    calendarElement.innerHTML += calendarHTML;
+    
     this.setupDayClickHandlers();
+    
+    // Hide loading spinner
+    const loadingElement = document.getElementById('calendarLoading');
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
     
     // Show message if no tasks
     if (this.tasks.length === 0) {
+        // Remove any existing empty state message
+        const existingEmptyState = calendarElement.querySelector('.calendar-empty-state');
+        if (existingEmptyState) {
+            existingEmptyState.remove();
+        }
+        
         const noTasksMessage = document.createElement('div');
-        noTasksMessage.className = 'text-center mt-3 text-muted';
+        noTasksMessage.className = 'calendar-empty-state';
+        noTasksMessage.style.gridColumn = '1 / -1'; // Span all columns
         noTasksMessage.innerHTML = `
-            <p><i class="bi bi-info-circle"></i> No upcoming tasks found. <a href="/schedule-task">Schedule a task</a> to see them here.</p>
+            <i class="bi bi-info-circle display-4 text-muted"></i>
+            <p class="mt-3 text-muted">No upcoming tasks found.</p>
+            <a href="/schedule-task" class="btn btn-primary mt-2">
+                <i class="bi bi-plus-circle"></i> Schedule Your First Task
+            </a>
         `;
         calendarElement.appendChild(noTasksMessage);
+    } else {
+        // Remove empty state message if tasks exist
+        const existingEmptyState = calendarElement.querySelector('.calendar-empty-state');
+        if (existingEmptyState) {
+            existingEmptyState.remove();
+        }
     }
 }
 
@@ -221,15 +240,15 @@ getTasksForDate(dateString) {
     }
 
     setupDayClickHandlers() {
-        document.querySelectorAll('.calendar-day:not(.empty)').forEach(day => {
-            day.addEventListener('click', () => {
-                const dateString = day.getAttribute('data-date');
-                this.selectedDate = new Date(dateString);
-                this.renderCalendar();
-                this.showDayTasks(dateString);
-            });
+    document.querySelectorAll('.calendar-day-card:not(.empty)').forEach(day => {
+        day.addEventListener('click', () => {
+            const dateString = day.getAttribute('data-date');
+            this.selectedDate = new Date(dateString);
+            this.renderCalendar();
+            this.showDayTasks(dateString);
         });
-    }
+    });
+}
 
     showDayTasks(dateString) {
     const tasks = this.getTasksForDate(dateString);

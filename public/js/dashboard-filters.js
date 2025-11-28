@@ -14,7 +14,7 @@ class PetFilterSystem {
 
     init() {
         this.bindEvents();
-        console.log('🎯 Pet Filter System initialized');
+        // console.log('🎯 Pet Filter System initialized');
     }
 
     bindEvents() {

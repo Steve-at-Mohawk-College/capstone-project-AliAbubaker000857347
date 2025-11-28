@@ -18,7 +18,6 @@ if (process.env.JAWSDB_URL) {
     queueLimit: 10,
     charset: 'utf8mb4',
     timezone: '+00:00',
-    // REMOVED invalid options: acquireTimeout, timeout, reconnect
     idleTimeout: 60000,
     enableKeepAlive: true,
     keepAliveInitialDelay: 0

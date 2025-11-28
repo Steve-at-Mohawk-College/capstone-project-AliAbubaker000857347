@@ -18,15 +18,17 @@ const validationRules = {
     if (typeof description !== 'string') return false;
     return description.length <= 500;
   },
+validateDueDate: (dueDate) => {
+  if (!dueDate) return false;
   
-  validateDueDate: (dueDate) => {
-  // Handle both local datetime and ISO strings
+  console.log('🔍 VALIDATION START - Input dueDate:', dueDate);
+  
   let date;
   if (dueDate && !dueDate.includes('Z') && !dueDate.includes('+')) {
-    // This is a datetime-local input (no timezone)
+    // datetime-local input - treat as local time
     date = new Date(dueDate);
   } else {
-    // This is already an ISO string with timezone
+    // ISO string with timezone
     date = new Date(dueDate);
   }
   
@@ -34,10 +36,26 @@ const validationRules = {
   const maxDate = new Date();
   maxDate.setFullYear(now.getFullYear() + 1);
   
-  return date instanceof Date && 
-         !isNaN(date) && 
-         date > now && 
-         date <= maxDate;
+  // Add 5 minute buffer to prevent false "past date" errors
+  const bufferTime = 5 * 60 * 1000; // 5 minutes in milliseconds
+  const nowWithBuffer = new Date(now.getTime() - bufferTime);
+  
+  console.log('📊 VALIDATION DETAILS:');
+  console.log('Parsed date:', date);
+  console.log('Current time:', now);
+  console.log('Current with buffer:', nowWithBuffer);
+  console.log('Max date:', maxDate);
+  console.log('Is date valid?', !isNaN(date));
+  console.log('Is future?', date > nowWithBuffer);
+  console.log('Within year?', date <= maxDate);
+  
+  const isValid = date instanceof Date && 
+                  !isNaN(date) && 
+                  date > nowWithBuffer && 
+                  date <= maxDate;
+  
+  console.log('✅ FINAL VALIDATION RESULT:', isValid);
+  return isValid;
 }
 };
 
@@ -71,6 +89,10 @@ async function getTasksByUser(userId) {
   return query(sql, [userId, userId]);
 }
 
+
+
+
+
 async function createTask(userId, taskData) {
   // Input validation
   if (!validationRules.validateTitle(taskData.title)) {
@@ -103,11 +125,19 @@ async function createTask(userId, taskData) {
     throw new Error('Pet not found or access denied');
   }
 
+  // FIX: Proper timezone handling for due_date
   let dueDate = taskData.due_date;
-// Remove the if block that converts to ISO string
-// Just use the dueDate as provided by the form
-
-// console.log('📅 Due date stored as:', dueDate);
+  
+  // If it's a datetime-local input (no timezone), convert to UTC
+  if (dueDate && !dueDate.includes('Z') && !dueDate.includes('+')) {
+    // Create date object from local time
+    const localDate = new Date(dueDate);
+    
+    // Convert to UTC ISO string for storage
+    dueDate = localDate.toISOString();
+    
+    console.log('🕒 Timezone conversion (create):', taskData.due_date, '→', dueDate);
+  }
 
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, priority)
@@ -126,6 +156,8 @@ async function createTask(userId, taskData) {
   
   return result;
 }
+
+
 
 
 
@@ -228,7 +260,20 @@ async function getTaskById(taskId, userId) {
   `;
   
   const results = await query(sql, [taskId, userId, userId]);
-  return results[0] || null;
+  
+  if (results[0]) {
+    // Convert UTC date from database to local time for display
+    const task = results[0];
+    if (task.due_date) {
+      // Create a date object from the UTC time in database
+      const utcDate = new Date(task.due_date);
+      // This will automatically display in the user's local timezone
+      task.due_date = utcDate.toISOString(); // Keep as ISO string but now it's properly interpreted
+    }
+    return task;
+  }
+  
+  return null;
 }
 
 module.exports = { 

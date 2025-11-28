@@ -1300,6 +1300,47 @@ app.get('/debug-files', (req, res) => {
 });
 
 
+
+
+
+
+
+
+
+
+
+// Add this debug route to test validation
+app.post('/debug/validate-date', (req, res) => {
+  const { due_date } = req.body;
+  const validationRules = require('./models/taskModel').validationRules;
+  
+  const result = validationRules.validateDueDate(due_date);
+  
+  res.json({
+    input: due_date,
+    isValid: result,
+    parsedDate: new Date(due_date),
+    currentTime: new Date(),
+    timezoneOffset: new Date().getTimezoneOffset()
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Schedule task form with pet data
 app.get('/schedule-task', requireAuth, async (req, res) => {
   try {

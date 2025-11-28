@@ -14,7 +14,7 @@ async function createAdminUser() {
     const existingAdmin = await query('SELECT * FROM users WHERE email = ?', [adminEmail]);
     
     if (existingAdmin.length > 0) {
-      console.log('Admin user already exists. Updating role and security settings...');
+      // console.log('Admin user already exists. Updating role and security settings...');
       
       // Update existing user to admin with enhanced security
       await query(
@@ -24,8 +24,8 @@ async function createAdminUser() {
         [adminUsername, adminEmail]
       );
       
-      console.log('Admin role updated successfully!');
-      console.log('New admin username:', adminUsername);
+      // console.log('Admin role updated successfully!');
+      // console.log('New admin username:', adminUsername);
     } else {
       // Create new admin user with secure password
       const securePassword = crypto.randomBytes(12).toString('hex');
@@ -37,11 +37,11 @@ async function createAdminUser() {
         [adminUsername, adminEmail, passwordHash, 'admin', true]
       );
       
-      console.log('Admin user created successfully!');
-      console.log('Email:', adminEmail);
-      console.log('Username:', adminUsername);
-      console.log('Password:', securePassword);
-      console.log('\n⚠️  IMPORTANT: Save this password securely! It will not be shown again.');
+      // console.log('Admin user created successfully!');
+      // console.log('Email:', adminEmail);
+      // console.log('Username:', adminUsername);
+      // console.log('Password:', securePassword);
+      // console.log('\n⚠️  IMPORTANT: Save this password securely! It will not be shown again.');
     }
     
     // Add admin security settings
@@ -62,18 +62,18 @@ async function createAdminUser() {
           60               // 60 minute lockout
         ]
       );
-      console.log('Admin security settings configured.');
+      // console.log('Admin security settings configured.');
     } catch (securityError) {
-      console.log('Note: Admin security table might not exist yet. Run the SQL setup first.');
+      // console.log('Note: Admin security table might not exist yet. Run the SQL setup first.');
     }
     
-    console.log('\n✅ Admin setup completed successfully!');
+    // console.log('\n✅ Admin setup completed successfully!');
     process.exit(0);
   } catch (error) {
     console.error('Error creating admin user:', error.message);
     
     if (error.code === 'ER_NO_SUCH_TABLE') {
-      console.log('\n💡 Please run the SQL setup queries first to create the required tables.');
+      // console.log('\n💡 Please run the SQL setup queries first to create the required tables.');
     }
     
     process.exit(1);

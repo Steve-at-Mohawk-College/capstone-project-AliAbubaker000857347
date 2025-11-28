@@ -1,6 +1,7 @@
 // routes/dashboardRoutes.js
 const express = require('express');
 const { query, queryPaginated } = require('../config/database');
+const { getTasksByUser } = require('../models/taskModel'); // ADD THIS IMPORT
 const router = express.Router();
 
 function requireAuth(req, res, next) {
@@ -11,8 +12,6 @@ function requireAuth(req, res, next) {
 // GET /dashboard - Dashboard page
 router.get('/', requireAuth, async (req, res) => {
   try {
-    // console.log('📊 Dashboard route called - checking variables being passed');
-    
     const userId = req.session.userId;
     
     // Get pagination parameters
@@ -23,10 +22,6 @@ router.get('/', requireAuth, async (req, res) => {
     // Calculate offsets
     const petOffset = (petPage - 1) * itemsPerPage;
     const taskOffset = (taskPage - 1) * itemsPerPage;
-
-    // console.log('🔢 Pagination parameters:', {
-    //   userId, petPage, taskPage, itemsPerPage, petOffset, taskOffset
-    // });
 
     // Get paginated pets
     const pets = await queryPaginated(
@@ -44,29 +39,14 @@ router.get('/', requireAuth, async (req, res) => {
     const totalPets = totalPetsResult[0].count;
     const totalPetPages = Math.max(1, Math.ceil(totalPets / itemsPerPage));
 
-    // Get paginated tasks
-    const tasks = await queryPaginated(
-      `SELECT t.*, p.name as pet_name 
-       FROM tasks t 
-       JOIN pets p ON t.pet_id = p.pet_id 
-       WHERE p.user_id = ? 
-       AND t.completed = false  
-       ORDER BY t.due_date ASC`,
-      [userId],
-      itemsPerPage,
-      taskOffset
-    );
+    // FIX: Use getTasksByUser which converts UTC dates to local time
+    const allTasks = await getTasksByUser(userId);
+    
+    // Apply pagination manually to the converted tasks
+    const paginatedTasks = allTasks.slice(taskOffset, taskOffset + itemsPerPage);
     
     // Get total task count
-    const totalTasksResult = await query(
-      `SELECT COUNT(*) as count 
-       FROM tasks t 
-       JOIN pets p ON t.pet_id = p.pet_id 
-       WHERE p.user_id = ? 
-       AND t.completed = false`,  
-      [userId]
-    );
-    const totalTasks = totalTasksResult[0].count;
+    const totalTasks = allTasks.length;
     const totalTaskPages = Math.max(1, Math.ceil(totalTasks / itemsPerPage));
 
     res.render('dashboard', {
@@ -74,7 +54,7 @@ router.get('/', requireAuth, async (req, res) => {
       username: req.session.username,
       profilePicture: req.session.profilePicture,
       pets: pets,
-      tasks: tasks,
+      tasks: paginatedTasks, // Use the converted tasks
       petPagination: {
         currentPage: petPage,
         totalPages: totalPetPages,
@@ -98,14 +78,9 @@ router.get('/', requireAuth, async (req, res) => {
     // Fallback without pagination
     try {
       const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
-      const tasks = await query(
-        `SELECT t.*, p.name as pet_name 
-         FROM tasks t 
-         JOIN pets p ON t.pet_id = p.pet_id 
-         WHERE p.user_id = ? 
-         ORDER BY t.due_date ASC`,
-        [req.session.userId]
-      );
+      
+      // FIX: Use getTasksByUser in fallback too
+      const tasks = await getTasksByUser(req.session.userId);
 
       res.render('dashboard', {
         title: 'Pet Dashboard',

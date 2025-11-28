@@ -18,48 +18,34 @@ const validationRules = {
     if (typeof description !== 'string') return false;
     return description.length <= 500;
   },
+
+
 validateDueDate: (dueDate) => {
   if (!dueDate) return false;
   
-  console.log('🔍 VALIDATION START - Input dueDate:', dueDate);
+  const now = new Date();
+  const selectedDate = new Date(dueDate);
   
-  let date;
-  if (dueDate && !dueDate.includes('Z') && !dueDate.includes('+')) {
-    // datetime-local input - treat as local time
-    date = new Date(dueDate);
-  } else {
-    // ISO string with timezone
-    date = new Date(dueDate);
+  // Convert both dates to milliseconds for timezone-agnostic comparison
+  const nowTime = now.getTime();
+  const selectedTime = selectedDate.getTime();
+  const minTime = nowTime + (15 * 60 * 1000); // 15 minutes from now
+  
+  // Check if selected date is at least 15 minutes in the future
+  if (selectedTime < minTime) {
+    return false;
   }
   
-  const now = new Date();
-  const maxDate = new Date();
-  maxDate.setFullYear(now.getFullYear() + 1);
+  // Check if selected date is within 1 year
+  const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
+  if (selectedTime > maxTime) {
+    return false;
+  }
   
-  // Add 5 minute buffer to prevent false "past date" errors
-  const bufferTime = 5 * 60 * 1000; // 5 minutes in milliseconds
-  const nowWithBuffer = new Date(now.getTime() - bufferTime);
-  
-  console.log('📊 VALIDATION DETAILS:');
-  console.log('Parsed date:', date);
-  console.log('Current time:', now);
-  console.log('Current with buffer:', nowWithBuffer);
-  console.log('Max date:', maxDate);
-  console.log('Is date valid?', !isNaN(date));
-  console.log('Is future?', date > nowWithBuffer);
-  console.log('Within year?', date <= maxDate);
-  
-  const isValid = date instanceof Date && 
-                  !isNaN(date) && 
-                  date > nowWithBuffer && 
-                  date <= maxDate;
-  
-  console.log('✅ FINAL VALIDATION RESULT:', isValid);
-  return isValid;
+  return true;
 }
 };
 
-// Add this function to your taskModel.js
 async function getUpcomingTasks(userId, days = 3) {
   const now = new Date();
   const futureDate = new Date();
@@ -75,7 +61,23 @@ async function getUpcomingTasks(userId, days = 3) {
     ORDER BY t.due_date ASC
   `;
   
-  return query(sql, [userId, now, futureDate]);
+  const tasks = await query(sql, [userId, now, futureDate]);
+  
+  // Use local time methods, not UTC methods
+  return tasks.map(task => {
+    if (task.due_date) {
+      const date = new Date(task.due_date);
+      
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      task.due_date = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    return task;
+  });
 }
 
 async function getTasksByUser(userId) {
@@ -86,7 +88,26 @@ async function getTasksByUser(userId) {
     WHERE t.user_id = ? AND p.user_id = ?
     ORDER BY t.due_date ASC
   `;
-  return query(sql, [userId, userId]);
+  
+  const tasks = await query(sql, [userId, userId]);
+  
+  // Remove the UTC conversion - return dates as they are from database
+  return tasks.map(task => {
+    if (task.due_date) {
+      // Format the date for datetime-local input WITHOUT timezone conversion
+      const date = new Date(task.due_date);
+      
+      // Use local time methods, not UTC methods
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      task.due_date = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    return task;
+  });
 }
 
 
@@ -136,7 +157,7 @@ async function createTask(userId, taskData) {
     // Convert to UTC ISO string for storage
     dueDate = localDate.toISOString();
     
-    console.log('🕒 Timezone conversion (create):', taskData.due_date, '→', dueDate);
+    // console.log('🕒 Timezone conversion (create):', taskData.due_date, '→', dueDate);
   }
 
   const sql = `
@@ -262,13 +283,18 @@ async function getTaskById(taskId, userId) {
   const results = await query(sql, [taskId, userId, userId]);
   
   if (results[0]) {
-    // Convert UTC date from database to local time for display
     const task = results[0];
     if (task.due_date) {
-      // Create a date object from the UTC time in database
-      const utcDate = new Date(task.due_date);
-      // This will automatically display in the user's local timezone
-      task.due_date = utcDate.toISOString(); // Keep as ISO string but now it's properly interpreted
+      // Use local time methods, not UTC methods
+      const date = new Date(task.due_date);
+      
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      task.due_date = `${year}-${month}-${day}T${hours}:${minutes}`;
     }
     return task;
   }

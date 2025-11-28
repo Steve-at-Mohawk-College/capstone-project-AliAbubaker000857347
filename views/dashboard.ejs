@@ -1816,12 +1816,10 @@ input[type="number"], input[type="date"], input[type="text"], select {
               </div>
               <div class="task-info">
                 <h4 class="task-title"><%= task.title %></h4>
-                <p class="task-details">
-                  For: <strong><%= task.pet_name %></strong> • 
-                  Due: <span class="due-date" data-due-date="<%= task.due_date %>">
-                    <%= new Date(task.due_date).toLocaleDateString() %>
-                  </span>
-                </p>
+      <p class="task-details">
+  For: <strong><%= task.pet_name %></strong> 
+ 
+</p>
                 <% if (task.description) { %>
                   <small class="task-description text-muted"><%= task.description %></small>
                 <% } %>
@@ -1862,8 +1860,8 @@ input[type="number"], input[type="date"], input[type="text"], select {
                   <div class="col-md-6">
                      <label for="edit-task-due-date-<%= task.task_id %>" class="form-label small">Due Date</label> 
                     <input type="datetime-local" class="form-control form-control-sm" 
-                           id="edit-task-due-date-<%= task.task_id %>" 
-                           value="<%= new Date(task.due_date).toISOString().slice(0, 16) %>">
+       id="edit-task-due-date-<%= task.task_id %>" 
+       value="<%= task.due_date %>">
                   </div>
                   <div class="col-md-6">
                     <label for="edit-task-priority-<%= task.task_id %>" class="form-label small">Priority</label>

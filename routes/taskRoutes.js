@@ -93,20 +93,34 @@ const validateTask = [
     .escape()
     .isLength({ max: 500 })
     .withMessage('Description too long'),
-  
-  body('due_date')
-    .isISO8601()
-    .withMessage('Invalid date format')
-    .custom((value) => {
-      const dueDate = new Date(value);
-      const now = new Date();
-      const maxDate = new Date();
-      maxDate.setFullYear(now.getFullYear() + 1);
-      
-      return dueDate > now && dueDate <= maxDate;
-    })
-    .withMessage('Due date must be in the future and within 1 year'),
-  
+
+body('due_date')
+  .isISO8601()
+  .withMessage('Invalid date format')
+  .custom((value) => {
+    if (!value) return false;
+    
+    const now = new Date();
+    const selectedDate = new Date(value);
+    
+    // Convert both dates to milliseconds for timezone-agnostic comparison
+    const nowTime = now.getTime();
+    const selectedTime = selectedDate.getTime();
+    const minTime = nowTime + (15 * 60 * 1000); // 15 minutes from now
+    
+    if (selectedTime < minTime) {
+      throw new Error('Due date must be at least 15 minutes from now');
+    }
+    
+    const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
+    if (selectedTime > maxTime) {
+      throw new Error('Due date must be within 1 year from now');
+    }
+    
+    return true;
+  })
+  .withMessage('Due date must be at least 15 minutes from now and within 1 year'),
+
   body('priority')
     .isIn(['low', 'medium', 'high'])
     .withMessage('Invalid priority level')
@@ -205,20 +219,33 @@ router.put('/:taskId', requireAuth, [
     .escape()
     .isLength({ max: 500 })
     .withMessage('Description too long'),
-  
-  body('due_date')
-    .isISO8601()
-    .withMessage('Invalid date format')
-    .custom((value) => {
-      const dueDate = new Date(value);
-      const now = new Date();
-      const maxDate = new Date();
-      maxDate.setFullYear(now.getFullYear() + 1);
-      
-      return dueDate > now && dueDate <= maxDate;
-    })
-    .withMessage('Due date must be in the future and within 1 year'),
-  
+body('due_date')
+  .isISO8601()
+  .withMessage('Invalid date format')
+  .custom((value) => {
+    if (!value) return false;
+    
+    const now = new Date();
+    const selectedDate = new Date(value);
+    
+    // Convert both dates to milliseconds for timezone-agnostic comparison
+    const nowTime = now.getTime();
+    const selectedTime = selectedDate.getTime();
+    const minTime = nowTime + (15 * 60 * 1000); // 15 minutes from now
+    
+    if (selectedTime < minTime) {
+      throw new Error('Due date must be at least 15 minutes from now');
+    }
+    
+    const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
+    if (selectedTime > maxTime) {
+      throw new Error('Due date must be within 1 year from now');
+    }
+    
+    return true;
+  })
+  .withMessage('Due date must be at least 15 minutes from now and within 1 year'),
+
   body('priority')
     .isIn(['low', 'medium', 'high'])
     .withMessage('Invalid priority level')
@@ -256,22 +283,6 @@ router.put('/:taskId', requireAuth, [
     });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // DELETE /tasks/:taskId - Delete a task
 router.delete('/:taskId', requireAuth, async (req, res) => {

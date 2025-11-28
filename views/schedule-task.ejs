@@ -154,12 +154,12 @@ label[for="priority"] {
             </div>
 
             <div class="mb-3">
-              <label for="title" class="form-label">Title *</label>
-              <input type="text" class="form-control" id="title" name="title" 
-                     required maxlength="100" pattern="^[a-zA-Z0-9\s\-_,.!()]+$"
-                     value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
-              <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers, spaces, and basic punctuation.</div>
-            </div>
+  <label for="title" class="form-label">Title *</label>
+  <input type="text" class="form-control" id="title" name="title" 
+         required maxlength="100" pattern="^[a-zA-Z0-9\s_,.!()\-]+$"
+         value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
+  <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers, spaces, and basic punctuation.</div>
+</div>
 
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
@@ -174,35 +174,24 @@ label[for="priority"] {
 
 
 
-
-
-        <div class="mb-3">
+<div class="mb-3">
   <label for="due_date" class="form-label">Due Date *</label>
-  <%
-    const now = new Date();
-    const maxDate = new Date();
-    maxDate.setFullYear(now.getFullYear() + 1);
-    
-    // Set min to current date (not time) to be more lenient
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    
-    const maxYear = maxDate.getFullYear();
-    const maxMonth = String(maxDate.getMonth() + 1).padStart(2, '0');
-    const maxDay = String(maxDate.getDate()).padStart(2, '0');
-    
-    // Only use date for min, not time
-    const localMin = `${year}-${month}-${day}T00:00`;
-    const localMax = `${maxYear}-${maxMonth}-${maxDay}T23:59`;
-  %>
-
   <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
-         required min="<%= localMin %>" max="<%= localMax %>"
-         value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>" step="300">
-  <div class="invalid-feedback">Due date must be within the next year and cannot be in the past.</div>
-  <small class="form-text text-muted">Select a future date and time (within 1 year).</small>
+         required 
+         min="<%= new Date(Date.now() + 15 * 60 * 1000).toISOString().slice(0, 16) %>"
+         value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>" 
+         step="300">
+  <div class="invalid-feedback">Due date must be at least 15 minutes from now and within 1 year.</div>
+  <small class="form-text text-muted">
+    <i class="bi bi-info-circle"></i> Tasks can only be scheduled for at least 15 minutes from now (up to 1 year).
+  </small>
 </div>
+
+
+
+
+
+
 
             <div class="mb-4">
               <label for="priority" class="form-label">Priority</label>
@@ -225,6 +214,8 @@ label[for="priority"] {
   </div>
 </div>
 
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('taskForm');
@@ -232,6 +223,26 @@ document.addEventListener('DOMContentLoaded', function() {
   const descriptionInput = document.getElementById('description');
   const charCount = document.getElementById('charCount');
   const titleInput = document.getElementById('title');
+
+  // Set minimum datetime to 15 minutes from now
+  function setMinDateTime() {
+    const now = new Date();
+    const minDate = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
+    
+    // Format for datetime-local input (YYYY-MM-DDTHH:MM)
+    const year = minDate.getFullYear();
+    const month = String(minDate.getMonth() + 1).padStart(2, '0');
+    const day = String(minDate.getDate()).padStart(2, '0');
+    const hours = String(minDate.getHours()).padStart(2, '0');
+    const minutes = String(minDate.getMinutes()).padStart(2, '0');
+    
+    dueDateInput.min = `${year}-${month}-${day}T${hours}:${minutes}`;
+    
+    // If no value is set, set it to the minimum allowed time
+    if (!dueDateInput.value) {
+      dueDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+  }
 
   // Character counter for description
   descriptionInput.addEventListener('input', function() {
@@ -245,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Enhanced due date validation
-  
+// Enhanced due date validation
 function validateDueDate() {
   if (!dueDateInput.value) {
     dueDateInput.setCustomValidity('Due date is required');
@@ -253,40 +264,35 @@ function validateDueDate() {
     return false;
   }
 
-  const dueDate = new Date(dueDateInput.value);
+  const selectedDate = new Date(dueDateInput.value);
   const now = new Date();
   
-  // Add 10 minute buffer to prevent "in the past" errors
-  const bufferTime = 10 * 60 * 1000; // 10 minutes
-  const nowWithBuffer = new Date(now.getTime() - bufferTime);
-  
-  const maxDate = new Date();
-  maxDate.setFullYear(now.getFullYear() + 1);
+  // Convert to milliseconds for accurate comparison
+  const selectedTime = selectedDate.getTime();
+  const nowTime = now.getTime();
+  const minTime = nowTime + (15 * 60 * 1000); // 15 minutes from now
+  const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
 
-  // console.log('🕒 FRONTEND VALIDATION:');
-  // console.log('Due Date Input:', dueDateInput.value);
-  // console.log('Parsed Due Date:', dueDate);
-  // console.log('Current Time:', now);
-  // console.log('Current with Buffer:', nowWithBuffer);
-  // console.log('Max Date:', maxDate);
-
-  if (dueDate <= nowWithBuffer) {
-    dueDateInput.setCustomValidity('Due date cannot be in the past. Please select a future time.');
+  if (selectedTime < minTime) {
+    dueDateInput.setCustomValidity('Due date must be at least 15 minutes from now');
     dueDateInput.classList.add('is-invalid');
     return false;
-  } else if (dueDate > maxDate) {
-    dueDateInput.setCustomValidity('Due date cannot be more than 1 year in the future');
-    dueDateInput.classList.add('is-invalid');
-    return false;
-  } else {
-    dueDateInput.setCustomValidity('');
-    dueDateInput.classList.remove('is-invalid');
-    return true;
   }
+
+  if (selectedTime > maxTime) {
+    dueDateInput.setCustomValidity('Due date must be within 1 year from now');
+    dueDateInput.classList.add('is-invalid');
+    return false;
+  }
+
+  dueDateInput.setCustomValidity('');
+  dueDateInput.classList.remove('is-invalid');
+  return true;
 }
 
   // Real-time validation
   dueDateInput.addEventListener('change', validateDueDate);
+  dueDateInput.addEventListener('input', validateDueDate);
   
   // Form submission with comprehensive validation
   form.addEventListener('submit', function(event) {
@@ -313,6 +319,9 @@ function validateDueDate() {
     
     form.classList.add('was-validated');
   });
+
+  // Initialize min datetime when page loads
+  setMinDateTime();
 });
 </script>
 

@@ -231,12 +231,13 @@ router.get('/', requireAuth, async (req, res) => {
 
 
 
+
 // POST /profile/picture - Update with better session handling
 router.post('/picture', requireAuth, uploadProfile, async (req, res) => {
     try {
         // console.log("➡️ POST /profile/picture route hit");
-        // console.log("Cloudinary result:", req.cloudinaryResult);
         // console.log("User ID:", req.session.userId);
+        // console.log("Session ID:", req.sessionID);
 
         if (!req.cloudinaryResult) {
             return res.status(400).json({
@@ -247,47 +248,60 @@ router.post('/picture', requireAuth, uploadProfile, async (req, res) => {
 
         const userId = req.session.userId;
         
-        // Get Cloudinary URL WITHOUT cache busting parameter here
-        // Let the frontend handle cache busting
+        // Verify user session is valid
+        const user = await findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        // Get Cloudinary URL
         const profilePictureUrl = req.cloudinaryResult.secure_url;
         
-        // console.log("Cloudinary URL:", profilePictureUrl);
+        // console.log("Updating profile picture for user:", userId);
+        // console.log("New profile picture URL:", profilePictureUrl);
 
         // Update database with Cloudinary URL
-        await updateUserProfilePicture(userId, profilePictureUrl);
+        const updateResult = await updateUserProfilePicture(userId, profilePictureUrl);
+        
+        if (updateResult.affectedRows === 0) {
+            throw new Error('Failed to update profile picture in database');
+        }
 
-        // Update session IMMEDIATELY
+        // Update session IMMEDIATELY with proper error handling
         req.session.profilePicture = profilePictureUrl;
+        req.session.touch(); // Refresh session
         
-        // Force session save
-        await new Promise((resolve, reject) => {
-            req.session.save((err) => {
-                if (err) {
-                    // console.error('Session save error:', err);
-                    reject(err);
-                } else {
-                    // console.log('✅ Session saved successfully');
-                    resolve();
-                }
+        // Save session with callback
+        req.session.save((err) => {
+            if (err) {
+                // console.error('❌ Session save error:', err);
+                return res.status(500).json({
+                    success: false,
+                    error: 'Error updating session'
+                });
+            }
+            
+            // console.log('✅ Session updated successfully');
+            
+            res.json({
+                success: true,
+                message: 'Profile picture updated successfully!',
+                profilePicture: profilePictureUrl,
+                timestamp: Date.now()
             });
-        });
-        
-        res.json({
-            success: true,
-            message: 'Profile picture updated successfully!',
-            profilePicture: profilePictureUrl,
-            timestamp: Date.now()
         });
 
     } catch (error) {
-        // console.error('Profile picture upload error:', error);
+        // console.error('❌ Profile picture upload error:', error);
         res.status(500).json({
             success: false,
             error: 'Error uploading profile picture: ' + error.message
         });
     }
 });
-
 
 
 

@@ -94,22 +94,22 @@ const validateTask = [
     .isLength({ max: 500 })
     .withMessage('Description too long'),
 
+
+
 body('due_date')
-  .isISO8601()
-  .withMessage('Invalid date format')
   .custom((value) => {
     if (!value) return false;
     
     const now = new Date();
-    const selectedDate = new Date(value);
+    const selectedDate = new Date(value); // This will be in local time
     
-    // Convert both dates to milliseconds for timezone-agnostic comparison
+    // Convert both dates to milliseconds for comparison
     const nowTime = now.getTime();
     const selectedTime = selectedDate.getTime();
-    const minTime = nowTime + (15 * 60 * 1000); // 15 minutes from now
+    const minTime = nowTime + (10 * 60 * 1000);
     
     if (selectedTime < minTime) {
-      throw new Error('Due date must be at least 15 minutes from now');
+      throw new Error('Due date must be at least 20 minutes from now'); // CHANGED: 20 minutes
     }
     
     const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
@@ -119,7 +119,7 @@ body('due_date')
     
     return true;
   })
-  .withMessage('Due date must be at least 15 minutes from now and within 1 year'),
+  .withMessage('Due date must be at least 20 minutes from now and within 1 year'), // CHANGED: 20 minutes
 
   body('priority')
     .isIn(['low', 'medium', 'high'])
@@ -137,20 +137,28 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
+
+
 // POST /tasks - Create a new task
 router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) => {
+  // console.log('🔍 [ROUTE DEBUG] POST /tasks called');
+  // console.log('🔍 [ROUTE DEBUG] Request body:', JSON.stringify(req.body, null, 2));
+  
   try {
     // Check validation errors
     const errors = validationResult(req);
+    // console.log('🔍 [ROUTE DEBUG] Validation errors:', errors.array());
+    
     if (!errors.isEmpty()) {
+      // console.log('❌ [ROUTE DEBUG] Validation failed');
       // Get pets for the form
       const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
       
       return res.status(400).render('schedule-task', {
         title: 'Schedule Task - Pet Care',
         pets: pets || [],
-        username: req.session.username, // Add this
-        profilePicture: req.session.profilePicture, // Add this
+        username: req.session.username,
+        profilePicture: req.session.profilePicture,
         error: errors.array()[0].msg,
         preservedPetId: req.body.pet_id,
         preservedTaskType: req.body.task_type,
@@ -163,6 +171,7 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
 
     const { pet_id, task_type, title, description, due_date, priority } = req.body;
     
+    // console.log('🔍 [ROUTE DEBUG] Calling createTask with processed data');
     await createTask(req.session.userId, { 
       pet_id, 
       task_type, 
@@ -172,9 +181,10 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       priority: priority || 'medium'
     });
     
+    // console.log('✅ [ROUTE DEBUG] Task created successfully, redirecting to dashboard');
     res.redirect('/dashboard?message=Task created successfully');
   } catch (error) {
-    // console.error('Create task error:', error);
+    // console.error('❌ [ROUTE DEBUG] Create task error:', error);
     
     // Handle specific errors
     let errorMessage = 'Error creating task. Please try again.';
@@ -184,14 +194,16 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       errorMessage = error.message;
     }
     
+    // console.log('🔍 [ROUTE DEBUG] Error message to display:', errorMessage);
+    
     // Get pets for the form
     const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
     
     res.status(500).render('schedule-task', {
       title: 'Schedule Task - Pet Care',
       pets: pets || [],
-      username: req.session.username, // Add this
-      profilePicture: req.session.profilePicture, // Add this
+      username: req.session.username,
+      profilePicture: req.session.profilePicture,
       error: errorMessage,
       preservedPetId: req.body.pet_id,
       preservedTaskType: req.body.task_type,
@@ -201,6 +213,33 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       preservedPriority: req.body.priority
     });
   }
+});
+
+// GET /tasks/debug/time - Debug time information
+router.get('/debug/time', requireAuth, (req, res) => {
+  const now = new Date();
+  const minDate = new Date(now.getTime() + 20 * 60 * 1000);
+  
+  res.json({
+    currentTime: {
+      local: now.toString(),
+      iso: now.toISOString(),
+      timestamp: now.getTime()
+    },
+    minimumAllowedTime: {
+      local: minDate.toString(),
+      iso: minDate.toISOString(),
+      timestamp: minDate.getTime()
+    },
+    difference: {
+      minutes: 20,
+      milliseconds: 20 * 60 * 1000
+    },
+    timezone: {
+      offset: now.getTimezoneOffset(),
+      offsetHours: now.getTimezoneOffset() / 60
+    }
+  });
 });
 
 // PUT /tasks/:taskId - Update a task
@@ -219,22 +258,25 @@ router.put('/:taskId', requireAuth, [
     .escape()
     .isLength({ max: 500 })
     .withMessage('Description too long'),
+
+
+
+
+
 body('due_date')
-  .isISO8601()
-  .withMessage('Invalid date format')
   .custom((value) => {
     if (!value) return false;
     
     const now = new Date();
-    const selectedDate = new Date(value);
+    const selectedDate = new Date(value); // This will be in local time
     
-    // Convert both dates to milliseconds for timezone-agnostic comparison
+    // Convert both dates to milliseconds for comparison
     const nowTime = now.getTime();
     const selectedTime = selectedDate.getTime();
-    const minTime = nowTime + (15 * 60 * 1000); // 15 minutes from now
+    const minTime = nowTime + (10 * 60 * 1000);
     
     if (selectedTime < minTime) {
-      throw new Error('Due date must be at least 15 minutes from now');
+      throw new Error('Due date must be at least 20 minutes from now'); 
     }
     
     const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
@@ -244,7 +286,7 @@ body('due_date')
     
     return true;
   })
-  .withMessage('Due date must be at least 15 minutes from now and within 1 year'),
+  .withMessage('Due date must be at least 20 minutes from now and within 1 year'), // CHANGED: 20 minutes
 
   body('priority')
     .isIn(['low', 'medium', 'high'])
@@ -281,6 +323,45 @@ body('due_date')
     res.status(500).json({ 
       error: errorMessage 
     });
+  }
+});
+
+
+// Add this to your routes
+router.get('/debug-timezone', requireAuth, async (req, res) => {
+  try {
+    const now = new Date();
+    const testDate = new Date(now.getTime() + 30 * 60 * 1000); // 30 minutes from now
+    
+    // Test database timezone and date insertion
+    const dbInfo = await query('SELECT @@session.time_zone as timezone, NOW() as db_time');
+    
+    // Test if we can insert a date
+    const testResult = await query(
+      'SELECT ? as test_date, NOW() as current_db_time',
+      [`${testDate.getFullYear()}-${String(testDate.getMonth() + 1).padStart(2, '0')}-${String(testDate.getDate()).padStart(2, '0')} ${String(testDate.getHours()).padStart(2, '0')}:${String(testDate.getMinutes()).padStart(2, '0')}:00`]
+    );
+
+    res.json({
+      success: true,
+      nodeJs: {
+        localTime: now.toString(),
+        localTimeISO: now.toISOString(),
+        testDate: testDate.toString(),
+        testDateISO: testDate.toISOString()
+      },
+      database: {
+        timezone: dbInfo[0].timezone,
+        currentTime: dbInfo[0].db_time,
+        testDateReceived: testResult[0].test_date,
+        currentDbTime: testResult[0].current_db_time
+      },
+      conversion: {
+        forDb: `${testDate.getFullYear()}-${String(testDate.getMonth() + 1).padStart(2, '0')}-${String(testDate.getDate()).padStart(2, '0')} ${String(testDate.getHours()).padStart(2, '0')}:${String(testDate.getMinutes()).padStart(2, '0')}:00`
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

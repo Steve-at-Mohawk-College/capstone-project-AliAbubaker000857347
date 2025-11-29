@@ -389,13 +389,13 @@ router.post('/login', async (req, res) => {
     const user = await findByEmail(email);
     if (!user) return res.status(400).render('login', { 
       title: 'Login - Pet Care Management',
-      error: 'Invalid credentials' 
+      error: 'Invalid credentials or Password' 
     });
 
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(400).render('login', { 
       title: 'Login - Pet Care Management',
-      error: 'Wrong password' 
+      error: 'Invalid credentials or Password' 
     });
     
     if (!user.is_verified && user.email !== HARDCODED_ADMIN_EMAIL) {

@@ -1,6 +1,4 @@
 
-
-
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
@@ -11,6 +9,7 @@ const session = require('express-session');
 const fs = require('fs');
 require('dotenv').config();
 require('./config/cloudinary')
+const { findById } = require('./models/userModel');
 
 
 
@@ -233,6 +232,49 @@ app.get('/db-status', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+
+// Session verification middleware
+app.use((req, res, next) => {
+  if (req.session && req.session.userId) {
+    // Verify session user still exists in database
+    (async () => {
+      try {
+        const user = await findById(req.session.userId);
+        if (!user) {
+          console.log('❌ Session user not found in database, destroying session');
+          req.session.destroy();
+          return res.redirect('/login');
+        }
+        
+        // Ensure session has correct profile picture
+        if (user.profile_picture_url !== req.session.profilePicture) {
+          console.log('🔄 Updating session profile picture from database');
+          req.session.profilePicture = user.profile_picture_url;
+        }
+      } catch (error) {
+        console.error('Session verification error:', error);
+      }
+    })();
+  }
+  next();
+});
+
+// Debug session endpoint
+app.get('/debug/session', requireAuth, (req, res) => {
+  res.json({
+    sessionId: req.sessionID,
+    userId: req.session.userId,
+    profilePicture: req.session.profilePicture,
+    username: req.session.username
+  });
+});
+
+// Debug user profile pictures
+app.get('/debug/profile-pictures', requireAuth, async (req, res) => {
+  const users = await query('SELECT user_id, username, profile_picture_url FROM users LIMIT 10');
+  res.json(users);
 });
 
 // ===== Main Routes =====

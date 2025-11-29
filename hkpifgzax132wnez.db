@@ -1,0 +1,178 @@
+-- Database: hkpifgzax132wnez
+-- Complete SQL Schema Creation Script
+
+CREATE TABLE `users` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `role` enum('regular','admin') DEFAULT 'regular',
+  `profile_picture_url` varchar(255) DEFAULT NULL,
+  `bio` text,
+  `is_verified` tinyint(1) DEFAULT '0',
+  `verification_token` varchar(255) DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expiry` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `bio_requires_moderation` tinyint(1) DEFAULT '0',
+  `pending_email` varchar(100) DEFAULT NULL,
+  `pending_email_token` varchar(255) DEFAULT NULL,
+  `pending_email_expiry` datetime DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`),
+  KEY `idx_users_email` (`email`),
+  KEY `idx_users_username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=1519 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `pets` (
+  `pet_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `breed` varchar(100) DEFAULT NULL,
+  `age` decimal(4,1) DEFAULT NULL,
+  `species` varchar(50) DEFAULT NULL,
+  `gender` enum('male','female','other') DEFAULT NULL,
+  `weight` decimal(5,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`pet_id`),
+  KEY `idx_pets_user_id` (`user_id`),
+  CONSTRAINT `pets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1319 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `photos` (
+  `photo_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `pet_id` int DEFAULT NULL,
+  `photo_url` varchar(255) NOT NULL,
+  `title` varchar(100) DEFAULT NULL,
+  `description` text,
+  `is_public` tinyint(1) DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`photo_id`),
+  KEY `idx_photos_user_id` (`user_id`),
+  KEY `idx_photos_pet_id` (`pet_id`),
+  CONSTRAINT `photos_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `photos_ibfk_2` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`pet_id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `tags` (
+  `tag_id` int NOT NULL AUTO_INCREMENT,
+  `tag_name` varchar(50) NOT NULL,
+  `is_approved` tinyint(1) DEFAULT '1',
+  `created_by` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`tag_id`),
+  UNIQUE KEY `tag_name` (`tag_name`),
+  KEY `created_by` (`created_by`),
+  CONSTRAINT `tags_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `photo_tags` (
+  `photo_tag_id` int NOT NULL AUTO_INCREMENT,
+  `photo_id` int NOT NULL,
+  `tag_id` int NOT NULL,
+  `added_by` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`photo_tag_id`),
+  UNIQUE KEY `unique_photo_tag` (`photo_id`,`tag_id`),
+  KEY `tag_id` (`tag_id`),
+  KEY `added_by` (`added_by`),
+  CONSTRAINT `photo_tags_ibfk_1` FOREIGN KEY (`photo_id`) REFERENCES `photos` (`photo_id`) ON DELETE CASCADE,
+  CONSTRAINT `photo_tags_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`tag_id`),
+  CONSTRAINT `photo_tags_ibfk_3` FOREIGN KEY (`added_by`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `photo_favorites` (
+  `favorite_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `photo_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`favorite_id`),
+  UNIQUE KEY `unique_user_photo` (`user_id`,`photo_id`),
+  KEY `photo_id` (`photo_id`),
+  CONSTRAINT `photo_favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `photo_favorites_ibfk_2` FOREIGN KEY (`photo_id`) REFERENCES `photos` (`photo_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `community_posts` (
+  `post_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `is_approved` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`post_id`),
+  KEY `idx_community_posts_user_id` (`user_id`),
+  CONSTRAINT `community_posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `comments` (
+  `comment_id` int NOT NULL AUTO_INCREMENT,
+  `post_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `content` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`comment_id`),
+  KEY `user_id` (`user_id`),
+  KEY `idx_comments_post_id` (`post_id`),
+  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `community_posts` (`post_id`) ON DELETE CASCADE,
+  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `tasks` (
+  `task_id` int NOT NULL AUTO_INCREMENT,
+  `pet_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `task_type` enum('feeding','cleaning','vaccination','medication','grooming','vet_visit','exercise','other') NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `due_date` datetime NOT NULL,
+  `completed` tinyint(1) DEFAULT '0',
+  `priority` enum('low','medium','high') DEFAULT 'medium',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `notification_sent` tinyint(1) DEFAULT '0',
+  `completed_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`task_id`),
+  KEY `idx_tasks_pet_id` (`pet_id`),
+  KEY `idx_tasks_user_id` (`user_id`),
+  KEY `idx_tasks_due_date` (`due_date`),
+  KEY `idx_notification_sent` (`notification_sent`),
+  CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`pet_id`) ON DELETE CASCADE,
+  CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=675 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `health_tracker` (
+  `health_id` int NOT NULL AUTO_INCREMENT,
+  `pet_id` int NOT NULL,
+  `weight` decimal(5,2) DEFAULT NULL,
+  `diet` varchar(255) DEFAULT NULL,
+  `medical_notes` text,
+  `vet_visit_date` date DEFAULT NULL,
+  `vaccination_date` date DEFAULT NULL,
+  `next_vaccination_date` date DEFAULT NULL,
+  `date_recorded` date NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`health_id`),
+  KEY `idx_health_tracker_pet_id` (`pet_id`),
+  CONSTRAINT `health_tracker_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`pet_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `notifications` (
+  `notification_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `type` varchar(50) NOT NULL COMMENT 'task_due, daily_digest, system, etc.',
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `related_id` int DEFAULT NULL COMMENT 'ID of related item (task_id, etc.)',
+  `is_read` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`notification_id`),
+  KEY `idx_user_read` (`user_id`,`is_read`),
+  KEY `idx_created_at` (`created_at`),
+  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2129 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

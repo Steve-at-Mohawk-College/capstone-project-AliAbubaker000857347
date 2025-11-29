@@ -69,8 +69,19 @@ async function updateProfile(userId, { username, email, bio, profile_picture_url
 }
 
 async function updateUserProfilePicture(userId, profilePictureUrl) {
+  // console.log('🔄 Updating profile picture in database:');
+  // console.log('   User ID:', userId);
+  // console.log('   Profile URL:', profilePictureUrl);
+  
   const sql = 'UPDATE users SET profile_picture_url = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?';
-  return query(sql, [profilePictureUrl, userId]);
+  const result = await query(sql, [profilePictureUrl, userId]);
+  
+  // console.log('✅ Database update result:', {
+  //   affectedRows: result.affectedRows,
+  //   changedRows: result.changedRows
+  // });
+  
+  return result;
 }
 
 async function getUserProfile(userId) {

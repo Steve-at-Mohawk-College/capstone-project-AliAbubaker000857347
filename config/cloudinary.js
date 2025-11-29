@@ -22,10 +22,10 @@ const uploadToCloudinary = (buffer, folder, filename) => {
       },
       (error, result) => {
         if (error) {
-          console.error('Cloudinary upload error:', error);
+          // console.error('Cloudinary upload error:', error);
           reject(error);
         } else {
-          console.log('Cloudinary upload success:', result.secure_url);
+          // console.log('Cloudinary upload success:', result.secure_url);
           resolve(result);
         }
       }
@@ -39,10 +39,16 @@ const uploadToCloudinary = (buffer, folder, filename) => {
 
 const uploadProfileToCloudinary = (buffer, filename) => {
   return new Promise((resolve, reject) => {
+    // Add more unique identifiers to prevent conflicts
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + '-' + Math.round(Math.random() * 1E9);
+    const finalFilename = `profile-${filename}-${uniqueSuffix}`;
+    
+    // console.log('📁 Uploading profile picture with filename:', finalFilename);
+    
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: 'petcare/profile',
-        public_id: filename,
+        public_id: finalFilename,
         resource_type: 'image',
         transformation: [
           { width: 400, height: 400, crop: 'thumb', gravity: 'face', quality: 'auto' }
@@ -50,10 +56,11 @@ const uploadProfileToCloudinary = (buffer, filename) => {
       },
       (error, result) => {
         if (error) {
-          console.error('Cloudinary profile upload error:', error);
+          // console.error('❌ Cloudinary profile upload error:', error);
           reject(error);
         } else {
-          console.log('Cloudinary profile upload success:', result.secure_url);
+          // console.log('✅ Cloudinary profile upload success for user:', filename);
+          // console.log('✅ Cloudinary URL:', result.secure_url);
           resolve(result);
         }
       }

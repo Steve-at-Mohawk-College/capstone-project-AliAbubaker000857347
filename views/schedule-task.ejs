@@ -96,13 +96,31 @@ label[for="due_date"],
 label[for="priority"] {
     color: var(--bs-body-color) !important;
 }
-</style>
 
+/* Add this to your existing CSS */
+input[type="datetime-local"][readonly] {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+input[type="datetime-local"][readonly]:focus {
+  background-color: #fff;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
 <div class="row justify-content-center">
   <div class="col-md-8 col-lg-6">
     <div class="card card-custom">
       <div class="card-body p-4">
         <h1 class="h3 mb-4 text-center">Schedule Task</h1>
+        
+        <!-- Debug Info Panel -->
+        <div class="alert alert-info d-none" id="debugPanel">
+          <h6>Debug Information:</h6>
+          <div id="debugContent"></div>
+        </div>
         
         <% if (typeof message !== 'undefined' && message) { %>
           <div class="alert alert-info"><%- message %></div>
@@ -123,6 +141,7 @@ label[for="priority"] {
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <% } %>
 
+            <!-- Your form fields remain the same -->
             <div class="mb-3">
               <label for="pet_id" class="form-label">Pet *</label>
               <select class="form-select" id="pet_id" name="pet_id" required>
@@ -154,12 +173,12 @@ label[for="priority"] {
             </div>
 
             <div class="mb-3">
-  <label for="title" class="form-label">Title *</label>
-  <input type="text" class="form-control" id="title" name="title" 
-         required maxlength="100" pattern="^[a-zA-Z0-9\s_,.!()\-]+$"
-         value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
-  <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers, spaces, and basic punctuation.</div>
-</div>
+              <label for="title" class="form-label">Title *</label>
+             <input type="text" class="form-control" id="title" name="title" 
+       required maxlength="100" pattern="^[a-zA-Z0-9\s_,.!()-]+$"
+       value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
+              <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers, spaces, and basic punctuation.</div>
+            </div>
 
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
@@ -167,9 +186,7 @@ label[for="priority"] {
               <small class="form-text text-muted"><span id="charCount">0</span>/500 characters</small>
             </div>
 
-
-
-
+           
 
 
 
@@ -178,14 +195,33 @@ label[for="priority"] {
   <label for="due_date" class="form-label">Due Date *</label>
   <input type="datetime-local" class="form-control" id="due_date" name="due_date" 
          required 
-         min="<%= new Date(Date.now() + 15 * 60 * 1000).toISOString().slice(0, 16) %>"
          value="<%= typeof preservedDueDate !== 'undefined' ? preservedDueDate : '' %>" 
-         step="300">
-  <div class="invalid-feedback">Due date must be at least 15 minutes from now and within 1 year.</div>
+         step="300"
+         readonly>
+  <div class="invalid-feedback">Due date must be at least 20 minutes from now and within 1 year.</div>
   <small class="form-text text-muted">
-    <i class="bi bi-info-circle"></i> Tasks can only be scheduled for at least 15 minutes from now (up to 1 year).
+    <i class="bi bi-info-circle"></i> Tasks can only be scheduled for at least 20 minutes from now (up to 1 year).
   </small>
+  <!-- <small class="form-text text-muted d-block mt-1">
+    <i class="bi bi-bug"></i> 
+    <a href="javascript:void(0)" id="showDebug">Show Debug Info</a> | 
+    <a href="javascript:void(0)" id="testValidation">Test Current Date</a>
+  </small> -->
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -214,8 +250,6 @@ label[for="priority"] {
   </div>
 </div>
 
-
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('taskForm');
@@ -223,25 +257,149 @@ document.addEventListener('DOMContentLoaded', function() {
   const descriptionInput = document.getElementById('description');
   const charCount = document.getElementById('charCount');
   const titleInput = document.getElementById('title');
+  const debugPanel = document.getElementById('debugPanel');
+  const debugContent = document.getElementById('debugContent');
+  // const showDebugLink = document.getElementById('showDebug');
+  // const testValidationLink = document.getElementById('testValidation');
 
-  // Set minimum datetime to 15 minutes from now
-  function setMinDateTime() {
-    const now = new Date();
-    const minDate = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
-    
-    // Format for datetime-local input (YYYY-MM-DDTHH:MM)
-    const year = minDate.getFullYear();
-    const month = String(minDate.getMonth() + 1).padStart(2, '0');
-    const day = String(minDate.getDate()).padStart(2, '0');
-    const hours = String(minDate.getHours()).padStart(2, '0');
-    const minutes = String(minDate.getMinutes()).padStart(2, '0');
-    
-    dueDateInput.min = `${year}-${month}-${day}T${hours}:${minutes}`;
-    
-    // If no value is set, set it to the minimum allowed time
-    if (!dueDateInput.value) {
-      dueDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
-    }
+  let debugLog = [];
+
+  function addDebugLog(message) {
+    const timestamp = new Date().toLocaleTimeString();
+    debugLog.push(`[${timestamp}] ${message}`);
+    // console.log(`[DEBUG] ${message}`);
+  }
+
+// Add this to your existing JavaScript in schedule-task.ejs
+
+// Prevent manual typing in datetime input
+function handleDateTimeClick() {
+  // Remove readonly temporarily when user clicks to open picker
+  dueDateInput.removeAttribute('readonly');
+  dueDateInput.showPicker(); // This opens the native datetime picker
+  
+  // Set back to readonly after a delay to prevent manual typing
+  setTimeout(() => {
+    dueDateInput.setAttribute('readonly', 'true');
+  }, 100);
+}
+
+
+// Prevent drag and drop
+dueDateInput.addEventListener('drop', function(event) {
+  event.preventDefault();
+  return false;
+});
+
+// Add click event listener to the datetime input
+dueDateInput.addEventListener('click', handleDateTimeClick);
+
+// Also prevent keyboard input
+dueDateInput.addEventListener('keydown', function(event) {
+  event.preventDefault();
+  return false;
+});
+
+// Prevent paste
+dueDateInput.addEventListener('paste', function(event) {
+  event.preventDefault();
+  return false;
+});
+
+  // function showDebugInfo() {
+  //   debugContent.innerHTML = debugLog.join('<br>');
+  //   debugPanel.classList.remove('d-none');
+  // }
+
+ // Set minimum datetime to 20 minutes from now
+function setMinDateTime() {
+  const now = new Date();
+  const minDate = new Date(now.getTime() + 20 * 60 * 1000); // 20 minutes from now
+  
+  // ROUND UP to the next minute to avoid second-level precision issues
+  minDate.setSeconds(0);
+  minDate.setMilliseconds(0);
+  
+  addDebugLog(`Current time: ${now.toString()}`);
+  addDebugLog(`Minimum allowed time (rounded): ${minDate.toString()}`);
+  
+  // Format for datetime-local input (local time)
+  const year = minDate.getFullYear();
+  const month = String(minDate.getMonth() + 1).padStart(2, '0');
+  const day = String(minDate.getDate()).padStart(2, '0');
+  const hours = String(minDate.getHours()).padStart(2, '0');
+  const minutes = String(minDate.getMinutes()).padStart(2, '0');
+  
+  const minValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+  dueDateInput.min = minValue;
+  
+  addDebugLog(`Setting min attribute to: ${minValue}`);
+  
+  // If no value is set, set it to the minimum allowed time
+  if (!dueDateInput.value) {
+    dueDateInput.value = minValue;
+    addDebugLog(`Set default value to: ${minValue}`);
+  }
+
+  addDebugLog(`Final dueDateInput.min: ${dueDateInput.min}`);
+  addDebugLog(`Final dueDateInput.value: ${dueDateInput.value}`);
+}
+
+// More lenient frontend validation
+function validateDueDate() {
+  const selectedValue = dueDateInput.value;
+  addDebugLog(`Validating due date: ${selectedValue}`);
+  
+  if (!selectedValue) {
+    dueDateInput.setCustomValidity('Due date is required');
+    dueDateInput.classList.add('is-invalid');
+    addDebugLog('Validation failed: No due date provided');
+    return false;
+  }
+
+  const selectedDate = new Date(selectedValue);
+  const now = new Date();
+  
+  // More lenient - 15 minutes buffer and round to minutes
+  selectedDate.setSeconds(0, 0);
+  now.setSeconds(0, 0);
+  
+  const selectedTime = selectedDate.getTime();
+  const nowTime = now.getTime();
+ const minTime = nowTime + (10 * 60 * 1000);
+  
+  addDebugLog(`Selected: ${selectedDate.toString()} (${selectedTime})`);
+  addDebugLog(`Current: ${now.toString()} (${nowTime})`);
+  addDebugLog(`Minimum: ${new Date(minTime).toString()} (${minTime})`);
+  addDebugLog(`Difference: ${(selectedTime - minTime) / 1000 / 60} minutes`);
+
+  if (selectedTime < minTime) {
+    const minutesEarly = (minTime - selectedTime) / 1000 / 60;
+    dueDateInput.setCustomValidity(`Due date must be at least 20 minutes from now (you're ${minutesEarly.toFixed(0)} minutes early)`);
+    dueDateInput.classList.add('is-invalid');
+    addDebugLog(`Validation failed: Too early by ${minutesEarly.toFixed(1)} minutes`);
+    return false;
+  }
+
+  const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000);
+  if (selectedTime > maxTime) {
+    dueDateInput.setCustomValidity('Due date must be within 1 year from now');
+    dueDateInput.classList.add('is-invalid');
+    addDebugLog('Validation failed: More than 1 year in future');
+    return false;
+  }
+
+  dueDateInput.setCustomValidity('');
+  dueDateInput.classList.remove('is-invalid');
+  addDebugLog('Validation passed');
+  return true;
+}
+
+  // Test current date validation
+  function testCurrentValidation() {
+    addDebugLog('=== TESTING CURRENT VALIDATION ===');
+    validateDueDate();
+    // showDebugInfo();
   }
 
   // Character counter for description
@@ -255,52 +413,30 @@ document.addEventListener('DOMContentLoaded', function() {
     this.value = this.value.replace(/[^a-zA-Z0-9\s\-_,.!()]/g, '');
   });
 
-  // Enhanced due date validation
-// Enhanced due date validation
-function validateDueDate() {
-  if (!dueDateInput.value) {
-    dueDateInput.setCustomValidity('Due date is required');
-    dueDateInput.classList.add('is-invalid');
-    return false;
-  }
-
-  const selectedDate = new Date(dueDateInput.value);
-  const now = new Date();
-  
-  // Convert to milliseconds for accurate comparison
-  const selectedTime = selectedDate.getTime();
-  const nowTime = now.getTime();
-  const minTime = nowTime + (15 * 60 * 1000); // 15 minutes from now
-  const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
-
-  if (selectedTime < minTime) {
-    dueDateInput.setCustomValidity('Due date must be at least 15 minutes from now');
-    dueDateInput.classList.add('is-invalid');
-    return false;
-  }
-
-  if (selectedTime > maxTime) {
-    dueDateInput.setCustomValidity('Due date must be within 1 year from now');
-    dueDateInput.classList.add('is-invalid');
-    return false;
-  }
-
-  dueDateInput.setCustomValidity('');
-  dueDateInput.classList.remove('is-invalid');
-  return true;
-}
-
   // Real-time validation
-  dueDateInput.addEventListener('change', validateDueDate);
-  dueDateInput.addEventListener('input', validateDueDate);
+  dueDateInput.addEventListener('change', function() {
+    addDebugLog('Due date changed by user');
+    validateDueDate();
+  });
+  
+  dueDateInput.addEventListener('input', function() {
+    addDebugLog('Due date input event');
+    validateDueDate();
+  });
+
+  // // Debug links
+  // showDebugLink.addEventListener('click', showDebugInfo);
+  // testValidationLink.addEventListener('click', testCurrentValidation);
   
   // Form submission with comprehensive validation
   form.addEventListener('submit', function(event) {
+    addDebugLog('=== FORM SUBMISSION STARTED ===');
     let isValid = true;
 
     // Validate due date
     if (!validateDueDate()) {
       isValid = false;
+      addDebugLog('Form validation failed: Due date invalid');
     }
 
     // Validate title pattern
@@ -308,6 +444,7 @@ function validateDueDate() {
     if (!titlePattern.test(titleInput.value.trim())) {
       titleInput.classList.add('is-invalid');
       isValid = false;
+      addDebugLog('Form validation failed: Title invalid');
     } else {
       titleInput.classList.remove('is-invalid');
     }
@@ -315,13 +452,19 @@ function validateDueDate() {
     if (!form.checkValidity() || !isValid) {
       event.preventDefault();
       event.stopPropagation();
+      addDebugLog('Form submission blocked due to validation errors');
+      // showDebugInfo();
+    } else {
+      addDebugLog('Form validation passed, submitting...');
     }
     
     form.classList.add('was-validated');
   });
 
   // Initialize min datetime when page loads
+  addDebugLog('=== PAGE LOAD INITIALIZATION ===');
   setMinDateTime();
+  addDebugLog('Initialization complete');
 });
 </script>
 

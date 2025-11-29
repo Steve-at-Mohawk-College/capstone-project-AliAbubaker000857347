@@ -9,8 +9,8 @@
 
 # # Commit the changes
 # git add package.json package-lock.json
-# git add .
-# git commit -m "Deploy: Remove Cypress for production"
+# 
+# git commit -m "Deploy: git add .Remove Cypress for production"
 
 # # Push to Heroku
 # git push heroku main

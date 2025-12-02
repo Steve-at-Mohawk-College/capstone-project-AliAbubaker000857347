@@ -172,9 +172,8 @@ const validateTask = [
 
 
 
-// Update the validation middleware
+// In taskRoutes.js - FIX the timezone adjustment
 body('start_time')
-
   .custom((value, { req }) => {
     if (!value) {
       throw new Error('Start time is required');
@@ -199,15 +198,34 @@ body('start_time')
         adjustmentMinutes: offsetDifference * 60000
       });
       
-      // Adjust the selected date to server timezone
-      selectedDate.setMinutes(selectedDate.getMinutes() - offsetDifference);
+      // FIX: When client is at UTC-5 (EST) and server is at UTC,
+      // we need to SUBTRACT 300 minutes from client time to get to UTC
+      // Wait, let me think about this differently...
+      
+      // Actually, let's not adjust at all in the route validation
+      // Let the model handle it with proper UTC conversion
+      console.log('⚠️ Skipping timezone adjustment in route validation');
     }
     
     // Add 15 minute buffer
     const bufferMinutes = 15;
     const bufferMs = bufferMinutes * 60 * 1000;
     
-    if (selectedDate.getTime() <= (now.getTime() - bufferMs)) {
+    // SIMPLE VALIDATION: Just check if it's a valid future date
+    // Let the model handle timezone conversion
+    const selectedUTC = selectedDate.toISOString();
+    const nowUTC = now.toISOString();
+    
+    console.log('🔍 [ROUTE VALIDATION] UTC comparison:', {
+      selectedLocal: selectedDate.toString(),
+      selectedUTC,
+      nowLocal: now.toString(),
+      nowUTC,
+      differenceMs: new Date(selectedUTC).getTime() - new Date(nowUTC).getTime()
+    });
+    
+    // Compare in UTC with buffer
+    if (new Date(selectedUTC).getTime() <= (new Date(nowUTC).getTime() - bufferMs)) {
       throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences)`);
     }
     

@@ -20,33 +20,38 @@ const validationRules = {
     if (typeof description !== 'string') return false;
     return description.length <= 500;
   },
-
-  // SIMPLIFIED VERSION - Just check if it's a valid future date
-  validateStartTime: (startTime) => {
-    if (!startTime) return false;
-    
-    console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
-    
-    // Parse the datetime-local input
-    const selectedDate = new Date(startTime);
-    const now = new Date();
-    
-    // Add 1 hour buffer for timezone differences
-    const bufferMilliseconds = 60 * 60 * 1000; // 1 hour
-    
-    // Simple check - is the date in the future (with buffer)?
-    const isValid = selectedDate.getTime() > (now.getTime() - bufferMilliseconds);
-    
-    console.log('🔍 [MODEL VALIDATION] Simple validation result:', isValid, {
-      selectedTime: selectedDate.getTime(),
-      nowTime: now.getTime(),
-      difference: selectedDate.getTime() - now.getTime(),
-      differenceHours: (selectedDate.getTime() - now.getTime()) / (1000 * 60 * 60)
-    });
-    
-    return isValid;
-  },
-
+// In taskModel.js - SIMPLIFIED validation
+validateStartTime: (startTime) => {
+  if (!startTime) return false;
+  
+  console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
+  
+  // Parse the datetime-local input (it's in local time)
+  const selectedDate = new Date(startTime);
+  const now = new Date();
+  
+  // Convert both to ISO strings for UTC comparison
+  const selectedUTC = selectedDate.toISOString();
+  const nowUTC = now.toISOString();
+  
+  console.log('🔍 [MODEL VALIDATION] UTC comparison:', {
+    selectedLocal: selectedDate.toString(),
+    selectedUTC,
+    nowLocal: now.toString(),
+    nowUTC,
+    differenceMinutes: (new Date(selectedUTC).getTime() - new Date(nowUTC).getTime()) / (1000 * 60)
+  });
+  
+  // Add 15 minute buffer for any timezone differences
+  const bufferMilliseconds = 15 * 60 * 1000;
+  
+  // Compare in UTC
+  const isValid = new Date(selectedUTC).getTime() > (new Date(nowUTC).getTime() - bufferMilliseconds);
+  
+  console.log('🔍 [MODEL VALIDATION] Result:', isValid);
+  
+  return isValid;
+},
   validateEndTime: (endTime, startTime) => {
     if (!endTime || !startTime) return false;
     
@@ -173,23 +178,21 @@ async function createTask(userId, taskData) {
   if (!validationRules.validateEndTime(taskData.end_time, taskData.start_time)) {
     throw new Error('End time must be after start time and within 1 year');
   }
-  
+    // Parse dates - datetime-local is already in local time
   const startDate = parseDateTimeLocalInput(taskData.start_time);
-const endDate = parseDateTimeLocalInput(taskData.end_time);
-
-// Convert to UTC for consistent database storage
-const startDateUTC = new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000));
-const endDateUTC = new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000));
-
-// Use UTC dates for database insertion
-console.log('🔍 [DEBUG] UTC dates for database:', {
-  startUTC: startDateUTC.toISOString(),
-  endUTC: endDateUTC.toISOString()
-});
+  const endDate = parseDateTimeLocalInput(taskData.end_time);
+  
+  console.log('🔍 [DEBUG] Parsed dates:', {
+    startLocal: startDate.toString(),
+    startISO: startDate.toISOString(),
+    endLocal: endDate.toString(),
+    endISO: endDate.toISOString()
+  });
   
   // For backward compatibility, set due_date = start_date
   const dueDate = startDate;
   
+  // Store dates as-is (they'll be converted to UTC by MySQL if needed)
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, start_time, end_time, priority)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)

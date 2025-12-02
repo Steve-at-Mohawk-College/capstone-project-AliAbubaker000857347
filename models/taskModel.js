@@ -26,28 +26,34 @@ validateStartTime: (startTime) => {
   
   console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
   
-  // Parse the datetime-local input (assume it's in client's local time)
+  // Parse the datetime-local input (it's in local time)
   const selectedDate = new Date(startTime);
   
   // Get current time
   const now = new Date();
   
-  // Debug info
-  console.log('🔍 [MODEL VALIDATION] Time comparison:', {
+  // Convert selectedDate to UTC for comparison
+  // The datetime-local input doesn't have timezone info, so JavaScript
+  // assumes local time when parsing it
+  const selectedUTC = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
+  const nowUTC = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+  
+  console.log('🔍 [MODEL VALIDATION] UTC comparison:', {
     input: startTime,
-    selectedDate: selectedDate.toString(),
-    selectedISO: selectedDate.toISOString(),
-    now: now.toString(),
-    nowISO: now.toISOString(),
-    differenceMs: selectedDate.getTime() - now.getTime(),
-    differenceMinutes: (selectedDate.getTime() - now.getTime()) / (1000 * 60)
+    selectedLocal: selectedDate.toString(),
+    selectedUTC: selectedUTC.toString(),
+    selectedUTCOffset: selectedDate.getTimezoneOffset(),
+    nowLocal: now.toString(),
+    nowUTC: nowUTC.toString(),
+    nowUTCOffset: now.getTimezoneOffset(),
+    differenceMinutes: (selectedUTC.getTime() - nowUTC.getTime()) / (1000 * 60)
   });
   
-  // Add buffer for timezone/server differences (15 minutes)
+  // Add 15 minute buffer for timezone/server differences
   const bufferMilliseconds = 15 * 60 * 1000;
   
-  // Compare directly - datetime-local is already in local time
-  const isValid = selectedDate.getTime() > (now.getTime() - bufferMilliseconds);
+  // Compare in UTC
+  const isValid = selectedUTC.getTime() > (nowUTC.getTime() - bufferMilliseconds);
   
   console.log('🔍 [MODEL VALIDATION] Result:', isValid);
   
@@ -124,7 +130,7 @@ function formatDateForInput(dateString) {
 function parseDateTimeLocalInput(dateTimeString) {
   if (!dateTimeString) return null;
   
-  // datetime-local input is in local time, create date directly without UTC conversion
+  // datetime-local input is in local time
   const [datePart, timePart] = dateTimeString.split('T');
   const [year, month, day] = datePart.split('-').map(Number);
   const [hours, minutes] = timePart.split(':').map(Number);
@@ -132,11 +138,15 @@ function parseDateTimeLocalInput(dateTimeString) {
   // Create date in local timezone
   const date = new Date(year, month - 1, day, hours, minutes);
   
-  // Convert to ISO string for database storage
-  // This ensures consistent storage
+  console.log('🔍 parseDateTimeLocalInput:', {
+    input: dateTimeString,
+    localDate: date.toString(),
+    localISO: date.toISOString(),
+    timezoneOffset: date.getTimezoneOffset()
+  });
+  
   return date;
 }
-
 async function createTask(userId, taskData) {
   console.log('🔍 [DEBUG] createTask called with data:', JSON.stringify(taskData, null, 2));
   

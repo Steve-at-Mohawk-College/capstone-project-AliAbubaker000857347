@@ -172,60 +172,26 @@ const validateTask = [
 
 
 
-// In taskRoutes.js - FIX the timezone adjustment
+// In taskRoutes.js - SIMPLE validation
 body('start_time')
-  .custom((value, { req }) => {
+  .custom((value) => {
     if (!value) {
       throw new Error('Start time is required');
     }
     
-    console.log('🔍 [ROUTE VALIDATION] Validating start_time:', value);
-    console.log('🌐 Client timezone offset:', req.body.timezoneOffset);
+    console.log('🔍 [ROUTE VALIDATION] Simple validation for:', value);
     
     const now = new Date();
     const selectedDate = new Date(value);
     
-    // Adjust for client timezone if provided
-    if (req.body.timezoneOffset) {
-      const clientOffset = parseInt(req.body.timezoneOffset);
-      const serverOffset = now.getTimezoneOffset();
-      const offsetDifference = clientOffset - serverOffset;
-      
-      console.log('🌐 Timezone adjustment:', {
-        clientOffset,
-        serverOffset,
-        offsetDifference,
-        adjustmentMinutes: offsetDifference * 60000
-      });
-      
-      // FIX: When client is at UTC-5 (EST) and server is at UTC,
-      // we need to SUBTRACT 300 minutes from client time to get to UTC
-      // Wait, let me think about this differently...
-      
-      // Actually, let's not adjust at all in the route validation
-      // Let the model handle it with proper UTC conversion
-      console.log('⚠️ Skipping timezone adjustment in route validation');
-    }
-    
-    // Add 15 minute buffer
+    // Add 15 minute buffer for any timezone/server differences
     const bufferMinutes = 15;
     const bufferMs = bufferMinutes * 60 * 1000;
     
-    // SIMPLE VALIDATION: Just check if it's a valid future date
-    // Let the model handle timezone conversion
-    const selectedUTC = selectedDate.toISOString();
-    const nowUTC = now.toISOString();
+    // Simple check: is the selected date in the future (with buffer)?
+    const isValid = selectedDate.getTime() > (now.getTime() - bufferMs);
     
-    console.log('🔍 [ROUTE VALIDATION] UTC comparison:', {
-      selectedLocal: selectedDate.toString(),
-      selectedUTC,
-      nowLocal: now.toString(),
-      nowUTC,
-      differenceMs: new Date(selectedUTC).getTime() - new Date(nowUTC).getTime()
-    });
-    
-    // Compare in UTC with buffer
-    if (new Date(selectedUTC).getTime() <= (new Date(nowUTC).getTime() - bufferMs)) {
+    if (!isValid) {
       throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences)`);
     }
     

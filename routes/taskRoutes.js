@@ -179,7 +179,7 @@ body('start_time')
       throw new Error('Start time is required');
     }
     
-    console.log('🔍 [ROUTE VALIDATION] Simple validation for:', value);
+    // console.log('🔍 [ROUTE VALIDATION] Simple validation for:', value);
     
     const now = new Date();
     const selectedDate = new Date(value);
@@ -237,16 +237,16 @@ router.get('/', requireAuth, async (req, res) => {
 
 // POST /tasks - Create a new task
 router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) => {
-  console.log('🔍 [ROUTE DEBUG] POST /tasks called');
-  console.log('🔍 [ROUTE DEBUG] Request body:', JSON.stringify(req.body, null, 2));
+  // console.log(' [ROUTE DEBUG] POST /tasks called');
+  // console.log(' [ROUTE DEBUG] Request body:', JSON.stringify(req.body, null, 2));
   
   try {
     // Check validation errors
     const errors = validationResult(req);
-    console.log('🔍 [ROUTE DEBUG] Validation errors:', errors.array());
+    // console.log('🔍 [ROUTE DEBUG] Validation errors:', errors.array());
     
     if (!errors.isEmpty()) {
-      console.log('❌ [ROUTE DEBUG] Validation failed');
+      // console.log('[ROUTE DEBUG] Validation failed');
       // Get pets for the form
       const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
       
@@ -268,7 +268,7 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
 
     const { pet_id, task_type, title, description, start_time, end_time, priority } = req.body;
     
-    console.log('🔍 [ROUTE DEBUG] Calling createTask with processed data');
+    // console.log('🔍 [ROUTE DEBUG] Calling createTask with processed data');
     await createTask(req.session.userId, { 
       pet_id, 
       task_type, 
@@ -279,10 +279,10 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       priority: priority || 'medium'
     });
     
-    console.log('✅ [ROUTE DEBUG] Task created successfully, redirecting to dashboard');
+    // console.log('✅ [ROUTE DEBUG] Task created successfully, redirecting to dashboard');
     res.redirect('/dashboard?message=Task created successfully');
   } catch (error) {
-    console.error('❌ [ROUTE DEBUG] Create task error:', error);
+    // console.error('❌ [ROUTE DEBUG] Create task error:', error);
     
     // Handle specific errors
     let errorMessage = 'Error creating task. Please try again.';
@@ -292,7 +292,7 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       errorMessage = error.message;
     }
     
-    console.log('🔍 [ROUTE DEBUG] Error message to display:', errorMessage);
+    // console.log('🔍 [ROUTE DEBUG] Error message to display:', errorMessage);
     
     // Get pets for the form
     const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);

@@ -83,36 +83,36 @@ function parseDateTimeLocalInput(dateTimeString) {
   // Create date in local timezone
   const localDate = new Date(year, month - 1, day, hours, minutes);
   
-  console.log('🔍 parseDateTimeLocalInput:', {
-    input: dateTimeString,
-    localDate: localDate.toString(),
-    timezoneOffset: localDate.getTimezoneOffset()
-  });
+  // console.log('🔍 parseDateTimeLocalInput:', {
+  //   input: dateTimeString,
+  //   localDate: localDate.toString(),
+  //   timezoneOffset: localDate.getTimezoneOffset()
+  // });
   
   return localDate;
 }
 
 async function createTask(userId, taskData) {
-  console.log('🔍 [DEBUG] createTask called with data:', JSON.stringify(taskData, null, 2));
+  // console.log('🔍 [DEBUG] createTask called with data:', JSON.stringify(taskData, null, 2));
   
   // Input validation
   if (!validationRules.validateTitle(taskData.title)) {
-    console.log('❌ [DEBUG] Title validation failed');
+    // console.log('❌ [DEBUG] Title validation failed');
     throw new Error('Invalid title format');
   }
   
   if (!validationRules.validateDescription(taskData.description)) {
-    console.log('❌ [DEBUG] Description validation failed');
+    // console.log('❌ [DEBUG] Description validation failed');
     throw new Error('Invalid description format');
   }
   
   if (!validationRules.taskType.includes(taskData.task_type)) {
-    console.log('❌ [DEBUG] Task type validation failed');
+    // console.log('❌ [DEBUG] Task type validation failed');
     throw new Error('Invalid task type');
   }
   
   if (!validationRules.priority.includes(taskData.priority)) {
-    console.log('❌ [DEBUG] Priority validation failed');
+    // console.log('❌ [DEBUG] Priority validation failed');
     throw new Error('Invalid priority');
   }
 
@@ -123,7 +123,7 @@ async function createTask(userId, taskData) {
   );
   
   if (petCheck.length === 0) {
-    console.log('❌ [DEBUG] Pet ownership verification failed');
+    // console.log('❌ [DEBUG] Pet ownership verification failed');
     throw new Error('Pet not found or access denied');
   }
 
@@ -141,12 +141,12 @@ async function createTask(userId, taskData) {
   const endTimeMySQL = toMySQLDateTime(taskData.end_time);
   const dueDateMySQL = toMySQLDateTime(taskData.start_time); // due_date = start_time
   
-  console.log('🔍 [DEBUG] Date conversions:', {
-    start_local: taskData.start_time,
-    start_mysql: startTimeMySQL,
-    end_local: taskData.end_time,
-    end_mysql: endTimeMySQL
-  });
+  // console.log('🔍 [DEBUG] Date conversions:', {
+  //   start_local: taskData.start_time,
+  //   start_mysql: startTimeMySQL,
+  //   end_local: taskData.end_time,
+  //   end_mysql: endTimeMySQL
+  // });
   
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, start_time, end_time, priority)
@@ -166,10 +166,10 @@ async function createTask(userId, taskData) {
       taskData.priority
     ]);
     
-    console.log('✅ [DEBUG] Task created successfully');
+    // console.log('✅ [DEBUG] Task created successfully');
     return result;
   } catch (error) {
-    console.error('❌ [DEBUG] Database error:', error);
+    // console.error('❌ [DEBUG] Database error:', error);
     throw new Error('Database error: ' + error.message);
   }
 }

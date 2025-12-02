@@ -71,7 +71,7 @@ async function testConnection() {
     // Force timezone for this test connection
     await connection.execute(`SET time_zone = '-05:00'`);
     
-    console.log('✅ Connected to MySQL database successfully');
+    // console.log('✅ Connected to MySQL database successfully');
     
     // FIXED: Use simpler SQL query without problematic functions
     const [result] = await connection.execute(

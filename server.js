@@ -127,9 +127,9 @@ async function fetchDogBreeds() {
       }
     });
     cachedBreeds = await response.json();
-    console.log('✅ Dog breeds cached successfully:', cachedBreeds.length);
+    // console.log('✅ Dog breeds cached successfully:', cachedBreeds.length);
   } catch (err) {
-    console.error('❌ Failed to fetch dog breeds', err);
+    // console.error('❌ Failed to fetch dog breeds', err);
   }
 }
 
@@ -158,8 +158,8 @@ app.use((req, res, next) => {
     res.locals.userId = req.session.userId;
     res.locals.role = req.session.role;
 
-     console.log('🔄 Middleware - Setting profilePicture:', res.locals.profilePicture);
-    console.log('🔄 Middleware - Setting username:', res.locals.username);
+    //  console.log('🔄 Middleware - Setting profilePicture:', res.locals.profilePicture);
+    // console.log('🔄 Middleware - Setting username:', res.locals.username);
     
     // Refresh email from database if not in session
     if (!req.session.email) {
@@ -171,7 +171,7 @@ app.use((req, res, next) => {
             res.locals.email = user.email;
           }
         } catch (error) {
-          console.error('Error refreshing email:', error);
+          // console.error('Error refreshing email:', error);
         }
       })();
     } else {
@@ -189,7 +189,7 @@ app.use((req, res, next) => {
 
 // Debug middleware
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  // console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
@@ -285,7 +285,7 @@ app.get('/test', (req, res) => {
 
 // Add connection monitoring middleware (after other middleware but before routes)
 app.use((req, res, next) => {
-  console.log(`[Connection] ${req.method} ${req.path}`);
+  // console.log(`[Connection] ${req.method} ${req.path}`);
   next();
 });
 
@@ -313,18 +313,18 @@ app.use((req, res, next) => {
       try {
         const user = await findById(req.session.userId);
         if (!user) {
-          console.log('❌ Session user not found in database, destroying session');
+          // console.log('❌ Session user not found in database, destroying session');
           req.session.destroy();
           return res.redirect('/login');
         }
         
         // Ensure session has correct profile picture
         if (user.profile_picture_url !== req.session.profilePicture) {
-          console.log('🔄 Updating session profile picture from database');
+          // console.log('🔄 Updating session profile picture from database');
           req.session.profilePicture = user.profile_picture_url;
         }
       } catch (error) {
-        console.error('Session verification error:', error);
+        // console.error('Session verification error:', error);
       }
     })();
   }
@@ -426,7 +426,7 @@ app.get('/api/dog-breeds', async (req, res) => {
     const breeds = await response.json();
     res.json(breeds);
   } catch (err) {
-    console.error('Error fetching Dog API:', err);
+    // console.error('Error fetching Dog API:', err);
     res.status(500).json({ error: 'Failed to fetch dog breeds' });
   }
 });
@@ -477,7 +477,7 @@ app.get('/debug/tasks-overview', requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
     
-    console.log('🔍 Debug: Fetching ALL tasks for user:', userId);
+    // console.log('🔍 Debug: Fetching ALL tasks for user:', userId);
     
     // Get all tasks for debugging
     const allTasks = await query(`
@@ -527,13 +527,13 @@ app.get('/debug/tasks-overview', requireAuth, async (req, res) => {
 // Calendar page route - ADD THIS TO YOUR server.js
 app.get('/calendar', requireAuth, async (req, res) => {
     try {
-        console.log('📅 Loading calendar page for user:', req.session.userId);
+        // console.log('📅 Loading calendar page for user:', req.session.userId);
         res.render('calendar', {
             title: 'Calendar - Pet Care Management',
             username: req.session.username
         });
     } catch (error) {
-        console.error('❌ Calendar page error:', error);
+        // console.error('❌ Calendar page error:', error);
         res.status(500).render('error', {
             title: 'Error',
             message: 'Error loading calendar page.'
@@ -546,17 +546,17 @@ app.get('/tasks/calendar', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
         
-        console.log('📅 Calendar API called for user:', userId);
+        // console.log('📅 Calendar API called for user:', userId);
         
         // Get tasks for the next 60 days for calendar view
         const now = new Date();
         const futureDate = new Date();
         futureDate.setDate(now.getDate() + 60);
         
-        console.log('📅 Date range:', {
-            now: now.toISOString(),
-            futureDate: futureDate.toISOString()
-        });
+        // console.log('📅 Date range:', {
+        //     now: now.toISOString(),
+        //     futureDate: futureDate.toISOString()
+        // });
 
         const sql = `
             SELECT t.*, p.name as pet_name, p.species 
@@ -570,11 +570,11 @@ app.get('/tasks/calendar', requireAuth, async (req, res) => {
         
         const tasks = await query(sql, [userId, now, futureDate]);
         
-        console.log('✅ Calendar tasks found:', tasks.length);
+        // console.log('✅ Calendar tasks found:', tasks.length);
         
         res.json(tasks);
     } catch (error) {
-        console.error('❌ Calendar API error:', error);
+        // console.error('❌ Calendar API error:', error);
         res.status(500).json({ error: 'Failed to load calendar data: ' + error.message });
     }
 });
@@ -621,7 +621,7 @@ async function initializeApp() {
     const dbConnected = await db.testConnection();
     
     if (!dbConnected) {
-      console.error('❌ Failed to connect to database. Exiting...');
+      // console.error('❌ Failed to connect to database. Exiting...');
       process.exit(1);
     }
 
@@ -646,7 +646,7 @@ async function initializeApp() {
       });
     }
   } catch (error) {
-    console.error('Failed to initialize app:', error);
+    // console.error('Failed to initialize app:', error);
     process.exit(1);
   }
 }
@@ -723,7 +723,7 @@ app.get('/health-tracker', requireAuth, async (req, res) => {
       healthRecords
     });
   } catch (err) {
-    console.error('Health tracker error:', err);
+    // console.error('Health tracker error:', err);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading health tracker.',
@@ -744,13 +744,13 @@ app.get('/tasks/upcoming', requireAuth, async (req, res) => {
     const targetDate = new Date();
     targetDate.setDate(now.getDate() + days);
     
-    console.log('📅 Fetching upcoming tasks:', {
-      userId,
-      days,
-      limit,
-      now: now.toISOString(),
-      targetDate: targetDate.toISOString()
-    });
+    // console.log('📅 Fetching upcoming tasks:', {
+    //   userId,
+    //   days,
+    //   limit,
+    //   now: now.toISOString(),
+    //   targetDate: targetDate.toISOString()
+    // });
 
     const sql = `
       SELECT t.*, p.name as pet_name, p.species 
@@ -765,11 +765,11 @@ app.get('/tasks/upcoming', requireAuth, async (req, res) => {
     
     const tasks = await query(sql, [userId, now, targetDate, limit]);
     
-    console.log('✅ Found upcoming tasks:', tasks.length);
+    // console.log('✅ Found upcoming tasks:', tasks.length);
     
     res.json(tasks);
   } catch (error) {
-    console.error('❌ Error fetching upcoming tasks:', error);
+    // console.error('❌ Error fetching upcoming tasks:', error);
     res.status(500).json({ error: 'Failed to fetch upcoming tasks' });
   }
 });
@@ -784,11 +784,11 @@ app.get('/upcoming-tasks', requireAuth, async (req, res) => {
     const threeDaysFromNow = new Date();
     threeDaysFromNow.setDate(now.getDate() + 3);
     
-    console.log('📅 Loading upcoming tasks page:', {
-      userId,
-      now: now.toISOString(),
-      threeDaysFromNow: threeDaysFromNow.toISOString()
-    });
+    // console.log('📅 Loading upcoming tasks page:', {
+    //   userId,
+    //   now: now.toISOString(),
+    //   threeDaysFromNow: threeDaysFromNow.toISOString()
+    // });
 
     const sql = `
       SELECT t.*, p.name as pet_name, p.species 
@@ -802,7 +802,7 @@ app.get('/upcoming-tasks', requireAuth, async (req, res) => {
     
     const tasks = await query(sql, [userId, now, threeDaysFromNow]);
     
-    console.log('✅ Tasks for upcoming page:', tasks.length);
+    // console.log('✅ Tasks for upcoming page:', tasks.length);
     
     res.render('upcoming-tasks', { 
       title: 'Upcoming Tasks - Next 3 Days',
@@ -810,7 +810,7 @@ app.get('/upcoming-tasks', requireAuth, async (req, res) => {
       username: req.session.username
     });
   } catch (error) {
-    console.error('❌ Error fetching upcoming tasks page:', error);
+    // console.error('❌ Error fetching upcoming tasks page:', error);
     res.status(500).render('error', { 
       error: 'Failed to load upcoming tasks',
       message: 'There was an error loading your upcoming tasks.'
@@ -828,7 +828,7 @@ app.get('/task-overview', requireAuth, async (req, res) => {
       title: 'Task Overview - Pet Care Management'
     });
   } catch (error) {
-    console.error('Task overview page error:', error);
+    // console.error('Task overview page error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading task overview page.',
@@ -885,7 +885,7 @@ app.get('/health-tracker-history', requireAuth, async (req, res) => {
       message: req.query.message || null
     });
   } catch (err) {
-    console.error('Health tracker history error:', err);
+    // console.error('Health tracker history error:', err);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading health tracker history.',
@@ -917,7 +917,7 @@ app.get('/health-tracker/add', requireAuth, async (req, res) => {
       fieldErrors: {} // Initialize as empty object instead of null
     });
   } catch (err) {
-    console.error('Add health record form error:', err);
+    // console.error('Add health record form error:', err);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading health record form.',
@@ -940,8 +940,8 @@ app.get('/test-domain-email', async (req, res) => {
     const sgMail = require('@sendgrid/mail');
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     
-    console.log('🔑 Testing SendGrid with Domain Authentication...');
-    console.log('From Email: no-reply@send37.get-cans.live');
+    // console.log('🔑 Testing SendGrid with Domain Authentication...');
+    // console.log('From Email: no-reply@send37.get-cans.live');
     
     const msg = {
       to: 'aliabdulsameea69@gmail.com',
@@ -955,10 +955,10 @@ app.get('/test-domain-email', async (req, res) => {
     };
     
     await sgMail.send(msg);
-    console.log('✅ Domain email test sent successfully!');
+    // console.log('✅ Domain email test sent successfully!');
     res.json({ success: true, message: 'Domain email test sent successfully' });
   } catch (error) {
-    console.error('❌ Domain email test failed:', error.response?.body || error.message);
+    // console.error('❌ Domain email test failed:', error.response?.body || error.message);
     res.status(500).json({ 
       error: 'Domain email test failed', 
       details: error.response?.body || error.message 
@@ -970,11 +970,11 @@ app.get('/debug-sendgrid', async (req, res) => {
   try {
     const sgMail = require('@sendgrid/mail');
     
-    console.log('🔍 SendGrid Debug Information:');
-    console.log('API Key Present:', !!process.env.SENDGRID_API_KEY);
-    console.log('API Key Length:', process.env.SENDGRID_API_KEY?.length);
-    console.log('API Key Starts With:', process.env.SENDGRID_API_KEY?.substring(0, 10));
-    console.log('From Email:', process.env.FROM_EMAIL);
+    // console.log('🔍 SendGrid Debug Information:');
+    // console.log('API Key Present:', !!process.env.SENDGRID_API_KEY);
+    // console.log('API Key Length:', process.env.SENDGRID_API_KEY?.length);
+    // console.log('API Key Starts With:', process.env.SENDGRID_API_KEY?.substring(0, 10));
+    // console.log('From Email:', process.env.FROM_EMAIL);
     
     // Test the API key directly
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -991,14 +991,14 @@ app.get('/debug-sendgrid', async (req, res) => {
     };
     
     await sgMail.send(msg);
-    console.log('✅ API Key is working!');
+    // console.log('✅ API Key is working!');
     res.json({ success: true, message: 'API key is valid' });
     
   } catch (error) {
-    console.error('❌ API Key test failed:');
-    console.error('Error Code:', error.code);
-    console.error('Error Message:', error.message);
-    console.error('Response Body:', error.response?.body);
+    // console.error('❌ API Key test failed:');
+    // console.error('Error Code:', error.code);
+    // console.error('Error Message:', error.message);
+    // console.error('Response Body:', error.response?.body);
     
     res.status(500).json({
       error: 'API key test failed',
@@ -1014,7 +1014,7 @@ app.get('/test-final', async (req, res) => {
     const sgMail = require('@sendgrid/mail');
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     
-    console.log('🎯 Final Test - Domain: em3996.pet-care.live');
+    // console.log('🎯 Final Test - Domain: em3996.pet-care.live');
     
     const msg = {
       to: 'aliabdulsameea69@gmail.com',
@@ -1025,7 +1025,7 @@ app.get('/test-final', async (req, res) => {
     };
     
     await sgMail.send(msg);
-    console.log('✅ FINAL SUCCESS: Email sent from verified domain!');
+    // console.log('✅ FINAL SUCCESS: Email sent from verified domain!');
     res.json({ 
       success: true, 
       message: 'Domain email working perfectly!',
@@ -1033,7 +1033,7 @@ app.get('/test-final', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ Final test failed:', error.response?.body || error.message);
+    // console.error('❌ Final test failed:', error.response?.body || error.message);
     res.status(500).json({ 
       error: 'Final test failed',
       details: error.response?.body 
@@ -1042,11 +1042,11 @@ app.get('/test-final', async (req, res) => {
 });
 
 app.get('/debug-email-config', (req, res) => {
-  console.log('🔍 Current Email Configuration:');
-  console.log('SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
-  console.log('SENDGRID_API_KEY length:', process.env.SENDGRID_API_KEY?.length);
-  console.log('EMAIL_USER from env:', process.env.EMAIL_USER);
-  console.log('FROM_EMAIL from env:', process.env.FROM_EMAIL);
+  // console.log('🔍 Current Email Configuration:');
+  // console.log('SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
+  // console.log('SENDGRID_API_KEY length:', process.env.SENDGRID_API_KEY?.length);
+  // console.log('EMAIL_USER from env:', process.env.EMAIL_USER);
+  // console.log('FROM_EMAIL from env:', process.env.FROM_EMAIL);
   
   res.json({
     apiKeyPresent: !!process.env.SENDGRID_API_KEY,
@@ -1061,10 +1061,10 @@ app.get('/test-correct-domain', async (req, res) => {
   try {
     const sgMail = require('@sendgrid/mail');
     
-    console.log('🔐 API Key Check:');
-    console.log('Key exists:', !!process.env.SENDGRID_API_KEY);
-    console.log('Key length:', process.env.SENDGRID_API_KEY?.length);
-    console.log('Key starts with:', process.env.SENDGRID_API_KEY?.substring(0, 10));
+    // console.log('🔐 API Key Check:');
+    // console.log('Key exists:', !!process.env.SENDGRID_API_KEY);
+    // console.log('Key length:', process.env.SENDGRID_API_KEY?.length);
+    // console.log('Key starts with:', process.env.SENDGRID_API_KEY?.substring(0, 10));
     
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     
@@ -1076,9 +1076,9 @@ app.get('/test-correct-domain', async (req, res) => {
       html: '<p>Testing with <strong>em3996.pet-care.live</strong> - your verified domain</p>'
     };
     
-    console.log('🚀 Sending test email...');
+    // console.log('🚀 Sending test email...');
     await sgMail.send(msg);
-    console.log('✅ SUCCESS: Email sent from verified domain!');
+    // console.log('✅ SUCCESS: Email sent from verified domain!');
     
     res.json({ 
       success: true, 
@@ -1087,14 +1087,14 @@ app.get('/test-correct-domain', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ Test failed:');
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
-    console.error('Response body:', error.response?.body);
+    // console.error('❌ Test failed:');
+    // console.error('Error code:', error.code);
+    // console.error('Error message:', error.message);
+    // console.error('Response body:', error.response?.body);
     
     // Check if it's an API key issue
     if (error.code === 401) {
-      console.error('🔑 API KEY ISSUE: Generate a new API key in SendGrid');
+      // console.error('🔑 API KEY ISSUE: Generate a new API key in SendGrid');
     }
     
     res.status(500).json({ 
@@ -1111,7 +1111,7 @@ app.get('/test-correct-domain', async (req, res) => {
 // In server.js - UPDATE the dashboard route
 app.get('/dashboard', requireAuth, async (req, res) => {
   try {
-    console.log('📊 Dashboard route called - checking variables being passed');
+    // console.log('📊 Dashboard route called - checking variables being passed');
     
     const userId = req.session.userId;
     
@@ -1124,9 +1124,9 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     const petOffset = (petPage - 1) * itemsPerPage;
     const taskOffset = (taskPage - 1) * itemsPerPage;
 
-    console.log('🔢 Pagination parameters:', {
-      userId, petPage, taskPage, itemsPerPage, petOffset, taskOffset
-    });
+    // console.log('🔢 Pagination parameters:', {
+    //   userId, petPage, taskPage, itemsPerPage, petOffset, taskOffset
+    // });
 
     // IMPORTANT: Import database functions properly
     const db = require('./config/database');
@@ -1172,14 +1172,14 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     const totalTasks = totalTasksResult[0].count;
     const totalTaskPages = Math.max(1, Math.ceil(totalTasks / itemsPerPage));
 
-    console.log('📈 Pagination results:', {
-      totalPets,
-      totalTasks,
-      petsCount: pets.length,
-      tasksCount: tasks.length,
-      totalPetPages,
-      totalTaskPages
-    });
+    // console.log('📈 Pagination results:', {
+    //   totalPets,
+    //   totalTasks,
+    //   petsCount: pets.length,
+    //   tasksCount: tasks.length,
+    //   totalPetPages,
+    //   totalTaskPages
+    // });
 
     res.render('dashboard', {
       title: 'Pet Dashboard',
@@ -1204,11 +1204,11 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Dashboard error:', error);
+    // console.error('Dashboard error:', error);
     
     // Fallback without pagination
     try {
-      console.log('🔄 Trying fallback query without pagination...');
+      // console.log('🔄 Trying fallback query without pagination...');
       const db = require('./config/database');
       const pets = await db.query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
       const tasks = await db.query(
@@ -1233,7 +1233,7 @@ app.get('/dashboard', requireAuth, async (req, res) => {
         error: 'Pagination temporarily disabled'
       });
     } catch (fallbackError) {
-      console.error('Fallback also failed:', fallbackError);
+      // console.error('Fallback also failed:', fallbackError);
       res.status(500).render('dashboard', {
         title: 'Pet Dashboard',
         username: req.session.username,
@@ -1251,35 +1251,6 @@ app.get('/dashboard', requireAuth, async (req, res) => {
 });
 
 
-// Add this route to your server.js file
-// app.get('/tasks/upcoming', requireAuth, async (req, res) => {
-//   try {
-//     const userId = req.session.userId;
-//     const days = parseInt(req.query.days) || 3;
-    
-//     // Calculate date range
-//     const now = new Date();
-//     const futureDate = new Date();
-//     futureDate.setDate(now.getDate() + days);
-    
-//     const sql = `
-//       SELECT t.*, p.name as pet_name 
-//       FROM tasks t
-//       JOIN pets p ON t.pet_id = p.pet_id
-//       WHERE t.user_id = ? 
-//       AND t.completed = false
-//       AND t.due_date BETWEEN ? AND ?
-//       ORDER BY t.due_date ASC
-//     `;
-    
-//     const tasks = await query(sql, [userId, now, futureDate]);
-    
-//     res.json(tasks);
-//   } catch (error) {
-//     console.error('Error fetching upcoming tasks:', error);
-//     res.status(500).json({ error: 'Error fetching upcoming tasks' });
-//   }
-// });
 // Update the test route in server.js
 app.get('/test-pagination', requireAuth, async (req, res) => {
   try {
@@ -1359,7 +1330,7 @@ app.post('/debug/add-test-pets', requireAuth, async (req, res) => {
         );
         addedCount++;
       } catch (err) {
-        console.log(`Pet ${petData.name} might already exist`);
+        // console.log(`Pet ${petData.name} might already exist`);
       }
     }
 
@@ -1469,7 +1440,7 @@ app.get('/schedule-task', requireAuth, async (req, res) => {
       pets 
     });
   } catch (err) {
-    console.error('Schedule task form error:', err);
+    // console.error('Schedule task form error:', err);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading task form.',
@@ -1551,7 +1522,7 @@ app.get('*.css', (req, res, next) => {
 // Debug middleware for static files
 app.use((req, res, next) => {
   if (req.url.endsWith('.css')) {
-    console.log('CSS request:', req.url);
+    // console.log('CSS request:', req.url);
   }
   next();
 });
@@ -1570,7 +1541,7 @@ app.get('/js/theme.js', (req, res) => {
 
 // ===== Error Handling =====
 app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
+  // console.error('Error:', err.stack);
   res.status(500).render('error', {
     title: 'Error',
     message: 'Something went wrong!',
@@ -1599,12 +1570,12 @@ function monitorConnections() {
     try {
       // Check if pool exists and has the properties we need
       if (db.pool && db.pool._allConnections) {
-        console.log(`📊 Connection pool status: ${db.pool._allConnections.length} total, ${db.pool._freeConnections.length} free`);
+        // console.log(`📊 Connection pool status: ${db.pool._allConnections.length} total, ${db.pool._freeConnections.length} free`);
       } else {
-        console.log('📊 Connection pool: Not available for monitoring');
+        // console.log('📊 Connection pool: Not available for monitoring');
       }
     } catch (error) {
-      console.log('📊 Connection monitoring error:', error.message);
+      // console.log('📊 Connection monitoring error:', error.message);
     }
   }, 30000); // Log every 30 seconds
 }
@@ -1619,12 +1590,12 @@ app.get('/debug/reset-connections', async (req, res) => {
   try {
     const db = require('./config/database');
     
-    console.log('🔄 Attempting connection pool reset...');
+    // console.log('🔄 Attempting connection pool reset...');
     
     // Close current pool
     if (db.pool && db.pool.end) {
       await db.pool.end();
-      console.log('✅ Connection pool closed');
+      // console.log('✅ Connection pool closed');
     }
     
     // Reinitialize database connection
@@ -1636,7 +1607,7 @@ app.get('/debug/reset-connections', async (req, res) => {
       message: 'Connection pool reset successfully'
     });
   } catch (error) {
-    console.error('Connection reset failed:', error);
+    // console.error('Connection reset failed:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -1694,16 +1665,16 @@ const PORT = process.env.PORT || 3000;
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+  // console.error('Uncaught Exception:', error);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   
   // Don't exit during tests - just log the error
   if (process.env.NODE_ENV === 'test') {
-    console.log('Unhandled rejection in test environment - continuing...');
+    // console.log('Unhandled rejection in test environment - continuing...');
   } else {
     process.exit(1);
   }

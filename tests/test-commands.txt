@@ -228,3 +228,8 @@ npx jest tests/integration/ --verbose --testTimeout=30000
 
 # Run specific test
 npx jest tests/unit/models/ --verbose
+
+
+
+to check the time inside the heroku app, use the following command:
+https://petwell-a1271a0b47f3.herokuapp.com/debug/current-time

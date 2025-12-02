@@ -1250,7 +1250,294 @@ html {
 }
 
 
+/* ===== FIX FOR 990px - 1490px RANGE ===== */
+@media (min-width: 992px) and (max-width: 1490px) {
+  .navbar-modern .container-fluid {
+    padding: 0 1rem !important;
+    flex-wrap: wrap !important;
+  }
+  
+  /* Ensure the navigation collapse area doesn't overflow */
+  .navbar-collapse-modern {
+    flex-basis: 100% !important;
+    order: 3 !important;
+    margin-top: 0.5rem !important;
+    padding: 0.5rem 0 !important;
+    border-top: 1px solid var(--glass-border);
+  }
+  
+  /* Stack desktop header icons above the nav */
+  .header-icons-desktop {
+    order: 2 !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    justify-content: flex-end !important;
+    padding: 0.5rem 0 !important;
+  }
+  
+  /* Adjust navbar nav for medium screens */
+  .navbar-nav-modern {
+    flex-wrap: wrap !important;
+    gap: 0.1rem !important;
+  }
+  
+  .nav-link-modern {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Make dropdown menus fit better on medium screens */
+  .navbar-nav-modern .dropdown-menu {
+    width: 200px !important;
+    min-width: unset !important;
+  }
+}
 
+/* ===== SPECIFIC FIX FOR 1200px - 1490px ===== */
+@media (min-width: 1200px) and (max-width: 1490px) {
+  .navbar-modern .container-fluid {
+    padding: 0 1.5rem !important;
+  }
+  
+  .navbar-nav-modern {
+    gap: 0.25rem !important;
+  }
+  
+  .nav-link-modern {
+    padding: 0.6rem 0.9rem !important;
+    font-size: 0.92rem !important;
+  }
+}
+
+/* ===== FIX FOR 992px - 1199px (TABLET-LIKE DESKTOP) ===== */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .navbar-modern .container-fluid {
+    padding: 0 0.75rem !important;
+  }
+  
+  /* Compact the layout */
+  .navbar-brand-modern {
+    font-size: 1.3rem !important;
+  }
+  
+  .navbar-brand-modern i {
+    font-size: 1.6rem !important;
+  }
+  
+  /* Reduce spacing between nav items */
+  .nav-link-modern {
+    padding: 0.4rem 0.6rem !important;
+    margin: 0 0.05rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Adjust profile section */
+  .header-icons-desktop .profile-modern {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .header-icons-desktop .profile-modern span {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Make icon buttons slightly smaller */
+  .header-icons-desktop .theme-toggle-modern,
+  .header-icons-desktop .notification-bell {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .user-avatar-modern {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* ===== ENSURE PROPER LAYOUT AT 992px BREAKPOINT ===== */
+@media (min-width: 992px) {
+  /* Make sure mobile elements are hidden */
+  .navbar-toggler-modern,
+  .header-icons-mobile {
+    display: none !important;
+  }
+  
+  /* Ensure desktop elements are visible */
+  .header-icons-desktop {
+    display: flex !important;
+  }
+  
+  /* Reset the mobile menu styles that might be interfering */
+  .navbar-collapse-modern {
+    position: static !important;
+    transform: none !important;
+    height: auto !important;
+    width: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  
+  .navbar-nav-modern {
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+  
+  .nav-item-modern {
+    margin: 0 !important;
+  }
+  
+  .nav-link-modern {
+    border-bottom: none !important;
+    border-radius: var(--border-radius-sm) !important;
+    padding: 0.7rem 1rem !important;
+    background: transparent !important;
+  }
+  
+  .nav-link-modern.active {
+    border-left: none !important;
+  }
+  
+  .nav-link-modern.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+  }
+}
+
+/* ===== CRITICAL FIX FOR CONTAINER LAYOUT ===== */
+@media (min-width: 992px) {
+  .navbar-modern .container-fluid {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+  }
+  
+  /* Main navigation should take available space */
+  .navbar-collapse-modern {
+    flex: 1 1 auto !important;
+    order: 1 !important;
+    margin-top: 0 !important;
+    border-top: none !important;
+  }
+  
+  /* Desktop icons should be at the end */
+  .header-icons-desktop {
+    order: 2 !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
+    padding: 0 !important;
+  }
+  
+  /* Brand should be at the start */
+  .navbar-brand-modern {
+    order: 0 !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ===== OVERRIDE CONFLICTING STYLES ===== */
+/* Remove any conflicting styles from other media queries */
+@media (min-width: 992px) {
+  body.mobile-menu-open {
+    overflow: visible !important;
+  }
+  
+  .navbar-modern .navbar-collapse-modern:not(.show) {
+    display: flex !important;
+  }
+}
+
+/* ===== ADDITIONAL RESPONSIVE FIXES ===== */
+@media (max-width: 1400px) and (min-width: 992px) {
+  /* Adjust container padding */
+  .navbar-modern .container-fluid {
+    padding: 0 1rem !important;
+  }
+  
+  /* Reduce spacing in navigation */
+  .navbar-nav-modern {
+    gap: 0.1rem !important;
+  }
+  
+  .nav-link-modern {
+    padding: 0.6rem 0.8rem !important;
+  }
+  
+  /* Compact dropdowns */
+  .navbar-nav-modern .dropdown-menu {
+    width: 180px !important;
+  }
+  
+  /* Compact profile section */
+  .header-icons-desktop .profile-modern span {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ===== FALLBACK FOR EXTREMELY NARROW DESKTOP ===== */
+@media (min-width: 992px) and (max-width: 1100px) {
+  /* Hide some less important text on very narrow desktop */
+  .header-icons-desktop .profile-modern span {
+    display: none;
+  }
+  
+  .header-icons-desktop .profile-modern {
+    padding: 0.5rem !important;
+    justify-content: center !important;
+  }
+  
+  /* Reduce nav item padding */
+  .nav-link-modern {
+    padding: 0.5rem 0.6rem !important;
+  }
+  
+  /* Hide text in nav items, show only icons */
+  .nav-link-modern span:not(.bi) {
+    font-size: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  .nav-link-modern .bi {
+    margin-right: 0 !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .nav-link-modern.dropdown-toggle::after {
+    margin-left: 0 !important;
+  }
+}
+
+/* ===== PRINT MEDIA FIX (optional) ===== */
+@media print {
+  .navbar-modern {
+    position: static !important;
+    box-shadow: none !important;
+  }
+}
 
 </style>
 </head>

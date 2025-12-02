@@ -20,35 +20,39 @@ const validationRules = {
     return description.length <= 500;
   },
 
+// In taskModel.js - update validateStartTime function
 validateStartTime: (startTime) => {
-    if (!startTime) return false;
-    
-    console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
-    
-    // Parse the datetime-local input (client local time)
-    const selectedDate = new Date(startTime);
-    const now = new Date();
-    
-    // Convert both to UTC for comparison
-    const selectedUTC = selectedDate.toISOString();
-    const nowUTC = now.toISOString();
-    
-    console.log('🔍 [MODEL VALIDATION] UTC comparison:', {
-      selectedLocal: selectedDate.toString(),
-      selectedUTC: selectedUTC,
-      nowLocal: now.toString(),
-      nowUTC: nowUTC,
-      differenceMinutes: (new Date(selectedUTC).getTime() - new Date(nowUTC).getTime()) / (1000 * 60)
-    });
-    
-    // Use 10 minute buffer (600000 ms) for timezone/server differences
-    const bufferMilliseconds = 10 * 60 * 1000; // 10 minutes
-    const isValid = new Date(selectedUTC).getTime() > (new Date(nowUTC).getTime() - bufferMilliseconds);
-    
-    console.log('🔍 [MODEL VALIDATION] Result:', isValid);
-    
-    return isValid;
-  },
+  if (!startTime) return false;
+  
+  console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
+  
+  // Parse the datetime-local input (assume it's in client's local time)
+  const selectedDate = new Date(startTime);
+  
+  // Get current time
+  const now = new Date();
+  
+  // Debug info
+  console.log('🔍 [MODEL VALIDATION] Time comparison:', {
+    input: startTime,
+    selectedDate: selectedDate.toString(),
+    selectedISO: selectedDate.toISOString(),
+    now: now.toString(),
+    nowISO: now.toISOString(),
+    differenceMs: selectedDate.getTime() - now.getTime(),
+    differenceMinutes: (selectedDate.getTime() - now.getTime()) / (1000 * 60)
+  });
+  
+  // Add buffer for timezone/server differences (15 minutes)
+  const bufferMilliseconds = 15 * 60 * 1000;
+  
+  // Compare directly - datetime-local is already in local time
+  const isValid = selectedDate.getTime() > (now.getTime() - bufferMilliseconds);
+  
+  console.log('🔍 [MODEL VALIDATION] Result:', isValid);
+  
+  return isValid;
+},
 
   validateEndTime: (endTime, startTime) => {
     if (!endTime || !startTime) return false;

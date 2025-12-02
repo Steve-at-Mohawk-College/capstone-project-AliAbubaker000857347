@@ -528,7 +528,7 @@ router.get('/email/status', requireAuth, async (req, res) => {
       email: user.email
     });
   } catch (error) {
-    console.error('Email status error:', error);
+    // console.error('Email status error:', error);
     res.status(500).json({
       success: false,
       error: 'Error checking email status'
@@ -553,8 +553,8 @@ router.get('/email/status', requireAuth, async (req, res) => {
 // DELETE /profile/picture - Remove profile picture (Updated for Cloudinary)
 router.delete('/picture', requireAuth, async (req, res) => {
   try {
-    console.log("➡️ DELETE /profile/picture called");
-    console.log("Session userId:", req.session.userId);
+    // console.log("➡️ DELETE /profile/picture called");
+    // console.log("Session userId:", req.session.userId);
 
     // Set profile picture to null in database
     await updateUserProfilePicture(req.session.userId, null);
@@ -567,7 +567,7 @@ router.delete('/picture', requireAuth, async (req, res) => {
       message: 'Profile picture removed successfully'
     });
   } catch (error) {
-    console.error('Delete error:', error);
+    // console.error('Delete error:', error);
     res.status(500).json({ error: 'Error removing profile picture' });
   }
 });

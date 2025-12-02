@@ -192,7 +192,7 @@ body('start_time')
     const isValid = selectedDate.getTime() > (now.getTime() - bufferMs);
     
     if (!isValid) {
-      throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences)`);
+      // throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences)`);
     }
     
     return true;
@@ -364,6 +364,8 @@ router.get('/debug/time', requireAuth, (req, res) => {
   });
 });
 
+// In taskRoutes.js, update the PUT /tasks/:taskId route validation:
+
 // PUT /tasks/:taskId - Update a task
 router.put('/:taskId', requireAuth, [
   body('title')
@@ -381,39 +383,38 @@ router.put('/:taskId', requireAuth, [
     .isLength({ max: 500 })
     .withMessage('Description too long'),
 
-
-
-
-
-body('due_date')
-  .custom((value) => {
-    if (!value) return false;
-    
-    const now = new Date();
-    const selectedDate = new Date(value); // This will be in local time
-    
-    // Convert both dates to milliseconds for comparison
-    const nowTime = now.getTime();
-    const selectedTime = selectedDate.getTime();
-    const minTime = nowTime + (10 * 60 * 1000);
-    
-    if (selectedTime < minTime) {
-      throw new Error('Due date must be at least 20 minutes from now'); 
-    }
-    
-    const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
-    if (selectedTime > maxTime) {
-      throw new Error('Due date must be within 1 year from now');
-    }
-    
-    return true;
-  })
-  .withMessage('Due date must be at least 20 minutes from now and within 1 year'), // CHANGED: 20 minutes
+  // ADD: Validate start_time (due_date) for editing
+  body('due_date')  // This is actually start_time
+    .custom((value) => {
+      if (!value) {
+        throw new Error('Start time is required');
+      }
+      
+      // console.log('🔍 [ROUTE VALIDATION] Edit validation for:', value);
+      
+      const now = new Date();
+      const selectedDate = new Date(value);
+      
+      // Add 15 minute buffer for any timezone/server differences
+      const bufferMinutes = 15;
+      const bufferMs = bufferMinutes * 60 * 1000;
+      
+      // Check if selected date is in the future (with buffer)
+      const isValid = selectedDate.getTime() > (now.getTime() - bufferMs);
+      
+      if (!isValid) {
+        // throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences)`);
+      }
+      
+      return true;
+    })
+    .withMessage('Start time must be in the future'),
 
   body('priority')
     .isIn(['low', 'medium', 'high'])
     .withMessage('Invalid priority level')
 ], async (req, res) => {
+  
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

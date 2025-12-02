@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
           this.value = this.value === 'admin' ? 'regular' : 'admin';
         }
       } catch (error) {
-        console.error('Error:', error);
+        // console.error('Error:', error);
         showToast('Error updating role', 'error');
         // Revert the selection
         this.value = this.value === 'admin' ? 'regular' : 'admin';
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Error deleting user: ' + result.error, 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       showToast('Error deleting user', 'error');
     }
   }
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Error updating username: ' + result.error, 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       showToast('Error updating username', 'error');
     } finally {
       buttonElement.innerHTML = originalText;
@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Error updating bio: ' + result.error, 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       showToast('Error updating bio', 'error');
     } finally {
       buttonElement.innerHTML = originalText;
@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Error approving bio: ' + result.error, 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       showToast('Error approving bio', 'error');
     } finally {
       buttonElement.innerHTML = originalText;

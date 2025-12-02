@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Error approving bio: ' + result.error, 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       showToast('Error approving bio', 'error');
     } finally {
       buttonElement.innerHTML = originalText;
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Error updating bio: ' + result.error, 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       showToast('Error updating bio', 'error');
     } finally {
       buttonElement.innerHTML = originalText;

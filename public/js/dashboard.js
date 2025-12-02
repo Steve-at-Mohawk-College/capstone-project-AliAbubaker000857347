@@ -96,18 +96,18 @@ class DashboardManager {
                         window.location.reload();
                     }, 1500);
                 } else {
-                    console.error('Delete failed:', response.status);
+                    // console.error('Delete failed:', response.status);
                     this.showAlert('Error removing item. Please try again.', 'danger');
                     this.resetRemoveButton(removeBtn, originalText);
                 }
             })
             .catch(error => {
-                console.error('Fetch error:', error);
+                // console.error('Fetch error:', error);
                 this.showAlert('Error removing item. Please try again.', 'danger');
                 this.resetRemoveButton(removeBtn, originalText);
             });
         } else {
-            console.error('Missing itemType or itemId');
+            // console.error('Missing itemType or itemId');
         }
     }
 
@@ -295,7 +295,7 @@ class DashboardManager {
             throw new Error(data.error || 'Unknown error from server');
         }
     } catch (error) {
-        console.error('❌ Error updating pet:', error);
+        // console.error('❌ Error updating pet:', error);
         this.showAlert('Error updating pet details: ' + error.message, 'danger');
     } finally {
         this.setButtonLoading(buttonElement, false);
@@ -357,7 +357,7 @@ class DashboardManager {
                 throw new Error(data.error || 'Unknown error');
             }
         } catch (error) {
-            console.error('Error:', error);
+            // console.error('Error:', error);
             this.showAlert('Error updating task details', 'danger');
         } finally {
             this.setButtonLoading(buttonElement, false);
@@ -394,7 +394,7 @@ class DashboardManager {
             ageElement.textContent = ageDisplay;
             // console.log('✅ Updated age display:', ageDisplay);
         } else {
-            console.warn('⚠️ Age display element not found for pet ID:', petId);
+            // console.warn('⚠️ Age display element not found for pet ID:', petId);
         }
         
         // Update weight display - check if element exists first
@@ -403,11 +403,11 @@ class DashboardManager {
             weightElement.textContent = newWeight + ' kg';
             // console.log('✅ Updated weight display:', newWeight + ' kg');
         } else {
-            console.warn('⚠️ Weight display element not found for pet ID:', petId);
+            // console.warn('⚠️ Weight display element not found for pet ID:', petId);
         }
         
     } catch (error) {
-        console.error('❌ Error updating pet display:', error);
+        // console.error('❌ Error updating pet display:', error);
         // Don't throw the error, just log it
     }
 }
@@ -422,7 +422,7 @@ class DashboardManager {
                          document.querySelector(`.task-item[data-task-id="${taskId}"]`);
         
         if (!taskElement) {
-            console.warn('❌ Task element not found for ID:', taskId);
+            // console.warn('❌ Task element not found for ID:', taskId);
             return;
         }
 
@@ -488,7 +488,7 @@ class DashboardManager {
         // console.log('✅ Task display updated successfully');
 
     } catch (error) {
-        console.error('❌ Error updating task display:', error);
+        // console.error('❌ Error updating task display:', error);
         // Don't throw the error, just log it and continue
     }
 }

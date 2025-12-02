@@ -41,7 +41,7 @@ class CalendarManager {
 renderCalendar() {
    const calendarElement = document.getElementById('calendarDaysGrid'); // Changed this line
     if (!calendarElement) {
-        console.error('❌ Calendar days grid element not found');
+        // console.error('❌ Calendar days grid element not found');
         return;
     }
 
@@ -161,7 +161,7 @@ formatDateForComparison(date) {
 getTasksForDate(dateString) {
     // Ensure this.tasks is always an array before using filter
     if (!Array.isArray(this.tasks)) {
-        console.warn('⚠️ this.tasks is not an array:', this.tasks);
+        // console.warn('⚠️ this.tasks is not an array:', this.tasks);
         return [];
     }
     
@@ -174,7 +174,7 @@ getTasksForDate(dateString) {
             const taskDateStr = taskDate.toISOString().split('T')[0];
             return taskDateStr === dateString;
         } catch (error) {
-            console.error('❌ Error parsing task date:', error, task);
+            // console.error('❌ Error parsing task date:', error, task);
             return false;
         }
     });

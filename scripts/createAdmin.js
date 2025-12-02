@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 async function createAdminUser() {
   try {
-    console.log('Setting up admin user...');
+    // console.log('Setting up admin user...');
     
     // Generate a secure random username to avoid conflicts
     const adminUsername = 'admin_' + crypto.randomBytes(3).toString('hex');
@@ -70,7 +70,7 @@ async function createAdminUser() {
     // console.log('\n✅ Admin setup completed successfully!');
     process.exit(0);
   } catch (error) {
-    console.error('Error creating admin user:', error.message);
+    // console.error('Error creating admin user:', error.message);
     
     if (error.code === 'ER_NO_SUCH_TABLE') {
       // console.log('\n💡 Please run the SQL setup queries first to create the required tables.');

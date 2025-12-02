@@ -57,10 +57,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await res.json();
       allBreeds = data.map(b => b.name);
     } else {
-      console.warn('Dog API returned an error.');
+      // console.warn('Dog API returned an error.');
     }
   } catch (err) {
-    console.warn('Dog API not available:', err);
+    // console.warn('Dog API not available:', err);
   }
 
   // Breed autocomplete

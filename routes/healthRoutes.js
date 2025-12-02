@@ -218,12 +218,14 @@ router.post('/:recordId', requireAuth, async (req, res) => {
         const record = await getHealthRecordById(recordId);
         
         return res.status(400).render('edit-health-record', {
-          title: 'Edit Health Record',
-          fieldErrors,
-          body: req.body,
-          pets: pets,
-          record: record
-        });
+  title: 'Edit Health Record',
+  fieldErrors,
+  body: req.body,
+  pets: pets,
+  record: record,
+  profilePicture: req.session.profilePicture || null, 
+  username: req.session.username || 'User' 
+});
       }
       
       // Update the health record
@@ -254,15 +256,16 @@ router.post('/:recordId', requireAuth, async (req, res) => {
     const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
     const record = await getHealthRecordById(req.params.recordId);
     
-    res.status(500).render('edit-health-record', {
-      title: 'Edit Health Record',
-      error: 'Error updating health record: ' + error.message,
-      body: req.body,
-      pets: pets,
-      record: record
-    });
-  }
+   res.status(500).render('edit-health-record', {
+  title: 'Edit Health Record',
+  error: 'Error updating health record: ' + error.message,
+  body: req.body,
+  pets: pets,
+  record: record,
+  profilePicture: req.session.profilePicture || null, // Add this line
+  username: req.session.username || 'User' // Add this line
 });
+  }});
 
 
 
@@ -356,6 +359,7 @@ router.get('/records', requireAuth, async (req, res) => {
 
 
 // GET /health/edit/:recordId - Edit health record form
+// In healthRoute.js - UPDATE the GET /health/edit/:recordId route
 router.get('/edit/:recordId', requireAuth, async (req, res) => {
   try {
     const recordId = req.params.recordId;
@@ -387,16 +391,22 @@ router.get('/edit/:recordId', requireAuth, async (req, res) => {
     // Get all user's pets for the dropdown
     const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
     
+    // IMPORTANT: Get the user's profile picture from session or database
+    const profilePicture = req.session.profilePicture || null;
+    const username = req.session.username || 'User';
+    
     res.render('edit-health-record', {
       title: 'Edit Health Record',
       record: record,
       pets: pets,
       body: null,
-      fieldErrors: {}
+      fieldErrors: {},
+      profilePicture: profilePicture, // Add this line
+      username: username // Add this line if needed
     });
     
   } catch (error) {
-    // console.error('Edit health record form error:', error);
+    console.error('Edit health record form error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading edit form.',

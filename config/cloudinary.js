@@ -9,6 +9,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// For gallery images - use consistent transformations
 const uploadToCloudinary = (buffer, folder, filename) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -17,15 +18,19 @@ const uploadToCloudinary = (buffer, folder, filename) => {
         public_id: filename,
         resource_type: 'image',
         transformation: [
-          { width: 1200, height: 800, crop: 'limit', quality: 'auto' }
+          { 
+            width: 1200, 
+            height: 800, 
+            crop: 'fill',  // Changed from 'limit' to 'fill'
+            gravity: 'auto', // Automatically focus on important parts
+            quality: 'auto:good' // Better quality compression
+          }
         ]
       },
       (error, result) => {
         if (error) {
-          // console.error('Cloudinary upload error:', error);
           reject(error);
         } else {
-          // console.log('Cloudinary upload success:', result.secure_url);
           resolve(result);
         }
       }
@@ -37,13 +42,11 @@ const uploadToCloudinary = (buffer, folder, filename) => {
   });
 };
 
+// For profile pictures
 const uploadProfileToCloudinary = (buffer, filename) => {
   return new Promise((resolve, reject) => {
-    // Add more unique identifiers to prevent conflicts
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const finalFilename = `profile-${filename}-${uniqueSuffix}`;
-    
-    // console.log('📁 Uploading profile picture with filename:', finalFilename);
     
     const uploadStream = cloudinary.uploader.upload_stream(
       {
@@ -51,16 +54,19 @@ const uploadProfileToCloudinary = (buffer, filename) => {
         public_id: finalFilename,
         resource_type: 'image',
         transformation: [
-          { width: 400, height: 400, crop: 'thumb', gravity: 'face', quality: 'auto' }
+          { 
+            width: 400, 
+            height: 400, 
+            crop: 'fill',  // Changed from 'thumb' to 'fill'
+            gravity: 'face', // Focus on face if detected
+            quality: 'auto:good'
+          }
         ]
       },
       (error, result) => {
         if (error) {
-          // console.error('❌ Cloudinary profile upload error:', error);
           reject(error);
         } else {
-          // console.log('✅ Cloudinary profile upload success for user:', filename);
-          // console.log('✅ Cloudinary URL:', result.secure_url);
           resolve(result);
         }
       }

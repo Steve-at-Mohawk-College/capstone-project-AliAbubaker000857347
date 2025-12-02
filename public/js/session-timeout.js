@@ -148,12 +148,12 @@ class SessionTimeout {
                 // console.log('Session extended');
                 this.resetTimers();
             } else {
-                console.error('Failed to extend session');
+                // console.error('Failed to extend session');
                 this.logout();
             }
         })
         .catch(error => {
-            console.error('Error extending session:', error);
+            // console.error('Error extending session:', error);
             this.logout();
         });
     }

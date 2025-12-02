@@ -20,7 +20,7 @@ class NotificationWorker {
       try {
         await notificationService.checkDueTasks();
       } catch (error) {
-        console.error('Error in task check interval:', error);
+        // console.error('Error in task check interval:', error);
       }
     }, 60 * 1000); // Every minute
 
@@ -33,7 +33,7 @@ class NotificationWorker {
           await notificationService.checkTomorrowTasks();
         }
       } catch (error) {
-        console.error('Error in digest interval:', error);
+        // console.error('Error in digest interval:', error);
       }
     }, 60 * 60 * 1000); // Every hour
 

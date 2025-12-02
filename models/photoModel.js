@@ -67,7 +67,7 @@ const photoModel = {
             
             return photos;
         } catch (error) {
-            console.error('Error in getPublicPhotos:', error);
+            // console.error('Error in getPublicPhotos:', error);
             throw error;
         }
     },
@@ -580,7 +580,7 @@ async getPublicPhotos(page = 1, limit = 12, filters = {}, sortBy = 'newest') {
         
         return photos;
     } catch (error) {
-        console.error('Error in getPublicPhotos:', error);
+        // console.error('Error in getPublicPhotos:', error);
         throw error;
     }
 },

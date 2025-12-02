@@ -2,7 +2,7 @@ const { query } = require('../config/database');
 
 async function setupNotifications() {
   try {
-    console.log('🔄 Setting up notification system...');
+    // console.log('🔄 Setting up notification system...');
     
     // Create notifications table
     await query(`
@@ -20,15 +20,15 @@ async function setupNotifications() {
         INDEX idx_created_at (created_at)
       )
     `);
-    console.log('✅ Notifications table created/verified');
+    // console.log('✅ Notifications table created/verified');
     
     // Add notification_sent column to tasks table if it doesn't exist
     try {
       await query('ALTER TABLE tasks ADD COLUMN notification_sent BOOLEAN DEFAULT FALSE');
-      console.log('✅ Added notification_sent column to tasks');
+      // console.log('✅ Added notification_sent column to tasks');
     } catch (error) {
       if (error.code === 'ER_DUP_FIELDNAME') {
-        console.log('✅ notification_sent column already exists');
+        // console.log('✅ notification_sent column already exists');
       } else {
         throw error;
       }
@@ -37,18 +37,18 @@ async function setupNotifications() {
     // Add index if it doesn't exist
     try {
       await query('CREATE INDEX idx_notification_sent ON tasks (notification_sent)');
-      console.log('✅ Added notification_sent index');
+      // console.log('✅ Added notification_sent index');
     } catch (error) {
       if (error.code === 'ER_DUP_KEYNAME') {
-        console.log('✅ notification_sent index already exists');
+        // console.log('✅ notification_sent index already exists');
       } else {
         throw error;
       }
     }
     
-    console.log('🎉 Notification system setup completed!');
+    // console.log('🎉 Notification system setup completed!');
   } catch (error) {
-    console.error('❌ Notification setup failed:', error);
+    // console.error('❌ Notification setup failed:', error);
     throw error;
   }
 }

@@ -507,6 +507,69 @@
             background-color: #6ea8fe;
             border-color: #6ea8fe;
         }
+        /* Update the image container to maintain aspect ratio */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 240px; /* Or your desired height */
+  overflow: hidden;
+}
+
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This is key - maintains aspect ratio while filling container */
+  object-position: center; /* Centers the image */
+  transition: transform 0.5s ease;
+}
+
+/* For the detail view in photo-detail.ejs */
+.photo-image-wrapper {
+  text-align: center;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.photo-detail-image {
+  max-height: 600px;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Show entire image without cropping */
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Dark theme support */
+[data-bs-theme="dark"] .photo-image-wrapper {
+  background: #1a1d21;
+}
+
+/* Loading states */
+.photo-image.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+[data-bs-theme="dark"] .photo-image.loading {
+  background: linear-gradient(90deg, #2d2d2d 25%, #3d3d3d 50%, #2d2d2d 75%);
+}
+
+.photo-image.error {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
     </style>
 </head>
 <body>
@@ -714,7 +777,7 @@
         <% } %>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
     <script>
         async function toggleFavorite(photoId, button) {
             try {
@@ -747,10 +810,12 @@
                     }
                 }
             } catch (error) {
-                console.error('Favorite error:', error);
+                // console.error('Favorite error:', error);
                 alert('Error updating favorite');
             }
         }
     </script>
+    <%- include('../partials/footer') %>
 </body>
 </html>
+

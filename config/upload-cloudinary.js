@@ -72,7 +72,7 @@ async function handleCloudinaryUpload(req, res, next, isMultiple) {
     
     next();
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
+    // console.error('Cloudinary upload error:', error);
     next(error);
   }
 }
@@ -89,7 +89,7 @@ const uploadProfile = [upload.single('profilePicture'), async (req, res, next) =
     req.cloudinaryResult = result;
     next();
   } catch (error) {
-    console.error('Cloudinary profile upload error:', error);
+    // console.error('Cloudinary profile upload error:', error);
     next(error);
   }
 }];

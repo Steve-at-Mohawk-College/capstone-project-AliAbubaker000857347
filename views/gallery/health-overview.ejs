@@ -463,6 +463,48 @@
                 display: none !important;
             }
         }
+        /* Update the image container to maintain aspect ratio */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 240px; /* Or your desired height */
+  overflow: hidden;
+}
+
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This is key - maintains aspect ratio while filling container */
+  object-position: center; /* Centers the image */
+  transition: transform 0.5s ease;
+}
+
+/* For the detail view in photo-detail.ejs */
+.photo-image-wrapper {
+  text-align: center;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.photo-detail-image {
+  max-height: 600px;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Show entire image without cropping */
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Dark theme support */
+[data-bs-theme="dark"] .photo-image-wrapper {
+  background: #1a1d21;
+}
     </style>
 </head>
 <body>
@@ -625,7 +667,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
     
     <script>
         // Theme detection and enhancement
@@ -657,5 +699,6 @@
             document.body.appendChild(printBtn);
         });
     </script>
+    <%- include('../partials/footer') %>
 </body>
 </html>

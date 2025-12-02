@@ -38,10 +38,10 @@ async function sendVerificationEmail(email, token, username = 'User', linkOverri
     };
 
     await sgMail.send(msg);
-    console.log(`✅ Email sent to ${email} from em3996.pet-care.live`);
+    // console.log(`✅ Email sent to ${email} from em3996.pet-care.live`);
     return true;
   } catch (error) {
-    console.error('❌ Email sending failed:', error.response?.body || error.message);
+    // console.error('❌ Email sending failed:', error.response?.body || error.message);
     return false;
   }
 }

@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Start time must be in the future (with 15 minute buffer)
     const bufferMs = 15 * 60 * 1000;
     if (startDate.getTime() <= (now.getTime() - bufferMs)) {
-      startTimeInput.setCustomValidity('Start time must be in the future (allowing 15 minutes for timezone differences)');
+      // startTimeInput.setCustomValidity('Start time must be in the future (allowing 15 minutes for timezone differences)');
       startTimeInput.classList.add('is-invalid');
       return false;
     }

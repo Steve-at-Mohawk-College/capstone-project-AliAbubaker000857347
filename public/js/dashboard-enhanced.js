@@ -280,77 +280,6 @@ class EnhancedDashboard {
         }
     }
 
-  async saveTaskEdit(taskId, buttonElement) {
-    // console.log('💾 Saving task edit for:', taskId);
-    
-    const titleInput = document.getElementById(`edit-task-title-${taskId}`);
-    const descriptionInput = document.getElementById(`edit-task-description-${taskId}`);
-    const dueDateInput = document.getElementById(`edit-task-due-date-${taskId}`);
-    const prioritySelect = document.getElementById(`edit-task-priority-${taskId}`);
-    
-    // Add null checks for inputs
-    if (!titleInput || !dueDateInput || !prioritySelect) {
-        this.showAlert('Error: Form elements not found', 'danger');
-        return;
-    }
-    
-    const newTitle = titleInput.value.trim();
-    const newDescription = descriptionInput ? descriptionInput.value.trim() : '';
-    const newDueDate = dueDateInput.value;
-    const newPriority = prioritySelect.value;
-    
-    // Validation
-    if (!newTitle) {
-        this.showAlert('Title is required', 'danger');
-        return;
-    }
-    
-    if (!newDueDate) {
-        this.showAlert('Due date is required', 'danger');
-        return;
-    }
-    
-    const dueDate = new Date(newDueDate);
-    const now = new Date();
-    
-    if (dueDate < now) {
-        this.showAlert('Due date cannot be in the past', 'danger');
-        return;
-    }
-    
-    // Show loading state
-    this.setButtonLoading(buttonElement, true);
-    
-    try {
-        const response = await fetch(`/tasks/${taskId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: newTitle,
-                description: newDescription,
-                due_date: newDueDate,
-                priority: newPriority
-            })
-        });
-        
-        // console.log('📥 Response status:', response.status);
-        const data = await response.json();
-        // console.log('📦 Response data:', data);
-        
-        if (response.ok && data.ok) {
-            this.updateTaskDisplay(taskId, newTitle, newDescription, newDueDate, newPriority);
-            this.hideTaskEditForm(taskId);
-            this.showAlert('Task updated successfully!', 'success');
-        } else {
-            throw new Error(data.error || 'Unknown error from server');
-        }
-    } catch (error) {
-        // console.error('❌ Error updating task:', error);
-        this.showAlert('Error updating task: ' + error.message, 'danger');
-    } finally {
-        this.setButtonLoading(buttonElement, false);
-    }
-}
 
     updatePetDisplay(petId, newAge, newWeight) {
         // console.log('🔄 Updating pet display for pet ID:', petId);
@@ -385,108 +314,7 @@ class EnhancedDashboard {
         }
     }
 
-    updateTaskDisplay(taskId, newTitle, newDescription, newDueDate, newPriority) {
-    // console.log('🔄 Updating task display for task:', taskId);
-    
-    try {
-        // Find the task element - use a more specific selector
-        let taskElement = document.querySelector(`.task-item-dark[data-task-id="${taskId}"]`) ||
-                         document.querySelector(`.task-item-dark:has(button[data-task-id="${taskId}"])`) ||
-                         document.querySelector(`.task-item-dark:has(.edit-task-btn[data-task-id="${taskId}"])`);
-        
-        if (!taskElement) {
-            // console.warn('❌ Task element not found for ID:', taskId);
-            // console.log('🔍 Available task elements:');
-            document.querySelectorAll('.task-item-dark').forEach((task, index) => {
-                const taskIdAttr = task.getAttribute('data-task-id');
-                console.log(`Task ${index + 1}: data-task-id="${taskIdAttr}"`);
-            });
-            return;
-        }
-
-        // console.log('✅ Found task element:', taskElement);
-
-        // Update title
-        const titleElement = taskElement.querySelector('.task-title-dark');
-        if (titleElement) {
-            titleElement.textContent = newTitle;
-            // console.log('✅ Updated title:', newTitle);
-        } else {
-            // console.warn('❌ Title element not found');
-        }
-
-        // Update priority badge - fix the class names
-        const priorityBadge = taskElement.querySelector('.badge-dark');
-        if (priorityBadge) {
-            // Remove all existing priority classes
-            priorityBadge.className = 'badge-dark me-2'; // Reset to base classes
-            
-            // Add correct priority class based on the new priority
-            const priorityClassMap = {
-                'high': 'badge-danger',
-                'medium': 'badge-warning', 
-                'low': 'badge-success'
-            };
-            
-            const newPriorityClass = priorityClassMap[newPriority];
-            if (newPriorityClass) {
-                priorityBadge.classList.add(newPriorityClass);
-            }
-            
-            priorityBadge.textContent = newPriority;
-            // console.log('✅ Updated priority:', newPriority);
-        } else {
-            // console.warn('❌ Priority badge not found');
-        }
-
-        // Update due date
-        const dueDateSpan = taskElement.querySelector('.due-date');
-        if (dueDateSpan) {
-            const formattedDate = new Date(newDueDate).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            dueDateSpan.textContent = formattedDate;
-            // Also update the data attribute if it exists
-            dueDateSpan.setAttribute('data-due-date', newDueDate);
-            // console.log('✅ Updated due date:', formattedDate);
-        } else {
-            // console.warn('❌ Due date span not found');
-        }
-
-        // Update description if it exists
-        if (newDescription) {
-            let descriptionElement = taskElement.querySelector('.task-description');
-            if (!descriptionElement) {
-                // If description element doesn't exist, create it
-                const taskDetails = taskElement.querySelector('.task-details-dark');
-                if (taskDetails) {
-                    descriptionElement = document.createElement('small');
-                    descriptionElement.className = 'task-description text-muted d-block mt-1';
-                    taskDetails.appendChild(descriptionElement);
-                }
-            }
-            if (descriptionElement) {
-                descriptionElement.textContent = newDescription;
-                // console.log('✅ Updated description');
-            }
-        } else {
-            // Remove description if it was cleared
-            const descriptionElement = taskElement.querySelector('.task-description');
-            if (descriptionElement) {
-                descriptionElement.remove();
-            }
-        }
-
-        // console.log('✅ Task display updated successfully');
-
-    } catch (error) {
-        // console.error('❌ Error updating task display:', error);
-    }
-}
+  
 
     handleRemoveClick(button) {
         this.itemType = button.getAttribute('data-type');
@@ -501,6 +329,310 @@ class EnhancedDashboard {
         const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
         modal.show();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // In dashboard-enhanced.js, update the saveTaskEdit function:
+
+async saveTaskEdit(taskId, buttonElement) {
+  // console.log('💾 Saving task edit for task ID:', taskId);
+  
+  // Get form elements
+  const titleInput = document.getElementById(`edit-task-title-${taskId}`);
+  const descriptionInput = document.getElementById(`edit-task-description-${taskId}`);
+  const startTimeInput = document.getElementById(`edit-task-start-time-${taskId}`); // Changed from due_date
+  const prioritySelect = document.getElementById(`edit-task-priority-${taskId}`);
+  
+  // Validate form elements exist
+  if (!titleInput || !startTimeInput || !prioritySelect) {
+    this.showAlert('Error: Form elements not found', 'danger');
+    return;
+  }
+  
+  // Get values
+  const newTitle = titleInput.value.trim();
+  const newDescription = descriptionInput ? descriptionInput.value.trim() : '';
+  const newStartTime = startTimeInput.value; // Changed from due_date
+  const newPriority = prioritySelect.value;
+  
+  // Basic validation
+  if (!newTitle) {
+    this.showAlert('Title is required', 'danger');
+    return;
+  }
+  
+  if (!newStartTime) {
+    this.showAlert('Start time is required', 'danger');
+    return;
+  }
+  
+  // ADD VALIDATION: Start time must be in the future
+  const selectedDate = new Date(newStartTime);
+  const now = new Date();
+  
+  // Add 15 minute buffer for any timezone/server differences
+  const bufferMinutes = 15;
+  const bufferMs = bufferMinutes * 60 * 1000;
+  
+  // Check if selected date is in the future (with buffer)
+  if (selectedDate.getTime() <= (now.getTime() - bufferMs)) {
+    // this.showAlert(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences)`, 'danger');
+    
+    // Show feedback on the input field
+    startTimeInput.classList.add('is-invalid');
+    const feedback = document.getElementById(`start-time-feedback-${taskId}`);
+    if (feedback) {
+      feedback.style.display = 'block';
+    }
+    return;
+  }
+  
+  // Show loading state
+  this.setButtonLoading(buttonElement, true);
+  
+  try {
+    // console.log('📤 Sending task update to server...');
+    // console.log('📝 Task data:', { 
+    //   taskId, 
+    //   title: newTitle, 
+    //   start_time: newStartTime, // Changed from due_date
+    //   priority: newPriority 
+    // });
+    
+    const response = await fetch(`/tasks/${taskId}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        title: newTitle,
+        description: newDescription,
+        due_date: newStartTime, // Using start_time as due_date
+        priority: newPriority
+      })
+    });
+    
+
+        
+        // console.log('📥 Response status:', response.status);
+        const data = await response.json();
+        // console.log('📦 Response data:', data);
+        
+     if (response.ok && data.ok) {
+    // Success - update UI immediately
+    this.showAlert('Task updated successfully!', 'success');
+    
+    // Hide the edit form
+    this.hideTaskEditForm(taskId);
+    
+    // Update the UI with the new data - using newStartTime (which is the due_date)
+    this.updateTaskDisplay(taskId, newTitle, newDescription, newStartTime, newPriority);
+    
+    // Optional: Fetch fresh data from server to ensure consistency
+    // You can enable this if you want to double-check with server
+    // await this.verifyTaskWithServer(taskId, newTitle, newDescription, newStartTime, newPriority);
+    
+    // Refresh notifications immediately
+    this.refreshNotificationSystem();
+    
+} else {
+    // Server returned an error
+    const errorMsg = data.error || `Server error: ${response.status}`;
+    throw new Error(errorMsg);
+}
+        
+    } catch (error) {
+        // console.error('❌ Error updating task:', error);
+        
+        let errorMessage = 'Error updating task. Please try again.';
+        
+        // Handle specific error cases
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+            errorMessage = 'Network error. Please check your connection.';
+        } else if (error.message.includes('validation')) {
+            errorMessage = 'Validation error: ' + error.message;
+        } else if (error.message.includes('permission') || error.message.includes('access')) {
+            errorMessage = 'You do not have permission to edit this task.';
+        } else {
+            errorMessage = error.message || errorMessage;
+        }
+        
+        this.showAlert(errorMessage, 'danger');
+        
+        // Keep the edit form open so user can fix the issue
+        // Don't hide it on error
+        
+    } finally {
+        // Always reset button state
+        this.setButtonLoading(buttonElement, false);
+    }
+}
+
+
+
+
+refreshNotificationSystem() {
+    // Trigger notification check
+    if (typeof window.notificationWorker !== 'undefined') {
+        window.notificationWorker.checkNow();
+    }
+    
+    // Update notification badge if exists
+    this.updateNotificationBadge();
+}
+
+async updateNotificationBadge() {
+    try {
+        const response = await fetch('/notifications/unread-count');
+        if (response.ok) {
+            const data = await response.json();
+            const badge = document.querySelector('.notification-count');
+            if (badge && data.count > 0) {
+                badge.textContent = data.count;
+                badge.style.display = 'inline-block';
+            } else if (badge) {
+                badge.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        // console.error('Error updating notification badge:', error);
+    }
+}
+
+// Also update your updateTaskDisplay method to ensure it updates the task-details correctly:
+updateTaskDisplay(taskId, newTitle, newDescription, newDueDate, newPriority) {
+    // console.log('🔄 Updating task display for task:', taskId);
+    
+    try {
+        // Find the task element
+        let taskElement = document.querySelector(`.task-item[data-id="${taskId}"]`) ||
+                         document.querySelector(`.task-item-dark[data-task-id="${taskId}"]`) ||
+                         document.querySelector(`.task-item:has(button[data-task-id="${taskId}"])`);
+        
+        if (!taskElement) {
+            // console.warn('❌ Task element not found for ID:', taskId);
+            return;
+        }
+
+        // console.log('✅ Found task element:', taskElement);
+
+        // Update data attributes for detail view
+        taskElement.setAttribute('data-due-date', newDueDate);
+        taskElement.setAttribute('data-priority', newPriority);
+        
+        // Update title
+        const titleElement = taskElement.querySelector('.task-title, .task-title-dark');
+        if (titleElement) {
+            titleElement.textContent = newTitle;
+        }
+
+        // Update priority badge
+        const priorityBadge = taskElement.querySelector('.badge, .badge-dark');
+        if (priorityBadge) {
+            // Reset classes
+            priorityBadge.className = 'badge me-2';
+            
+            // Add appropriate class
+            const priorityClasses = {
+                'high': 'badge-danger',
+                'medium': 'badge-warning',
+                'low': 'badge-success'
+            };
+            
+            if (priorityClasses[newPriority]) {
+                priorityBadge.classList.add(priorityClasses[newPriority]);
+            }
+            
+            priorityBadge.textContent = newPriority.charAt(0).toUpperCase() + newPriority.slice(1);
+        }
+
+        // Update due date in the display
+        const dueDateSpan = taskElement.querySelector('.due-date');
+        if (dueDateSpan) {
+            try {
+                const formattedDate = new Date(newDueDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                dueDateSpan.textContent = formattedDate;
+                
+                // Update data attribute
+                dueDateSpan.setAttribute('data-due-date', newDueDate);
+            } catch (dateError) {
+                dueDateSpan.textContent = newDueDate;
+            }
+        }
+
+        // Update task details section - THIS IS CRITICAL
+        const taskDetails = taskElement.querySelector('.task-details, .task-details-dark');
+        if (taskDetails) {
+            // Extract pet name from existing details or use data attribute
+            let petName = 'Unknown';
+            
+            // Try to get pet name from the existing HTML
+            const currentText = taskDetails.textContent;
+            const forIndex = currentText.indexOf('For:');
+            const petEndIndex = currentText.indexOf('•');
+            
+            if (forIndex !== -1 && petEndIndex !== -1) {
+                petName = currentText.substring(forIndex + 4, petEndIndex).trim();
+            }
+            
+            // Format the new date
+            const formattedDate = new Date(newDueDate).toLocaleString();
+            
+            // Update the text content - this is what the detail view reads
+            taskDetails.textContent = `For: ${petName} • Starts: ${formattedDate}`;
+            
+            // Update description
+            if (newDescription) {
+                let descriptionElement = taskElement.querySelector('.task-description');
+                if (!descriptionElement) {
+                    descriptionElement = document.createElement('small');
+                    descriptionElement.className = 'task-description text-muted d-block mt-1';
+                    // Insert after task-details
+                    taskDetails.parentNode.insertBefore(descriptionElement, taskDetails.nextSibling);
+                }
+                descriptionElement.textContent = newDescription;
+            } else {
+                const descriptionElement = taskElement.querySelector('.task-description');
+                if (descriptionElement) {
+                    descriptionElement.remove();
+                }
+            }
+        }
+
+        // console.log('✅ Task display updated successfully');
+        
+        // Force a style update to ensure changes are visible
+        taskElement.style.display = 'none';
+        taskElement.offsetHeight; // Trigger reflow
+        taskElement.style.display = 'flex';
+
+    } catch (error) {
+        // console.error('❌ Error updating task display:', error);
+    }
+}
 
     handleRemoveConfirmation() {
         // console.log('Confirm remove button clicked');

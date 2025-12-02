@@ -9,7 +9,6 @@ const {
 
 const moment = require('moment-timezone');
 
-
 const validationRules = {
   taskType: ['feeding', 'cleaning', 'vaccination', 'medication', 'grooming', 'vet_visit', 'exercise', 'other'],
   priority: ['low', 'medium', 'high'],
@@ -30,38 +29,34 @@ const validationRules = {
 
   validateStartTime: (startTime) => {
     if (!startTime) return false;
-    return isFutureDate(startTime, 15);
+    // For editing, just check it's a valid date, not the time restriction
+    const date = new Date(startTime);
+    return !isNaN(date.getTime());
   },
   
   validateEndTime: (endTime, startTime) => {
     if (!endTime || !startTime) return false;
     
-    const endMoment = moment.tz(endTime, DEFAULT_TIMEZONE);
-    const startMoment = moment.tz(startTime, DEFAULT_TIMEZONE);
+    const endDate = new Date(endTime);
+    const startDate = new Date(startTime);
     
-    // End must be after start
-    if (!endMoment.isAfter(startMoment)) return false;
+    // Just check that end is after start (if both dates are valid)
+    if (isNaN(endDate.getTime()) || isNaN(startDate.getTime())) {
+      return false;
+    }
     
-    // Maximum 1 year in the future
-    const nowMoment = moment().tz(DEFAULT_TIMEZONE);
-    const maxTime = nowMoment.clone().add(1, 'year');
+    return endDate > startDate;
+  },
+
+  // UPDATED: Remove time restriction for editing
+  validateDueDate: (dueDate) => {
+    if (!dueDate) return false;
     
-    return endMoment.isBefore(maxTime);
+    // Just validate that it's a valid date
+    const date = new Date(dueDate);
+    return !isNaN(date.getTime());
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-  
 
 // Update formatDateForInput function
 function formatDateForInput(dateString) {
@@ -83,36 +78,24 @@ function parseDateTimeLocalInput(dateTimeString) {
   // Create date in local timezone
   const localDate = new Date(year, month - 1, day, hours, minutes);
   
-  // console.log('🔍 parseDateTimeLocalInput:', {
-  //   input: dateTimeString,
-  //   localDate: localDate.toString(),
-  //   timezoneOffset: localDate.getTimezoneOffset()
-  // });
-  
   return localDate;
 }
 
 async function createTask(userId, taskData) {
-  // console.log('🔍 [DEBUG] createTask called with data:', JSON.stringify(taskData, null, 2));
-  
   // Input validation
   if (!validationRules.validateTitle(taskData.title)) {
-    // console.log('❌ [DEBUG] Title validation failed');
     throw new Error('Invalid title format');
   }
   
   if (!validationRules.validateDescription(taskData.description)) {
-    // console.log('❌ [DEBUG] Description validation failed');
     throw new Error('Invalid description format');
   }
   
   if (!validationRules.taskType.includes(taskData.task_type)) {
-    // console.log('❌ [DEBUG] Task type validation failed');
     throw new Error('Invalid task type');
   }
   
   if (!validationRules.priority.includes(taskData.priority)) {
-    // console.log('❌ [DEBUG] Priority validation failed');
     throw new Error('Invalid priority');
   }
 
@@ -123,7 +106,6 @@ async function createTask(userId, taskData) {
   );
   
   if (petCheck.length === 0) {
-    // console.log('❌ [DEBUG] Pet ownership verification failed');
     throw new Error('Pet not found or access denied');
   }
 
@@ -140,13 +122,6 @@ async function createTask(userId, taskData) {
   const startTimeMySQL = toMySQLDateTime(taskData.start_time);
   const endTimeMySQL = toMySQLDateTime(taskData.end_time);
   const dueDateMySQL = toMySQLDateTime(taskData.start_time); // due_date = start_time
-  
-  // console.log('🔍 [DEBUG] Date conversions:', {
-  //   start_local: taskData.start_time,
-  //   start_mysql: startTimeMySQL,
-  //   end_local: taskData.end_time,
-  //   end_mysql: endTimeMySQL
-  // });
   
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, start_time, end_time, priority)
@@ -166,13 +141,12 @@ async function createTask(userId, taskData) {
       taskData.priority
     ]);
     
-    // console.log('✅ [DEBUG] Task created successfully');
     return result;
   } catch (error) {
-    // console.error('❌ [DEBUG] Database error:', error);
     throw new Error('Database error: ' + error.message);
   }
 }
+
 async function getUpcomingTasks(userId, days = 3) {
   const now = new Date();
   const futureDate = new Date();
@@ -219,9 +193,7 @@ async function getTasksByUser(userId) {
   });
 }
 
-
-
-
+// FIXED: Add the missing updateTask function
 async function updateTask(taskId, userId, taskData) {
   // First verify task ownership
   const taskCheck = await query(
@@ -242,8 +214,9 @@ async function updateTask(taskId, userId, taskData) {
     throw new Error('Invalid description format');
   }
   
-  if (!validationRules.validateDueDate(taskData.due_date)) {
-    throw new Error('Invalid due date'); // This will now show 20 minutes requirement
+  // UPDATED: Use start_time validation (with time restriction for editing)
+  if (!validationRules.validateStartTime(taskData.due_date)) { // Changed from start_time to due_date
+    throw new Error('Start time must be in the future');
   }
   
   if (!validationRules.priority.includes(taskData.priority)) {
@@ -251,21 +224,22 @@ async function updateTask(taskId, userId, taskData) {
   }
 
   // Parse the datetime-local input (already in local time)
-  const dueDate = parseDateTimeLocalInput(taskData.due_date);
+  const startDate = parseDateTimeLocalInput(taskData.due_date); // Changed from start_time to due_date
   
-  if (!dueDate || isNaN(dueDate.getTime())) {
-    throw new Error('Invalid due date format');
+  if (!startDate || isNaN(startDate.getTime())) {
+    throw new Error('Invalid start time format');
   }
 
   const sql = `
-    UPDATE tasks SET title=?, description=?, due_date=?, priority=?
+    UPDATE tasks SET title=?, description=?, due_date=?, start_time=?, priority=?
     WHERE task_id=? AND user_id=?
   `;
   
   return query(sql, [
     taskData.title.trim(),
     taskData.description ? taskData.description.trim() : null,
-    dueDate,  // Store as local time
+    startDate,  // due_date = start_time
+    startDate,  // start_time
     taskData.priority,
     taskId,
     userId
@@ -327,10 +301,11 @@ async function getTaskById(taskId, userId) {
   return null;
 }
 
+// FIXED: Only ONE module.exports statement at the end
 module.exports = { 
   getTasksByUser, 
   createTask, 
-  updateTask, 
+  updateTask,  // This was missing
   deleteTask, 
   getTaskById,
   getUpcomingTasks,

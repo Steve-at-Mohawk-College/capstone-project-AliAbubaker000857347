@@ -794,6 +794,219 @@ body {
   outline: none;
 }
 
+/* Fix mobile padding for very small screens */
+@media (max-width: 400px) {
+  .profile-container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  .container-fluid.profile-container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Ensure content inside has consistent padding */
+  .card-custom {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  /* Fix the row gutters on mobile */
+  .row.g-4 {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+  
+  .col-xxl-10 {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
+@media (max-width: 300px) {
+  .profile-container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  .container-fluid.profile-container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Ensure content inside has consistent padding */
+  .card-custom {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  /* Fix the row gutters on mobile */
+  .row.g-4 {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+  
+  .col-xxl-10 {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
+@media (max-width: 200px) {
+  .profile-container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  .container-fluid.profile-container {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Ensure content inside has consistent padding */
+  .card-custom {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  
+  /* Fix the row gutters on mobile */
+  .row.g-4 {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+  
+  .col-xxl-10 {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
+
+
+/* Fix for ultra-small mobile screens (less than 360px) */
+@media (max-width: 359.98px) {
+  /* Reset all container padding */
+  body > .container-fluid.profile-container,
+  .container-fluid.profile-container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Fix the inner grid structure */
+  .container-fluid.profile-container > .row.justify-content-center {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+  
+  /* Fix the main content column */
+  .col-xxl-10 {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Remove negative margins from rows */
+  .row.g-4 {
+    margin-left: -4px !important;
+    margin-right: -4px !important;
+  }
+  
+  /* Fix column padding for ultra-small screens */
+  .row.g-4 > div {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  /* Fix profile header */
+  .profile-header {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+    padding: 1rem 12px !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Reduce card padding */
+  .card-custom {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .card-body {
+    padding: 1rem !important;
+  }
+  
+  /* Fix form elements */
+  .form-control-modern,
+  .bio-textarea {
+    padding: 0.5rem 0.6rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Reduce button padding */
+  .btn-modern {
+    padding: 0.5rem 0.8rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  /* Fix settings items layout */
+  .settings-item .row.align-items-center {
+    margin-left: -4px !important;
+    margin-right: -4px !important;
+  }
+  
+  .settings-item .col-md-4,
+  .settings-item .col-md-8 {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  /* Ensure all text fits */
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 90% !important;
+  }
+  
+  /* Fix email display */
+  .current-email-display,
+  .pending-email-display {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0.5rem !important;
+  }
+  
+  .email-actions {
+    align-self: flex-start !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  /* Fix responsive text */
+  .text-truncate {
+    max-width: 100% !important;
+  }
+  
+  /* Remove any min-width constraints */
+  *[style*="min-width"] {
+    min-width: auto !important;
+  }
+}
 </style>
 
 <div class="container-fluid profile-container">

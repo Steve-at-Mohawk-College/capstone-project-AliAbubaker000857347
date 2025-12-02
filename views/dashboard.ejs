@@ -1471,6 +1471,142 @@ input[type="number"], input[type="date"], input[type="text"], select {
     background: transparent !important;
     color: transparent !important;
 }
+/* In dashboard.ejs CSS - Replace or add these styles */
+
+/* Fix body and container padding */
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important; /* Prevent horizontal scrolling */
+  width: 100vw !important;
+  max-width: 100% !important;
+}
+
+/* Fix dashboard container */
+.dashboard-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* Fix container-fluid */
+.container-fluid {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 1rem !important;
+  box-sizing: border-box !important;
+}
+
+/* Remove any right space issue */
+.dashboard-header,
+.filter-section,
+.section-card,
+.stats-grid {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+/* Fix content grid spacing */
+.content-grid {
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  gap: 1.5rem;
+}
+
+/* In header.ejs CSS - Fix mobile header visibility */
+@media (max-width: 991.98px) {
+  .header-icons-mobile {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 1050 !important;
+  }
+  
+  .header-icons-mobile .notification-bell {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-toggler-modern {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* In header.ejs CSS - Fix for 992px-1490px range */
+@media (min-width: 992px) and (max-width: 1490px) {
+  .navbar-modern .container-fluid {
+    padding: 0 1rem !important;
+    flex-wrap: nowrap !important; /* Changed from wrap to nowrap */
+    justify-content: space-between !important;
+  }
+  
+  /* Ensure nav items don't wrap */
+  .navbar-collapse-modern {
+    flex: 1 !important;
+    order: 1 !important;
+    margin-top: 0 !important;
+    border-top: none !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+  
+  /* Keep header icons in place */
+  .header-icons-desktop {
+    order: 2 !important;
+    margin-left: auto !important;
+    width: auto !important;
+    padding: 0 !important;
+  }
+  
+  /* Adjust nav items for medium screens */
+  .navbar-nav-modern {
+    flex-wrap: nowrap !important;
+    gap: 0.25rem !important;
+    overflow-x: auto !important;
+    padding: 0.5rem 0 !important;
+  }
+  
+  .nav-link-modern {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Quick fix for dashboard spacing - add to dashboard.ejs */
+* {
+  box-sizing: border-box !important;
+}
+
+html, body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+main {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.col-lg-8, .col-lg-4 {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
 
 </style>
 
@@ -1843,49 +1979,83 @@ input[type="number"], input[type="date"], input[type="text"], select {
               </div>
             </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <!-- Edit Form for Task -->
-            <div id="edit-task-form-<%= task.task_id %>" class="edit-task-form" style="display: none;">
-              <div class="edit-form-content p-3 rounded border">
-                <h4 class="mb-3">Edit Task</h4>
-                <form class="row g-2">
-                  <div class="col-12">
-                    <label for="edit-task-title-<%= task.task_id %>" class="form-label small">Title</label> 
-                    <input type="text" class="form-control form-control-sm" 
-                           id="edit-task-title-<%= task.task_id %>" value="<%= task.title %>">
-                  </div>
-                  <div class="col-12">
-                     <label for="edit-task-description-<%= task.task_id %>" class="form-label small">Description</label> 
-                    <textarea class="form-control form-control-sm" 
-                              id="edit-task-description-<%= task.task_id %>" rows="2"><%= task.description %></textarea>
-                  </div>
-                  <div class="col-md-6">
-                     <label for="edit-task-due-date-<%= task.task_id %>" class="form-label small">Due Date</label> 
-                    <input type="datetime-local" class="form-control form-control-sm" 
-       id="edit-task-due-date-<%= task.task_id %>" 
-       value="<%= task.due_date %>">
-                  </div>
-                  <div class="col-md-6">
-                    <label for="edit-task-priority-<%= task.task_id %>" class="form-label small">Priority</label>
-                    <select class="form-select form-select-sm" 
-                            id="edit-task-priority-<%= task.task_id %>">
-                      <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
-                      <option value="medium" <%= task.priority === 'medium' ? 'selected' : '' %>>Medium</option>
-                      <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
-                    </select>
-                  </div>
-                  <div class="col-12 mt-2">
-                    <button type="button" class="btn btn-success btn-sm save-task-edit-btn" 
-                            data-task-id="<%= task.task_id %>">
-                      <i class="bi bi-check"></i> Save
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm cancel-task-edit-btn" 
-                            data-task-id="<%= task.task_id %>">
-                      <i class="bi bi-x"></i> Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
+            <!-- In dashboard.ejs, find the edit task form section -->
+<!-- Update the Due Date field to be Start Time field with validation -->
+
+<div class="edit-task-form" id="edit-task-form-<%= task.task_id %>" style="display: none;">
+  <div class="edit-form-content p-3 rounded border">
+    <h4 class="mb-3">Edit Task</h4>
+    <form class="row g-2">
+      <div class="col-12">
+        <label for="edit-task-title-<%= task.task_id %>" class="form-label small">Title</label> 
+        <input type="text" class="form-control form-control-sm" 
+               id="edit-task-title-<%= task.task_id %>" value="<%= task.title %>">
+      </div>
+      <div class="col-12">
+        <label for="edit-task-description-<%= task.task_id %>" class="form-label small">Description</label> 
+        <textarea class="form-control form-control-sm" 
+                  id="edit-task-description-<%= task.task_id %>" rows="2"><%= task.description %></textarea>
+      </div>
+      
+      <!-- CHANGE: Update Due Date to Start Time with datetime-local and validation -->
+      <div class="col-md-6">
+        <label for="edit-task-start-time-<%= task.task_id %>" class="form-label small">Start Time *</label> 
+        <input type="datetime-local" class="form-control form-control-sm" 
+               id="edit-task-start-time-<%= task.task_id %>" 
+               name="start_time"
+               value="<%= task.due_date %>" 
+               required>
+        <div class="invalid-feedback" id="start-time-feedback-<%= task.task_id %>">
+          Start time must be in the future.
+        </div>
+      </div>
+      
+      <!-- Optional: Add End Time field if needed -->
+      <div class="col-md-6">
+        <label for="edit-task-priority-<%= task.task_id %>" class="form-label small">Priority</label>
+        <select class="form-select form-select-sm" 
+                id="edit-task-priority-<%= task.task_id %>">
+          <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
+          <option value="medium" <%= task.priority === 'medium' ? 'selected' : '' %>>Medium</option>
+          <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
+        </select>
+      </div>
+      
+      <div class="col-12 mt-2">
+        <button type="button" class="btn btn-success btn-sm save-task-edit-btn" 
+                data-task-id="<%= task.task_id %>">
+          <i class="bi bi-check"></i> Save
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm cancel-task-edit-btn" 
+                data-task-id="<%= task.task_id %>">
+          <i class="bi bi-x"></i> Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
           <% }); %>
 
 

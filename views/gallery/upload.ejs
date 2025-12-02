@@ -1,464 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/theme.css">
     <style>
-    .upload-area {
-        border: 2px dashed #dee2e6;
-        border-radius: 10px;
-        padding: 3rem;
-        text-align: center;
-        transition: all 0.3s;
-        background: #f8f9fa;
-    }
-    .upload-area:hover {
-        border-color: #0d6efd;
-        background: #e7f1ff;
-    }
-    .upload-area.dragover {
-        border-color: #0d6efd;
-        background: #e7f1ff;
-    }
-    .preview-image {
-        max-width: 100%;
-        max-height: 300px;
-        border-radius: 8px;
-        display: none;
-    }
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
 
-    /* FIXED: Improved contrast for light theme */
-    .form-label {
-        color: #212529 !important;
-        font-weight: 600;
-    }
-    
-    .form-label.fw-bold {
-        color: #212529 !important;
-    }
+        .upload-area:hover {
+            border-color: #0d6efd;
+            background: #e7f1ff;
+        }
 
-    /* FIXED: Dark theme support with better contrast */
-    [data-theme="dark"] .upload-area {
-        border-color: #6c757d;
-        background: #343a40;
-    }
-    [data-theme="dark"] .upload-area:hover {
-        border-color: #0d6efd;
-        background: #1a365d;
-    }
-    [data-theme="dark"] .upload-area.dragover {
-        border-color: #0d6efd;
-        background: #1a365d;
-    }
-    
-    /* FIXED: Better text contrast in dark theme */
-    [data-theme="dark"] .upload-area h4 {
-        color: #f8f9fa !important;
-    }
-    [data-theme="dark"] .upload-area p {
-        color: #e9ecef !important;
-    }
-    [data-theme="dark"] .upload-area .text-muted {
-        color: #adb5bd !important;
-    }
-    [data-theme="dark"] .upload-area .bi-cloud-arrow-up {
-        color: #adb5bd !important;
-    }
-    
-    /* FIXED: Form labels contrast in dark theme */
-    [data-theme="dark"] .form-label {
-        color: #f8f9fa !important;
-    }
-    
-    [data-theme="dark"] .form-label.fw-bold {
-        color: #f8f9fa !important;
-    }
-    
-    [data-theme="dark"] .form-text {
-        color: #adb5bd !important;
-    }
-    
-    /* FIXED: Card text contrast */
-    [data-theme="dark"] .card-header h2 {
-        color: #f8f9fa !important;
-    }
-    
-    [data-theme="dark"] .card-body {
-        color: #e9ecef !important;
-    }
-    
-    /* FIXED: Alert text contrast */
-    [data-theme="dark"] .alert-info {
-        background-color: #03254c;
-        border-color: #0d6efd;
-        color: #e9ecef !important;
-    }
-    
-    [data-theme="dark"] .alert-danger {
-        background-color: #4a0c0c;
-        border-color: #dc3545;
-        color: #f8d7da !important;
-    }
-    /* ===== FIX MOBILE HEADING POSITION ===== */
-.container.mt-4 {
-    margin-top: 2rem !important;
-}
+        .upload-area.dragover {
+            border-color: #0d6efd;
+            background: #e7f1ff;
+        }
 
-/* For smaller mobile devices */
-@media (max-width: 576px) {
-    .container.mt-4 {
-        margin-top: 5rem !important;
-    }
-    
-    .card-header {
-        padding-top: 1.5rem !important;
-    }
-    
-    h1.card-title.h4.mb-0 {
-        margin-top: 0.5rem !important;
-    }
-}
-</style>
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        /* FIXED: Improved contrast for light theme */
+        .form-label {
+            color: #212529 !important;
+            font-weight: 600;
+        }
+
+        .form-label.fw-bold {
+            color: #212529 !important;
+        }
+
+        /* FIXED: Dark theme support with better contrast */
+        [data-theme="dark"] .upload-area {
+            border-color: #6c757d;
+            background: #343a40;
+        }
+
+        [data-theme="dark"] .upload-area:hover {
+            border-color: #0d6efd;
+            background: #1a365d;
+        }
+
+        [data-theme="dark"] .upload-area.dragover {
+            border-color: #0d6efd;
+            background: #1a365d;
+        }
+
+        /* FIXED: Better text contrast in dark theme */
+        [data-theme="dark"] .upload-area h4 {
+            color: #f8f9fa !important;
+        }
+
+        [data-theme="dark"] .upload-area p {
+            color: #e9ecef !important;
+        }
+
+        [data-theme="dark"] .upload-area .text-muted {
+            color: #adb5bd !important;
+        }
+
+        [data-theme="dark"] .upload-area .bi-cloud-arrow-up {
+            color: #adb5bd !important;
+        }
+
+        /* FIXED: Form labels contrast in dark theme */
+        [data-theme="dark"] .form-label {
+            color: #f8f9fa !important;
+        }
+
+        [data-theme="dark"] .form-label.fw-bold {
+            color: #f8f9fa !important;
+        }
+
+        [data-theme="dark"] .form-text {
+            color: #adb5bd !important;
+        }
+
+        /* FIXED: Card text contrast */
+        [data-theme="dark"] .card-header h2 {
+            color: #f8f9fa !important;
+        }
+
+        [data-theme="dark"] .card-body {
+            color: #e9ecef !important;
+        }
+
+        /* FIXED: Alert text contrast */
+        [data-theme="dark"] .alert-info {
+            background-color: #03254c;
+            border-color: #0d6efd;
+            color: #e9ecef !important;
+        }
+
+        [data-theme="dark"] .alert-danger {
+            background-color: #4a0c0c;
+            border-color: #dc3545;
+            color: #f8d7da !important;
+        }
+
+        /* ===== FIX MOBILE HEADING POSITION ===== */
+        .container.mt-4 {
+            margin-top: 2rem !important;
+        }
+
+        /* For smaller mobile devices */
+        @media (max-width: 576px) {
+            .container.mt-4 {
+                margin-top: 5rem !important;
+            }
+
+            .card-header {
+                padding-top: 1.5rem !important;
+            }
+
+            h1.card-title.h4.mb-0 {
+                margin-top: 0.5rem !important;
+            }
+        }
+
+        /* Update the image container to maintain aspect ratio */
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            /* Or your desired height */
+            overflow: hidden;
+        }
+
+        .photo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* This is key - maintains aspect ratio while filling container */
+            object-position: center;
+            /* Centers the image */
+            transition: transform 0.5s ease;
+        }
+
+        /* For the detail view in photo-detail.ejs */
+        .photo-image-wrapper {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .photo-detail-image {
+            max-height: 600px;
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            /* Show entire image without cropping */
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Dark theme support */
+        [data-bs-theme="dark"] .photo-image-wrapper {
+            background: #1a1d21;
+        }
+    </style>
 </head>
+
 <body>
     <%- include('../partials/header') %>
-    
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h1 class="card-title h4 mb-0"> <!-- FIXED: Changed from h2 to h1 for proper heading structure -->
-                            <i class="bi bi-cloud-upload"></i> Upload Photo
-                        </h1>
-                    </div>
-                    <div class="card-body">
-                        <% if (error) { %>
-                            <div class="alert alert-danger">
-                                <i class="bi bi-exclamation-triangle"></i> <%= error %>
-                            </div>
-                        <% } %>
 
-                        <form id="uploadForm" action="/gallery/upload" method="POST" enctype="multipart/form-data">
-                            <!-- Photo Upload -->
-                            <div class="mb-4">
-                                <% if (isAdmin) { %>
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle"></i> 
-                                    <strong>Admin Mode:</strong> You can upload multiple photos at once. 
-                                    Select multiple files using Ctrl+Click or Cmd+Click.
-                                </div>
-                                <% } else { %>
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle"></i> 
-                                    You can upload one photo at a time.
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h1 class="card-title h4 mb-0">
+                                <!-- FIXED: Changed from h2 to h1 for proper heading structure -->
+                                <i class="bi bi-cloud-upload"></i> Upload Photo
+                            </h1>
+                        </div>
+                        <div class="card-body">
+                            <% if (error) { %>
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <%= error %>
                                 </div>
                                 <% } %>
-                                
-                                <!-- FIXED: Added proper label association -->
-                                <label for="photoInput" class="form-label fw-bold">
-                                    <% if (isAdmin) { %>Select Photos *<% } else { %>Select Photo *<% } %>
-                                </label>
-                                
-                                <div class="upload-area" id="uploadArea">
-                                    <i class="bi bi-cloud-arrow-up display-4 text-muted mb-3"></i>
-                                    <!-- FIXED: Changed from h5 to h4 for proper heading structure -->
-                                    <h4 class="h5"> <!-- Using h4 with h5 styling for semantic correctness -->
-                                        <% if (isAdmin) { %>Drag & Drop your photos here<% } else { %>Drag & Drop your photo here<% } %>
-                                    </h4>
-                                    <p class="text-muted">or click to browse</p>
-                                    <!-- FIXED: Added aria-label for better accessibility -->
-                                    <input type="file" 
-                                           name="photos" 
-                                           id="photoInput" 
-                                           accept="image/*" 
-                                           class="d-none" 
-                                           <%= isAdmin ? 'multiple' : '' %> 
-                                           required
-                                           aria-label="<% if (isAdmin) { %>Select photos to upload<% } else { %>Select photo to upload<% } %>">
-                                    <button type="button" class="btn btn-primary mt-2" id="chooseFileBtn">
-    <% if (isAdmin) { %>Choose Files<% } else { %>Choose File<% } %>
-</button>
-                                </div>
-                                <div class="mt-3 text-center" id="previewContainer">
-                                    <!-- Preview will be dynamically added here -->
-                                </div>
-                                <div class="form-text">
-                                    Supported formats: JPG, PNG, GIF. Max size: 5MB per file
-                                    <% if (isAdmin) { %>- You can select up to 10 files at once<% } %>
-                                </div>
-                            </div>
 
-                            <!-- Photo Details -->
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="title" name="title" 
-                                       value="<%= formData.title || '' %>" 
-                                       placeholder="Give your photo a title...">
-                            </div>
+                                    <form id="uploadForm" action="/gallery/upload" method="POST"
+                                        enctype="multipart/form-data">
+                                        <!-- Photo Upload -->
+                                        <div class="mb-4">
+                                            <% if (isAdmin) { %>
+                                                <div class="alert alert-info">
+                                                    <i class="bi bi-info-circle"></i>
+                                                    <strong>Admin Mode:</strong> You can upload multiple photos at once.
+                                                    Select multiple files using Ctrl+Click or Cmd+Click.
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="alert alert-info">
+                                                        <i class="bi bi-info-circle"></i>
+                                                        You can upload one photo at a time.
+                                                    </div>
+                                                    <% } %>
 
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" 
-                                          rows="3" placeholder="Describe your photo..."><%= formData.description || '' %></textarea>
-                            </div>
+                                                        <!-- FIXED: Added proper label association -->
+                                                        <label for="photoInput" class="form-label fw-bold">
+                                                            <% if (isAdmin) { %>Select Photos *<% } else { %>Select
+                                                                    Photo *<% } %>
+                                                        </label>
 
-                            <!-- Pet Selection -->
-                            <div class="mb-3">
-                                <label for="pet_id" class="form-label">Associated Pet (Optional)</label>
-                                <select class="form-select" id="pet_id" name="pet_id">
-                                    <option value="">No specific pet</option>
-                                    <% pets.forEach(pet => { %>
-                                        <option value="<%= pet.pet_id %>" 
-                                                <%= (formData.pet_id == pet.pet_id) ? 'selected' : '' %>>
-                                            <%= pet.name %> (<%= pet.species %>)
-                                        </option>
-                                    <% }); %>
-                                </select>
-                            </div>
+                                                        <div class="upload-area" id="uploadArea">
+                                                            <i
+                                                                class="bi bi-cloud-arrow-up display-4 text-muted mb-3"></i>
+                                                            <!-- FIXED: Changed from h5 to h4 for proper heading structure -->
+                                                            <h4 class="h5">
+                                                                <!-- Using h4 with h5 styling for semantic correctness -->
+                                                                <% if (isAdmin) { %>Drag & Drop your photos here<% }
+                                                                        else { %>Drag & Drop your photo here<% } %>
+                                                            </h4>
+                                                            <p class="text-muted">or click to browse</p>
+                                                            <!-- FIXED: Added aria-label for better accessibility -->
+                                                            <input type="file" name="photos" id="photoInput"
+                                                                accept="image/*" class="d-none" <%=isAdmin ? 'multiple'
+                                                                : '' %>
+                                                            required
+                                                            aria-label="<% if (isAdmin) { %>Select photos to upload<% }
+                                                                    else { %>Select photo to upload<% } %>">
+                                                                        <button type="button"
+                                                                            class="btn btn-primary mt-2"
+                                                                            id="chooseFileBtn">
+                                                                            <% if (isAdmin) { %>Choose Files<% } else {
+                                                                                    %>Choose File<% } %>
+                                                                        </button>
+                                                        </div>
+                                                        <div class="mt-3 text-center" id="previewContainer">
+                                                            <!-- Preview will be dynamically added here -->
+                                                        </div>
+                                                        <div class="form-text">
+                                                            Supported formats: JPG, PNG, GIF. Max size: 5MB per file
+                                                            <% if (isAdmin) { %>- You can select up to 10 files at once
+                                                                <% } %>
+                                                        </div>
+                                        </div>
 
-                            <!-- Tags -->
-                            <div class="mb-3">
-                                <label for="tags" class="form-label">Tags (Optional)</label>
-                                <input type="text" class="form-control" id="tags" name="tags" 
-                                       value="<%= formData.tags || '' %>" 
-                                       placeholder="cute, funny, adventure (separate with commas)">
-                                <div class="form-text">
-                                    Add tags to help others discover your photo
-                                </div>
-                            </div>
+                                        <!-- Photo Details -->
+                                        <div class="mb-3">
+                                            <label for="title" class="form-label">Title</label>
+                                            <input type="text" class="form-control" id="title" name="title"
+                                                value="<%= formData.title || '' %>"
+                                                placeholder="Give your photo a title...">
+                                        </div>
 
-                            <!-- Privacy Settings -->
-                            <div class="mb-4">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="is_public" name="is_public" 
-                                           <%= (formData.is_public === undefined || formData.is_public) ? 'checked' : '' %>>
-                                    <label class="form-check-label fw-bold" for="is_public">
-                                        Make this photo public
-                                    </label>
-                                </div>
-                                <div class="form-text">
-                                    Public photos are visible to everyone in the community gallery
-                                </div>
-                            </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Description</label>
+                                            <textarea class="form-control" id="description" name="description" rows="3"
+                                                placeholder="Describe your photo..."><%= formData.description || '' %></textarea>
+                                        </div>
 
-                            <!-- Submit Buttons -->
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary flex-fill">
-                                    <i class="bi bi-cloud-upload"></i> Upload Photo
-                                </button>
-                                <a href="/gallery" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left"></i> Cancel
-                                </a>
-                            </div>
-                        </form>
+                                        <!-- Pet Selection -->
+                                        <div class="mb-3">
+                                            <label for="pet_id" class="form-label">Associated Pet (Optional)</label>
+                                            <select class="form-select" id="pet_id" name="pet_id">
+                                                <option value="">No specific pet</option>
+                                                <% pets.forEach(pet=> { %>
+                                                    <option value="<%= pet.pet_id %>" <%=(formData.pet_id==pet.pet_id)
+                                                        ? 'selected' : '' %>>
+                                                        <%= pet.name %> (<%= pet.species %>)
+                                                    </option>
+                                                    <% }); %>
+                                            </select>
+                                        </div>
+
+                                        <!-- Tags -->
+                                        <div class="mb-3">
+                                            <label for="tags" class="form-label">Tags (Optional)</label>
+                                            <input type="text" class="form-control" id="tags" name="tags"
+                                                value="<%= formData.tags || '' %>"
+                                                placeholder="cute, funny, adventure (separate with commas)">
+                                            <div class="form-text">
+                                                Add tags to help others discover your photo
+                                            </div>
+                                        </div>
+
+                                        <!-- Privacy Settings -->
+                                        <div class="mb-4">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="is_public"
+                                                    name="is_public" <%=(formData.is_public===undefined ||
+                                                    formData.is_public) ? 'checked' : '' %>>
+                                                <label class="form-check-label fw-bold" for="is_public">
+                                                    Make this photo public
+                                                </label>
+                                            </div>
+                                            <div class="form-text">
+                                                Public photos are visible to everyone in the community gallery
+                                            </div>
+                                        </div>
+
+                                        <!-- Submit Buttons -->
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary flex-fill">
+                                                <i class="bi bi-cloud-upload"></i> Upload Photo
+                                            </button>
+                                            <a href="/gallery" class="btn btn-outline-secondary">
+                                                <i class="bi bi-arrow-left"></i> Cancel
+                                            </a>
+                                        </div>
+                                    </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // File upload preview and drag & drop
-    const uploadArea = document.getElementById('uploadArea');
-    const photoInput = document.getElementById('photoInput');
-    const previewContainer = document.getElementById('previewContainer');
-    const form = document.getElementById('uploadForm');
-    const chooseFileBtn = document.getElementById('chooseFileBtn'); // Get by ID instead
-    const isAdmin = <%= isAdmin %>;
+        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+        <script>
+            // File upload preview and drag & drop
+            const uploadArea = document.getElementById('uploadArea');
+            const photoInput = document.getElementById('photoInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const form = document.getElementById('uploadForm');
+            const chooseFileBtn = document.getElementById('chooseFileBtn'); // Get by ID instead
+            const isAdmin = <%= isAdmin %>;
 
-    // Remove any existing click handlers first
-    uploadArea.onclick = null;
-    if (chooseFileBtn) {
-        chooseFileBtn.onclick = null;
-    }
-
-    // SINGLE CLICK HANDLER FOR UPLOAD AREA (background only)
-    uploadArea.addEventListener('click', function(e) {
-        // Only trigger file input if the click is directly on the upload area 
-        // (not on the button inside it)
-        if (e.target === uploadArea || 
-            e.target.classList.contains('bi-cloud-arrow-up') ||
-            e.target.tagName === 'H4' || 
-            e.target.tagName === 'P') {
-            photoInput.click();
-        }
-    });
-
-    // SINGLE CLICK HANDLER FOR THE CHOOSE FILE BUTTON
-    if (chooseFileBtn) {
-        chooseFileBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent the event from bubbling to uploadArea
-            photoInput.click();
-        }, { once: false }); // Make sure it's not a one-time listener
-    }
-
-    // Drag and drop functionality
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
-    });
-
-    uploadArea.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        photoInput.files = files;
-        handleFiles(files);
-    }
-
-    photoInput.addEventListener('change', function() {
-        handleFiles(this.files);
-    });
-
-    function handleFiles(files) {
-        if (files.length > 0) {
-            // Clear previous previews
-            previewContainer.innerHTML = '';
-            
-            // Validate files
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Validate file type
-                if (!file.type.match('image.*')) {
-                    alert('Please select only image files (JPG, PNG, GIF)');
-                    photoInput.value = '';
-                    previewContainer.innerHTML = '';
-                    return;
-                }
-
-                // Validate file size (5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert(`File "${file.name}" is too large. Max size is 5MB.`);
-                    photoInput.value = '';
-                    previewContainer.innerHTML = '';
-                    return;
-                }
-
-                // For regular users, only allow one file
-                if (!isAdmin && files.length > 1) {
-                    alert('Regular users can only upload one photo at a time. Please select only one file.');
-                    photoInput.value = '';
-                    previewContainer.innerHTML = '';
-                    return;
-                }
-
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.createElement('img');
-                    preview.src = e.target.result;
-                    preview.className = 'preview-image';
-                    preview.style.display = 'block';
-                    preview.style.margin = '5px';
-                    preview.style.maxHeight = '150px';
-                    preview.alt = 'Preview of selected photo';
-                    
-                    if (isAdmin && files.length > 1) {
-                        const fileName = document.createElement('div');
-                        fileName.className = 'small text-muted';
-                        fileName.textContent = file.name;
-                        
-                        const fileContainer = document.createElement('div');
-                        fileContainer.style.display = 'inline-block';
-                        fileContainer.style.margin = '10px';
-                        fileContainer.style.textAlign = 'center';
-                        fileContainer.appendChild(preview);
-                        fileContainer.appendChild(fileName);
-                        
-                        previewContainer.appendChild(fileContainer);
-                    } else {
-                        previewContainer.appendChild(preview);
-                    }
-                };
-                reader.readAsDataURL(file);
+            // Remove any existing click handlers first
+            uploadArea.onclick = null;
+            if (chooseFileBtn) {
+                chooseFileBtn.onclick = null;
             }
-            
-            // Hide upload area when files are selected
-            uploadArea.style.display = 'none';
-            
-            // Show file count for admins
-            if (isAdmin && files.length > 1) {
-                const fileCount = document.createElement('div');
-                fileCount.className = 'alert alert-info mt-2';
-                fileCount.innerHTML = `<i class="bi bi-info-circle"></i> ${files.length} files selected for upload`;
-                previewContainer.appendChild(fileCount);
+
+            // SINGLE CLICK HANDLER FOR UPLOAD AREA (background only)
+            uploadArea.addEventListener('click', function (e) {
+                // Only trigger file input if the click is directly on the upload area 
+                // (not on the button inside it)
+                if (e.target === uploadArea ||
+                    e.target.classList.contains('bi-cloud-arrow-up') ||
+                    e.target.tagName === 'H4' ||
+                    e.target.tagName === 'P') {
+                    photoInput.click();
+                }
+            });
+
+            // SINGLE CLICK HANDLER FOR THE CHOOSE FILE BUTTON
+            if (chooseFileBtn) {
+                chooseFileBtn.addEventListener('click', function (e) {
+                    e.stopPropagation(); // Prevent the event from bubbling to uploadArea
+                    photoInput.click();
+                }, { once: false }); // Make sure it's not a one-time listener
             }
-            
-            // Add change file button
-            addChangeFileButton();
-        }
-    }
 
-    // Form validation
-    form.addEventListener('submit', function(e) {
-        if (!photoInput.files.length) {
-            e.preventDefault();
-            alert('Please select at least one photo to upload');
-            return;
-        }
+            // Drag and drop functionality
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
 
-        const files = photoInput.files;
-        
-        // For regular users, ensure only one file
-        if (!isAdmin && files.length > 1) {
-            e.preventDefault();
-            alert('Regular users can only upload one photo at a time. Please select only one file.');
-            return;
-        }
-
-        // Validate each file
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (file.size > 5 * 1024 * 1024) {
+            function preventDefaults(e) {
                 e.preventDefault();
-                alert(`File "${file.name}" is too large. Max size is 5MB.`);
-                return;
+                e.stopPropagation();
             }
-        }
-    });
 
-    // Add a button to change file
-    function addChangeFileButton() {
-        // Remove existing change file button if it exists
-        const existingBtn = document.querySelector('.change-file-btn');
-        if (existingBtn) {
-            existingBtn.remove();
-        }
-        
-        const changeFileBtn = document.createElement('button');
-        changeFileBtn.type = 'button';
-        changeFileBtn.className = 'btn btn-outline-secondary mt-3 change-file-btn';
-        changeFileBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Choose Different File';
-        changeFileBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            photoInput.value = '';
-            previewContainer.innerHTML = '';
-            uploadArea.style.display = 'block';
-            this.remove(); // Remove this button
-        });
-        
-        previewContainer.appendChild(changeFileBtn);
-    }
-</script>
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+            });
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                photoInput.files = files;
+                handleFiles(files);
+            }
+
+            photoInput.addEventListener('change', function () {
+                handleFiles(this.files);
+            });
+
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    // Clear previous previews
+                    previewContainer.innerHTML = '';
+
+                    // Validate files
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+
+                        // Validate file type
+                        if (!file.type.match('image.*')) {
+                            alert('Please select only image files (JPG, PNG, GIF)');
+                            photoInput.value = '';
+                            previewContainer.innerHTML = '';
+                            return;
+                        }
+
+                        // Validate file size (5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert(`File "${file.name}" is too large. Max size is 5MB.`);
+                            photoInput.value = '';
+                            previewContainer.innerHTML = '';
+                            return;
+                        }
+
+                        // For regular users, only allow one file
+                        if (!isAdmin && files.length > 1) {
+                            alert('Regular users can only upload one photo at a time. Please select only one file.');
+                            photoInput.value = '';
+                            previewContainer.innerHTML = '';
+                            return;
+                        }
+
+                        // Show preview
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const preview = document.createElement('img');
+                            preview.src = e.target.result;
+                            preview.className = 'preview-image';
+                            preview.style.display = 'block';
+                            preview.style.margin = '5px';
+                            preview.style.maxHeight = '150px';
+                            preview.alt = 'Preview of selected photo';
+
+                            if (isAdmin && files.length > 1) {
+                                const fileName = document.createElement('div');
+                                fileName.className = 'small text-muted';
+                                fileName.textContent = file.name;
+
+                                const fileContainer = document.createElement('div');
+                                fileContainer.style.display = 'inline-block';
+                                fileContainer.style.margin = '10px';
+                                fileContainer.style.textAlign = 'center';
+                                fileContainer.appendChild(preview);
+                                fileContainer.appendChild(fileName);
+
+                                previewContainer.appendChild(fileContainer);
+                            } else {
+                                previewContainer.appendChild(preview);
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+
+                    // Hide upload area when files are selected
+                    uploadArea.style.display = 'none';
+
+                    // Show file count for admins
+                    if (isAdmin && files.length > 1) {
+                        const fileCount = document.createElement('div');
+                        fileCount.className = 'alert alert-info mt-2';
+                        fileCount.innerHTML = `<i class="bi bi-info-circle"></i> ${files.length} files selected for upload`;
+                        previewContainer.appendChild(fileCount);
+                    }
+
+                    // Add change file button
+                    addChangeFileButton();
+                }
+            }
+
+            // Form validation
+            form.addEventListener('submit', function (e) {
+                if (!photoInput.files.length) {
+                    e.preventDefault();
+                    alert('Please select at least one photo to upload');
+                    return;
+                }
+
+                const files = photoInput.files;
+
+                // For regular users, ensure only one file
+                if (!isAdmin && files.length > 1) {
+                    e.preventDefault();
+                    alert('Regular users can only upload one photo at a time. Please select only one file.');
+                    return;
+                }
+
+                // Validate each file
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.size > 5 * 1024 * 1024) {
+                        e.preventDefault();
+                        alert(`File "${file.name}" is too large. Max size is 5MB.`);
+                        return;
+                    }
+                }
+            });
+
+            // Add a button to change file
+            function addChangeFileButton() {
+                // Remove existing change file button if it exists
+                const existingBtn = document.querySelector('.change-file-btn');
+                if (existingBtn) {
+                    existingBtn.remove();
+                }
+
+                const changeFileBtn = document.createElement('button');
+                changeFileBtn.type = 'button';
+                changeFileBtn.className = 'btn btn-outline-secondary mt-3 change-file-btn';
+                changeFileBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Choose Different File';
+                changeFileBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    photoInput.value = '';
+                    previewContainer.innerHTML = '';
+                    uploadArea.style.display = 'block';
+                    this.remove(); // Remove this button
+                });
+
+                previewContainer.appendChild(changeFileBtn);
+            }
+        </script>
+        <%- include('../partials/footer') %>
 </body>
+
 </html>

@@ -385,6 +385,49 @@
     }
 }
 
+/* Update the image container to maintain aspect ratio */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 240px; /* Or your desired height */
+  overflow: hidden;
+}
+
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This is key - maintains aspect ratio while filling container */
+  object-position: center; /* Centers the image */
+  transition: transform 0.5s ease;
+}
+
+/* For the detail view in photo-detail.ejs */
+.photo-image-wrapper {
+  text-align: center;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.photo-detail-image {
+  max-height: 600px;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Show entire image without cropping */
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Dark theme support */
+[data-bs-theme="dark"] .photo-image-wrapper {
+  background: #1a1d21;
+}
+
     </style>
 </head>
 <body>
@@ -546,7 +589,7 @@
     </div>
 
     <!-- Add Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
     <script>
         // Store modal instance globally
@@ -596,7 +639,7 @@
                     }
                 }
             } catch (error) {
-                console.error('Favorite error:', error);
+                // console.error('Favorite error:', error);
                 alert('Error updating favorite');
             }
         }
@@ -625,7 +668,7 @@
                     alert('Error adding tag: ' + result.error);
                 }
             } catch (error) {
-                console.error('Add tag error:', error);
+                // console.error('Add tag error:', error);
                 alert('Error adding tag');
             }
         }
@@ -674,7 +717,7 @@
                     alert('Error updating photo: ' + result.error);
                 }
             } catch (error) {
-                console.error('Update error:', error);
+                // console.error('Update error:', error);
                 alert('Error updating photo: ' + error.message);
             }
         }
@@ -700,7 +743,7 @@
                     alert('Error deleting photo: ' + result.error);
                 }
             } catch (error) {
-                console.error('Delete error:', error);
+                // console.error('Delete error:', error);
                 alert('Error deleting photo: ' + error.message);
             }
         }
@@ -711,5 +754,7 @@
             }
         });
     </script>
+    <%- include('../partials/footer') %>
 </body>
 </html>
+

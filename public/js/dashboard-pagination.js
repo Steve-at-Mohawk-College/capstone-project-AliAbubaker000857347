@@ -43,7 +43,7 @@ class DashboardPagination {
         this.showSuccess('Pets page updated');
       }
     } catch (error) {
-      console.error('Error loading pets page:', error);
+      // console.error('Error loading pets page:', error);
       // Fallback to regular navigation
       window.location.href = url;
     }
@@ -65,7 +65,7 @@ class DashboardPagination {
         this.showSuccess('Tasks page updated');
       }
     } catch (error) {
-      console.error('Error loading tasks page:', error);
+      // console.error('Error loading tasks page:', error);
       // Fallback to regular navigation
       window.location.href = url;
     }

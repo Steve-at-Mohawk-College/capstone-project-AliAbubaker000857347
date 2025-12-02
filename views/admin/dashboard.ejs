@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
             throw new Error(result.error || 'Unknown error');
           }
         } catch (error) {
-          console.error('Error approving post:', error);
+          // console.error('Error approving post:', error);
           showToast('Error approving post: ' + error.message, 'error');
           
           // Reset button
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
               throw new Error(result.error || 'Unknown error');
             }
           } catch (error) {
-            console.error('Error deleting post:', error);
+            // console.error('Error deleting post:', error);
             showToast('Error deleting post: ' + error.message, 'error');
             
             // Reset button

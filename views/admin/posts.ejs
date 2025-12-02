@@ -145,7 +145,7 @@ async function approvePost(postId, button) {
       showToast('Error approving post: ' + result.error, 'error');
     }
   } catch (error) {
-    console.error('Error:', error);
+    // console.error('Error:', error);
     showToast('Error approving post: ' + error.message, 'error');
   }
 }
@@ -170,7 +170,7 @@ async function approvePost(postId, button) {
         showToast('Error deleting post: ' + result.error, 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      // console.error('Error:', error);
       showToast('Error deleting post', 'error');
     }
   }

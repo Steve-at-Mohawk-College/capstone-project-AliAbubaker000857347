@@ -37,7 +37,7 @@ class NotificationService {
       
       return dueTasks.length;
     } catch (error) {
-      console.error('Error checking due tasks:', error);
+      // console.error('Error checking due tasks:', error);
       return 0;
     }
   }
@@ -127,7 +127,7 @@ class NotificationService {
       
       return tomorrowTasks.length;
     } catch (error) {
-      console.error('Error checking tomorrow tasks:', error);
+      // console.error('Error checking tomorrow tasks:', error);
       return 0;
     }
   }

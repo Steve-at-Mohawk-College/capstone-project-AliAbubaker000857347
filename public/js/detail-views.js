@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const detailModalElement = document.getElementById('detailModal');
     if (!detailModalElement) {
-        console.error('❌ Detail modal not found!');
+        // console.error('❌ Detail modal not found!');
         return;
     }
     
@@ -120,83 +120,108 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 50);
     }
 
-    function showSimpleTaskDetails(item) {
-        const taskTitle = item.querySelector('.task-title').textContent;
-        const taskDetails = item.querySelector('.task-details').textContent;
-        const taskPriority = item.dataset.priority;
+
+ function showSimpleTaskDetails(item) {
+    const taskTitle = item.querySelector('.task-title').textContent;
+    const taskDetails = item.querySelector('.task-details');
+    const taskPriority = item.dataset.priority;
+    
+    // Get pet name and start time from the task details
+    let petName = 'Unknown';
+    let startTime = '';
+    let taskDetailsText = '';
+    
+    if (taskDetails) {
+        // Parse the task details HTML
+        const detailsHtml = taskDetails.innerHTML;
         
-        const dueDate = new Date(item.dataset.dueDate);
-        const isOverdue = dueDate < new Date();
+        // Extract pet name - look for text between <strong> tags after "For:"
+        const petMatch = detailsHtml.match(/For:\s*<strong>(.*?)<\/strong>/);
+        petName = petMatch ? petMatch[1] : 'Unknown';
         
-        detailModalTitle.innerHTML = `
-            <i class="bi bi-calendar-check text-warning me-2"></i>
-            ${taskTitle} - Details
-        `;
+        // Extract start time - look for text between <strong> tags after "Starts:"
+        const timeMatch = detailsHtml.match(/Starts:\s*<strong>(.*?)<\/strong>/);
+        startTime = timeMatch ? timeMatch[1] : new Date(item.dataset.dueDate).toLocaleString();
         
-        detailModalBody.innerHTML = `
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="detail-section">
-                        <h6 class="section-title">Task Information</h6>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="detail-label">Details</label>
-                                <p class="detail-value">${taskDetails}</p>
-                            </div>
-                            <div class="col-6">
-                                <label class="detail-label">Due Date</label>
-                                <p class="detail-value ${isOverdue ? 'text-danger' : ''}">
-                                    ${dueDate.toLocaleDateString()} at ${dueDate.toLocaleTimeString()}
-                                    ${isOverdue ? ' (Overdue)' : ''}
-                                </p>
-                            </div>
-                            <div class="col-6">
-                                <label class="detail-label">Priority</label>
-                                <p class="detail-value">
-                                    <span class="badge badge-${taskPriority === 'high' ? 'danger' : taskPriority === 'medium' ? 'warning' : 'success'}">
-                                        ${taskPriority}
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="col-6">
-                                <label class="detail-label">Type</label>
-                                <p class="detail-value text-capitalize">${(item.dataset.taskType || '').replace('_', ' ')}</p>
-                            </div>
+        // Use the details text
+        taskDetailsText = `For: ${petName} • Starts: ${startTime}`;
+    } else {
+        // Fallback to old method
+        taskDetailsText = taskDetails ? taskDetails.textContent : '';
+    }
+    
+    const dueDate = new Date(item.dataset.dueDate);
+    const isOverdue = dueDate < new Date();
+    
+    detailModalTitle.innerHTML = `
+        <i class="bi bi-calendar-check text-warning me-2"></i>
+        ${taskTitle} - Details
+    `;
+    
+    detailModalBody.innerHTML = `
+        <div class="row">
+            <div class="col-md-8">
+                <div class="detail-section">
+                    <h6 class="section-title">Task Information</h6>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="detail-label">Details</label>
+                            <p class="detail-value">${taskDetailsText}</p>
                         </div>
-                    </div>
-                    
-                    <div class="detail-section mt-4">
-                        <h6 class="section-title">Quick Actions</h6>
-                        <div class="d-grid gap-2">
-                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.editTask(${item.dataset.id})">
-                                <i class="bi bi-pencil me-1"></i>Edit Task
-                            </button>
-                            <button type="button" class="btn btn-outline-success btn-sm" onclick="window.completeTask(${item.dataset.id})">
-                                <i class="bi bi-check-circle me-1"></i>Mark Complete
-                            </button>
+                        <div class="col-6">
+                            <label class="detail-label">Due Date</label>
+                            <p class="detail-value ${isOverdue ? 'text-danger' : ''}">
+                                ${dueDate.toLocaleDateString()} at ${dueDate.toLocaleTimeString()}
+                                ${isOverdue ? ' (Overdue)' : ''}
+                            </p>
+                        </div>
+                        <div class="col-6">
+                            <label class="detail-label">Priority</label>
+                            <p class="detail-value">
+                                <span class="badge badge-${taskPriority === 'high' ? 'danger' : taskPriority === 'medium' ? 'warning' : 'success'}">
+                                    ${taskPriority}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-6">
+                            <label class="detail-label">Type</label>
+                            <p class="detail-value text-capitalize">${(item.dataset.taskType || '').replace('_', ' ')}</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 text-center">
-                    <div class="task-icon-large mx-auto mb-3 ${isOverdue ? 'overdue' : ''}">
-                        <i class="bi bi-${getTaskIcon(item.dataset.taskType)}"></i>
-                    </div>
-                    <div class="time-remaining">
-                        <h6>Due Date</h6>
-                        <p class="countdown ${isOverdue ? 'text-danger' : ''}">
-                            ${isOverdue ? 'Overdue' : dueDate.toLocaleDateString()}
-                        </p>
+                
+                <div class="detail-section mt-4">
+                    <h6 class="section-title">Quick Actions</h6>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.editTask(${item.dataset.id})">
+                            <i class="bi bi-pencil me-1"></i>Edit Task
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm" onclick="window.completeTask(${item.dataset.id})">
+                            <i class="bi bi-check-circle me-1"></i>Mark Complete
+                        </button>
                     </div>
                 </div>
             </div>
-        `;
-        
-        detailEditBtn.style.display = 'none';
-        
-        setTimeout(() => {
-            detailModal.show();
-        }, 50);
-    }
+            <div class="col-md-4 text-center">
+                <div class="task-icon-large mx-auto mb-3 ${isOverdue ? 'overdue' : ''}">
+                    <i class="bi bi-${getTaskIcon(item.dataset.taskType)}"></i>
+                </div>
+                <div class="time-remaining">
+                    <h6>Due Date</h6>
+                    <p class="countdown ${isOverdue ? 'text-danger' : ''}">
+                        ${isOverdue ? 'Overdue' : dueDate.toLocaleDateString()}
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    detailEditBtn.style.display = 'none';
+    
+    setTimeout(() => {
+        detailModal.show();
+    }, 50);
+}
 
     // Helper functions
     function getPetIcon(species) {
@@ -286,7 +311,7 @@ window.completeTask = function(taskId) {
         }
     })
     .catch(error => {
-        console.error('Error completing task:', error);
+        // console.error('Error completing task:', error);
         alert('Failed to mark task as complete');
     });
 }

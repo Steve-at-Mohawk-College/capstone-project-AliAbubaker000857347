@@ -21,34 +21,34 @@ const validationRules = {
   },
 
 validateStartTime: (startTime) => {
-    if (!startTime) return false;
-    
-    console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
-    
-    // Parse the datetime-local input (client local time)
-    const selectedDate = new Date(startTime);
-    const now = new Date();
-    
-    // Convert both to UTC for comparison
-    const selectedUTC = selectedDate.toISOString();
-    const nowUTC = now.toISOString();
-    
-    console.log('🔍 [MODEL VALIDATION] UTC comparison:', {
-      selectedLocal: selectedDate.toString(),
-      selectedUTC: selectedUTC,
-      nowLocal: now.toString(),
-      nowUTC: nowUTC,
-      differenceMinutes: (new Date(selectedUTC).getTime() - new Date(nowUTC).getTime()) / (1000 * 60)
-    });
-    
-    // Use 10 minute buffer (600000 ms) for timezone/server differences
-    const bufferMilliseconds = 10 * 60 * 1000; // 10 minutes
-    const isValid = new Date(selectedUTC).getTime() > (new Date(nowUTC).getTime() - bufferMilliseconds);
-    
-    console.log('🔍 [MODEL VALIDATION] Result:', isValid);
-    
-    return isValid;
-  },
+  if (!startTime) return false;
+  
+  console.log('🔍 [MODEL VALIDATION] Validating start time:', {
+    input: startTime,
+    serverTime: new Date().toString(),
+    serverTimeISO: new Date().toISOString()
+  });
+  
+  const selectedDate = new Date(startTime);
+  const now = new Date();
+  
+  // Add LARGE buffer for debugging - 2 hours (120 minutes)
+  const bufferMilliseconds = 120 * 60 * 1000; // 120 minutes
+  
+  // Simple comparison - if selected date is after (now - buffer)
+  const isValid = selectedDate.getTime() > (now.getTime() - bufferMilliseconds);
+  
+  console.log('🔍 [MODEL VALIDATION] Simple comparison:', {
+    selectedDate: selectedDate.toString(),
+    selectedTime: selectedDate.getTime(),
+    now: now.toString(),
+    nowTime: now.getTime(),
+    bufferMs: bufferMilliseconds,
+    isValid: isValid
+  });
+  
+  return isValid;
+},
 
   validateEndTime: (endTime, startTime) => {
     if (!endTime || !startTime) return false;

@@ -264,69 +264,62 @@ input[type="datetime-local"][readonly]:focus {
   </div>
 </div>
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('taskForm');
   const startTimeInput = document.getElementById('start_time');
   const endTimeInput = document.getElementById('end_time');
 
-   // FIX: Declare the variable before using it
+  // Add hidden field for timezone
   const timezoneInput = document.createElement('input');
   timezoneInput.type = 'hidden';
-  timezoneInput.name = 'timezoneOffset';
-  timezoneInput.id = 'timezoneOffset';
-  timezoneInput.value = new Date().getTimezoneOffset();
+  timezoneInput.name = 'timezone';
+  timezoneInput.id = 'timezone';
+  timezoneInput.value = 'America/New_York';
   form.appendChild(timezoneInput);
   
-  console.log('🌐 Client timezone offset:', timezoneInput.value, 'minutes');
+  console.log('🌐 Using timezone:', timezoneInput.value);
 
-  
-  // Set minimum datetime to current time with buffer
+  // Set minimum datetime to current time
   function setMinDateTime() {
     const now = new Date();
-    // Add 10 minutes buffer for timezone/server differences
-    const bufferMinutes = 10;
-    const minTime = new Date(now.getTime() + (bufferMinutes * 60 * 1000));
     
-    const year = minTime.getFullYear();
-    const month = String(minTime.getMonth() + 1).padStart(2, '0');
-    const day = String(minTime.getDate()).padStart(2, '0');
-    const hours = String(minTime.getHours()).padStart(2, '0');
-    const minutes = String(minTime.getMinutes()).padStart(2, '0');
+    // Add 10 minutes buffer
+    const minTime = new Date(now.getTime() + (10 * 60 * 1000));
     
-    const minValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+    // Format for datetime-local input (YYYY-MM-DDTHH:mm)
+    const minValue = formatDateForInput(minTime);
     
     startTimeInput.min = minValue;
     endTimeInput.min = minValue;
     
-    // Set default values if empty
+    // Set default start time (30 minutes from now)
     if (!startTimeInput.value) {
-      // Set to 30 minutes from now
       const defaultStart = new Date(now.getTime() + (30 * 60 * 1000));
-      const startYear = defaultStart.getFullYear();
-      const startMonth = String(defaultStart.getMonth() + 1).padStart(2, '0');
-      const startDay = String(defaultStart.getDate()).padStart(2, '0');
-      const startHours = String(defaultStart.getHours()).padStart(2, '0');
-      const startMinutes = String(defaultStart.getMinutes()).padStart(2, '0');
-      
-      startTimeInput.value = `${startYear}-${startMonth}-${startDay}T${startHours}:${startMinutes}`;
+      startTimeInput.value = formatDateForInput(defaultStart);
     }
     
-    if (!endTimeInput.value) {
-      // Default end time 1 hour after start
-      const startValue = startTimeInput.value ? new Date(startTimeInput.value) : new Date(now.getTime() + (30 * 60 * 1000));
+    // Set default end time (1 hour after start)
+    if (!endTimeInput.value && startTimeInput.value) {
+      const startValue = new Date(startTimeInput.value);
       const defaultEndTime = new Date(startValue.getTime() + 60 * 60 * 1000);
-      const endYear = defaultEndTime.getFullYear();
-      const endMonth = String(defaultEndTime.getMonth() + 1).padStart(2, '0');
-      const endDay = String(defaultEndTime.getDate()).padStart(2, '0');
-      const endHours = String(defaultEndTime.getHours()).padStart(2, '0');
-      const endMinutes = String(defaultEndTime.getMinutes()).padStart(2, '0');
-      
-      endTimeInput.value = `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}`;
+      endTimeInput.value = formatDateForInput(defaultEndTime);
     }
   }
 
-  // Validate start and end times
+  // Helper function to format date for datetime-local input
+  function formatDateForInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  // Validate times
   function validateTimes() {
     const startValue = startTimeInput.value;
     const endValue = endTimeInput.value;
@@ -341,21 +334,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const endDate = new Date(endValue);
     const now = new Date();
     
-    // Add 15 minute buffer for timezone/server differences
-    const bufferMinutes = 15 * 60 * 1000;
-    const nowWithBuffer = new Date(now.getTime() - bufferMinutes);
-    
-    // Debug logging
-    console.log('🔍 [CLIENT VALIDATION]', {
-      now: now.toLocaleString(),
-      nowWithBuffer: nowWithBuffer.toLocaleString(),
-      startDate: startDate.toLocaleString(),
-      endDate: endDate.toLocaleString(),
-      isValid: startDate > nowWithBuffer
-    });
-    
-    // Start time must be in the future (with buffer)
-    if (startDate <= nowWithBuffer) {
+    // Start time must be in the future (with 15 minute buffer)
+    const bufferMs = 15 * 60 * 1000;
+    if (startDate.getTime() <= (now.getTime() - bufferMs)) {
       startTimeInput.setCustomValidity('Start time must be in the future (allowing 15 minutes for timezone differences)');
       startTimeInput.classList.add('is-invalid');
       return false;
@@ -387,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
   startTimeInput.addEventListener('change', validateTimes);
   endTimeInput.addEventListener('change', validateTimes);
   
-  // Form submission validation
+  // Form submission
   form.addEventListener('submit', function(event) {
     if (!validateTimes()) {
       event.preventDefault();
@@ -397,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
     form.classList.add('was-validated');
   });
 
-  // Initialize when page loads
+  // Initialize
   setMinDateTime();
 });
 </script>

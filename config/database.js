@@ -3,20 +3,21 @@ require('dotenv').config();
 
 let dbConfig = {};
 
-// Common configuration
+// config/database.js - UPDATED SECTION
 const commonConfig = {
   waitForConnections: true,
   connectionLimit: 3,
   queueLimit: 10,
   charset: 'utf8mb4',
-  timezone: '-05:00', // EXPLICITLY SET TO EST
+  timezone: '-05:00', // USE OFFSET, not named timezone
   idleTimeout: 60000,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
-  dateStrings: ['DATETIME'], // Return datetime as strings to avoid timezone conversion
+  dateStrings: ['DATETIME'],
   supportBigNumbers: true,
   bigNumberStrings: true
 };
+
 
 if (process.env.JAWSDB_URL) {
   const url = new URL(process.env.JAWSDB_URL);

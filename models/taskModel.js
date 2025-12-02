@@ -1,8 +1,15 @@
 const { query } = require('../config/database');
+const { 
+  toMySQLDateTime, 
+  formatForDateTimeLocal,
+  parseDateTimeLocalToEST,
+  isFutureDate,
+  DEFAULT_TIMEZONE 
+} = require('../utils/timezone');
+
+const moment = require('moment-timezone');
 
 
-
-// In taskModel.js - update the validationRules
 const validationRules = {
   taskType: ['feeding', 'cleaning', 'vaccination', 'medication', 'grooming', 'vet_visit', 'exercise', 'other'],
   priority: ['low', 'medium', 'high'],
@@ -20,121 +27,71 @@ const validationRules = {
     if (typeof description !== 'string') return false;
     return description.length <= 500;
   },
-// In taskModel.js - SIMPLIFIED validation
-validateStartTime: (startTime) => {
-  if (!startTime) return false;
+
+  validateStartTime: (startTime) => {
+    if (!startTime) return false;
+    return isFutureDate(startTime, 15);
+  },
   
-  console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
-  
-  // Parse the datetime-local input (it's in local time)
-  const selectedDate = new Date(startTime);
-  const now = new Date();
-  
-  // Convert both to ISO strings for UTC comparison
-  const selectedUTC = selectedDate.toISOString();
-  const nowUTC = now.toISOString();
-  
-  console.log('🔍 [MODEL VALIDATION] UTC comparison:', {
-    selectedLocal: selectedDate.toString(),
-    selectedUTC,
-    nowLocal: now.toString(),
-    nowUTC,
-    differenceMinutes: (new Date(selectedUTC).getTime() - new Date(nowUTC).getTime()) / (1000 * 60)
-  });
-  
-  // Add 15 minute buffer for any timezone differences
-  const bufferMilliseconds = 15 * 60 * 1000;
-  
-  // Compare in UTC
-  const isValid = new Date(selectedUTC).getTime() > (new Date(nowUTC).getTime() - bufferMilliseconds);
-  
-  console.log('🔍 [MODEL VALIDATION] Result:', isValid);
-  
-  return isValid;
-},
   validateEndTime: (endTime, startTime) => {
     if (!endTime || !startTime) return false;
     
-    console.log('🔍 [MODEL VALIDATION] Validating end time:', endTime);
+    const endMoment = moment.tz(endTime, DEFAULT_TIMEZONE);
+    const startMoment = moment.tz(startTime, DEFAULT_TIMEZONE);
     
-    const endDate = new Date(endTime);
-    const startDate = new Date(startTime);
-    const now = new Date();
-    
-    // End time must be after start time
-    if (endDate <= startDate) {
-      console.log('❌ End time not after start time');
-      return false;
-    }
+    // End must be after start
+    if (!endMoment.isAfter(startMoment)) return false;
     
     // Maximum 1 year in the future
-    const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
-    const isValid = endDate.getTime() <= maxTime;
+    const nowMoment = moment().tz(DEFAULT_TIMEZONE);
+    const maxTime = nowMoment.clone().add(1, 'year');
     
-    console.log('🔍 [MODEL VALIDATION] End time valid:', isValid);
-    
-    return isValid;
+    return endMoment.isBefore(maxTime);
   }
 };
 
 
+
+
+
+
+
+
+
+
+
+
+  
+
+// Update formatDateForInput function
 function formatDateForInput(dateString) {
   if (!dateString) return '';
   
-  // console.log('🔍 formatDateForInput received:', dateString);
-  
-  let date;
-  if (dateString instanceof Date) {
-    date = dateString;
-  } else {
-    // Parse as local time - don't let JavaScript convert to UTC
-    const mysqlDate = new Date(dateString);
-    
-    // Create a new date in local timezone using the components
-    date = new Date(
-      mysqlDate.getFullYear(),
-      mysqlDate.getMonth(),
-      mysqlDate.getDate(),
-      mysqlDate.getHours(),
-      mysqlDate.getMinutes(),
-      mysqlDate.getSeconds()
-    );
-  }
-  
-  // Use local time methods
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  
-  const result = `${year}-${month}-${day}T${hours}:${minutes}`;
-  // console.log('🔍 formatDateForInput returning:', result);
-  
-  return result;
+  // Convert database UTC time to local timezone
+  return formatForDateTimeLocal(dateString);
 }
 
-
+// Update parseDateTimeLocalInput function
 function parseDateTimeLocalInput(dateTimeString) {
   if (!dateTimeString) return null;
   
-  // datetime-local input is in local time
+  // Parse as local time (datetime-local input is in local time)
   const [datePart, timePart] = dateTimeString.split('T');
   const [year, month, day] = datePart.split('-').map(Number);
   const [hours, minutes] = timePart.split(':').map(Number);
   
   // Create date in local timezone
-  const date = new Date(year, month - 1, day, hours, minutes);
+  const localDate = new Date(year, month - 1, day, hours, minutes);
   
   console.log('🔍 parseDateTimeLocalInput:', {
     input: dateTimeString,
-    localDate: date.toString(),
-    localISO: date.toISOString(),
-    timezoneOffset: date.getTimezoneOffset()
+    localDate: localDate.toString(),
+    timezoneOffset: localDate.getTimezoneOffset()
   });
   
-  return date;
+  return localDate;
 }
+
 async function createTask(userId, taskData) {
   console.log('🔍 [DEBUG] createTask called with data:', JSON.stringify(taskData, null, 2));
   
@@ -178,37 +135,23 @@ async function createTask(userId, taskData) {
   if (!validationRules.validateEndTime(taskData.end_time, taskData.start_time)) {
     throw new Error('End time must be after start time and within 1 year');
   }
-    // Parse dates - datetime-local is already in local time
-  const startDate = parseDateTimeLocalInput(taskData.start_time);
-  const endDate = parseDateTimeLocalInput(taskData.end_time);
+
+  // Convert dates to MySQL datetime strings (in EST)
+  const startTimeMySQL = toMySQLDateTime(taskData.start_time);
+  const endTimeMySQL = toMySQLDateTime(taskData.end_time);
+  const dueDateMySQL = toMySQLDateTime(taskData.start_time); // due_date = start_time
   
-  console.log('🔍 [DEBUG] Parsed dates:', {
-    startLocal: startDate.toString(),
-    startISO: startDate.toISOString(),
-    endLocal: endDate.toString(),
-    endISO: endDate.toISOString()
+  console.log('🔍 [DEBUG] Date conversions:', {
+    start_local: taskData.start_time,
+    start_mysql: startTimeMySQL,
+    end_local: taskData.end_time,
+    end_mysql: endTimeMySQL
   });
   
-  // For backward compatibility, set due_date = start_date
-  const dueDate = startDate;
-  
-  // Store dates as-is (they'll be converted to UTC by MySQL if needed)
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, start_time, end_time, priority)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  
-  console.log('🔍 [DEBUG] Executing SQL with values:', [
-    userId, 
-    taskData.pet_id, 
-    taskData.task_type, 
-    taskData.title.trim(),
-    taskData.description ? taskData.description.trim() : null,
-    dueDate,
-    startDate,
-    endDate,
-    taskData.priority
-  ]);
   
   try {
     const result = await query(sql, [
@@ -217,9 +160,9 @@ async function createTask(userId, taskData) {
       taskData.task_type, 
       taskData.title.trim(),
       taskData.description ? taskData.description.trim() : null,
-      dueDate,
-      startDate,
-      endDate,
+      dueDateMySQL,
+      startTimeMySQL,
+      endTimeMySQL,
       taskData.priority
     ]);
     
@@ -230,8 +173,6 @@ async function createTask(userId, taskData) {
     throw new Error('Database error: ' + error.message);
   }
 }
-
-
 async function getUpcomingTasks(userId, days = 3) {
   const now = new Date();
   const futureDate = new Date();

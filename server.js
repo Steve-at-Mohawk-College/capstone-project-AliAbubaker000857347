@@ -193,6 +193,49 @@ app.use((req, res, next) => {
   next();
 });
 
+
+// server.js - ADD AFTER SESSION MIDDLEWARE
+const { DEFAULT_TIMEZONE } = require('./utils/timezone');
+
+// Timezone middleware
+app.use((req, res, next) => {
+  // Set timezone for this request
+  res.locals.timezone = DEFAULT_TIMEZONE;
+  res.locals.timezoneOffset = '-05:00'; // EST offset
+  
+  // Add to all templates
+  res.locals.formatDateTimeLocal = (date) => {
+    const { formatForDateTimeLocal } = require('./utils/timezone');
+    return formatForDateTimeLocal(date);
+  };
+  
+  next();
+});
+
+// Update debug endpoint
+app.get('/debug/timezone-info', (req, res) => {
+  const moment = require('moment-timezone');
+  const now = new Date();
+  
+  res.json({
+    server: {
+      node_time: now.toString(),
+      node_iso: now.toISOString(),
+      node_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      moment_local: moment().format(),
+      moment_est: moment().tz('America/New_York').format()
+    },
+    database: {
+      configured_timezone: 'America/New_York',
+      offset: '-05:00'
+    },
+    app: {
+      default_timezone: DEFAULT_TIMEZONE,
+      current_time: moment().tz(DEFAULT_TIMEZONE).format('YYYY-MM-DD HH:mm:ss')
+    }
+  });
+});
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {

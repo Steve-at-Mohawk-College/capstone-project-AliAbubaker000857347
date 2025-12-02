@@ -1604,7 +1604,22 @@ app.get('/debug/reset-connections', async (req, res) => {
 
 
 
-
+// Add to server.js
+app.get('/debug/server-time', (req, res) => {
+  const now = new Date();
+  res.json({
+    serverTime: {
+      local: now.toString(),
+      iso: now.toISOString(),
+      timestamp: now.getTime(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      offset: now.getTimezoneOffset()
+    },
+    headers: {
+      date: req.headers.date
+    }
+  });
+});
 
 
 

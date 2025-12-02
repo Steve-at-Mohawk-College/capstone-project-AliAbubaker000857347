@@ -718,8 +718,8 @@ async getPhotosByHealthStatus(userId, healthStatus, page = 1, limit = 12, sortBy
         LIMIT ${numLimit} OFFSET ${numOffset}
     `;
 
-    console.log('Health filter SQL:', sql);
-    console.log('Health filter params:', params);
+    // console.log('Health filter SQL:', sql);
+    // console.log('Health filter params:', params);
 
     try {
         const photos = await query(sql, params);

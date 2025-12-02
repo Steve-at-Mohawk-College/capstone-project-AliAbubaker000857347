@@ -335,6 +335,56 @@
     }
 }
 
+/* Add this to your existing CSS */
+.photo-image {
+    max-height: 600px !important;
+    object-fit: contain !important;
+    width: auto !important;
+    margin: 0 auto !important;
+    display: block !important;
+}
+
+.photo-image-wrapper {
+    text-align: center !important;
+    background: #000000 !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+}
+
+[data-bs-theme="dark"] .photo-image-wrapper {
+    background: #1a1d21 !important;
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+    .photo-image {
+        max-height: 500px !important;
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .photo-image {
+        max-height: 400px !important;
+        max-width: 100% !important;
+    }
+    
+    .photo-image-wrapper {
+        padding: 15px !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .photo-image {
+        max-height: 350px !important;
+        max-width: 100% !important;
+    }
+    
+    .photo-image-wrapper {
+        padding: 10px !important;
+    }
+}
+
     </style>
 </head>
 <body>

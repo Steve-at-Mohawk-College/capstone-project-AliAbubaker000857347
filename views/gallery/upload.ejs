@@ -180,9 +180,9 @@
                                            <%= isAdmin ? 'multiple' : '' %> 
                                            required
                                            aria-label="<% if (isAdmin) { %>Select photos to upload<% } else { %>Select photo to upload<% } %>">
-                                    <button type="button" class="btn btn-primary mt-2" onclick="document.getElementById('photoInput').click()">
-                                        <% if (isAdmin) { %>Choose Files<% } else { %>Choose File<% } %>
-                                    </button>
+                                    <button type="button" class="btn btn-primary mt-2" id="chooseFileBtn">
+    <% if (isAdmin) { %>Choose Files<% } else { %>Choose File<% } %>
+</button>
                                 </div>
                                 <div class="mt-3 text-center" id="previewContainer">
                                     <!-- Preview will be dynamically added here -->
@@ -268,12 +268,34 @@
     const photoInput = document.getElementById('photoInput');
     const previewContainer = document.getElementById('previewContainer');
     const form = document.getElementById('uploadForm');
+    const chooseFileBtn = document.getElementById('chooseFileBtn'); // Get by ID instead
     const isAdmin = <%= isAdmin %>;
 
-    // Click to select file
-    uploadArea.addEventListener('click', () => {
-        photoInput.click();
+    // Remove any existing click handlers first
+    uploadArea.onclick = null;
+    if (chooseFileBtn) {
+        chooseFileBtn.onclick = null;
+    }
+
+    // SINGLE CLICK HANDLER FOR UPLOAD AREA (background only)
+    uploadArea.addEventListener('click', function(e) {
+        // Only trigger file input if the click is directly on the upload area 
+        // (not on the button inside it)
+        if (e.target === uploadArea || 
+            e.target.classList.contains('bi-cloud-arrow-up') ||
+            e.target.tagName === 'H4' || 
+            e.target.tagName === 'P') {
+            photoInput.click();
+        }
     });
+
+    // SINGLE CLICK HANDLER FOR THE CHOOSE FILE BUTTON
+    if (chooseFileBtn) {
+        chooseFileBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the event from bubbling to uploadArea
+            photoInput.click();
+        }, { once: false }); // Make sure it's not a one-time listener
+    }
 
     // Drag and drop functionality
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -380,6 +402,9 @@
                 fileCount.innerHTML = `<i class="bi bi-info-circle"></i> ${files.length} files selected for upload`;
                 previewContainer.appendChild(fileCount);
             }
+            
+            // Add change file button
+            addChangeFileButton();
         }
     }
 
@@ -411,13 +436,29 @@
         }
     });
 
-    // Reset preview if user wants to change file
-    document.addEventListener('click', function(e) {
-        if (e.target.id === 'photoInput') {
+    // Add a button to change file
+    function addChangeFileButton() {
+        // Remove existing change file button if it exists
+        const existingBtn = document.querySelector('.change-file-btn');
+        if (existingBtn) {
+            existingBtn.remove();
+        }
+        
+        const changeFileBtn = document.createElement('button');
+        changeFileBtn.type = 'button';
+        changeFileBtn.className = 'btn btn-outline-secondary mt-3 change-file-btn';
+        changeFileBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Choose Different File';
+        changeFileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            photoInput.value = '';
             previewContainer.innerHTML = '';
             uploadArea.style.display = 'block';
-        }
-    });
+            this.remove(); // Remove this button
+        });
+        
+        previewContainer.appendChild(changeFileBtn);
+    }
 </script>
 </body>
 </html>

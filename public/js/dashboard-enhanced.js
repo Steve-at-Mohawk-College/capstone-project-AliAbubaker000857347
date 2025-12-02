@@ -59,7 +59,7 @@ class EnhancedDashboard {
             if (e.target.closest('.save-task-edit-btn')) {
                 const button = e.target.closest('.save-task-edit-btn');
                 const taskId = button.getAttribute('data-task-id');
-                console.log('💾 Save task edit button clicked:', taskId);
+                // console.log('💾 Save task edit button clicked:', taskId);
                 this.saveTaskEdit(taskId, button);
             }
 
@@ -67,7 +67,7 @@ class EnhancedDashboard {
             if (e.target.closest('.cancel-task-edit-btn')) {
                 const button = e.target.closest('.cancel-task-edit-btn');
                 const taskId = button.getAttribute('data-task-id');
-                console.log('❌ Cancel task edit button clicked:', taskId);
+                // console.log('❌ Cancel task edit button clicked:', taskId);
                 this.hideTaskEditForm(taskId);
             }
 
@@ -128,7 +128,7 @@ class EnhancedDashboard {
         const editForm = document.getElementById(`edit-form-${petId}`);
         
         if (!editForm) {
-            console.error('❌ Edit form not found for pet:', petId);
+            // console.error('❌ Edit form not found for pet:', petId);
             return;
         }
 
@@ -142,10 +142,10 @@ class EnhancedDashboard {
         // Toggle current form
         if (editForm.style.display === 'block') {
             editForm.style.display = 'none';
-            console.log('👻 Hid pet edit form');
+            // console.log('👻 Hid pet edit form');
         } else {
             editForm.style.display = 'block';
-            console.log('👁️ Showed pet edit form');
+            // console.log('👁️ Showed pet edit form');
             // Scroll to form
             editForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
@@ -159,29 +159,29 @@ class EnhancedDashboard {
     }
 
     toggleTaskEditForm(taskId) {
-        console.log('🔄 Toggling task edit form for:', taskId);
+        // console.log('🔄 Toggling task edit form for:', taskId);
         const editForm = document.getElementById(`edit-task-form-${taskId}`);
         
         if (!editForm) {
-            console.error('❌ Edit form not found for task:', taskId);
-            console.log('🔍 Available task edit forms:');
+            // console.error('❌ Edit form not found for task:', taskId);
+            // console.log('🔍 Available task edit forms:');
             document.querySelectorAll('[id^="edit-task-form-"]').forEach(form => {
-                console.log(`- ${form.id}: display="${form.style.display}"`);
+                // console.log(`- ${form.id}: display="${form.style.display}"`);
             });
             return;
         }
 
-        console.log('📋 Task edit form found:', {
-            id: editForm.id,
-            currentDisplay: editForm.style.display,
-            computedStyle: window.getComputedStyle(editForm).display
-        });
+        // console.log('📋 Task edit form found:', {
+        //     id: editForm.id,
+        //     currentDisplay: editForm.style.display,
+        //     computedStyle: window.getComputedStyle(editForm).display
+        // });
 
         // Hide all other task edit forms
         document.querySelectorAll('[id^="edit-task-form-"]').forEach(form => {
             if (form.id !== `edit-task-form-${taskId}`) {
                 form.style.display = 'none';
-                console.log(`👻 Hid other form: ${form.id}`);
+                // console.log(`👻 Hid other form: ${form.id}`);
             }
         });
 
@@ -190,21 +190,21 @@ class EnhancedDashboard {
         
         if (isCurrentlyVisible) {
             editForm.style.display = 'none';
-            console.log('👻 Hid task edit form');
+            // console.log('👻 Hid task edit form');
         } else {
             editForm.style.display = 'block';
-            console.log('👁️ Showed task edit form');
+            // console.log('👁️ Showed task edit form');
             // Scroll to form
             editForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         // Double check the display property
         setTimeout(() => {
-            console.log('✅ Final form state:', {
-                id: editForm.id,
-                display: editForm.style.display,
-                computed: window.getComputedStyle(editForm).display
-            });
+            // console.log('✅ Final form state:', {
+            //     id: editForm.id,
+            //     display: editForm.style.display,
+            //     computed: window.getComputedStyle(editForm).display
+            // });
         }, 100);
     }
 
@@ -216,7 +216,7 @@ class EnhancedDashboard {
     }
 
     async savePetEdit(petId, buttonElement) {
-        console.log('💾 Saving pet edit for ID:', petId);
+        // console.log('💾 Saving pet edit for ID:', petId);
         
         const ageInput = document.getElementById(`edit-age-${petId}`);
         const weightInput = document.getElementById(`edit-weight-${petId}`);
@@ -229,7 +229,7 @@ class EnhancedDashboard {
         const newAge = parseFloat(ageInput.value);
         const newWeight = parseFloat(weightInput.value);
         
-        console.log('📊 New values:', { newAge, newWeight });
+        // console.log('📊 New values:', { newAge, newWeight });
         
         // Validation
         if (isNaN(newAge) || newAge <= 0) {
@@ -246,26 +246,26 @@ class EnhancedDashboard {
         this.setButtonLoading(buttonElement, true);
         
         try {
-            console.log('📤 Sending update request...');
+            // console.log('📤 Sending update request...');
             const response = await fetch(`/pets/${petId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ age: newAge, weight: newWeight })
             });
             
-            console.log('📥 Response received, status:', response.status);
+            // console.log('📥 Response received, status:', response.status);
             const data = await response.json();
-            console.log('📦 Response data:', data);
+            // console.log('📦 Response data:', data);
             
             if (response.ok && data.ok) {
-                console.log('✅ Update successful, updating display...');
+                // console.log('✅ Update successful, updating display...');
                 this.updatePetDisplay(petId, newAge, newWeight);
                 this.hidePetEditForm(petId);
                 this.showAlert('Pet details updated successfully!', 'success');
                 
                 // Optional: Reload the page to ensure all data is fresh
                 setTimeout(() => {
-                    console.log('🔄 Reloading page to refresh data...');
+                    // console.log('🔄 Reloading page to refresh data...');
                     window.location.reload();
                 }, 1000);
                 
@@ -273,7 +273,7 @@ class EnhancedDashboard {
                 throw new Error(data.error || 'Unknown error from server');
             }
         } catch (error) {
-            console.error('❌ Error updating pet:', error);
+            // console.error('❌ Error updating pet:', error);
             this.showAlert('Error updating pet details: ' + error.message, 'danger');
         } finally {
             this.setButtonLoading(buttonElement, false);
@@ -281,7 +281,7 @@ class EnhancedDashboard {
     }
 
   async saveTaskEdit(taskId, buttonElement) {
-    console.log('💾 Saving task edit for:', taskId);
+    // console.log('💾 Saving task edit for:', taskId);
     
     const titleInput = document.getElementById(`edit-task-title-${taskId}`);
     const descriptionInput = document.getElementById(`edit-task-description-${taskId}`);
@@ -333,9 +333,9 @@ class EnhancedDashboard {
             })
         });
         
-        console.log('📥 Response status:', response.status);
+        // console.log('📥 Response status:', response.status);
         const data = await response.json();
-        console.log('📦 Response data:', data);
+        // console.log('📦 Response data:', data);
         
         if (response.ok && data.ok) {
             this.updateTaskDisplay(taskId, newTitle, newDescription, newDueDate, newPriority);
@@ -345,7 +345,7 @@ class EnhancedDashboard {
             throw new Error(data.error || 'Unknown error from server');
         }
     } catch (error) {
-        console.error('❌ Error updating task:', error);
+        // console.error('❌ Error updating task:', error);
         this.showAlert('Error updating task: ' + error.message, 'danger');
     } finally {
         this.setButtonLoading(buttonElement, false);
@@ -353,7 +353,7 @@ class EnhancedDashboard {
 }
 
     updatePetDisplay(petId, newAge, newWeight) {
-        console.log('🔄 Updating pet display for pet ID:', petId);
+        // console.log('🔄 Updating pet display for pet ID:', petId);
         
         try {
             let ageDisplay;
@@ -370,23 +370,23 @@ class EnhancedDashboard {
             const ageElement = document.getElementById(`age-display-${petId}`);
             if (ageElement) {
                 ageElement.textContent = ageDisplay;
-                console.log('✅ Updated age display:', ageDisplay);
+                // console.log('✅ Updated age display:', ageDisplay);
             }
             
             // Update weight display
             const weightElement = document.getElementById(`weight-display-${petId}`);
             if (weightElement) {
                 weightElement.textContent = newWeight + ' kg';
-                console.log('✅ Updated weight display:', newWeight + ' kg');
+                // console.log('✅ Updated weight display:', newWeight + ' kg');
             }
             
         } catch (error) {
-            console.error('❌ Error updating pet display:', error);
+            // console.error('❌ Error updating pet display:', error);
         }
     }
 
     updateTaskDisplay(taskId, newTitle, newDescription, newDueDate, newPriority) {
-    console.log('🔄 Updating task display for task:', taskId);
+    // console.log('🔄 Updating task display for task:', taskId);
     
     try {
         // Find the task element - use a more specific selector
@@ -395,8 +395,8 @@ class EnhancedDashboard {
                          document.querySelector(`.task-item-dark:has(.edit-task-btn[data-task-id="${taskId}"])`);
         
         if (!taskElement) {
-            console.warn('❌ Task element not found for ID:', taskId);
-            console.log('🔍 Available task elements:');
+            // console.warn('❌ Task element not found for ID:', taskId);
+            // console.log('🔍 Available task elements:');
             document.querySelectorAll('.task-item-dark').forEach((task, index) => {
                 const taskIdAttr = task.getAttribute('data-task-id');
                 console.log(`Task ${index + 1}: data-task-id="${taskIdAttr}"`);
@@ -404,15 +404,15 @@ class EnhancedDashboard {
             return;
         }
 
-        console.log('✅ Found task element:', taskElement);
+        // console.log('✅ Found task element:', taskElement);
 
         // Update title
         const titleElement = taskElement.querySelector('.task-title-dark');
         if (titleElement) {
             titleElement.textContent = newTitle;
-            console.log('✅ Updated title:', newTitle);
+            // console.log('✅ Updated title:', newTitle);
         } else {
-            console.warn('❌ Title element not found');
+            // console.warn('❌ Title element not found');
         }
 
         // Update priority badge - fix the class names
@@ -434,9 +434,9 @@ class EnhancedDashboard {
             }
             
             priorityBadge.textContent = newPriority;
-            console.log('✅ Updated priority:', newPriority);
+            // console.log('✅ Updated priority:', newPriority);
         } else {
-            console.warn('❌ Priority badge not found');
+            // console.warn('❌ Priority badge not found');
         }
 
         // Update due date
@@ -452,9 +452,9 @@ class EnhancedDashboard {
             dueDateSpan.textContent = formattedDate;
             // Also update the data attribute if it exists
             dueDateSpan.setAttribute('data-due-date', newDueDate);
-            console.log('✅ Updated due date:', formattedDate);
+            // console.log('✅ Updated due date:', formattedDate);
         } else {
-            console.warn('❌ Due date span not found');
+            // console.warn('❌ Due date span not found');
         }
 
         // Update description if it exists
@@ -471,7 +471,7 @@ class EnhancedDashboard {
             }
             if (descriptionElement) {
                 descriptionElement.textContent = newDescription;
-                console.log('✅ Updated description');
+                // console.log('✅ Updated description');
             }
         } else {
             // Remove description if it was cleared
@@ -481,10 +481,10 @@ class EnhancedDashboard {
             }
         }
 
-        console.log('✅ Task display updated successfully');
+        // console.log('✅ Task display updated successfully');
 
     } catch (error) {
-        console.error('❌ Error updating task display:', error);
+        // console.error('❌ Error updating task display:', error);
     }
 }
 
@@ -493,7 +493,7 @@ class EnhancedDashboard {
         this.itemId = button.getAttribute('data-id');
         const itemName = button.getAttribute('data-name');
         
-        console.log('Remove button clicked:', this.itemType, this.itemId, itemName);
+        // console.log('Remove button clicked:', this.itemType, this.itemId, itemName);
         
         const message = `Are you sure you want to remove ${this.itemType === 'pet' ? 'pet' : 'task'} "${itemName}"? This action cannot be undone.`;
         document.getElementById('confirmationMessage').textContent = message;
@@ -503,9 +503,9 @@ class EnhancedDashboard {
     }
 
     handleRemoveConfirmation() {
-        console.log('Confirm remove button clicked');
+        // console.log('Confirm remove button clicked');
         if (this.itemType && this.itemId) {
-            console.log(`Sending DELETE request to /${this.itemType}s/${this.itemId}`);
+            // console.log(`Sending DELETE request to /${this.itemType}s/${this.itemId}`);
             
             // Show loading state
             const removeBtn = document.getElementById('confirmRemoveBtn');
@@ -521,9 +521,9 @@ class EnhancedDashboard {
                 }
             })
             .then(response => {
-                console.log('Response received:', response.status, response.statusText);
+                // console.log('Response received:', response.status, response.statusText);
                 if (response.ok) {
-                    console.log('Delete successful');
+                    // console.log('Delete successful');
                     this.showSuccessMessage(`${this.itemType === 'pet' ? 'Pet' : 'Task'} has been removed successfully.`);
                     
                     // Reload the page after a short delay
@@ -531,18 +531,18 @@ class EnhancedDashboard {
                         window.location.reload();
                     }, 1500);
                 } else {
-                    console.error('Delete failed:', response.status);
+                    // console.error('Delete failed:', response.status);
                     this.showAlert('Error removing item. Please try again.', 'danger');
                     this.resetRemoveButton(removeBtn, originalText);
                 }
             })
             .catch(error => {
-                console.error('Fetch error:', error);
+                // console.error('Fetch error:', error);
                 this.showAlert('Error removing item. Please try again.', 'danger');
                 this.resetRemoveButton(removeBtn, originalText);
             });
         } else {
-            console.error('Missing itemType or itemId');
+            // console.error('Missing itemType or itemId');
         }
     }
 

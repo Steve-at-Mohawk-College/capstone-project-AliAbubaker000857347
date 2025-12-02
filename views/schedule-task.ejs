@@ -270,7 +270,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const startTimeInput = document.getElementById('start_time');
   const endTimeInput = document.getElementById('end_time');
 
- timezoneInput.type = 'hidden';
+   // FIX: Declare the variable before using it
+  const timezoneInput = document.createElement('input');
+  timezoneInput.type = 'hidden';
   timezoneInput.name = 'timezoneOffset';
   timezoneInput.id = 'timezoneOffset';
   timezoneInput.value = new Date().getTimezoneOffset();

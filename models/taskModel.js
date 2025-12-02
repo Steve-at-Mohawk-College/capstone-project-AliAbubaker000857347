@@ -2,6 +2,7 @@ const { query } = require('../config/database');
 
 
 
+// In taskModel.js - update the validationRules
 const validationRules = {
   taskType: ['feeding', 'cleaning', 'vaccination', 'medication', 'grooming', 'vet_visit', 'exercise', 'other'],
   priority: ['low', 'medium', 'high'],
@@ -20,45 +21,31 @@ const validationRules = {
     return description.length <= 500;
   },
 
-// In taskModel.js - update validateStartTime function
-validateStartTime: (startTime) => {
-  if (!startTime) return false;
-  
-  console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
-  
-  // Parse the datetime-local input (it's in local time)
-  const selectedDate = new Date(startTime);
-  
-  // Get current time
-  const now = new Date();
-  
-  // Convert selectedDate to UTC for comparison
-  // The datetime-local input doesn't have timezone info, so JavaScript
-  // assumes local time when parsing it
-  const selectedUTC = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
-  const nowUTC = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
-  
-  console.log('🔍 [MODEL VALIDATION] UTC comparison:', {
-    input: startTime,
-    selectedLocal: selectedDate.toString(),
-    selectedUTC: selectedUTC.toString(),
-    selectedUTCOffset: selectedDate.getTimezoneOffset(),
-    nowLocal: now.toString(),
-    nowUTC: nowUTC.toString(),
-    nowUTCOffset: now.getTimezoneOffset(),
-    differenceMinutes: (selectedUTC.getTime() - nowUTC.getTime()) / (1000 * 60)
-  });
-  
-  // Add 15 minute buffer for timezone/server differences
-  const bufferMilliseconds = 15 * 60 * 1000;
-  
-  // Compare in UTC
-  const isValid = selectedUTC.getTime() > (nowUTC.getTime() - bufferMilliseconds);
-  
-  console.log('🔍 [MODEL VALIDATION] Result:', isValid);
-  
-  return isValid;
-},
+  // SIMPLIFIED VERSION - Just check if it's a valid future date
+  validateStartTime: (startTime) => {
+    if (!startTime) return false;
+    
+    console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
+    
+    // Parse the datetime-local input
+    const selectedDate = new Date(startTime);
+    const now = new Date();
+    
+    // Add 1 hour buffer for timezone differences
+    const bufferMilliseconds = 60 * 60 * 1000; // 1 hour
+    
+    // Simple check - is the date in the future (with buffer)?
+    const isValid = selectedDate.getTime() > (now.getTime() - bufferMilliseconds);
+    
+    console.log('🔍 [MODEL VALIDATION] Simple validation result:', isValid, {
+      selectedTime: selectedDate.getTime(),
+      nowTime: now.getTime(),
+      difference: selectedDate.getTime() - now.getTime(),
+      differenceHours: (selectedDate.getTime() - now.getTime()) / (1000 * 60 * 60)
+    });
+    
+    return isValid;
+  },
 
   validateEndTime: (endTime, startTime) => {
     if (!endTime || !startTime) return false;
@@ -69,19 +56,15 @@ validateStartTime: (startTime) => {
     const startDate = new Date(startTime);
     const now = new Date();
     
-    // Convert to UTC
-    const endUTC = endDate.toISOString();
-    const startUTC = startDate.toISOString();
-    
-    // End time must be after start time (UTC comparison)
-    if (new Date(endUTC) <= new Date(startUTC)) {
+    // End time must be after start time
+    if (endDate <= startDate) {
       console.log('❌ End time not after start time');
       return false;
     }
     
     // Maximum 1 year in the future
     const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
-    const isValid = new Date(endUTC).getTime() <= maxTime;
+    const isValid = endDate.getTime() <= maxTime;
     
     console.log('🔍 [MODEL VALIDATION] End time valid:', isValid);
     

@@ -269,6 +269,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('taskForm');
   const startTimeInput = document.getElementById('start_time');
   const endTimeInput = document.getElementById('end_time');
+
+ timezoneInput.type = 'hidden';
+  timezoneInput.name = 'timezoneOffset';
+  timezoneInput.id = 'timezoneOffset';
+  timezoneInput.value = new Date().getTimezoneOffset();
+  form.appendChild(timezoneInput);
+  
+  console.log('🌐 Client timezone offset:', timezoneInput.value, 'minutes');
+
   
   // Set minimum datetime to current time with buffer
   function setMinDateTime() {

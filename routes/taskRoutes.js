@@ -174,50 +174,46 @@ const validateTask = [
 
 // Update the validation middleware
 body('start_time')
-  .custom((value) => {
+
+  .custom((value, { req }) => {
     if (!value) {
       throw new Error('Start time is required');
     }
     
     console.log('🔍 [ROUTE VALIDATION] Validating start_time:', value);
+    console.log('🌐 Client timezone offset:', req.body.timezoneOffset);
     
     const now = new Date();
     const selectedDate = new Date(value);
     
-    // Convert both to UTC strings
-    const selectedUTC = selectedDate.toISOString();
-    const nowUTC = now.toISOString();
+    // Adjust for client timezone if provided
+    if (req.body.timezoneOffset) {
+      const clientOffset = parseInt(req.body.timezoneOffset);
+      const serverOffset = now.getTimezoneOffset();
+      const offsetDifference = clientOffset - serverOffset;
+      
+      console.log('🌐 Timezone adjustment:', {
+        clientOffset,
+        serverOffset,
+        offsetDifference,
+        adjustmentMinutes: offsetDifference * 60000
+      });
+      
+      // Adjust the selected date to server timezone
+      selectedDate.setMinutes(selectedDate.getMinutes() - offsetDifference);
+    }
     
-    console.log('🔍 [ROUTE VALIDATION] UTC Comparison:', {
-      input: value,
-      selectedLocal: selectedDate.toString(),
-      selectedUTC: selectedUTC,
-      nowLocal: now.toString(),
-      nowUTC: nowUTC
-    });
-    
-    // Add 15 minute buffer for timezone/server differences
+    // Add 15 minute buffer
     const bufferMinutes = 15;
     const bufferMs = bufferMinutes * 60 * 1000;
     
-    // Compare in UTC
-    const selectedTime = new Date(selectedUTC).getTime();
-    const nowTime = new Date(nowUTC).getTime();
-    
-    console.log('🔍 [ROUTE VALIDATION] Time comparison:', {
-      selectedTime,
-      nowTime,
-      difference: selectedTime - nowTime,
-      differenceMinutes: (selectedTime - nowTime) / (1000 * 60)
-    });
-    
-    if (selectedTime <= (nowTime - bufferMs)) {
-      throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences). Selected: ${selectedDate.toLocaleString()}, Server: ${now.toLocaleString()}`);
+    if (selectedDate.getTime() <= (now.getTime() - bufferMs)) {
+      throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences)`);
     }
     
     return true;
   })
-  .withMessage('Start time must be in the future (within 15 minutes tolerance)'),
+  .withMessage('Start time must be in the future'),
 
 body('end_time')
   .custom((value, { req }) => {

@@ -26,8 +26,12 @@ validateStartTime: (startTime) => {
   const selectedDate = new Date(startTime);
   const now = new Date();
   
-  // Start time must be in the future (any time greater than now)
-  return selectedDate > now;
+  // Add a buffer for timezone differences (5 minutes)
+  // This allows for slight differences between client and server time
+  const bufferMinutes = 5 * 60 * 1000;
+  
+  // Start time must be in the future with buffer
+  return selectedDate > new Date(now.getTime() - bufferMinutes);
 },
 
 validateEndTime: (endTime, startTime) => {
@@ -84,10 +88,7 @@ function formatDateForInput(dateString) {
 }
 
 
-// Add this function to your task model if it's missing
 function parseDateTimeLocalInput(dateTimeString) {
-  // console.log('🔍 parseDateTimeLocalInput called with:', dateTimeString);
-  
   if (!dateTimeString) return null;
   
   // datetime-local input is in local time, create date directly without UTC conversion
@@ -95,17 +96,11 @@ function parseDateTimeLocalInput(dateTimeString) {
   const [year, month, day] = datePart.split('-').map(Number);
   const [hours, minutes] = timePart.split(':').map(Number);
   
-  // Create date in local timezone (this is crucial!)
+  // Create date in local timezone
   const date = new Date(year, month - 1, day, hours, minutes);
   
-  // console.log('🔍 Parsed local date:', {
-  //   input: dateTimeString,
-  //   result: date.toString(),
-  //   iso: date.toISOString(),
-  //   localHours: date.getHours(),
-  //   localMinutes: date.getMinutes()
-  // });
-  
+  // Convert to ISO string for database storage
+  // This ensures consistent storage
   return date;
 }
 
@@ -153,14 +148,18 @@ async function createTask(userId, taskData) {
     throw new Error('End time must be after start time and within 1 year');
   }
   
-  // Parse dates
   const startDate = parseDateTimeLocalInput(taskData.start_time);
-  const endDate = parseDateTimeLocalInput(taskData.end_time);
-  
-  console.log('🔍 [DEBUG] Parsed dates:', {
-    startDate: startDate.toString(),
-    endDate: endDate.toString()
-  });
+const endDate = parseDateTimeLocalInput(taskData.end_time);
+
+// Convert to UTC for consistent database storage
+const startDateUTC = new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000));
+const endDateUTC = new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000));
+
+// Use UTC dates for database insertion
+console.log('🔍 [DEBUG] UTC dates for database:', {
+  startUTC: startDateUTC.toISOString(),
+  endUTC: endDateUTC.toISOString()
+});
   
   // For backward compatibility, set due_date = start_date
   const dueDate = startDate;

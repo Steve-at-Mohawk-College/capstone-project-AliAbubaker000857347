@@ -53,6 +53,48 @@ router.get('/schedule', requireAuth, async (req, res) => {
   }
 });
 
+
+
+
+
+
+// Add this to your taskRoutes.js
+router.get('/debug/timezone', requireAuth, async (req, res) => {
+  const now = new Date();
+  const testDate = new Date(now.getTime() + 30 * 60 * 1000); // 30 minutes from now
+  
+  res.json({
+    serverTime: {
+      local: now.toString(),
+      iso: now.toISOString(),
+      timestamp: now.getTime(),
+      timezoneOffset: now.getTimezoneOffset(),
+      utc: now.toUTCString()
+    },
+    testDate: {
+      local: testDate.toString(),
+      iso: testDate.toISOString(),
+      timestamp: testDate.getTime()
+    },
+    headers: {
+      'date-header': req.headers.date
+    }
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // GET /tasks/upcoming - Get tasks due in the next X days
 router.get('/upcoming', requireAuth, async (req, res) => {
   try {
@@ -103,10 +145,13 @@ body('start_time')
     const now = new Date();
     const selectedDate = new Date(value);
     
-    // Start time must be in the future
-    return selectedDate > now;
+    // Add buffer for timezone differences (5 minutes)
+    const bufferMinutes = 5 * 60 * 1000;
+    
+    // Start time must be in the future with buffer
+    return selectedDate > new Date(now.getTime() - bufferMinutes);
   })
-  .withMessage('Start time must be in the future'),
+  .withMessage('Start time must be in the future (within 5 minutes tolerance)'),
 
 body('end_time')
   .custom((value, { req }) => {

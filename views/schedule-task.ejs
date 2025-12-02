@@ -304,25 +304,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Validate start and end times
   function validateTimes() {
-    const startValue = startTimeInput.value;
-    const endValue = endTimeInput.value;
-    
-    if (!startValue || !endValue) {
-      startTimeInput.setCustomValidity('Start time is required');
-      endTimeInput.setCustomValidity('End time is required');
-      return false;
-    }
+  
 
-    const startDate = new Date(startValue);
-    const endDate = new Date(endValue);
-    const now = new Date();
-    
-    // Start time must be in the future
-    if (startDate <= now) {
-      startTimeInput.setCustomValidity('Start time must be in the future');
-      startTimeInput.classList.add('is-invalid');
-      return false;
-    }
+      const startValue = startTimeInput.value;
+  const endValue = endTimeInput.value;
+  
+  if (!startValue || !endValue) {
+    startTimeInput.setCustomValidity('Start time is required');
+    endTimeInput.setCustomValidity('End time is required');
+    return false;
+  }
+
+  const startDate = new Date(startValue);
+  const endDate = new Date(endValue);
+  const now = new Date();
+  
+  // Add 5 minute buffer for timezone/server differences
+  const bufferMinutes = 5 * 60 * 1000;
+  const nowWithBuffer = new Date(now.getTime() - bufferMinutes);
+  
+  // Start time must be in the future (with buffer)
+  if (startDate <= nowWithBuffer) {
+    startTimeInput.setCustomValidity('Start time must be in the future (allowing 5 minutes for timezone differences)');
+    startTimeInput.classList.add('is-invalid');
+    return false;
+  }
+
     
     // End time must be after start time
     if (endDate <= startDate) {

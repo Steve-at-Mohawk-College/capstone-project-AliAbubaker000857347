@@ -96,30 +96,35 @@ const validateTask = [
 
 
 
-body('due_date')
+body('start_time')
   .custom((value) => {
     if (!value) return false;
     
     const now = new Date();
-    const selectedDate = new Date(value); // This will be in local time
+    const selectedDate = new Date(value);
     
-    // Convert both dates to milliseconds for comparison
-    const nowTime = now.getTime();
-    const selectedTime = selectedDate.getTime();
-    const minTime = nowTime + (10 * 60 * 1000);
-    
-    if (selectedTime < minTime) {
-      throw new Error('Due date must be at least 20 minutes from now'); // CHANGED: 20 minutes
-    }
-    
-    const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000); // 1 year from now
-    if (selectedTime > maxTime) {
-      throw new Error('Due date must be within 1 year from now');
-    }
-    
-    return true;
+    // Start time must be in the future
+    return selectedDate > now;
   })
-  .withMessage('Due date must be at least 20 minutes from now and within 1 year'), // CHANGED: 20 minutes
+  .withMessage('Start time must be in the future'),
+
+body('end_time')
+  .custom((value, { req }) => {
+    if (!value || !req.body.start_time) return false;
+    
+    const endDate = new Date(value);
+    const startDate = new Date(req.body.start_time);
+    const now = new Date();
+    
+    // End time must be after start time
+    if (endDate <= startDate) return false;
+    
+    // Maximum 1 year in the future
+    const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
+    return endDate.getTime() <= maxTime;
+  })
+  .withMessage('End time must be after start time and within 1 year'),
+
 
   body('priority')
     .isIn(['low', 'medium', 'high'])
@@ -141,16 +146,16 @@ router.get('/', requireAuth, async (req, res) => {
 
 // POST /tasks - Create a new task
 router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) => {
-  // console.log('🔍 [ROUTE DEBUG] POST /tasks called');
-  // console.log('🔍 [ROUTE DEBUG] Request body:', JSON.stringify(req.body, null, 2));
+  console.log('🔍 [ROUTE DEBUG] POST /tasks called');
+  console.log('🔍 [ROUTE DEBUG] Request body:', JSON.stringify(req.body, null, 2));
   
   try {
     // Check validation errors
     const errors = validationResult(req);
-    // console.log('🔍 [ROUTE DEBUG] Validation errors:', errors.array());
+    console.log('🔍 [ROUTE DEBUG] Validation errors:', errors.array());
     
     if (!errors.isEmpty()) {
-      // console.log('❌ [ROUTE DEBUG] Validation failed');
+      console.log('❌ [ROUTE DEBUG] Validation failed');
       // Get pets for the form
       const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
       
@@ -164,27 +169,29 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
         preservedTaskType: req.body.task_type,
         preservedTitle: req.body.title,
         preservedDescription: req.body.description,
-        preservedDueDate: req.body.due_date,
+        preservedStartTime: req.body.start_time, // CHANGED
+        preservedEndTime: req.body.end_time, // CHANGED
         preservedPriority: req.body.priority
       });
     }
 
-    const { pet_id, task_type, title, description, due_date, priority } = req.body;
+    const { pet_id, task_type, title, description, start_time, end_time, priority } = req.body; // CHANGED
     
-    // console.log('🔍 [ROUTE DEBUG] Calling createTask with processed data');
+    console.log('🔍 [ROUTE DEBUG] Calling createTask with processed data');
     await createTask(req.session.userId, { 
       pet_id, 
       task_type, 
       title, 
       description, 
-      due_date, 
+      start_time, // CHANGED
+      end_time, // CHANGED
       priority: priority || 'medium'
     });
     
-    // console.log('✅ [ROUTE DEBUG] Task created successfully, redirecting to dashboard');
+    console.log('✅ [ROUTE DEBUG] Task created successfully, redirecting to dashboard');
     res.redirect('/dashboard?message=Task created successfully');
   } catch (error) {
-    // console.error('❌ [ROUTE DEBUG] Create task error:', error);
+    console.error('❌ [ROUTE DEBUG] Create task error:', error);
     
     // Handle specific errors
     let errorMessage = 'Error creating task. Please try again.';
@@ -194,7 +201,7 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       errorMessage = error.message;
     }
     
-    // console.log('🔍 [ROUTE DEBUG] Error message to display:', errorMessage);
+    console.log('🔍 [ROUTE DEBUG] Error message to display:', errorMessage);
     
     // Get pets for the form
     const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
@@ -209,7 +216,8 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       preservedTaskType: req.body.task_type,
       preservedTitle: req.body.title,
       preservedDescription: req.body.description,
-      preservedDueDate: req.body.due_date,
+      preservedStartTime: req.body.start_time, // CHANGED
+      preservedEndTime: req.body.end_time, // CHANGED
       preservedPriority: req.body.priority
     });
   }

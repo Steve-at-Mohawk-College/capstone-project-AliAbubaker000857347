@@ -20,43 +20,30 @@ const validationRules = {
     return description.length <= 500;
   },
 
-  validateDueDate: (dueDate) => {
-    // console.log('🔍 [VALIDATE] validateDueDate called with:', dueDate);
-    
-    if (!dueDate) {
-      // console.log('❌ [VALIDATE] No due date provided');
-      return false;
-    }
-    
-    const selectedDate = parseDateTimeLocalInput(dueDate);
-    const now = new Date();
-    
-    // console.log('🔍 [VALIDATE] Selected date:', selectedDate.toString());
-    // console.log('🔍 [VALIDATE] Current time:', now.toString());
-    
-    // Use timestamps for comparison (simpler and more reliable)
-    const selectedTime = selectedDate.getTime();
-    const nowTime = now.getTime();
-    const minTime = nowTime + (10 * 60 * 1000);
-    
-    // console.log('🔍 [VALIDATE] Timestamps - Selected:', selectedTime, 'Now:', nowTime, 'Min:', minTime);
-    // console.log('🔍 [VALIDATE] Difference:', (selectedTime - minTime) / 1000 / 60, 'minutes');
-    
-    if (selectedTime < minTime) {
-      const minutesEarly = (minTime - selectedTime) / 1000 / 60;
-      // console.log('❌ [VALIDATE] Too early by', minutesEarly.toFixed(1), 'minutes');
-      return false;
-    }
-    
-    const maxTime = nowTime + (365 * 24 * 60 * 60 * 1000);
-    if (selectedTime > maxTime) {
-      // console.log('❌ [VALIDATE] More than 1 year in future');
-      return false;
-    }
-    
-    // console.log('✅ [VALIDATE] Validation passed');
-    return true;
-  }
+validateStartTime: (startTime) => {
+  if (!startTime) return false;
+  
+  const selectedDate = new Date(startTime);
+  const now = new Date();
+  
+  // Start time must be in the future (any time greater than now)
+  return selectedDate > now;
+},
+
+validateEndTime: (endTime, startTime) => {
+  if (!endTime || !startTime) return false;
+  
+  const endDate = new Date(endTime);
+  const startDate = new Date(startTime);
+  const now = new Date();
+  
+  // End time must be after start time
+  if (endDate <= startDate) return false;
+  
+  // Maximum 1 year in the future
+  const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
+  return endDate.getTime() <= maxTime;
+}
 };
 
 
@@ -123,31 +110,26 @@ function parseDateTimeLocalInput(dateTimeString) {
 }
 
 async function createTask(userId, taskData) {
-  // console.log('🔍 [DEBUG] createTask called with data:', JSON.stringify(taskData, null, 2));
+  console.log('🔍 [DEBUG] createTask called with data:', JSON.stringify(taskData, null, 2));
   
   // Input validation
   if (!validationRules.validateTitle(taskData.title)) {
-    // console.log('❌ [DEBUG] Title validation failed');
+    console.log('❌ [DEBUG] Title validation failed');
     throw new Error('Invalid title format');
   }
   
   if (!validationRules.validateDescription(taskData.description)) {
-    // console.log('❌ [DEBUG] Description validation failed');
+    console.log('❌ [DEBUG] Description validation failed');
     throw new Error('Invalid description format');
   }
   
-  if (!validationRules.validateDueDate(taskData.due_date)) {
-    // console.log('❌ [DEBUG] Due date validation failed - must be at least 20 minutes from now');
-    throw new Error('Due date must be at least 20 minutes from now and within 1 year');
-  }
-  
   if (!validationRules.taskType.includes(taskData.task_type)) {
-    // console.log('❌ [DEBUG] Task type validation failed');
+    console.log('❌ [DEBUG] Task type validation failed');
     throw new Error('Invalid task type');
   }
   
   if (!validationRules.priority.includes(taskData.priority)) {
-    // console.log('❌ [DEBUG] Priority validation failed');
+    console.log('❌ [DEBUG] Priority validation failed');
     throw new Error('Invalid priority');
   }
 
@@ -158,37 +140,67 @@ async function createTask(userId, taskData) {
   );
   
   if (petCheck.length === 0) {
-    // console.log('❌ [DEBUG] Pet ownership verification failed');
+    console.log('❌ [DEBUG] Pet ownership verification failed');
     throw new Error('Pet not found or access denied');
   }
 
-  // Parse the datetime-local input (already in local time)
-  const dueDate = parseDateTimeLocalInput(taskData.due_date);
-  
-  if (!dueDate || isNaN(dueDate.getTime())) {
-    // console.log('❌ [DEBUG] Invalid due date format after parsing');
-    throw new Error('Invalid due date format');
+  // Add validation for start_time and end_time
+  if (!validationRules.validateStartTime(taskData.start_time)) {
+    throw new Error('Start time must be in the future');
   }
-
-  // console.log('🔍 [DEBUG] Final due date to be stored:', dueDate.toString());
-
+  
+  if (!validationRules.validateEndTime(taskData.end_time, taskData.start_time)) {
+    throw new Error('End time must be after start time and within 1 year');
+  }
+  
+  // Parse dates
+  const startDate = parseDateTimeLocalInput(taskData.start_time);
+  const endDate = parseDateTimeLocalInput(taskData.end_time);
+  
+  console.log('🔍 [DEBUG] Parsed dates:', {
+    startDate: startDate.toString(),
+    endDate: endDate.toString()
+  });
+  
+  // For backward compatibility, set due_date = start_date
+  const dueDate = startDate;
+  
   const sql = `
-    INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, priority)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, start_time, end_time, priority)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
   
-  const result = await query(sql, [
+  console.log('🔍 [DEBUG] Executing SQL with values:', [
     userId, 
     taskData.pet_id, 
     taskData.task_type, 
     taskData.title.trim(),
     taskData.description ? taskData.description.trim() : null,
-    dueDate,  // Store as local time
+    dueDate,
+    startDate,
+    endDate,
     taskData.priority
   ]);
   
-  // console.log('✅ [DEBUG] Task created successfully');
-  return result;
+  try {
+    const result = await query(sql, [
+      userId, 
+      taskData.pet_id, 
+      taskData.task_type, 
+      taskData.title.trim(),
+      taskData.description ? taskData.description.trim() : null,
+      dueDate,
+      startDate,
+      endDate,
+      taskData.priority
+    ]);
+    
+    console.log('✅ [DEBUG] Task created successfully');
+    return result;
+  } catch (error) {
+    console.error('❌ [DEBUG] Database error:', error);
+    throw new Error('Database error: ' + error.message);
+  }
 }
 
 
@@ -203,8 +215,8 @@ async function getUpcomingTasks(userId, days = 3) {
     JOIN pets p ON t.pet_id = p.pet_id
     WHERE t.user_id = ? 
     AND t.completed = false
-    AND t.due_date BETWEEN ? AND ?
-    ORDER BY t.due_date ASC
+    AND t.start_time BETWEEN ? AND ?
+    ORDER BY t.start_time ASC
   `;
   
   const tasks = await query(sql, [userId, now, futureDate]);
@@ -212,6 +224,8 @@ async function getUpcomingTasks(userId, days = 3) {
   // Format dates for display (local time)
   return tasks.map(task => {
     task.due_date = formatDateForInput(task.due_date);
+    task.start_time = formatDateForInput(task.start_time);
+    task.end_time = formatDateForInput(task.end_time);
     return task;
   });
 }
@@ -222,7 +236,7 @@ async function getTasksByUser(userId) {
     FROM tasks t
     JOIN pets p ON t.pet_id = p.pet_id
     WHERE t.user_id = ? AND p.user_id = ?
-    ORDER BY t.due_date ASC
+    ORDER BY t.start_time ASC
   `;
   
   const tasks = await query(sql, [userId, userId]);
@@ -230,9 +244,12 @@ async function getTasksByUser(userId) {
   // Format dates for display (local time)
   return tasks.map(task => {
     task.due_date = formatDateForInput(task.due_date);
+    task.start_time = formatDateForInput(task.start_time);
+    task.end_time = formatDateForInput(task.end_time);
     return task;
   });
 }
+
 
 
 
@@ -333,6 +350,8 @@ async function getTaskById(taskId, userId) {
   if (results[0]) {
     const task = results[0];
     task.due_date = formatDateForInput(task.due_date);
+    task.start_time = formatDateForInput(task.start_time);
+    task.end_time = formatDateForInput(task.end_time);
     return task;
   }
   

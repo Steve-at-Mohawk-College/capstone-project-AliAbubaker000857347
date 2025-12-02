@@ -17,10 +17,44 @@ const { query } = require('../config/database');
 const router = express.Router();
 
 // Rate limiting
+// In taskRoutes.js - Update the rate limiter configuration
 const createTaskLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 10 requests per windowMs
-  message: 'Too many tasks created, please try again later.'
+  max: 20, // limit each IP to 20 requests per windowMs
+  keyGenerator: function(req) {
+    // Use user ID for rate limiting instead of IP
+    return req.session.userId || req.ip;
+  },
+  skipFailedRequests: true, // Don't count failed requests
+  handler: async function(req, res, next) {
+    try {
+      // Get pets for the form
+      const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
+      
+      // Calculate remaining time
+      const remainingTime = Math.ceil(this.windowMs / 60000); // Convert to minutes
+      
+      return res.status(429).render('schedule-task', {
+        title: 'Schedule Task - Pet Care',
+        pets: pets || [],
+        username: req.session.username,
+        profilePicture: req.session.profilePicture,
+        error: `Too many tasks created. Please wait ${remainingTime} minutes before creating another task.`,
+        preservedPetId: req.body.pet_id,
+        preservedTaskType: req.body.task_type,
+        preservedTitle: req.body.title,
+        preservedDescription: req.body.description,
+        preservedStartTime: req.body.start_time,
+        preservedEndTime: req.body.end_time,
+        preservedPriority: req.body.priority
+      });
+    } catch (error) {
+      // Fallback if we can't render the form
+      return res.status(429).send(`Too many tasks created. Please wait 15 minutes before creating another task.`);
+    }
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
 function requireAuth(req, res, next) {
@@ -214,13 +248,13 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
         preservedTaskType: req.body.task_type,
         preservedTitle: req.body.title,
         preservedDescription: req.body.description,
-        preservedStartTime: req.body.start_time, // CHANGED
-        preservedEndTime: req.body.end_time, // CHANGED
+        preservedStartTime: req.body.start_time,
+        preservedEndTime: req.body.end_time,
         preservedPriority: req.body.priority
       });
     }
 
-    const { pet_id, task_type, title, description, start_time, end_time, priority } = req.body; // CHANGED
+    const { pet_id, task_type, title, description, start_time, end_time, priority } = req.body;
     
     console.log('🔍 [ROUTE DEBUG] Calling createTask with processed data');
     await createTask(req.session.userId, { 
@@ -228,8 +262,8 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       task_type, 
       title, 
       description, 
-      start_time, // CHANGED
-      end_time, // CHANGED
+      start_time,
+      end_time,
       priority: priority || 'medium'
     });
     
@@ -261,8 +295,8 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
       preservedTaskType: req.body.task_type,
       preservedTitle: req.body.title,
       preservedDescription: req.body.description,
-      preservedStartTime: req.body.start_time, // CHANGED
-      preservedEndTime: req.body.end_time, // CHANGED
+      preservedStartTime: req.body.start_time,
+      preservedEndTime: req.body.end_time,
       preservedPriority: req.body.priority
     });
   }

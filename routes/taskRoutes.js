@@ -302,6 +302,29 @@ router.post('/', requireAuth, createTaskLimiter, validateTask, async (req, res) 
   }
 });
 
+
+
+
+
+// Add to taskRoutes.js
+router.get('/debug/timezone-check', requireAuth, (req, res) => {
+  const now = new Date();
+  const testInput = "2024-12-02T10:00"; // Example from client
+  
+  res.json({
+    clientInput: testInput,
+    parsedAsLocal: new Date(testInput).toString(),
+    parsedAsUTC: new Date(testInput).toISOString(),
+    serverNow: now.toString(),
+    serverNowUTC: now.toISOString(),
+    serverTimezoneOffset: now.getTimezoneOffset(),
+    databaseConfig: {
+      timezone: process.env.TZ || 'UTC',
+      nodeEnv: process.env.NODE_ENV
+    }
+  });
+});
+
 // GET /tasks/debug/time - Debug time information
 router.get('/debug/time', requireAuth, (req, res) => {
   const now = new Date();

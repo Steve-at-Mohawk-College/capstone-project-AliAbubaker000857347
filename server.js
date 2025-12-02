@@ -59,6 +59,33 @@ app.use(
 );
 
 
+
+// Add debug endpoint
+app.get('/debug/current-time', (req, res) => {
+  const now = new Date();
+  const testInput = "2025-12-02T10:00"; // Example datetime-local format
+  
+  res.json({
+    debugInfo: {
+      serverTime: {
+        local: now.toString(),
+        iso: now.toISOString(),
+        timestamp: now.getTime(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        offset: now.getTimezoneOffset()
+      },
+      testInput: {
+        raw: testInput,
+        parsed: new Date(testInput).toString(),
+        parsedISO: new Date(testInput).toISOString(),
+        parsedTimestamp: new Date(testInput).getTime()
+      },
+      databaseTime: null // Will be populated if we query DB
+    }
+  });
+});
+
+
 // Add cache control for profile images
 app.use('/profile/picture', (req, res, next) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');

@@ -172,20 +172,52 @@ const validateTask = [
 
 
 
+// Update the validation middleware
 body('start_time')
   .custom((value) => {
-    if (!value) return false;
+    if (!value) {
+      throw new Error('Start time is required');
+    }
+    
+    console.log('🔍 [ROUTE VALIDATION] Validating start_time:', value);
     
     const now = new Date();
     const selectedDate = new Date(value);
     
-    // Add buffer for timezone differences (5 minutes)
-    const bufferMinutes = 5 * 60 * 1000;
+    // Convert both to UTC strings
+    const selectedUTC = selectedDate.toISOString();
+    const nowUTC = now.toISOString();
     
-    // Start time must be in the future with buffer
-    return selectedDate > new Date(now.getTime() - bufferMinutes);
+    console.log('🔍 [ROUTE VALIDATION] UTC Comparison:', {
+      input: value,
+      selectedLocal: selectedDate.toString(),
+      selectedUTC: selectedUTC,
+      nowLocal: now.toString(),
+      nowUTC: nowUTC
+    });
+    
+    // Add 15 minute buffer for timezone/server differences
+    const bufferMinutes = 15;
+    const bufferMs = bufferMinutes * 60 * 1000;
+    
+    // Compare in UTC
+    const selectedTime = new Date(selectedUTC).getTime();
+    const nowTime = new Date(nowUTC).getTime();
+    
+    console.log('🔍 [ROUTE VALIDATION] Time comparison:', {
+      selectedTime,
+      nowTime,
+      difference: selectedTime - nowTime,
+      differenceMinutes: (selectedTime - nowTime) / (1000 * 60)
+    });
+    
+    if (selectedTime <= (nowTime - bufferMs)) {
+      throw new Error(`Start time must be in the future (allowing ${bufferMinutes} minutes for timezone differences). Selected: ${selectedDate.toLocaleString()}, Server: ${now.toLocaleString()}`);
+    }
+    
+    return true;
   })
-  .withMessage('Start time must be in the future (within 5 minutes tolerance)'),
+  .withMessage('Start time must be in the future (within 15 minutes tolerance)'),
 
 body('end_time')
   .custom((value, { req }) => {

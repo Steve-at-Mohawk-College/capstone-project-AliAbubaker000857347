@@ -21,33 +21,62 @@ const validationRules = {
   },
 
 validateStartTime: (startTime) => {
-  if (!startTime) return false;
-  
-  const selectedDate = new Date(startTime);
-  const now = new Date();
-  
-  // Add a buffer for timezone differences (5 minutes)
-  // This allows for slight differences between client and server time
-  const bufferMinutes = 5 * 60 * 1000;
-  
-  // Start time must be in the future with buffer
-  return selectedDate > new Date(now.getTime() - bufferMinutes);
-},
+    if (!startTime) return false;
+    
+    console.log('🔍 [MODEL VALIDATION] Validating start time:', startTime);
+    
+    // Parse the datetime-local input (client local time)
+    const selectedDate = new Date(startTime);
+    const now = new Date();
+    
+    // Convert both to UTC for comparison
+    const selectedUTC = selectedDate.toISOString();
+    const nowUTC = now.toISOString();
+    
+    console.log('🔍 [MODEL VALIDATION] UTC comparison:', {
+      selectedLocal: selectedDate.toString(),
+      selectedUTC: selectedUTC,
+      nowLocal: now.toString(),
+      nowUTC: nowUTC,
+      differenceMinutes: (new Date(selectedUTC).getTime() - new Date(nowUTC).getTime()) / (1000 * 60)
+    });
+    
+    // Use 10 minute buffer (600000 ms) for timezone/server differences
+    const bufferMilliseconds = 10 * 60 * 1000; // 10 minutes
+    const isValid = new Date(selectedUTC).getTime() > (new Date(nowUTC).getTime() - bufferMilliseconds);
+    
+    console.log('🔍 [MODEL VALIDATION] Result:', isValid);
+    
+    return isValid;
+  },
 
-validateEndTime: (endTime, startTime) => {
-  if (!endTime || !startTime) return false;
-  
-  const endDate = new Date(endTime);
-  const startDate = new Date(startTime);
-  const now = new Date();
-  
-  // End time must be after start time
-  if (endDate <= startDate) return false;
-  
-  // Maximum 1 year in the future
-  const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
-  return endDate.getTime() <= maxTime;
-}
+  validateEndTime: (endTime, startTime) => {
+    if (!endTime || !startTime) return false;
+    
+    console.log('🔍 [MODEL VALIDATION] Validating end time:', endTime);
+    
+    const endDate = new Date(endTime);
+    const startDate = new Date(startTime);
+    const now = new Date();
+    
+    // Convert to UTC
+    const endUTC = endDate.toISOString();
+    const startUTC = startDate.toISOString();
+    
+    // End time must be after start time (UTC comparison)
+    if (new Date(endUTC) <= new Date(startUTC)) {
+      console.log('❌ End time not after start time');
+      return false;
+    }
+    
+    // Maximum 1 year in the future
+    const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
+    const isValid = new Date(endUTC).getTime() <= maxTime;
+    
+    console.log('🔍 [MODEL VALIDATION] End time valid:', isValid);
+    
+    return isValid;
+  }
 };
 
 

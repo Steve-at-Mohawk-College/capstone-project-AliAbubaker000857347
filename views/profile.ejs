@@ -1401,6 +1401,169 @@ body.zoom-mode {
 #profilePictureModal #modalProfilePicture:hover {
     transform: scale(1.01);
 }
+
+
+/* Add these mobile-specific zoom fixes */
+@media (max-width: 768px) {
+    #profilePictureModal .modal-dialog {
+        max-width: 100vw !important;
+        max-height: 100vh !important;
+        margin: 0 !important;
+        padding: 10px !important;
+    }
+    
+    #profilePictureModal .modal-content {
+        min-height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+    }
+    
+    #profilePictureModal .modal-body {
+        min-height: calc(100vh - 100px) !important;
+        max-height: calc(100vh - 100px) !important;
+        overflow: auto !important; /* Allow scrolling when zoomed */
+        touch-action: pan-x pan-y !important;
+    }
+    
+    #profilePictureModal #modalProfilePicture {
+        max-width: 100% !important;
+        max-height: 80vh !important;
+        touch-action: pan-x pan-y !important;
+    }
+    
+    /* Zoomed state on mobile */
+    #profilePictureModal.zoomed .modal-body {
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    #profilePictureModal.zoomed #modalProfilePicture {
+        max-width: none !important;
+        max-height: none !important;
+        min-height: 100% !important;
+    }
+    
+    /* Fix zoom controls on mobile */
+    .zoom-controls {
+        bottom: 70px !important; /* Move up to avoid mobile browser UI */
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 25px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .zoom-controls button {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 20px !important;
+    }
+    
+    /* Always show zoom controls on mobile */
+    #profilePictureModal .zoom-controls {
+        opacity: 1 !important;
+    }
+}
+
+/* Mobile touch improvements */
+@media (max-width: 576px) {
+    #profilePictureModal .modal-dialog {
+        width: 100vw !important;
+        height: 100vh !important;
+    }
+    
+    #profilePictureModal .modal-content {
+        border-radius: 0 !important;
+    }
+    
+    .zoom-controls {
+        bottom: 20px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: auto !important;
+        max-width: 90vw !important;
+    }
+    
+    .zoom-controls button {
+        margin: 5px !important;
+    }
+    
+    /* Double-tap to zoom */
+    #profilePictureModal #modalProfilePicture {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Prevent excessive zoom on mobile */
+@media (max-width: 768px) {
+    #profilePictureModal.zoomed #modalProfilePicture {
+        transform-origin: center center !important;
+    }
+    
+    /* Add a visual indicator when zoomed */
+    #profilePictureModal.zoomed::after {
+        content: 'Pinch to zoom out • Double tap to reset';
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        z-index: 1060;
+        animation: fadeInOut 3s ease-in-out;
+    }
+    
+    @keyframes fadeInOut {
+        0%, 100% { opacity: 0; }
+        10%, 90% { opacity: 1; }
+    }
+}
+
+/* Mobile reset button */
+#mobileResetZoom {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+#mobileResetZoom:hover {
+    background: rgba(0, 0, 0, 0.9) !important;
+    transform: scale(1.05);
+}
+
+/* Mobile gesture hints */
+.gesture-hint {
+    position: fixed;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    z-index: 1060;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    max-width: 80%;
+    white-space: nowrap;
+}
+
+/* Limit maximum zoom on mobile */
+@media (max-width: 768px) {
+    #profilePictureModal #modalProfilePicture {
+        max-width: 100vw !important;
+    }
+    
+    #profilePictureModal.zoomed #modalProfilePicture {
+        max-width: 300vw !important; /* Allow zoom but not excessive */
+    }
+}
 </style>
 
 <div class="container-fluid profile-container">
@@ -2088,12 +2251,17 @@ function showAlert(message, type) {
     }
 }
 
-// Replace your existing setupImageZoom and related functions with this:
+
+
+
+  // Replace your existing setupImageZoom function with this improved version:
 
 let currentZoom = 1;
 const ZOOM_STEP = 0.5;
 const MAX_ZOOM = 3;
 const MIN_ZOOM = 1;
+let initialDistance = null;
+let lastTouchEnd = 0;
 
 function setupImageZoom() {
     const modalImg = document.getElementById('modalProfilePicture');
@@ -2104,10 +2272,79 @@ function setupImageZoom() {
     
     if (!modalImg || !modal) return;
     
-    // Click to toggle zoom
+    // Click to toggle zoom (double tap on mobile)
+    let lastTap = 0;
     modalImg.addEventListener('click', function(e) {
         e.stopPropagation();
+        
+        // Handle double tap on mobile
+        if (window.innerWidth <= 768) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            
+            if (tapLength < 300 && tapLength > 0) {
+                // Double tap detected
+                if (currentZoom > 1) {
+                    resetZoom();
+                } else {
+                    zoomIn();
+                }
+                lastTap = 0;
+                return;
+            }
+            lastTap = currentTime;
+        }
+        
+        // Single click/tape on desktop
         toggleZoom();
+    });
+    
+    // Pinch to zoom for mobile
+    modalImg.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            initialDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+        }
+    });
+    
+    modalImg.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 2 && initialDistance) {
+            e.preventDefault();
+            
+            const currentDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            
+            // Calculate zoom factor
+            const zoomFactor = currentDistance / initialDistance;
+            
+            // Apply pinch zoom
+            if (zoomFactor > 1.1) {
+                // Pinching out (zoom in)
+                if (currentZoom < MAX_ZOOM) {
+                    currentZoom = Math.min(currentZoom + 0.1, MAX_ZOOM);
+                    applyZoom();
+                    initialDistance = currentDistance;
+                }
+            } else if (zoomFactor < 0.9) {
+                // Pinching in (zoom out)
+                if (currentZoom > MIN_ZOOM) {
+                    currentZoom = Math.max(currentZoom - 0.1, MIN_ZOOM);
+                    applyZoom();
+                    initialDistance = currentDistance;
+                }
+            }
+        }
+    });
+    
+    modalImg.addEventListener('touchend', function(e) {
+        if (e.touches.length < 2) {
+            initialDistance = null;
+        }
     });
     
     // Zoom in button
@@ -2138,12 +2375,17 @@ function setupImageZoom() {
     modal.addEventListener('hidden.bs.modal', function() {
         resetZoom();
         currentZoom = 1;
+        translateX = 0;
+        translateY = 0;
         updateZoomButtons();
     });
     
-    // Handle keyboard shortcuts
+    // Handle keyboard shortcuts (desktop only)
     document.addEventListener('keydown', function(e) {
         if (!modal.classList.contains('show')) return;
+        
+        // Don't handle keyboard shortcuts on mobile
+        if (window.innerWidth <= 768) return;
         
         switch(e.key) {
             case '+':
@@ -2174,8 +2416,11 @@ function setupImageZoom() {
         }
     });
     
-    // Handle wheel zoom
+    // Handle wheel zoom (desktop only)
     modalImg.addEventListener('wheel', function(e) {
+        // Don't handle wheel on mobile
+        if (window.innerWidth <= 768) return;
+        
         if (e.ctrlKey) {
             e.preventDefault();
             if (e.deltaY < 0) {
@@ -2185,7 +2430,310 @@ function setupImageZoom() {
             }
         }
     });
+    
+    // Add escape hatch for mobile - tap outside image to reset zoom
+    modal.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && currentZoom > 1 && !modalImg.contains(e.target)) {
+            resetZoom();
+        }
+    });
 }
+
+// Add mobile-specific zoom functions
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+}
+
+function zoomIn() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    
+    if (!modalImg || !modal || currentZoom >= MAX_ZOOM) return;
+    
+    // Smaller steps on mobile
+    const zoomStep = isMobileDevice() ? 0.25 : ZOOM_STEP;
+    currentZoom = Math.min(currentZoom + zoomStep, MAX_ZOOM);
+    applyZoom();
+}
+
+function zoomOut() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    
+    if (!modalImg || !modal || currentZoom <= MIN_ZOOM) return;
+    
+    // Smaller steps on mobile
+    const zoomStep = isMobileDevice() ? 0.25 : ZOOM_STEP;
+    currentZoom = Math.max(currentZoom - zoomStep, MIN_ZOOM);
+    applyZoom();
+}
+
+function resetZoom() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    
+    if (!modalImg || !modal) return;
+    
+    currentZoom = 1;
+    translateX = 0;
+    translateY = 0;
+    applyZoom();
+    
+    // Show reset feedback on mobile
+    if (isMobileDevice()) {
+        showToast('Zoom reset to normal', 2000);
+    }
+}
+
+// Add this helper function
+function showToast(message, duration) {
+    // Remove existing toast
+    const existingToast = document.getElementById('zoomToast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    const toast = document.createElement('div');
+    toast.id = 'zoomToast';
+    toast.innerHTML = `
+        <div style="
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            z-index: 9999;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+        ">
+            ${message}
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, duration);
+}
+
+// Update the applyZoom function for mobile
+function applyZoom() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const resetZoomBtn = document.getElementById('resetZoomBtn');
+    
+    if (!modalImg || !modal) return;
+    
+    // Apply zoom transform
+    modalImg.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
+    
+    // Toggle zoomed class
+    if (currentZoom > 1) {
+        modalImg.classList.add('zoomed');
+        modal.classList.add('zoomed');
+        document.body.classList.add('zoom-mode');
+        
+        // Enable panning when zoomed
+        enableImagePanning();
+        
+        // Set grab cursor on desktop
+        if (!isMobileDevice()) {
+            modalImg.style.cursor = 'grab';
+        }
+    } else {
+        modalImg.classList.remove('zoomed');
+        modal.classList.remove('zoomed');
+        document.body.classList.remove('zoom-mode');
+        
+        // Reset pan position
+        modalImg.style.transform = `scale(1) translate(0px, 0px)`;
+        disableImagePanning();
+        
+        // Set regular pointer cursor (not zoom-in)
+        modalImg.style.cursor = 'pointer';
+    }
+    
+    // Update button states
+    updateZoomButtons();
+}
+
+// Update touch event handling for mobile panning
+function enableImagePanning() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    if (!modalImg) return;
+    
+    modalImg.addEventListener('mousedown', startPan);
+    modalImg.addEventListener('touchstart', startPanTouch);
+    document.addEventListener('mousemove', pan);
+    document.addEventListener('touchmove', panTouch);
+    document.addEventListener('mouseup', stopPan);
+    document.addEventListener('touchend', stopPan);
+    document.addEventListener('touchcancel', stopPan);
+}
+
+function startPanTouch(e) {
+    if (!document.getElementById('modalProfilePicture').classList.contains('zoomed')) return;
+    
+    // Only start panning with one finger
+    if (e.touches.length !== 1) return;
+    
+    isPanning = true;
+    const touch = e.touches[0];
+    startX = touch.clientX - translateX;
+    startY = touch.clientY - translateY;
+    e.preventDefault();
+}
+
+function panTouch(e) {
+    if (!isPanning) return;
+    
+    // Only pan with one finger
+    if (e.touches.length !== 1) return;
+    
+    const touch = e.touches[0];
+    translateX = touch.clientX - startX;
+    translateY = touch.clientY - startY;
+    
+    const modalImg = document.getElementById('modalProfilePicture');
+    modalImg.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
+    
+    e.preventDefault();
+}
+
+// Add emergency reset button for mobile
+function addMobileResetButton() {
+    const modal = document.getElementById('profilePictureModal');
+    if (!modal || !isMobileDevice()) return;
+    
+    // Remove existing reset button if any
+    const existingReset = document.getElementById('mobileResetZoom');
+    if (existingReset) existingReset.remove();
+    
+    const resetBtn = document.createElement('button');
+    resetBtn.id = 'mobileResetZoom';
+    resetBtn.innerHTML = `
+        <i class="bi bi-arrow-counterclockwise"></i>
+        <span>Reset Zoom</span>
+    `;
+    resetBtn.style.cssText = `
+        position: fixed;
+        top: 70px;
+        right: 15px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 25px;
+        padding: 10px 15px;
+        z-index: 1060;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        backdrop-filter: blur(10px);
+        cursor: pointer;
+    `;
+    
+    resetBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        resetZoom();
+    });
+    
+    modal.appendChild(resetBtn);
+    
+    // Show/hide based on zoom level
+    const observer = new MutationObserver(function() {
+        const modalImg = document.getElementById('modalProfilePicture');
+        if (modalImg && modalImg.classList.contains('zoomed')) {
+            resetBtn.style.display = 'flex';
+        } else {
+            resetBtn.style.display = 'none';
+        }
+    });
+    
+    observer.observe(document.getElementById('modalProfilePicture'), {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+}
+
+// Call this in viewProfilePicture function
+function viewProfilePicture() {
+    hideProfilePictureMenu();
+    
+    const profilePicture = document.getElementById('profilePicture');
+    const modalProfilePicture = document.getElementById('modalProfilePicture');
+    const modalElement = document.getElementById('profilePictureModal');
+    
+    if (!profilePicture || !modalProfilePicture || !modalElement) return;
+    
+    // Reset zoom state
+    currentZoom = 1;
+    translateX = 0;
+    translateY = 0;
+    
+    // Get the Bootstrap modal instance
+    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+    const pictureUrl = profilePicture.src;
+    
+    // Set the image source with cache busting
+    modalProfilePicture.src = pictureUrl + (pictureUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+    
+    // Reset image transform
+    modalProfilePicture.style.transform = 'scale(1) translate(0px, 0px)';
+    modalProfilePicture.classList.remove('zoomed');
+    modalElement.classList.remove('zoomed');
+    
+    modal.show();
+    
+    // Update zoom buttons
+    updateZoomButtons();
+    
+    // Add mobile reset button
+    setTimeout(() => {
+        addMobileResetButton();
+    }, 100);
+}
+   
+    
+  
+    
+   
+    
+   
+   
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function toggleZoom() {
     const modalImg = document.getElementById('modalProfilePicture');
@@ -2200,72 +2748,11 @@ function toggleZoom() {
     }
 }
 
-function zoomIn() {
-    const modalImg = document.getElementById('modalProfilePicture');
-    const modal = document.getElementById('profilePictureModal');
-    
-    if (!modalImg || !modal || currentZoom >= MAX_ZOOM) return;
-    
-    currentZoom = Math.min(currentZoom + ZOOM_STEP, MAX_ZOOM);
-    applyZoom();
-}
 
-function zoomOut() {
-    const modalImg = document.getElementById('modalProfilePicture');
-    const modal = document.getElementById('profilePictureModal');
-    
-    if (!modalImg || !modal || currentZoom <= MIN_ZOOM) return;
-    
-    currentZoom = Math.max(currentZoom - ZOOM_STEP, MIN_ZOOM);
-    applyZoom();
-}
 
-function resetZoom() {
-    const modalImg = document.getElementById('modalProfilePicture');
-    const modal = document.getElementById('profilePictureModal');
-    
-    if (!modalImg || !modal) return;
-    
-    currentZoom = 1;
-    applyZoom();
-}
 
-function applyZoom() {
-    const modalImg = document.getElementById('modalProfilePicture');
-    const modal = document.getElementById('profilePictureModal');
-    const zoomInBtn = document.getElementById('zoomInBtn');
-    const zoomOutBtn = document.getElementById('zoomOutBtn');
-    const resetZoomBtn = document.getElementById('resetZoomBtn');
-    
-    if (!modalImg || !modal) return;
-    
-    // Apply zoom transform
-    modalImg.style.transform = `scale(${currentZoom})`;
-    
-    // Toggle zoomed class
-    if (currentZoom > 1) {
-        modalImg.classList.add('zoomed');
-        modal.classList.add('zoomed');
-        document.body.classList.add('zoom-mode');
-        
-        // Enable panning when zoomed
-        enableImagePanning();
-    } else {
-        modalImg.classList.remove('zoomed');
-        modal.classList.remove('zoomed');
-        document.body.classList.remove('zoom-mode');
-        
-        // Reset pan position
-        modalImg.style.transform = `scale(1) translate(0px, 0px)`;
-        disableImagePanning();
-    }
-    
-    // Update button states
-    updateZoomButtons();
-    
-    // Update cursor
-    modalImg.style.cursor = currentZoom > 1 ? 'grab' : 'zoom-in';
-}
+
+
 
 function updateZoomButtons() {
     const zoomInBtn = document.getElementById('zoomInBtn');
@@ -2293,18 +2780,7 @@ let isPanning = false;
 let startX, startY;
 let translateX = 0, translateY = 0;
 
-function enableImagePanning() {
-    const modalImg = document.getElementById('modalProfilePicture');
-    if (!modalImg) return;
-    
-    modalImg.addEventListener('mousedown', startPan);
-    modalImg.addEventListener('touchstart', startPanTouch);
-    document.addEventListener('mousemove', pan);
-    document.addEventListener('touchmove', panTouch);
-    document.addEventListener('mouseup', stopPan);
-    document.addEventListener('touchend', stopPan);
-    document.addEventListener('touchcancel', stopPan);
-}
+
 
 function disableImagePanning() {
     const modalImg = document.getElementById('modalProfilePicture');
@@ -2332,15 +2808,7 @@ function startPan(e) {
     e.preventDefault();
 }
 
-function startPanTouch(e) {
-    if (!document.getElementById('modalProfilePicture').classList.contains('zoomed')) return;
-    
-    isPanning = true;
-    const touch = e.touches[0];
-    startX = touch.clientX - translateX;
-    startY = touch.clientY - translateY;
-    e.preventDefault();
-}
+
 
 function pan(e) {
     if (!isPanning) return;
@@ -2352,18 +2820,7 @@ function pan(e) {
     modalImg.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
 }
 
-function panTouch(e) {
-    if (!isPanning) return;
-    
-    const touch = e.touches[0];
-    translateX = touch.clientX - startX;
-    translateY = touch.clientY - startY;
-    
-    const modalImg = document.getElementById('modalProfilePicture');
-    modalImg.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
-    
-    e.preventDefault();
-}
+
 
 function stopPan() {
     isPanning = false;
@@ -2436,37 +2893,7 @@ function hideProfilePictureMenuOnClickOutside(e) {
         hideProfilePictureMenu();
     }
 }
-function viewProfilePicture() {
-    hideProfilePictureMenu();
-    
-    const profilePicture = document.getElementById('profilePicture');
-    const modalProfilePicture = document.getElementById('modalProfilePicture');
-    const modalElement = document.getElementById('profilePictureModal');
-    
-    if (!profilePicture || !modalProfilePicture || !modalElement) return;
-    
-    // Reset zoom state
-    currentZoom = 1;
-    translateX = 0;
-    translateY = 0;
-    
-    // Get the Bootstrap modal instance
-    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-    const pictureUrl = profilePicture.src;
-    
-    // Set the image source with cache busting
-    modalProfilePicture.src = pictureUrl + (pictureUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-    
-    // Reset image transform
-    modalProfilePicture.style.transform = 'scale(1) translate(0px, 0px)';
-    modalProfilePicture.classList.remove('zoomed');
-    modalElement.classList.remove('zoomed');
-    
-    modal.show();
-    
-    // Update zoom buttons
-    updateZoomButtons();
-}
+
 
 function openFileInput() {
     hideProfilePictureMenu();
@@ -2744,10 +3171,9 @@ async function resendVerification() {
 
 
 
-// Replace your current DOMContentLoaded handler with this:
 
-document.addEventListener('DOMContentLoaded', function() {
-     // Initialize pending email status
+   document.addEventListener('DOMContentLoaded', function() {
+    // Initialize pending email status
     checkPendingEmailStatus();
     
     // Initialize profile picture viewer
@@ -2758,7 +3184,14 @@ document.addEventListener('DOMContentLoaded', function() {
         setupImageZoom();
     }, 100);
     
-    // Rest of your existing code...
+    // Add mobile-specific features
+    if (window.innerWidth <= 768) {
+        // Add viewport meta tag for better mobile experience
+        const metaViewport = document.createElement('meta');
+        metaViewport.name = 'viewport';
+        metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes';
+        document.head.appendChild(metaViewport);
+    }
     // Bio character count
     const bioInput = document.getElementById('bioInput');
     const bioCharCount = document.getElementById('bioCharCount');

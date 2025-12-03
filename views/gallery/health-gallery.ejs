@@ -95,8 +95,8 @@
 
         
 
-          .photo-card:hover .photo-image {
-            transform: scale(1.05);
+        .photo-card:hover .photo-image {
+            transform: scale(1.08);
         }
 
         /* Image Overlay */
@@ -183,47 +183,27 @@
             font-size: 1rem;
         }
 
-          /* Tags Section */
+        /* Tags */
         .tags-container {
-            margin-top: auto;
-            margin-bottom: 0.75rem;
-            min-height: 48px;
+            margin-bottom: 1rem;
         }
+
         .tag-badge {
-            display: inline-block;
-            background: var(--light-gray);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            border: none;
             font-size: 0.75rem;
-            margin: 0.125rem;
-            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            margin: 0.15rem;
+            border-radius: 20px;
+            font-weight: 500;
             transition: var(--transition);
         }
 
-
         .tag-badge:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
         }
-
-          [data-bs-theme="dark"] .tag-badge:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-         /* Stats Row */
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--gray);
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--light-gray);
-        }
-
 
         /* Actions */
         .card-actions {
@@ -814,6 +794,53 @@
 [data-bs-theme="dark"] .photo-image-wrapper {
   background: #1a1d21;
 }
+/* ===== FIX FOR THEME ICON SIZE ===== */
+@media (max-width: 770px) {
+  /* Override any styles affecting the theme toggle button */
+  .theme-toggle-modern,
+  .header-icons-mobile .theme-toggle-modern,
+  .header-icons-desktop .theme-toggle-modern {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Ensure the icon inside is proper size */
+  .theme-toggle-modern i,
+  #themeToggleMobile i,
+  #themeToggleDesktop i {
+    font-size: 1.2rem !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  
+  /* Make sure the theme button container isn't affected by other styles */
+  .header-icons-mobile,
+  .header-icons-desktop {
+    gap: 0.5rem !important;
+  }
+  
+  /* Prevent any width:100% styles from affecting theme button */
+  .header-icons-mobile .theme-toggle-modern,
+  .header-icons-desktop .theme-toggle-modern {
+    width: 44px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* More specific fix for very small screens */
+@media (max-width: 400px) {
+  .theme-toggle-modern {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .theme-toggle-modern i {
+    font-size: 1.1rem !important;
+  }
+}
+
     </style>
 </head>
 <body>

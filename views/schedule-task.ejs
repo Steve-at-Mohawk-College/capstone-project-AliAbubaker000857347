@@ -122,6 +122,61 @@ input[type="datetime-local"][readonly]:focus {
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
+
+/* Style for the Back to Dashboard button */
+.back-to-dashboard-btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    border: 2px solid #6c757d;
+    border-radius: 8px; /* Same as btn-custom */
+    background-color: transparent;
+    color: #6c757d;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.back-to-dashboard-btn:hover {
+    background-color: #6c757d;
+    color: white !important;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.back-to-dashboard-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+}
+
+/* Dark mode support */
+[data-bs-theme="dark"] .back-to-dashboard-btn {
+    border-color: #a7acb1;
+    color: #a7acb1;
+}
+
+[data-bs-theme="dark"] .back-to-dashboard-btn:hover {
+    background-color: #a7acb1;
+    color: #000000 !important;
+    box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
+}
+
+/* Ensure proper spacing and center alignment */
+.mt-4.text-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem !important;
+}
+
+
+.back-to-dashboard-btn {
+    padding: 0.625rem 1.75rem; /* Slightly smaller padding than Save Task */
+    font-size: 0.95rem;
+}
 </style>
 <div class="row justify-content-center">
   <div class="col-md-8 col-lg-6">
@@ -253,12 +308,16 @@ input[type="datetime-local"][readonly]:focus {
             </div>
 
             <button type="submit" class="btn btn-custom w-100 btn-lg">Save Task</button>
+        <p></p>
+            
+    <a href="/dashboard" class="back-to-dashboard-btn">
+        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+    </a>
+
           </form>
         <% } %>
 
-        <div class="mt-4 text-center">
-          <a href="/dashboard">← Back to Dashboard</a>
-        </div>
+        
       </div>
     </div>
   </div>

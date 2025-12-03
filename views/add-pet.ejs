@@ -108,6 +108,53 @@ label[for="weight"] {
     color: var(--bs-body-color) !important;
     opacity: 1 !important;
 }
+
+/* Style for the Back to Dashboard button */
+.back-to-dashboard-btn {
+    display: inline-block;
+    padding: 0.625rem 2rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border: 2px solid #6c757d;
+    border-radius: 50rem; /* Same rounded-pill as Save Pet */
+    background-color: transparent;
+    color: #6c757d;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    width: 100%;
+}
+
+.back-to-dashboard-btn:hover {
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.back-to-dashboard-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+}
+
+/* Dark mode support */
+[data-bs-theme="dark"] .back-to-dashboard-btn {
+    border-color: #a7acb1;
+    color: #a7acb1;
+}
+
+[data-bs-theme="dark"] .back-to-dashboard-btn:hover {
+    background-color: #a7acb1;
+    color: #000000;
+    box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
+}
+
+/* Ensure proper spacing */
+.mt-4.text-center {
+    display: flex;
+    justify-content: center;
+}
 </style>
 
 <div class="row justify-content-center">
@@ -257,11 +304,14 @@ label[for="weight"] {
           <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-semibold">
             <i class="bi bi-plus-circle me-2"></i> Save Pet
           </button>
+           <div class="mt-4 text-center">
+    <a href="/dashboard" class="back-to-dashboard-btn">
+        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+    </a>
+</div>
         </form>
 
-        <div class="mt-4 text-center">
-          <a href="/dashboard" class="text-decoration-none">← Back to Dashboard</a>
-        </div>
+      
       </div>
     </div>
   </div>

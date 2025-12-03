@@ -187,8 +187,8 @@ input[type="datetime-local"][readonly]:focus {
 
             <div class="mb-3">
               <label for="title" class="form-label">Title *</label>
-             <input type="text" class="form-control" id="title" name="title" 
-       required maxlength="100" pattern="^[a-zA-Z0-9\s_,.!()-]+$"
+            <input type="text" class="form-control" id="title" name="title" 
+       required maxlength="100"
        value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
               <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers, spaces, and basic punctuation.</div>
             </div>

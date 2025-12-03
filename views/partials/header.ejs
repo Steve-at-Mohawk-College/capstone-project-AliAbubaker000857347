@@ -1847,8 +1847,14 @@ function setupMobileMenu() {
 
 // Update the existing DOMContentLoaded event
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize notification system
-  window.notificationSystem = new NotificationSystem();
+  // Only initialize notification system if user is logged in
+  const isLoginPage = window.location.pathname === '/login' || 
+                      window.location.pathname === '/register' || 
+                      window.location.pathname === '/forgot-password';
+  
+  if (!isLoginPage) {
+    window.notificationSystem = new NotificationSystem();
+  }
   
   // Initialize theme toggles
   setupThemeToggle();
@@ -1889,18 +1895,21 @@ class NotificationSystem {
     }
   }
 
-  async fetchUpcomingTasks() {
-    try {
-      const response = await fetch('/tasks/upcoming?days=3&limit=5');
-      if (response.ok) {
-        return await response.json();
-      }
-      return [];
-    } catch (error) {
-      // console.error('Error fetching upcoming tasks:', error);
-      return [];
+async fetchUpcomingTasks() {
+  try {
+    // Use relative path instead of absolute URL
+    const response = await fetch('/tasks/upcoming?days=3&limit=5', {
+      credentials: 'same-origin' // Important for session cookies
+    });
+    
+    if (response.ok) {
+      return await response.json();
     }
+    return [];
+  } catch (error) {
+    return [];
   }
+}
 
  updateNotificationBadge(upcomingTasks) {
   // Update both mobile and desktop badges

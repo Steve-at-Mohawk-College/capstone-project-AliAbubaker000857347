@@ -1616,10 +1616,11 @@ body.zoom-mode {
 <div class="profile-picture-container">
     <div class="profile-picture-wrapper" id="profilePictureWrapper">
         <img id="profilePicture" 
-             src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
-             class="profile-picture" 
-             onerror="this.onerror=null; this.src='/images/default-avatar.png'" 
-             alt="Profile Picture">
+     src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
+     class="profile-picture" 
+     onerror="this.onerror=null; this.src='/images/default-avatar.png'" 
+     alt="Profile Picture"
+     crossorigin="anonymous">
         
         <!-- Hidden Action Menu -->
         <div class="profile-picture-menu" id="profilePictureMenu">
@@ -2029,8 +2030,11 @@ body.zoom-mode {
       </div>
     </div>
   </div>
+
+
+
 <!-- Profile Picture Viewer Modal -->
-<div class="modal fade" id="profilePictureModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="profilePictureModal" tabindex="-1" role="dialog" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content bg-dark border-0">
       <div class="modal-header border-0 pb-0">
@@ -2039,9 +2043,11 @@ body.zoom-mode {
       <div class="modal-body text-center p-1">
         <img id="modalProfilePicture" src="" alt="Profile Picture" 
              class="img-fluid rounded shadow-lg" 
-             style="max-height: 75vh; object-fit: contain;">
+             style="max-height: 75vh; object-fit: contain;"
+             crossorigin="anonymous"
+             referrerpolicy="no-referrer">
       </div>
-      <!-- Add zoom controls -->
+   
       <div class="zoom-controls">
         <button id="zoomInBtn" title="Zoom In">
           <i class="bi bi-zoom-in"></i>
@@ -2056,6 +2062,10 @@ body.zoom-mode {
     </div>
   </div>
 </div>
+
+
+
+
 </div>
 
 
@@ -2166,6 +2176,37 @@ async function uploadProfilePicture(file) {
         isUploading = false;
         // console.log('File input reset and upload completed');
     }
+}
+
+function fixModalAccessibility() {
+    const modal = document.getElementById('profilePictureModal');
+    if (!modal) return;
+    
+    // Fix aria-hidden issue
+    modal.addEventListener('show.bs.modal', function() {
+        this.setAttribute('aria-hidden', 'false');
+        this.setAttribute('aria-modal', 'true');
+    });
+    
+    modal.addEventListener('hide.bs.modal', function() {
+        this.setAttribute('aria-hidden', 'true');
+        this.removeAttribute('aria-modal');
+    });
+    
+    // Ensure proper focus management
+    modal.addEventListener('shown.bs.modal', function() {
+        const closeBtn = this.querySelector('.btn-close');
+        if (closeBtn) {
+            closeBtn.focus();
+        }
+    });
+    
+    modal.addEventListener('hidden.bs.modal', function() {
+        const closeBtn = this.querySelector('.btn-close');
+        if (closeBtn) {
+            closeBtn.blur();
+        }
+    });
 }
 
 // Enhanced function to update all profile pictures
@@ -3178,6 +3219,8 @@ async function resendVerification() {
     
     // Initialize profile picture viewer
     setupProfilePictureViewer();
+
+       fixModalAccessibility();
 
     // Initialize zoom functionality - CALL THIS AFTER setupProfilePictureViewer
     setTimeout(() => {

@@ -150,9 +150,9 @@ label[for="weight"] {
 
             </label>
             <input type="text" class="form-control" id="name" name="name"
-                   required minlength="2" maxlength="50"
-                   pattern="^[A-Za-z\s'-]+$" autocomplete="off"
-                   value="<%= typeof name !== 'undefined' ? name : '' %>">
+       required minlength="2" maxlength="50"
+       autocomplete="off"
+       value="<%= typeof name !== 'undefined' ? name : '' %>">
             <div class="invalid-feedback" id="nameError">Enter a valid pet name (letters only).</div>
           </div>
 

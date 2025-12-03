@@ -342,20 +342,20 @@ getTasksForDate(dateString) {
         }
     }
 
-    // showOverdueNotification(tasks) {
-    //     const notification = document.createElement('div');
-    //     notification.className = 'alert alert-warning alert-dismissible fade show position-fixed top-0 end-0 m-3';
-    //     notification.style.zIndex = '1060';
-    //     notification.innerHTML = `
-    //         <i class="bi bi-exclamation-triangle me-2"></i>
-    //         <strong>${tasks.length} overdue task${tasks.length > 1 ? 's' : ''}</strong>
-    //         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    //         <div class="mt-2">
-    //             <a href="/task-overview" class="btn btn-sm btn-outline-warning">View Tasks</a>
-    //         </div>
-    //     `;
-    //     document.body.appendChild(notification);
-    // }
+    showOverdueNotification(tasks) {
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-warning alert-dismissible fade show position-fixed top-0 end-0 m-3';
+        notification.style.zIndex = '1060';
+        notification.innerHTML = `
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <strong>${tasks.length} overdue task${tasks.length > 1 ? 's' : ''}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="mt-2">
+                <a href="/task-overview" class="btn btn-sm btn-outline-warning">View Tasks</a>
+            </div>
+        `;
+        document.body.appendChild(notification);
+    }
 }
 
 // Initialize calendar when DOM is loaded

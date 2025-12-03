@@ -1,5 +1,180 @@
 <%- include('partials/header', {title: 'Health Tracker History'}) %>
 
+<style>
+/* FIX FOR MOBILE LIGHT MODE TEXT VISIBILITY */
+/* Ensure proper text colors for light and dark modes */
+body {
+    background-color: var(--light);
+    color: var(--dark);
+}
+
+/* Fix for health record cards */
+.health-record-card {
+    background-color: var(--light);
+    color: var(--dark);
+    border: 1px solid var(--light-gray);
+}
+
+/* Fix for modal in light mode */
+.modal-content {
+    background-color: var(--light) !important;
+    color: var(--dark) !important;
+}
+
+.modal-header {
+    background-color: var(--light-gray) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    color: var(--dark) !important;
+}
+
+/* Fix for form controls in light mode */
+.form-control, .form-select {
+    background-color: var(--light) !important;
+    color: var(--dark) !important;
+    border-color: var(--light-gray) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--light) !important;
+    color: var(--dark) !important;
+    border-color: var(--primary) !important;
+}
+
+/* Fix for table in light mode */
+.table {
+    color: var(--dark) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(67, 97, 238, 0.05) !important;
+}
+
+/* Fix for alert in light mode */
+.alert {
+    background-color: var(--light) !important;
+    color: var(--dark) !important;
+    border: 1px solid var(--light-gray) !important;
+}
+
+/* Fix for text-muted in both themes */
+.text-muted {
+    color: var(--gray) !important;
+}
+
+/* Fix for buttons */
+.btn-outline-primary {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+}
+
+.btn-outline-warning {
+    color: #ffc107 !important;
+    border-color: #ffc107 !important;
+}
+
+.btn-outline-warning:hover {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.btn-outline-danger {
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+/* Fix for card headers */
+.card-header {
+    background-color: var(--light-gray) !important;
+    color: var(--dark) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+}
+
+/* Fix for bootstrap theme colors in light mode */
+[data-theme="light"] {
+    --bs-body-color: #212529 !important;
+    --bs-body-bg: #ffffff !important;
+}
+
+/* Force dark theme override for health record detail modal */
+#recordDetails {
+    background-color: var(--light) !important;
+    color: var(--dark) !important;
+}
+
+#recordDetails h6,
+#recordDetails p,
+#recordDetails strong {
+    color: var(--dark) !important;
+}
+
+#recordDetails .bg-light {
+    background-color: var(--light-gray) !important;
+    color: var(--dark) !important;
+}
+
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+    .health-record-card {
+        background-color: var(--light) !important;
+        color: var(--dark) !important;
+    }
+    
+    .health-record-card .text-muted {
+        color: var(--gray) !important;
+    }
+    
+    .health-record-card .fw-medium {
+        color: var(--dark) !important;
+    }
+    
+    /* Ensure mobile header is visible */
+    .d-xl-none {
+        background-color: var(--light) !important;
+        color: var(--dark) !important;
+    }
+    
+    .d-xl-none h1 {
+        color: var(--dark) !important;
+    }
+}
+
+/* Add this specific fix for the modal content */
+#recordModal .modal-body {
+    background-color: var(--light) !important;
+}
+
+#recordModal .modal-body * {
+    color: var(--dark) !important;
+}
+
+#recordModal .modal-body .bg-light {
+    background-color: var(--light-gray) !important;
+}
+
+/* Dark mode specific overrides */
+[data-theme="dark"] .health-record-card {
+    background-color: #2d2d2d !important;
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: #2d2d2d !important;
+}
+
+[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+</style>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
@@ -12,16 +187,16 @@
       </div>
 
       <!-- Mobile header (shown only on screens less than 1000px) -->
-<div class="d-xl-none mb-4 mt-5 pt-5">
-  <div class="text-center">
-    <h1 class="h4">Health Tracker History</h1>
-  </div>
-  <div class="text-center mt-2">
-    <a href="/health-tracker/add" class="btn btn-primary btn-sm">
-      <i class="bi bi-plus-circle"></i> Add New Record
-    </a>
-  </div>
-</div>
+      <div class="d-xl-none mb-4 mt-5 pt-5">
+        <div class="text-center">
+          <h1 class="h4">Health Tracker History</h1>
+        </div>
+        <div class="text-center mt-2">
+          <a href="/health-tracker/add" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Add New Record
+          </a>
+        </div>
+      </div>
 
       <% if (typeof message !== 'undefined' && message) { %>
         <div class="alert alert-success alert-dismissible fade show">
@@ -30,7 +205,6 @@
         </div>
       <% } %>
 
-      <!-- Rest of your existing code remains the same -->
       <% if (pets.length === 0) { %>
         <div class="alert alert-info">
           <h4>No Pets Found</h4>
@@ -264,8 +438,6 @@
   </div>
 </div>
 
-<!-- Rest of your code remains the same -->
-
 <!-- Record Details Modal -->
 <div class="modal fade" id="recordModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
@@ -282,25 +454,33 @@
 </div>
 
 <script>
-// Dark mode detection and class application
+// FIX: Theme compatibility - Ensure CSS variables are properly applied
 document.addEventListener('DOMContentLoaded', function() {
-    // Check for dark mode and apply class
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark-mode');
-        document.documentElement.setAttribute('data-bs-theme', 'dark');
-    }
+    // Apply theme styles immediately
+    applyThemeStyles();
     
     // Listen for theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        if (e.matches) {
-            document.body.classList.add('dark-mode');
-            document.documentElement.setAttribute('data-bs-theme', 'dark');
-        } else {
-            document.body.classList.remove('dark-mode');
-            document.documentElement.setAttribute('data-bs-theme', 'light');
-        }
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'data-theme') {
+                applyThemeStyles();
+            }
+        });
     });
+    
+    observer.observe(document.documentElement, { attributes: true });
 });
+
+function applyThemeStyles() {
+    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+    const isDark = theme === 'dark';
+    
+    // Update all text elements to use correct colors
+    document.querySelectorAll('.health-record-card, .modal-content, .card-body, .table, .alert, .form-control, .form-select').forEach(el => {
+        el.style.setProperty('--bs-body-color', isDark ? '#f8f9fa' : '#212529', 'important');
+        el.style.setProperty('--bs-body-bg', isDark ? '#1a1d21' : '#ffffff', 'important');
+    });
+}
 
 // View record details
 document.querySelectorAll('.view-record').forEach(btn => {
@@ -312,6 +492,10 @@ document.querySelectorAll('.view-record').forEach(btn => {
       const record = await response.json();
       
       if (response.ok) {
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        const isDark = theme === 'dark';
+        const bgClass = isDark ? 'bg-dark text-light' : 'bg-light text-dark';
+        
         document.getElementById('recordDetails').innerHTML = `
           <div class="row">
             <div class="col-md-6">
@@ -332,7 +516,7 @@ document.querySelectorAll('.view-record').forEach(btn => {
             <div class="row mt-3">
               <div class="col-12">
                 <h6>Medical Notes</h6>
-                <div class="border rounded p-3 bg-light">
+                <div class="border rounded p-3 ${bgClass}">
                   ${record.medical_notes}
                 </div>
               </div>
@@ -385,6 +569,19 @@ document.querySelectorAll('.delete-record').forEach(btn => {
       });
     }
   });
+});
+
+// Add this to ensure mobile view works properly
+window.addEventListener('load', function() {
+    // Force theme application on load
+    applyThemeStyles();
+    
+    // Add event listeners for all dynamically created elements
+    document.body.addEventListener('click', function(e) {
+        if (e.target.closest('.view-record')) {
+            applyThemeStyles(); // Re-apply before showing modal
+        }
+    });
 });
 </script>
 

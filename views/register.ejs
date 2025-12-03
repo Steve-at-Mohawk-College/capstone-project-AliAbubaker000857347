@@ -56,7 +56,7 @@ header {
 }
 
 .btn-custom {
-    background-color: #1b5e20 !important;
+    background-color: #0d6efd !important; 
     color: white !important;
     border: none;
     border-radius: 8px;
@@ -66,18 +66,80 @@ header {
 }
 
 .btn-custom:hover {
-    background-color: #2e7d32 !important;
+    background-color: #0d6efd !important;
     color: white !important;
     transform: translateY(-1px);
 }
 
 .form-control:focus {
-    border-color: #1b5e20;
+    border-color: #0d6efd !important;
     box-shadow: 0 0 0 0.2rem rgba(27, 94, 32, 0.25);
 }
 
 .bi-person-plus.text-primary {
     color: #1b5e20 !important;
+}
+
+/* ===== FIX CONTRAST ISSUES FOR REGISTER PAGE ===== */
+
+/* Fix for form labels in dark mode */
+[data-theme="dark"] .form-label {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    background-color: transparent !important;
+}
+
+/* Fix for headings in dark mode */
+[data-theme="dark"] .text-dark,
+[data-theme="dark"] .h3,
+[data-theme="dark"] h1,
+[data-theme="dark"] h3 {
+    color: #ffffff !important;
+}
+
+/* Fix for muted text in dark mode */
+[data-theme="dark"] .text-muted {
+    color: #adb5bd !important;
+}
+
+/* Fix for form text in dark mode */
+[data-theme="dark"] .form-text {
+    color: #adb5bd !important;
+}
+
+/* Fix for links in dark mode */
+[data-theme="dark"] .text-decoration-none {
+    color: #86b7fe !important;
+}
+
+/* Fix for dark mode card background */
+[data-theme="dark"] .card-custom {
+    background: var(--light) !important;
+    border-color: var(--glass-border) !important;
+}
+
+[data-theme="dark"] body {
+    background-color: var(--light) !important;
+}
+
+/* Fix for input group text in dark mode */
+[data-theme="dark"] .input-group-text {
+    background-color: var(--light-gray) !important;
+    border-color: var(--glass-border) !important;
+    color: var(--dark) !important;
+}
+
+/* Ensure proper contrast for text in light mode */
+[data-theme="light"] .form-label {
+    color: #212529 !important;
+}
+
+[data-theme="light"] .text-dark {
+    color: #212529 !important;
+}
+
+[data-theme="light"] .text-muted {
+    color: #6c757d !important;
 }
 </style>
 
@@ -150,6 +212,45 @@ header {
     </div>
   </div>
 </div>
-
 <%- include('partials/footer') %>
+<script>
+    // Function to update contrast for form labels
+    function updateContrast() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        
+        // Update all form labels
+        document.querySelectorAll('.form-label').forEach(label => {
+            label.style.color = isDark ? '#ffffff' : '#212529';
+            label.style.backgroundColor = 'transparent';
+            label.style.opacity = '1';
+        });
+        
+        // Update headings
+        document.querySelectorAll('.text-dark, .h3, h1, h3').forEach(el => {
+            el.style.color = isDark ? '#ffffff' : '#212529';
+        });
+        
+        // Update muted text
+        document.querySelectorAll('.text-muted, .form-text').forEach(el => {
+            el.style.color = isDark ? '#adb5bd' : '#6c757d';
+        });
+    }
+    
+    // Apply contrast on load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateContrast();
+        
+        // Watch for theme changes
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'data-theme') {
+                    updateContrast();
+                }
+            });
+        });
+        
+        observer.observe(document.documentElement, { attributes: true });
+    });
+</script>
+
 

@@ -6,7 +6,8 @@
     <title><%= title %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+ <style>
         body {
             margin: 0;
             padding: 0;
@@ -17,20 +18,107 @@
             margin-top: 80px !important;
         }
 
+
+             /* Dropdowns */
+        .dropdown-menu {
+            background: black;
+            border: 1px solid var(--light-gray);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .dropdown-item {
+            color: var(--dark);
+            transition: var(--transition);
+        }
+
+                /* Popular Tags */
+        .popular-tags-container {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .popular-tags-container h5 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .dropdown-item:hover {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .dropdown-item.active {
+            background: var(--primary);
+            color: white;
+        }
+           /* Consistent Card Layout */
         .photo-card {
-            transition: transform 0.2s;
+            background: var(--card-bg);
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
             margin-bottom: 1.5rem;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
-        .photo-card:hover {
+               .photo-card:hover {
             transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
         }
-        .photo-image {
-            height: 300px;
+
+         /* Consistent Image Container */
+        .photo-image-container {
+            position: relative;
             width: 100%;
+            height: 240px;
+            overflow: hidden;
+            background-color: var(--light-gray);
+        }
+
+
+         .photo-image {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            max-width: 100%;
-            width: 100%;
+            object-position: center;
+            transition: transform 0.5s ease;
         }
+
+        /* Card Body */
+        .card-body {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+        }
+
+              .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-text {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+            
+        }
+
+
         .tag-badge {
             cursor: pointer;
             margin: 2px;
@@ -42,26 +130,29 @@
             overflow: hidden;
         }
 
-        /* Love button positioned inside the image - CLEAN DESIGN */
+          /* Love Button */
         .love-btn-inside {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 12px;
+            left: 12px;
             z-index: 20;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(199, 0, 0, 0.95);
             border: none;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6c757d;
-            transition: all 0.3s ease;
+            color: var(--secondary);
+            transition: var(--transition);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             cursor: pointer;
+        }
+        [data-bs-theme="dark"] .love-btn-inside {
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--secondary);
         }
 
         .love-btn-inside:hover {
@@ -97,26 +188,45 @@
             100% { transform: scale(1); }
         }
 
-        /* ===== FAVORITE COUNT OUTSIDE IMAGE ===== */
-        .favorite-count-outside {
+          .favorite-count-outside {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: #6c757d;
-            font-weight: 500;
-            font-size: 0.9rem;
+            gap: 0.25rem;
         }
 
         .favorite-count-outside .bi {
             color: #dc3545;
         }
-
-        /* Dark theme support */
-        [data-bs-theme="dark"] .love-btn-inside {
-            background: rgba(0, 0, 0, 0.7);
-            color: #a7acb1;
+         /* Load More Button */
+        .load-more-container {
+            margin: 3rem 0;
+            text-align: center;
         }
 
+          .load-more-btn {
+            min-width: 200px;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .load-more-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .load-more-btn:hover:before {
+            left: 100%;
+        }
+        
         [data-bs-theme="dark"] .love-btn-inside:hover {
             background: rgba(0, 0, 0, 0.9);
             color: #ff6b6b;
@@ -164,11 +274,18 @@
             display: none !important;
         }
 
-        /* Adjust privacy badge position */
+              /* Privacy Badge */
         .privacy-badge {
-            top: 15px;
-            right: 15px;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
         }
+
 
         /* Rest of your existing styles */
         .card-img-top {
@@ -193,10 +310,31 @@
             vertical-align: middle;
         }
         
+        /* Empty State */
         .empty-state {
             padding: 4rem 2rem;
             text-align: center;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin: 2rem 0;
         }
+
+         .empty-state i {
+            font-size: 4rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+         /* Search and Filter Controls */
+        .search-filter-container {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
 
         /* Mobile Responsive Styles */
         @media (min-width: 400px) and (max-width: 500px) {
@@ -570,6 +708,74 @@
   opacity: 0.5;
   filter: grayscale(100%);
 }
+/* Zoom out images slightly */
+.photo-image-container {
+    padding: 8px; /* Add padding to create space around the image */
+}
+
+.photo-image {
+    object-fit: contain; /* Show the whole image without cropping */
+    transform: scale(0.95); /* Zoom out by 5% */
+    transition: transform 0.5s ease;
+}
+
+.photo-card:hover .photo-image {
+    transform: scale(1); /* Return to normal size on hover */
+    object-fit: cover; /* Cover the area on hover for effect */
+}
+
+/* Dark mode adjustments */
+[data-bs-theme="dark"] .photo-image-container {
+    background-color: #1a1a1a; /* Dark background for image container */
+}
+
+[data-bs-theme="dark"] .photo-image {
+    filter: brightness(0.9); /* Slightly darken images in dark mode */
+}
+
+/* Adjust the love button and privacy badge position due to padding */
+.photo-image-container .love-btn-inside {
+    top: 20px; /* Adjust for padding */
+    left: 20px; /* Adjust for padding */
+}
+
+.photo-image-container .privacy-badge {
+    top: 20px; /* Adjust for padding */
+    right: 20px; /* Adjust for padding */
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .photo-image-container {
+        padding: 6px;
+    }
+    
+    .photo-image-container .love-btn-inside {
+        top: 18px;
+        left: 18px;
+    }
+    
+    .photo-image-container .privacy-badge {
+        top: 18px;
+        right: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .photo-image-container {
+        padding: 4px;
+    }
+    
+    .photo-image-container .love-btn-inside {
+        top: 16px;
+        left: 16px;
+    }
+    
+    .photo-image-container .privacy-badge {
+        top: 16px;
+        right: 16px;
+    }
+}
     </style>
 </head>
 <body>
@@ -579,94 +785,97 @@
         <!-- Header -->
         <div class="row mb-4">
             <div class="col-md-8">
-                <h1>Community Gallery</h1>
-                <p class="text-muted">Share and discover amazing pet photos from our community</p>
+                <h1 class="mb-2">Community Gallery</h1>
+                <p class="text-muted mb-0">Share and discover amazing pet photos from our community</p>
             </div>
-            <div class="col-md-4 text-end">
-                <a href="/gallery/upload" class="btn btn-primary me-2">
-                    <i class="bi bi-cloud-upload"></i> Upload Photo
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="/gallery/upload" class="btn btn-primary me-2 mb-2 mb-md-0">
+                    <i class="bi bi-cloud-upload me-1"></i> Upload Photo
                 </a>
                 <a href="/gallery/my-photos" class="btn btn-outline-secondary">
-                    <i class="bi bi-images"></i> My Photos
+                    <i class="bi bi-images me-1"></i> My Photos
                 </a>
             </div>
         </div>
 
-        <!-- Sorting Controls -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <form class="d-flex">
-                    <div class="flex-grow-1">
-                        <label for="searchInput" class="visually-hidden">Search photos</label>
-                        <input type="text" name="search" id="searchInput" class="form-control me-2" 
-                               placeholder="Search photos..." value="<%= currentSearch || '' %>">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Search</button>
-                    <% if (currentSearch || currentTag) { %>
-                        <a href="/gallery" class="btn btn-outline-secondary ms-2">Clear</a>
-                    <% } %>
-                </form>
-            </div>
-            <div class="col-md-6">
-                <div class="d-flex justify-content-end">
-                    <!-- Sorting Dropdown -->
-                    <div class="dropdown me-2">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-sort-down"></i> 
-                            <% if (currentSort === 'newest') { %>Newest<% } %>
-                            <% if (currentSort === 'oldest') { %>Oldest<% } %>
-                            <% if (currentSort === 'popular') { %>Most Popular<% } %>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item <%= currentSort === 'newest' ? 'active' : '' %>" 
-                                   href="/gallery?sort=newest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
-                                    <i class="bi bi-sort-down"></i> Newest First
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item <%= currentSort === 'oldest' ? 'active' : '' %>" 
-                                   href="/gallery?sort=oldest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
-                                    <i class="bi bi-sort-up"></i> Oldest First
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item <%= currentSort === 'popular' ? 'active' : '' %>" 
-                                   href="/gallery?sort=popular<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
-                                    <i class="bi bi-heart"></i> Most Popular
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+        <!-- Search and Filter Controls -->
+        <div class="search-filter-container">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <form class="d-flex">
+                        <div class="input-group">
+                            <input type="text" name="search" id="searchInput" class="form-control" 
+                                   placeholder="Search photos by title or tags..." value="<%= currentSearch || '' %>">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <% if (currentSearch || currentTag) { %>
+                                <a href="/gallery" class="btn btn-outline-secondary">Clear</a>
+                            <% } %>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex flex-wrap justify-content-md-end gap-2">
+                        <!-- Sorting Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-sort-down me-1"></i> 
+                                <% if (currentSort === 'newest') { %>Newest<% } %>
+                                <% if (currentSort === 'oldest') { %>Oldest<% } %>
+                                <% if (currentSort === 'popular') { %>Most Popular<% } %>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item <%= currentSort === 'newest' ? 'active' : '' %>" 
+                                       href="/gallery?sort=newest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
+                                        <i class="bi bi-sort-down me-2"></i> Newest First
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item <%= currentSort === 'oldest' ? 'active' : '' %>" 
+                                       href="/gallery?sort=oldest<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
+                                        <i class="bi bi-sort-up me-2"></i> Oldest First
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item <%= currentSort === 'popular' ? 'active' : '' %>" 
+                                       href="/gallery?sort=popular<%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %>">
+                                        <i class="bi bi-heart me-2"></i> Most Popular
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
 
-                    <!-- Health Status Filter -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-info dropdown-toggle" type="button" 
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-heart-pulse"></i> Filter by Health Status
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/gallery/health-overview">
-                                <i class="bi bi-grid-3x3-gap"></i> Health Overview
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/gallery/health-status/healthy">
-                                <span class="health-indicator health-healthy"></span> Healthy Pets
-                            </a></li>
-                            <li><a class="dropdown-item" href="/gallery/health-status/needs_vaccination">
-                                <span class="health-indicator health-needs_vaccination"></span> Needs Vaccination
-                            </a></li>
-                            <li><a class="dropdown-item" href="/gallery/health-status/underweight">
-                                <span class="health-indicator health-underweight"></span> Underweight
-                            </a></li>
-                            <li><a class="dropdown-item" href="/gallery/health-status/overweight">
-                                <span class="health-indicator health-overweight"></span> Overweight
-                            </a></li>
-                            <li><a class="dropdown-item" href="/gallery/health-status/recent_vet_visit">
-                                <span class="health-indicator health-recent_vet_visit"></span> Recent Vet Visits
-                            </a></li>
-                        </ul>
+                        <!-- Health Status Filter -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-info dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-heart-pulse me-1"></i> Health Status
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/gallery/health-overview">
+                                    <i class="bi bi-grid-3x3-gap me-2"></i> Health Overview
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/gallery/health-status/healthy">
+                                    <span class="health-indicator health-healthy me-2"></span> Healthy Pets
+                                </a></li>
+                                <li><a class="dropdown-item" href="/gallery/health-status/needs_vaccination">
+                                    <span class="health-indicator health-needs_vaccination me-2"></span> Needs Vaccination
+                                </a></li>
+                                <li><a class="dropdown-item" href="/gallery/health-status/underweight">
+                                    <span class="health-indicator health-underweight me-2"></span> Underweight
+                                </a></li>
+                                <li><a class="dropdown-item" href="/gallery/health-status/overweight">
+                                    <span class="health-indicator health-overweight me-2"></span> Overweight
+                                </a></li>
+                                <li><a class="dropdown-item" href="/gallery/health-status/recent_vet_visit">
+                                    <span class="health-indicator health-recent_vet_visit me-2"></span> Recent Vet Visits
+                                </a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -674,17 +883,15 @@
 
         <!-- Popular Tags -->
         <% if (popularTags.length > 0) { %>
-        <div class="row mb-4">
-            <div class="col-12">
-                <h5>Popular Tags:</h5>
-                <div>
-                    <% popularTags.forEach(tag => { %>
-                        <a href="/gallery?tag=<%= tag.tag_name %>" 
-                           class="btn btn-sm btn-outline-primary tag-badge <%= currentTag === tag.tag_name ? 'active' : '' %>">
-                            #<%= tag.tag_name %> (<%= tag.usage_count %>)
-                        </a>
-                    <% }); %>
-                </div>
+        <div class="popular-tags-container">
+            <h5>Popular Tags:</h5>
+            <div class="d-flex flex-wrap gap-2">
+                <% popularTags.forEach(tag => { %>
+                    <a href="/gallery?tag=<%= tag.tag_name %>" 
+                       class="btn btn-sm <%= currentTag === tag.tag_name ? 'btn-primary' : 'btn-outline-primary' %>">
+                        #<%= tag.tag_name %> <span class="badge bg-light text-dark ms-1"><%= tag.usage_count %></span>
+                    </a>
+                <% }); %>
             </div>
         </div>
         <% } %>
@@ -693,15 +900,16 @@
         <div class="row">
             <% if (photos.length > 0) { %>
                 <% photos.forEach(photo => { %>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-12 photo-grid-column">
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 photo-grid-column">
                         <div class="card photo-card">
-                            <div class="position-relative">
-                                <a href="/gallery/photo/<%= photo.photo_id %>" class="d-block position-relative">
+                            <div class="photo-image-container">
+                                <a href="/gallery/photo/<%= photo.photo_id %>" class="d-block h-100">
                                     <img src="<%= photo.photo_url %>" 
-                                         class="card-img-top photo-image" 
-                                         alt="<%= photo.title ? 'Photo: ' + photo.title : 'Pet photo by ' + photo.username %>">
+                                         class="photo-image" 
+                                         alt="<%= photo.title ? 'Photo: ' + photo.title : 'Pet photo by ' + photo.username %>"
+                                         loading="lazy">
                                     
-                                    <!-- Love Icon INSIDE Image Only (No Count) -->
+                                    <!-- Love Button -->
                                     <button class="love-btn-inside <%= photo.is_favorited ? 'active' : '' %>" 
                                             onclick="event.preventDefault(); toggleFavorite(<%= photo.photo_id %>, this)"
                                             aria-label="<%= photo.is_favorited ? 'Remove from favorites' : 'Add to favorites' %>">
@@ -710,37 +918,39 @@
                                     
                                     <!-- Privacy Badge -->
                                     <span class="badge privacy-badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
-                                        <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
+                                        <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %> me-1"></i>
                                         <%= photo.is_public ? 'Public' : 'Private' %>
                                     </span>
                                 </a>
                             </div>
                             
                             <div class="card-body">
-                                <h5 class="card-title h6"><%= photo.title %></h5>
-                                <p class="card-text small text-muted">
-                                    By <%= photo.username %>
+                                <h5 class="card-title"><%= photo.title || 'Untitled' %></h5>
+                                <p class="card-text">
+                                    By <span class="fw-medium"><%= photo.username %></span>
                                 </p>
                                 
                                 <!-- Tags -->
                                 <% if (photo.tags) { %>
-                                    <div class="mb-2">
+                                    <div class="tags-container">
                                         <% photo.tags.split(',').forEach(tag => { %>
-                                            <a href="/gallery?tag=<%= tag %>" class="badge bg-light text-dark tag-badge text-decoration-none me-1 mb-1">
+                                            <a href="/gallery?tag=<%= tag %>" class="tag-badge">
                                                 #<%= tag %>
                                             </a>
                                         <% }); %>
                                     </div>
+                                <% } else { %>
+                                    <div class="tags-container" style="visibility: hidden;"></div>
                                 <% } %>
                                 
-                                <!-- Stats Row - Favorite Count OUTSIDE Image -->
-                                <div class="d-flex justify-content-between align-items-center text-muted small">
+                                <!-- Stats Row -->
+                                <div class="stats-row">
                                     <div class="favorite-count-outside">
                                         <i class="bi bi-heart-fill"></i>
                                         <span><%= photo.favorite_count || 0 %> favorites</span>
                                     </div>
                                     <div>
-                                        <i class="bi bi-calendar"></i> 
+                                        <i class="bi bi-calendar me-1"></i>
                                         <%= new Date(photo.created_at).toLocaleDateString() %>
                                     </div>
                                 </div>
@@ -749,35 +959,39 @@
                     </div>
                 <% }); %>
             <% } else { %>
-                <div class="col-12 text-center py-5">
-                    <i class="bi bi-camera display-1 text-muted"></i>
-                    <h2 class="h4 mt-3 text-muted">No photos found</h2>
-                    <p class="text-muted">
-                        <% if (currentSearch || currentTag) { %>
-                            Try adjusting your search criteria
-                        <% } else { %>
-                            Be the first to share a photo!
-                        <% } %>
-                    </p>
-                    <a href="/gallery/upload" class="btn btn-primary">Upload First Photo</a>
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="bi bi-camera"></i>
+                        <h2 class="h4 mb-3">No photos found</h2>
+                        <p class="text-muted mb-4">
+                            <% if (currentSearch || currentTag) { %>
+                                Try adjusting your search criteria or clear filters
+                            <% } else { %>
+                                Be the first to share a photo with our community!
+                            <% } %>
+                        </p>
+                        <a href="/gallery/upload" class="btn btn-primary btn-lg">
+                            <i class="bi bi-cloud-upload me-2"></i>Upload Your First Photo
+                        </a>
+                    </div>
                 </div>
             <% } %>
         </div>
 
         <!-- Load More -->
         <% if (hasMore) { %>
-        <div class="row mt-4">
-            <div class="col-12 text-center">
-                <a href="/gallery?page=<%= currentPage + 1 %><%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %><%= currentSort ? '&sort=' + currentSort : '' %>" 
-                   class="btn btn-outline-primary">
-                    Load More Photos
-                </a>
-            </div>
+        <div class="load-more-container">
+            <a href="/gallery?page=<%= currentPage + 1 %><%= currentTag ? '&tag=' + currentTag : '' %><%= currentSearch ? '&search=' + currentSearch : '' %><%= currentSort ? '&sort=' + currentSort : '' %>" 
+               class="btn btn-primary load-more-btn">
+                <i class="bi bi-arrow-clockwise me-2"></i>Load More Photos
+            </a>
+            <p class="text-muted mt-2 small">
+                Showing <%= photos.length %> of many photos • Page <%= currentPage %>
+            </p>
         </div>
         <% } %>
     </div>
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
     <script>
         async function toggleFavorite(photoId, button) {
             try {
@@ -798,24 +1012,61 @@
                         icon.classList.remove('bi-heart');
                         icon.classList.add('bi-heart-fill');
                         button.classList.add('active');
+                        
+                        // Add animation
+                        button.style.animation = 'none';
+                        setTimeout(() => {
+                            button.style.animation = 'heartBeat 0.6s ease';
+                        }, 10);
                     } else {
                         icon.classList.remove('bi-heart-fill');
                         icon.classList.add('bi-heart');
                         button.classList.remove('active');
                     }
                     
-                    // Update the favorite count outside the image
+                    // Update the favorite count
                     if (favoriteCountElement) {
                         favoriteCountElement.textContent = result.favorite_count + ' favorites';
                     }
                 }
             } catch (error) {
-                // console.error('Favorite error:', error);
-                alert('Error updating favorite');
+                console.error('Favorite error:', error);
+                alert('Error updating favorite. Please try again.');
             }
         }
+
+        // Heart beat animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes heartBeat {
+                0% { transform: scale(1); }
+                25% { transform: scale(1.3); }
+                50% { transform: scale(0.9); }
+                75% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Smooth scroll to top when navigating back
+        if (window.history && window.history.scrollRestoration) {
+            window.history.scrollRestoration = 'manual';
+        }
+
+        // Store scroll position before leaving page
+        let scrollPosition = 0;
+        window.addEventListener('beforeunload', () => {
+            scrollPosition = window.scrollY;
+        });
+
+        // Restore scroll position when returning
+        window.addEventListener('load', () => {
+            if (scrollPosition > 0) {
+                window.scrollTo(0, scrollPosition);
+            }
+        });
     </script>
+    
     <%- include('../partials/footer') %>
 </body>
 </html>
-

@@ -95,8 +95,8 @@
 
         
 
-        .photo-card:hover .photo-image {
-            transform: scale(1.08);
+          .photo-card:hover .photo-image {
+            transform: scale(1.05);
         }
 
         /* Image Overlay */
@@ -183,27 +183,47 @@
             font-size: 1rem;
         }
 
-        /* Tags */
+          /* Tags Section */
         .tags-container {
-            margin-bottom: 1rem;
+            margin-top: auto;
+            margin-bottom: 0.75rem;
+            min-height: 48px;
         }
-
         .tag-badge {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: inline-block;
+            background: var(--light-gray);
             color: white;
-            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
             font-size: 0.75rem;
-            padding: 0.4rem 0.8rem;
-            margin: 0.15rem;
-            border-radius: 20px;
-            font-weight: 500;
+            margin: 0.125rem;
+            text-decoration: none;
             transition: var(--transition);
         }
 
+
         .tag-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            background: var(--primary-light);
+            color: var(--primary);
+            text-decoration: none;
         }
+
+          [data-bs-theme="dark"] .tag-badge:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+         /* Stats Row */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--gray);
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
 
         /* Actions */
         .card-actions {

@@ -1007,6 +1007,400 @@ body {
     min-width: auto !important;
   }
 }
+
+/* Fixed Profile Picture Viewer Styles */
+#profilePictureModal .modal-dialog {
+  max-width: 90vw;
+  margin: 0 auto;
+}
+
+#profilePictureModal .modal-content {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#profilePictureModal .modal-header {
+  padding: 0.75rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  border: none;
+}
+
+#profilePictureModal .modal-body {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+
+
+#profilePictureModal #modalProfilePicture:hover {
+  transform: scale(1.02);
+}
+
+/* Make profile picture clickable with proper cursor */
+#profilePicture {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#profilePicture:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Smooth modal transitions */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+}
+
+/* Prevent body scrolling when modal is open */
+body.modal-open {
+  overflow: hidden;
+  padding-right: 0 !important;
+}
+
+/* Fix for modal backdrop */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-backdrop.fade {
+  opacity: 0;
+}
+
+.modal-backdrop.show {
+  opacity: 0.8;
+}
+
+/* Profile Picture Action Menu Styles */
+.profile-picture-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-picture-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    min-width: 200px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    display: none;
+    animation: fadeIn 0.2s ease;
+}
+
+.profile-picture-menu.show {
+    display: block;
+}
+
+.profile-picture-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid rgba(0, 0, 0, 0.85);
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
+}
+
+.menu-item i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.menu-item.text-danger {
+    color: #ff6b6b;
+}
+
+.menu-item.text-danger:hover {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+/* Dark mode support for menu */
+[data-theme="dark"] .profile-picture-menu {
+    background: rgba(33, 37, 41, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .profile-picture-menu::before {
+    border-bottom-color: rgba(33, 37, 41, 0.95);
+}
+
+/* Add these styles for better modal experience */
+
+/* Modal backdrop - make it darker */
+.modal-backdrop.show {
+    opacity: 0.9 !important;
+    background-color: #000 !important;
+}
+
+/* Full-screen modal styling */
+#profilePictureModal .modal-dialog {
+    max-width: 95vw;
+    max-height: 95vh;
+    margin: 10px auto;
+}
+
+#profilePictureModal .modal-content {
+    background: transparent !important;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#profilePictureModal .modal-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+}
+
+
+
+#profilePictureModal #modalProfilePicture:hover {
+    transform: scale(1.01);
+}
+
+/* Close button styling */
+#profilePictureModal .modal-header {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    border: none;
+    padding: 0;
+}
+
+#profilePictureModal .btn-close {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    padding: 10px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+}
+
+#profilePictureModal .btn-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* Modal animation */
+.modal.fade .modal-dialog {
+    transform: scale(0.9);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+
+
+#profilePicture:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure modal takes full viewport height */
+#profilePictureModal .modal-dialog-centered {
+    min-height: calc(100vh - 20px);
+}
+
+/* Add these CSS rules to fix the zoom issue */
+
+/* Fix for modal zoom functionality */
+#profilePictureModal .modal-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: visible !important; /* Changed from hidden to visible */
+    min-height: 100vh;
+}
+
+#profilePictureModal .modal-content {
+    background: transparent !important;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible !important; /* Ensure content can overflow */
+}
+
+
+
+/* Zoomed state */
+#profilePictureModal #modalProfilePicture.zoomed {
+    transform: scale(2);
+    cursor: zoom-out;
+    position: relative;
+    z-index: 1051; /* Above modal backdrop */
+}
+
+/* Modal backdrop when zoomed */
+body.modal-open #profilePictureModal.zoomed ~ .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(5px);
+}
+
+/* Modal dialog when zoomed */
+#profilePictureModal.zoomed .modal-dialog {
+    transform: none !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+}
+
+/* Modal content when zoomed */
+#profilePictureModal.zoomed .modal-content {
+    background: rgba(0, 0, 0, 0.9) !important;
+    width: 100% !important;
+    height: 100% !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Modal body when zoomed */
+#profilePictureModal.zoomed .modal-body {
+    overflow: visible !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Add zoom controls */
+.zoom-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1060;
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#profilePictureModal:hover .zoom-controls {
+    opacity: 1;
+}
+
+.zoom-controls button {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.zoom-controls button:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.7);
+    transform: scale(1.1);
+}
+
+/* Prevent body scroll when zoomed */
+body.zoom-mode {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+/* Profile picture hover effect - FIXED */
+#profilePicture {
+    cursor: pointer; /* Changed from zoom-in to pointer */
+    transition: all 0.3s ease;
+}
+
+#profilePicture:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+/* Image container for zoom - FIXED */
+#profilePictureModal #modalProfilePicture {
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    cursor: pointer; /* Changed from zoom-in to pointer */
+    transition: transform 0.3s ease;
+    transform-origin: center center; /* Important for zoom */
+}
+
+/* Keep the zoom-in cursor only when image is zoomed out */
+#profilePictureModal #modalProfilePicture:not(.zoomed) {
+    cursor: pointer; /* Regular pointer when not zoomed */
+}
+
+/* Zoomed state - show grab cursor */
+#profilePictureModal #modalProfilePicture.zoomed {
+    transform: scale(2);
+    cursor: grab; /* Grab cursor when zoomed */
+    position: relative;
+    z-index: 1051; /* Above modal backdrop */
+}
+
+/* When actively dragging */
+#profilePictureModal #modalProfilePicture.zoomed:active {
+    cursor: grabbing;
+}
+#profilePictureModal #modalProfilePicture:hover {
+    transform: scale(1.01);
+}
 </style>
 
 <div class="container-fluid profile-container">
@@ -1051,24 +1445,50 @@ body {
           <div class="card card-custom h-100 slide-up">
             <div class="card-body text-center p-4">
               <!-- Profile Picture -->
-              <div class="profile-picture-container">
-                <img id="profilePicture" 
-                     src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
-                     class="profile-picture" 
-                     onerror="this.onerror=null; this.src='/images/default-avatar.png'" 
-                     alt="Profile Picture">
-                
-                <div class="profile-picture-actions">
-                  <label for="profilePictureInput" class="profile-picture-btn upload" title="Upload photo">
-                    <i class="bi bi-camera-fill"></i>
-                  </label>
-                  <% if (user.profile_picture_url) { %>
-                    <button class="profile-picture-btn remove" onclick="removeProfilePicture()" title="Remove photo">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  <% } %>
-                </div>
-              </div>
+
+
+
+
+              <!-- Profile Picture with Action Menu -->
+<div class="profile-picture-container">
+    <div class="profile-picture-wrapper" id="profilePictureWrapper">
+        <img id="profilePicture" 
+             src="<%= user.profile_picture_url || '/images/default-avatar.png' %>"
+             class="profile-picture" 
+             onerror="this.onerror=null; this.src='/images/default-avatar.png'" 
+             alt="Profile Picture">
+        
+        <!-- Hidden Action Menu -->
+        <div class="profile-picture-menu" id="profilePictureMenu">
+            <button class="menu-item" onclick="viewProfilePicture()">
+                <i class="bi bi-eye"></i>
+                <span>See Profile Picture</span>
+            </button>
+            <button class="menu-item" onclick="openFileInput()">
+                <i class="bi bi-upload"></i>
+                <span>Update Profile Image</span>
+            </button>
+            <% if (user.profile_picture_url) { %>
+            <button class="menu-item text-danger" onclick="removeProfilePicture()">
+                <i class="bi bi-trash"></i>
+                <span>Remove Photo</span>
+            </button>
+            <% } %>
+        </div>
+    </div>
+    
+    <!-- Keep the existing camera/trash icons for quick access -->
+    <div class="profile-picture-actions">
+        <label for="profilePictureInput" class="profile-picture-btn upload" title="Upload photo">
+            <i class="bi bi-camera-fill"></i>
+        </label>
+        <% if (user.profile_picture_url) { %>
+            <button class="profile-picture-btn remove" onclick="removeProfilePicture()" title="Remove photo">
+                <i class="bi bi-trash"></i>
+            </button>
+        <% } %>
+    </div>
+</div>
 
               <!-- User Info -->
               <h3 class="h5 mb-2 fw-bold text-dark"><%= user.username %></h3>
@@ -1278,8 +1698,12 @@ body {
                   </div>
                 </div>
               </div>
+
+
             </div>
+            
           </div>
+
 
           <!-- Bio Section -->
           <div class="card card-custom mt-4 slide-up" style="animation-delay: 0.5s;">
@@ -1442,7 +1866,36 @@ body {
       </div>
     </div>
   </div>
+<!-- Profile Picture Viewer Modal -->
+<div class="modal fade" id="profilePictureModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark border-0">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-1">
+        <img id="modalProfilePicture" src="" alt="Profile Picture" 
+             class="img-fluid rounded shadow-lg" 
+             style="max-height: 75vh; object-fit: contain;">
+      </div>
+      <!-- Add zoom controls -->
+      <div class="zoom-controls">
+        <button id="zoomInBtn" title="Zoom In">
+          <i class="bi bi-zoom-in"></i>
+        </button>
+        <button id="zoomOutBtn" title="Zoom Out" disabled>
+          <i class="bi bi-zoom-out"></i>
+        </button>
+        <button id="resetZoomBtn" title="Reset Zoom" disabled>
+          <i class="bi bi-arrow-counterclockwise"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+</div>
+
+
 
 <!-- Hidden File Input -->
 <input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
@@ -1635,6 +2088,293 @@ function showAlert(message, type) {
     }
 }
 
+// Replace your existing setupImageZoom and related functions with this:
+
+let currentZoom = 1;
+const ZOOM_STEP = 0.5;
+const MAX_ZOOM = 3;
+const MIN_ZOOM = 1;
+
+function setupImageZoom() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const resetZoomBtn = document.getElementById('resetZoomBtn');
+    
+    if (!modalImg || !modal) return;
+    
+    // Click to toggle zoom
+    modalImg.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleZoom();
+    });
+    
+    // Zoom in button
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            zoomIn();
+        });
+    }
+    
+    // Zoom out button
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            zoomOut();
+        });
+    }
+    
+    // Reset zoom button
+    if (resetZoomBtn) {
+        resetZoomBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            resetZoom();
+        });
+    }
+    
+    // Reset zoom when modal is hidden
+    modal.addEventListener('hidden.bs.modal', function() {
+        resetZoom();
+        currentZoom = 1;
+        updateZoomButtons();
+    });
+    
+    // Handle keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('show')) return;
+        
+        switch(e.key) {
+            case '+':
+            case '=':
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    zoomIn();
+                }
+                break;
+            case '-':
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    zoomOut();
+                }
+                break;
+            case '0':
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    resetZoom();
+                }
+                break;
+            case 'Escape':
+                if (modalImg.classList.contains('zoomed')) {
+                    e.preventDefault();
+                    resetZoom();
+                }
+                break;
+        }
+    });
+    
+    // Handle wheel zoom
+    modalImg.addEventListener('wheel', function(e) {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        }
+    });
+}
+
+function toggleZoom() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    
+    if (!modalImg || !modal) return;
+    
+    if (modalImg.classList.contains('zoomed')) {
+        resetZoom();
+    } else {
+        zoomIn();
+    }
+}
+
+function zoomIn() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    
+    if (!modalImg || !modal || currentZoom >= MAX_ZOOM) return;
+    
+    currentZoom = Math.min(currentZoom + ZOOM_STEP, MAX_ZOOM);
+    applyZoom();
+}
+
+function zoomOut() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    
+    if (!modalImg || !modal || currentZoom <= MIN_ZOOM) return;
+    
+    currentZoom = Math.max(currentZoom - ZOOM_STEP, MIN_ZOOM);
+    applyZoom();
+}
+
+function resetZoom() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    
+    if (!modalImg || !modal) return;
+    
+    currentZoom = 1;
+    applyZoom();
+}
+
+function applyZoom() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    const modal = document.getElementById('profilePictureModal');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const resetZoomBtn = document.getElementById('resetZoomBtn');
+    
+    if (!modalImg || !modal) return;
+    
+    // Apply zoom transform
+    modalImg.style.transform = `scale(${currentZoom})`;
+    
+    // Toggle zoomed class
+    if (currentZoom > 1) {
+        modalImg.classList.add('zoomed');
+        modal.classList.add('zoomed');
+        document.body.classList.add('zoom-mode');
+        
+        // Enable panning when zoomed
+        enableImagePanning();
+    } else {
+        modalImg.classList.remove('zoomed');
+        modal.classList.remove('zoomed');
+        document.body.classList.remove('zoom-mode');
+        
+        // Reset pan position
+        modalImg.style.transform = `scale(1) translate(0px, 0px)`;
+        disableImagePanning();
+    }
+    
+    // Update button states
+    updateZoomButtons();
+    
+    // Update cursor
+    modalImg.style.cursor = currentZoom > 1 ? 'grab' : 'zoom-in';
+}
+
+function updateZoomButtons() {
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const resetZoomBtn = document.getElementById('resetZoomBtn');
+    
+    if (zoomInBtn) {
+        zoomInBtn.disabled = currentZoom >= MAX_ZOOM;
+        zoomInBtn.title = currentZoom >= MAX_ZOOM ? 'Maximum zoom reached' : 'Zoom In (Ctrl + +)';
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.disabled = currentZoom <= MIN_ZOOM;
+        zoomOutBtn.title = currentZoom <= MIN_ZOOM ? 'Minimum zoom reached' : 'Zoom Out (Ctrl + -)';
+    }
+    
+    if (resetZoomBtn) {
+        resetZoomBtn.disabled = currentZoom === MIN_ZOOM;
+        resetZoomBtn.title = currentZoom === MIN_ZOOM ? 'Already at normal size' : 'Reset Zoom (Ctrl + 0)';
+    }
+}
+
+// Image panning functionality for when zoomed
+let isPanning = false;
+let startX, startY;
+let translateX = 0, translateY = 0;
+
+function enableImagePanning() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    if (!modalImg) return;
+    
+    modalImg.addEventListener('mousedown', startPan);
+    modalImg.addEventListener('touchstart', startPanTouch);
+    document.addEventListener('mousemove', pan);
+    document.addEventListener('touchmove', panTouch);
+    document.addEventListener('mouseup', stopPan);
+    document.addEventListener('touchend', stopPan);
+    document.addEventListener('touchcancel', stopPan);
+}
+
+function disableImagePanning() {
+    const modalImg = document.getElementById('modalProfilePicture');
+    if (!modalImg) return;
+    
+    modalImg.removeEventListener('mousedown', startPan);
+    modalImg.removeEventListener('touchstart', startPanTouch);
+    document.removeEventListener('mousemove', pan);
+    document.removeEventListener('touchmove', panTouch);
+    document.removeEventListener('mouseup', stopPan);
+    document.removeEventListener('touchend', stopPan);
+    document.removeEventListener('touchcancel', stopPan);
+    
+    translateX = 0;
+    translateY = 0;
+}
+
+function startPan(e) {
+    if (!document.getElementById('modalProfilePicture').classList.contains('zoomed')) return;
+    
+    isPanning = true;
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
+    document.getElementById('modalProfilePicture').style.cursor = 'grabbing';
+    e.preventDefault();
+}
+
+function startPanTouch(e) {
+    if (!document.getElementById('modalProfilePicture').classList.contains('zoomed')) return;
+    
+    isPanning = true;
+    const touch = e.touches[0];
+    startX = touch.clientX - translateX;
+    startY = touch.clientY - translateY;
+    e.preventDefault();
+}
+
+function pan(e) {
+    if (!isPanning) return;
+    
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
+    
+    const modalImg = document.getElementById('modalProfilePicture');
+    modalImg.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
+}
+
+function panTouch(e) {
+    if (!isPanning) return;
+    
+    const touch = e.touches[0];
+    translateX = touch.clientX - startX;
+    translateY = touch.clientY - startY;
+    
+    const modalImg = document.getElementById('modalProfilePicture');
+    modalImg.style.transform = `scale(${currentZoom}) translate(${translateX}px, ${translateY}px)`;
+    
+    e.preventDefault();
+}
+
+function stopPan() {
+    isPanning = false;
+    const modalImg = document.getElementById('modalProfilePicture');
+    if (modalImg) {
+        modalImg.style.cursor = 'grab';
+    }
+}
+
+
+
 // Update Header Profile Picture Function
 function updateHeaderProfilePicture(url) {
     // console.log('Updating header images with:', url);
@@ -1649,6 +2389,8 @@ function updateHeaderProfilePicture(url) {
     });
 }
 
+
+
 // Update Header Username Function
 function updateHeaderUsername(newUsername) {
     const desktopUsername = document.querySelector('.header-icons.d-none.d-lg-flex .username-modern');
@@ -1658,6 +2400,121 @@ function updateHeaderUsername(newUsername) {
     
     document.title = document.title.replace(/<%= user.username %>/g, newUsername);
 }
+
+// Profile Picture Action Menu Functions
+function toggleProfilePictureMenu(e) {
+    e.stopPropagation(); // Prevent event bubbling
+    
+    const menu = document.getElementById('profilePictureMenu');
+    const profilePic = document.getElementById('profilePicture');
+    
+    if (menu.classList.contains('show')) {
+        hideProfilePictureMenu();
+        return;
+    }
+    
+    // Show the menu
+    menu.classList.add('show');
+    
+    // Add click outside listener
+    setTimeout(() => {
+        document.addEventListener('click', hideProfilePictureMenuOnClickOutside);
+    }, 10);
+}
+
+function hideProfilePictureMenu() {
+    const menu = document.getElementById('profilePictureMenu');
+    menu.classList.remove('show');
+    document.removeEventListener('click', hideProfilePictureMenuOnClickOutside);
+}
+
+function hideProfilePictureMenuOnClickOutside(e) {
+    const menu = document.getElementById('profilePictureMenu');
+    const profilePic = document.getElementById('profilePicture');
+    
+    if (!menu.contains(e.target) && !profilePic.contains(e.target)) {
+        hideProfilePictureMenu();
+    }
+}
+function viewProfilePicture() {
+    hideProfilePictureMenu();
+    
+    const profilePicture = document.getElementById('profilePicture');
+    const modalProfilePicture = document.getElementById('modalProfilePicture');
+    const modalElement = document.getElementById('profilePictureModal');
+    
+    if (!profilePicture || !modalProfilePicture || !modalElement) return;
+    
+    // Reset zoom state
+    currentZoom = 1;
+    translateX = 0;
+    translateY = 0;
+    
+    // Get the Bootstrap modal instance
+    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+    const pictureUrl = profilePicture.src;
+    
+    // Set the image source with cache busting
+    modalProfilePicture.src = pictureUrl + (pictureUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+    
+    // Reset image transform
+    modalProfilePicture.style.transform = 'scale(1) translate(0px, 0px)';
+    modalProfilePicture.classList.remove('zoomed');
+    modalElement.classList.remove('zoomed');
+    
+    modal.show();
+    
+    // Update zoom buttons
+    updateZoomButtons();
+}
+
+function openFileInput() {
+    hideProfilePictureMenu();
+    document.getElementById('profilePictureInput').click();
+}
+
+// Update the setupProfilePictureViewer function to use the new menu
+function setupProfilePictureViewer() {
+    const profilePicture = document.getElementById('profilePicture');
+    const modalElement = document.getElementById('profilePictureModal');
+    
+    if (!profilePicture || !modalElement) return;
+    
+    // Change from direct modal opening to menu opening
+    profilePicture.addEventListener('click', toggleProfilePictureMenu);
+    
+    // Keep the modal initialization for when viewProfilePicture is called
+    const modal = new bootstrap.Modal(modalElement, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
+    });
+    
+    const modalProfilePicture = document.getElementById('modalProfilePicture');
+    
+    // Make the modal image clickable to close
+    if (modalProfilePicture) {
+        modalProfilePicture.addEventListener('click', function(e) {
+            e.stopPropagation();
+            modal.hide();
+        });
+    }
+    
+    // Close modal when clicking outside the image
+    modalElement.addEventListener('click', function(e) {
+        if (e.target === this || e.target.classList.contains('modal-content')) {
+            modal.hide();
+        }
+    });
+    
+    // Handle escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalElement.classList.contains('show')) {
+            modal.hide();
+        }
+    });
+}
+
 
 // Form Handlers
 async function handleUsernameUpdate(e) {
@@ -1884,13 +2741,24 @@ async function resendVerification() {
     }
 }
 
-// SINGLE DOMContentLoaded Event Listener - This is the key fix
+
+
+
+// Replace your current DOMContentLoaded handler with this:
+
 document.addEventListener('DOMContentLoaded', function() {
-    // console.log('Professional Profile Page Loaded');
-    
-    // Initialize pending email status
+     // Initialize pending email status
     checkPendingEmailStatus();
     
+    // Initialize profile picture viewer
+    setupProfilePictureViewer();
+
+    // Initialize zoom functionality - CALL THIS AFTER setupProfilePictureViewer
+    setTimeout(() => {
+        setupImageZoom();
+    }, 100);
+    
+    // Rest of your existing code...
     // Bio character count
     const bioInput = document.getElementById('bioInput');
     const bioCharCount = document.getElementById('bioCharCount');
@@ -1902,22 +2770,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // File input handling - SET UP ONLY ONCE
+    // File input handling
     const fileInput = document.getElementById('profilePictureInput');
     const cameraLabel = document.querySelector('label[for="profilePictureInput"]');
 
-    // Only set up camera label click if it exists
     if (cameraLabel) {
         cameraLabel.addEventListener('click', function (e) {
             e.preventDefault();
-            // Only trigger file input if it exists and we're not already uploading
             if (fileInput && !isUploading) {
                 fileInput.click();
             }
         });
     }
 
-    // File input change handler - SET UP ONLY ONCE
     if (fileInput) {
         fileInput.addEventListener('change', function(e) {
             if (this.files && this.files[0] && !isUploading) {
@@ -1959,6 +2824,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+
+
+
 
 // Email verification status check
 <% if (!user.is_verified) { %>

@@ -6,36 +6,208 @@
     <title><%= title %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .profile-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 3rem 0;
-            margin-bottom: 2rem;
+ 
+   <style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+    }
+    .stat-card {
+        text-align: center;
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .bio-section {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Custom Back to Community Button Styles */
+    .btn-community-back {
+        background-color: #000000 !important; /* Black background */
+        color: #ffffff !important; /* White text */
+        border: 2px solid #ffffff !important; /* White border */
+        transition: all 0.3s ease;
+    }
+    
+    .btn-community-back:hover {
+        background-color: #000000 !important; /* Black background on hover */
+        color: #ffffff !important; /* White text on hover */
+        border: 2px solid #000000 !important; /* Black border on hover */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* DARK THEME STYLES */
+    [data-bs-theme="dark"] body {
+        background-color: #121212;
+        color: #f8f9fa;
+    }
+    
+    [data-bs-theme="dark"] .stat-card {
+        background-color: #2d2d2d;
+        color: #f8f9fa;
+    }
+    
+    [data-bs-theme="dark"] .bio-section {
+        background-color: #2d2d2d;
+        color: #f8f9fa;
+    }
+    
+    [data-bs-theme="dark"] .card {
+        background-color: #2d2d2d;
+        color: #f8f9fa;
+        border-color: #444;
+    }
+    
+    [data-bs-theme="dark"] .card-header {
+        background-color: #333;
+        border-color: #444;
+        color: #f8f9fa;
+    }
+    
+    [data-bs-theme="dark"] .border-bottom {
+        border-color: #444 !important;
+    }
+    
+    /* FIX: Make text-muted elements WHITE in dark mode */
+    [data-bs-theme="dark"] .text-muted {
+        color: #ffffff !important;
+        font-weight: 500;
+    }
+    
+    /* Make sure stat card text-muted is also white */
+    [data-bs-theme="dark"] .stat-card .text-muted {
+        color: #ffffff !important;
+    }
+    
+    /* Make sure "No Posts Yet" heading is white */
+    [data-bs-theme="dark"] h3.text-muted {
+        color: #ffffff !important;
+    }
+    
+    /* Make sure paragraph text-muted is white */
+    [data-bs-theme="dark"] p.text-muted {
+        color: #ffffff !important;
+    }
+    
+    /* Make sure small text-muted is white */
+    [data-bs-theme="dark"] small.text-muted {
+        color: #ffffff !important;
+    }
+
+    /* Alternative: Override Bootstrap btn-outline-light in dark mode */
+[data-bs-theme="dark"] .btn-outline-light {
+    background-color: #000000 !important; /* Black background */
+    color: #ffffff !important; /* White text */
+    border-color: #ffffff !important; /* White border */
+}
+
+[data-bs-theme="dark"] .btn-outline-light:hover {
+    background-color: #000000 !important; /* Black background on hover */
+    color: #ffffff !important; /* White text on hover */
+    border-color: #000000 !important; /* Black border on hover */
+}
+
+[data-bs-theme="dark"] {
+    --light: #ffffff;
+    --dark: #f8f9fa;
+    --gray: #fffcfc;
+    --light-gray: #ffffff;
+    --glass-bg: rgba(26, 29, 33, 0.85);
+    --glass-border: rgb(255, 255, 255);
+    --shadow: 0 4px 20px rgb(255, 255, 255);
+    --shadow-lg: 0 10px 40px rgb(255, 255, 255);
+}
+/* Add to your existing style block */
+@media (max-width: 1000px) {
+    .profile-header {
+        margin-top: 70px !important; /* Push it down below the fixed header */
+        padding-top: 2rem !important; /* Adjust padding for smaller screens */
+    }
+    
+    /* Make the layout more vertical on smaller screens */
+    .profile-header .row {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-header .col-md-2,
+    .profile-header .col-md-8,
+    .profile-header .col-md-2 {
+        width: 100%;
+        margin-bottom: 1.5rem;
+    }
+    
+    .profile-header .col-md-2.text-end {
+        text-align: center !important;
+    }
+    
+    /* Adjust avatar size for smaller screens */
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+    
+    /* Adjust font sizes for smaller screens */
+    .profile-header h1.h2 {
+        font-size: 1.8rem;
+    }
+    
+    .profile-header p {
+        font-size: 0.95rem;
+    }
+    
+    /* Make the button smaller on mobile */
+    .profile-header .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* More specific adjustments for very small screens */
+@media (max-width: 768px) {
+    .profile-header {
+        margin-top: 60px !important;
+        padding: 1.5rem 0 !important;
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .profile-header h1.h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Stack the button text vertically on very small screens */
+    @media (max-width: 576px) {
+        .profile-header .btn {
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto;
         }
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid white;
-            object-fit: cover;
-        }
-        .stat-card {
-            text-align: center;
-            padding: 1.5rem;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .bio-section {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-    </style>
+    }
+}
+
+</style>
+
 </head>
-<body>
+<body data-bs-theme="dark">
     <%- include('partials/header', {title: title }) %>
     
     <!-- Profile Header -->
@@ -66,10 +238,10 @@
                     </p>
                 </div>
                 <div class="col-md-2 text-end">
-                    <a href="/community" class="btn btn-light">
-                        <i class="bi bi-arrow-left me-2"></i>Back to Community
-                    </a>
-                </div>
+    <a href="/community" class="btn btn-outline-light">
+    <i class="bi bi-arrow-left me-2"></i>Back to Community
+</a>
+</div>
             </div>
         </div>
     </div>
@@ -139,7 +311,7 @@
         <% } else { %>
             <div class="text-center py-5">
                 <i class="bi bi-chat-dots display-1 text-muted"></i>
-                <h4 class="mt-3 text-muted">No Posts Yet</h4>
+                <h3 class="h4 mt-3 text-muted">No Posts Yet</h3>
                 <p class="text-muted"><%= userProfile.username %> hasn't posted in the community yet.</p>
             </div>
         <% } %>

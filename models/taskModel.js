@@ -246,6 +246,29 @@ async function updateTask(taskId, userId, taskData) {
   ]);
 }
 
+async function getFutureTasks(userId) {
+  const now = new Date();
+  
+  const sql = `
+    SELECT t.*, p.name as pet_name 
+    FROM tasks t
+    JOIN pets p ON t.pet_id = p.pet_id
+    WHERE t.user_id = ? 
+    AND t.completed = false
+    AND t.start_time > ?
+    ORDER BY t.start_time ASC
+  `;
+  
+  const tasks = await query(sql, [userId, now]);
+  
+  // Format dates for display (local time)
+  return tasks.map(task => {
+    task.due_date = formatDateForInput(task.due_date);
+    task.start_time = formatDateForInput(task.start_time);
+    task.end_time = formatDateForInput(task.end_time);
+    return task;
+  });
+}
 async function completeTask(taskId, userId) {
   // Verify ownership
   const taskCheck = await query(
@@ -305,10 +328,11 @@ async function getTaskById(taskId, userId) {
 module.exports = { 
   getTasksByUser, 
   createTask, 
-  updateTask,  // This was missing
+  updateTask,
   deleteTask, 
   getTaskById,
   getUpcomingTasks,
+  getFutureTasks,  
   validationRules,
   completeTask,
   formatDateForInput,

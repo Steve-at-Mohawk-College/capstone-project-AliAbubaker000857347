@@ -1,7 +1,7 @@
 // routes/dashboardRoutes.js
 const express = require('express');
 const { query, queryPaginated } = require('../config/database');
-const { getTasksByUser } = require('../models/taskModel'); // ADD THIS IMPORT
+const { getTasksByUser, getFutureTasks } = require('../models/taskModel');
 const router = express.Router();
 
 function requireAuth(req, res, next) {
@@ -9,7 +9,7 @@ function requireAuth(req, res, next) {
   return res.redirect('/login');
 }
 
-// GET /dashboard - Dashboard page
+// In dashboardRoutes.js - Update the GET /dashboard route
 router.get('/', requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
@@ -23,7 +23,7 @@ router.get('/', requireAuth, async (req, res) => {
     const petOffset = (petPage - 1) * itemsPerPage;
     const taskOffset = (taskPage - 1) * itemsPerPage;
 
-    // Get paginated pets
+    // Get paginated pets (unchanged)
     const pets = await queryPaginated(
       `SELECT * FROM pets WHERE user_id = ? ORDER BY name`,
       [userId],
@@ -31,7 +31,7 @@ router.get('/', requireAuth, async (req, res) => {
       petOffset
     );
     
-    // Get total pet count
+    // Get total pet count (unchanged)
     const totalPetsResult = await query(
       `SELECT COUNT(*) as count FROM pets WHERE user_id = ?`,
       [userId]
@@ -39,8 +39,9 @@ router.get('/', requireAuth, async (req, res) => {
     const totalPets = totalPetsResult[0].count;
     const totalPetPages = Math.max(1, Math.ceil(totalPets / itemsPerPage));
 
-    // FIX: Use getTasksByUser which converts UTC dates to local time
-    const allTasks = await getTasksByUser(userId);
+    // FIX: Use getFutureTasks instead of getTasksByUser
+    // This will only get tasks with start_time in the future
+    const allTasks = await getFutureTasks(userId);  // Changed this line
     
     // Apply pagination manually to the converted tasks
     const paginatedTasks = allTasks.slice(taskOffset, taskOffset + itemsPerPage);
@@ -54,7 +55,7 @@ router.get('/', requireAuth, async (req, res) => {
       username: req.session.username,
       profilePicture: req.session.profilePicture,
       pets: pets,
-      tasks: paginatedTasks, // Use the converted tasks
+      tasks: paginatedTasks,
       petPagination: {
         currentPage: petPage,
         totalPages: totalPetPages,
@@ -79,8 +80,8 @@ router.get('/', requireAuth, async (req, res) => {
     try {
       const pets = await query('SELECT * FROM pets WHERE user_id = ?', [req.session.userId]);
       
-      // FIX: Use getTasksByUser in fallback too
-      const tasks = await getTasksByUser(req.session.userId);
+      // FIX: Use getFutureTasks in fallback too
+      const tasks = await getFutureTasks(req.session.userId);  // Changed this line
 
       res.render('dashboard', {
         title: 'Pet Dashboard',

@@ -1,7 +1,9 @@
-// Detail View Handler - Fixed version
+/**
+ * Detail View Handler - Provides detailed view functionality for pet and task items.
+ * Shows comprehensive information in modal dialogs when items are clicked.
+ * Excludes action buttons (edit, delete, etc.) from triggering detail views.
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    
-    
     const detailModalElement = document.getElementById('detailModal');
     if (!detailModalElement) {
         // console.error('❌ Detail modal not found!');
@@ -13,9 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const detailModalBody = document.getElementById('detailModalBody');
     const detailEditBtn = document.getElementById('detailEditBtn');
 
-    // console.log('✅ Modal elements found:', { detailModalTitle, detailModalBody, detailEditBtn });
-
-    // Proper modal event listeners to handle focus
+    // Modal accessibility event handlers
     detailModalElement.addEventListener('show.bs.modal', function () {
         // console.log('📱 Modal opening - setting up accessibility');
     });
@@ -26,9 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
         detailModalTitle.innerHTML = '';
     });
 
-    // MODIFIED: Click handlers for pet and task items - exclude action buttons
+    /**
+     * Event delegation for clickable items, excluding action buttons.
+     * Identifies clicks on main item areas and shows appropriate detail view.
+     */
     document.addEventListener('click', function(e) {
-        // Check if click is on an action button (edit, delete, or their icons)
+        // Skip action buttons to prevent detail view from opening
         if (e.target.closest('.edit-btn') || 
             e.target.closest('.remove-btn') || 
             e.target.closest('.edit-task-btn') ||
@@ -36,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.closest('.cancel-edit-btn') ||
             e.target.closest('.save-task-edit-btn') ||
             e.target.closest('.cancel-task-edit-btn')) {
-            // console.log('🔧 Action button clicked - skipping detail view');
             return; // Don't show detail view for action buttons
         }
 
@@ -49,8 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = item.dataset.type;
             const id = item.dataset.id;
             
-            // console.log('📝 Item clicked:', { type, id });
-            
             if (type === 'pet') {
                 showSimplePetDetails(item);
             } else if (type === 'task') {
@@ -59,7 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Rest of your existing functions remain the same...
+    /**
+     * Displays detailed pet information in modal.
+     * Shows basic information, statistics, and quick action buttons.
+     * 
+     * @param {HTMLElement} item - The pet item element that was clicked
+     */
     function showSimplePetDetails(item) {
         const petName = item.querySelector('.pet-name').textContent;
         const petDetails = item.querySelector('.pet-details').textContent;
@@ -120,110 +125,113 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 50);
     }
 
-
- function showSimpleTaskDetails(item) {
-    const taskTitle = item.querySelector('.task-title').textContent;
-    const taskDetails = item.querySelector('.task-details');
-    const taskPriority = item.dataset.priority;
-    
-    // Get pet name and start time from the task details
-    let petName = 'Unknown';
-    let startTime = '';
-    let taskDetailsText = '';
-    
-    if (taskDetails) {
-        // Parse the task details HTML
-        const detailsHtml = taskDetails.innerHTML;
+    /**
+     * Displays detailed task information in modal.
+     * Shows task details, due date, priority, and quick action buttons.
+     * 
+     * @param {HTMLElement} item - The task item element that was clicked
+     */
+    function showSimpleTaskDetails(item) {
+        const taskTitle = item.querySelector('.task-title').textContent;
+        const taskDetails = item.querySelector('.task-details');
+        const taskPriority = item.dataset.priority;
         
-        // Extract pet name - look for text between <strong> tags after "For:"
-        const petMatch = detailsHtml.match(/For:\s*<strong>(.*?)<\/strong>/);
-        petName = petMatch ? petMatch[1] : 'Unknown';
+        let petName = 'Unknown';
+        let startTime = '';
+        let taskDetailsText = '';
         
-        // Extract start time - look for text between <strong> tags after "Starts:"
-        const timeMatch = detailsHtml.match(/Starts:\s*<strong>(.*?)<\/strong>/);
-        startTime = timeMatch ? timeMatch[1] : new Date(item.dataset.dueDate).toLocaleString();
+        if (taskDetails) {
+            const detailsHtml = taskDetails.innerHTML;
+            const petMatch = detailsHtml.match(/For:\s*<strong>(.*?)<\/strong>/);
+            petName = petMatch ? petMatch[1] : 'Unknown';
+            
+            const timeMatch = detailsHtml.match(/Starts:\s*<strong>(.*?)<\/strong>/);
+            startTime = timeMatch ? timeMatch[1] : new Date(item.dataset.dueDate).toLocaleString();
+            
+            taskDetailsText = `For: ${petName} • Starts: ${startTime}`;
+        } else {
+            taskDetailsText = taskDetails ? taskDetails.textContent : '';
+        }
         
-        // Use the details text
-        taskDetailsText = `For: ${petName} • Starts: ${startTime}`;
-    } else {
-        // Fallback to old method
-        taskDetailsText = taskDetails ? taskDetails.textContent : '';
+        const dueDate = new Date(item.dataset.dueDate);
+        const isOverdue = dueDate < new Date();
+        
+        detailModalTitle.innerHTML = `
+            <i class="bi bi-calendar-check text-warning me-2"></i>
+            ${taskTitle} - Details
+        `;
+        
+        detailModalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="detail-section">
+                        <h6 class="section-title">Task Information</h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="detail-label">Details</label>
+                                <p class="detail-value">${taskDetailsText}</p>
+                            </div>
+                            <div class="col-6">
+                                <label class="detail-label">Due Date</label>
+                                <p class="detail-value ${isOverdue ? 'text-danger' : ''}">
+                                    ${dueDate.toLocaleDateString()} at ${dueDate.toLocaleTimeString()}
+                                    ${isOverdue ? ' (Overdue)' : ''}
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <label class="detail-label">Priority</label>
+                                <p class="detail-value">
+                                    <span class="badge badge-${taskPriority === 'high' ? 'danger' : taskPriority === 'medium' ? 'warning' : 'success'}">
+                                        ${taskPriority}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <label class="detail-label">Type</label>
+                                <p class="detail-value text-capitalize">${(item.dataset.taskType || '').replace('_', ' ')}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section mt-4">
+                        <h6 class="section-title">Quick Actions</h6>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.editTask(${item.dataset.id})">
+                                <i class="bi bi-pencil me-1"></i>Edit Task
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm" onclick="window.completeTask(${item.dataset.id})">
+                                <i class="bi bi-check-circle me-1"></i>Mark Complete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="task-icon-large mx-auto mb-3 ${isOverdue ? 'overdue' : ''}">
+                        <i class="bi bi-${getTaskIcon(item.dataset.taskType)}"></i>
+                    </div>
+                    <div class="time-remaining">
+                        <h6>Due Date</h6>
+                        <p class="countdown ${isOverdue ? 'text-danger' : ''}">
+                            ${isOverdue ? 'Overdue' : dueDate.toLocaleDateString()}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        detailEditBtn.style.display = 'none';
+        
+        setTimeout(() => {
+            detailModal.show();
+        }, 50);
     }
-    
-    const dueDate = new Date(item.dataset.dueDate);
-    const isOverdue = dueDate < new Date();
-    
-    detailModalTitle.innerHTML = `
-        <i class="bi bi-calendar-check text-warning me-2"></i>
-        ${taskTitle} - Details
-    `;
-    
-    detailModalBody.innerHTML = `
-        <div class="row">
-            <div class="col-md-8">
-                <div class="detail-section">
-                    <h6 class="section-title">Task Information</h6>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="detail-label">Details</label>
-                            <p class="detail-value">${taskDetailsText}</p>
-                        </div>
-                        <div class="col-6">
-                            <label class="detail-label">Due Date</label>
-                            <p class="detail-value ${isOverdue ? 'text-danger' : ''}">
-                                ${dueDate.toLocaleDateString()} at ${dueDate.toLocaleTimeString()}
-                                ${isOverdue ? ' (Overdue)' : ''}
-                            </p>
-                        </div>
-                        <div class="col-6">
-                            <label class="detail-label">Priority</label>
-                            <p class="detail-value">
-                                <span class="badge badge-${taskPriority === 'high' ? 'danger' : taskPriority === 'medium' ? 'warning' : 'success'}">
-                                    ${taskPriority}
-                                </span>
-                            </p>
-                        </div>
-                        <div class="col-6">
-                            <label class="detail-label">Type</label>
-                            <p class="detail-value text-capitalize">${(item.dataset.taskType || '').replace('_', ' ')}</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="detail-section mt-4">
-                    <h6 class="section-title">Quick Actions</h6>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.editTask(${item.dataset.id})">
-                            <i class="bi bi-pencil me-1"></i>Edit Task
-                        </button>
-                        <button type="button" class="btn btn-outline-success btn-sm" onclick="window.completeTask(${item.dataset.id})">
-                            <i class="bi bi-check-circle me-1"></i>Mark Complete
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="task-icon-large mx-auto mb-3 ${isOverdue ? 'overdue' : ''}">
-                    <i class="bi bi-${getTaskIcon(item.dataset.taskType)}"></i>
-                </div>
-                <div class="time-remaining">
-                    <h6>Due Date</h6>
-                    <p class="countdown ${isOverdue ? 'text-danger' : ''}">
-                        ${isOverdue ? 'Overdue' : dueDate.toLocaleDateString()}
-                    </p>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    detailEditBtn.style.display = 'none';
-    
-    setTimeout(() => {
-        detailModal.show();
-    }, 50);
-}
 
-    // Helper functions
+    /**
+     * Returns appropriate Bootstrap icon class for pet species.
+     * 
+     * @param {string} species - Pet species (dog, cat, bird, rabbit, other)
+     * @returns {string} Bootstrap icon class name
+     */
     function getPetIcon(species) {
         const icons = {
             'dog': 'heart',
@@ -235,6 +243,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return icons[species] || 'circle';
     }
 
+    /**
+     * Returns appropriate Bootstrap icon class for task type.
+     * 
+     * @param {string} taskType - Task type (feeding, cleaning, vaccination, etc.)
+     * @returns {string} Bootstrap icon class name
+     */
     function getTaskIcon(taskType) {
         const icons = {
             'feeding': 'cup-straw',
@@ -250,9 +264,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Global functions remain the same...
+/**
+ * Global function to edit a pet from the detail view.
+ * Triggers the edit button click for the specified pet.
+ * 
+ * @param {number} petId - ID of the pet to edit
+ */
 window.editPet = function(petId) {
-    // console.log('✏️ Editing pet:', petId);
     const editBtn = document.querySelector(`.edit-btn[data-pet-id="${petId}"]`);
     if (editBtn) {
         editBtn.click();
@@ -261,13 +279,23 @@ window.editPet = function(petId) {
     if (modal) modal.hide();
 }
 
+/**
+ * Global function to schedule a task for a specific pet.
+ * Navigates to the schedule task page with the pet ID pre-selected.
+ * 
+ * @param {number} petId - ID of the pet to schedule task for
+ */
 window.scheduleTaskForPet = function(petId) {
-    // console.log('📅 Scheduling task for pet:', petId);
     window.location.href = `/schedule-task?petId=${petId}`;
 }
 
+/**
+ * Global function to edit a task from the detail view.
+ * Triggers the edit button click for the specified task.
+ * 
+ * @param {number} taskId - ID of the task to edit
+ */
 window.editTask = function(taskId) {
-    // console.log('✏️ Editing task:', taskId);
     const editBtn = document.querySelector(`.edit-task-btn[data-task-id="${taskId}"]`);
     if (editBtn) {
         editBtn.click();
@@ -276,14 +304,16 @@ window.editTask = function(taskId) {
     if (modal) modal.hide();
 }
 
+/**
+ * Global function to mark a task as complete.
+ * Sends PUT request to server and updates UI with animation.
+ * 
+ * @param {number} taskId - ID of the task to mark as complete
+ */
 window.completeTask = function(taskId) {
-    // console.log('✅ Completing task:', taskId);
-    
     fetch(`/tasks/${taskId}/complete`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
     })
     .then(response => {
         if (response.ok) {

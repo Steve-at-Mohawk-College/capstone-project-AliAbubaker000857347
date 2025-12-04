@@ -1,787 +1,841 @@
-<%- include('partials/header', {title: 'Task Overview'}) %>
+<%- include('partials/header', {title: 'Task Overview' }) %>
 
-<style>
-  /* ===== FIX MOBILE HEADING POSITION ===== */
-.container.mt-4 {
-    margin-top: 2rem !important;
-}
-
-/* For smaller mobile devices */
-@media (max-width: 576px) {
+  <style>
+    /* ===== FIX MOBILE HEADING POSITION ===== */
     .container.mt-4 {
-        margin-top: 7rem !important;
+      margin-top: 2rem !important;
     }
-    
-    .d-flex.justify-content-between.align-items-center.mb-4 {
+
+    /* For smaller mobile devices */
+    @media (max-width: 576px) {
+      .container.mt-4 {
+        margin-top: 7rem !important;
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-4 {
         flex-direction: column !important;
         gap: 1rem !important;
         margin-top: 1rem !important;
         text-align: center !important;
-    }
-    
-    .d-flex.justify-content-between.align-items-center.mb-4 .btn {
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-4 .btn {
         order: 1;
         width: 100%;
         margin-bottom: 0.5rem;
-    }
-    
-    .d-flex.justify-content-between.align-items-center.mb-4 h1 {
+      }
+
+      .d-flex.justify-content-between.align-items-center.mb-4 h1 {
         order: 2;
         margin: 0.5rem 0 !important;
         width: 100%;
-    }
-    
-    .d-flex.justify-content-between.align-items-center.mb-4 .btn:last-child {
-        order: 3;
-    }
-}
-
-/* For medium devices */
-@media (max-width: 768px) {
-    .d-flex.justify-content-between.align-items-center.mb-4 {
-        margin-top: 0.5rem !important;
-    }
-}
-
-/* ===== FIX ACCESSIBILITY ISSUES ===== */
-
-/* Fix empty buttons - ensure icons have proper labels */
-.btn .bi::before {
-    /* Ensure screen readers can detect the icons */
-    speak: none;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-}
-
-/* Fix contrast issues */
-.btn-custom {
-    background-color: #1b5e20 !important;
-    color: white !important;
-    border: none;
-}
-
-/* Fix outline button contrast */
-.btn-outline-secondary {
-    color: #495057 !important; /* Darker gray for better contrast */
-    border-color: #6c757d !important;
-    background-color: transparent !important;
-}
-
-.btn-outline-secondary:hover {
-    color: #fff !important;
-    background-color: #6c757d !important;
-}
-
-/* Fix tab contrast in both light and dark modes */
-.nav-tabs .nav-link {
-    color: var(--bs-body-color) !important;
-}
-
-.nav-tabs .nav-link.active {
-    color: var(--bs-primary) !important;
-    background-color: var(--bs-body-bg) !important;
-    border-color: var(--bs-border-color) !important;
-}
-
-/* Fix badge contrast */
-.badge.bg-danger {
-    background-color: #dc3545 !important;
-    color: white !important;
-}
-
-.badge.bg-warning {
-    background-color: #e0a800 !important; /* Darker yellow for better contrast */
-    color: #000 !important;
-}
-
-.badge.bg-info {
-    background-color: #0aa2c0 !important; /* Darker blue for better contrast */
-    color: #000 !important;
-}
-
-.badge.bg-success {
-    background-color: #198754 !important;
-    color: white !important;
-}
-
-/* Fix heading hierarchy */
-.card-header h5 {
-    font-size: 1.25rem;
-    margin-bottom: 0;
-}
-
-/* Fix stat numbers contrast - use much darker colors for better contrast */
-.h2.text-danger { color: #a71e2a !important; } /* Much darker red */
-.h2.text-warning { color: #996500 !important; } /* Much darker yellow/brown */
-.h2.text-info { color: #0a6c87 !important; } /* Much darker blue */
-.h2.text-success { color: #146c43 !important; } /* Much darker green */
-
-/* Fix text-muted contrast */
-.text-muted {
-    color: #6c757d !important; /* Ensure proper contrast */
-}
-
-/* Fix empty state headings */
-.h5.text-muted {
-    color: #6c757d !important;
-}
-
-/* Fix card header text colors for better contrast */
-.card-header .text-danger { color: #a71e2a !important; }
-.card-header .text-warning { color: #996500 !important; }
-.card-header .text-info { color: #0a6c87 !important; }
-.card-header .text-success { color: #146c43 !important; }
-
-/* Dark mode fixes */
-[data-theme="dark"] .btn-outline-secondary {
-    color: #adb5bd !important;
-    border-color: #6c757d !important;
-}
-
-[data-theme="dark"] .text-muted {
-    color: #8b9cb1 !important; /* Lighter gray for dark mode */
-}
-
-[data-theme="dark"] .nav-tabs .nav-link {
-    color: #f8f9fa !important;
-}
-
-[data-theme="dark"] .nav-tabs .nav-link.active {
-    color: #0d6efd !important;
-    background-color: #212529 !important;
-}
-
-[data-theme="dark"] .h5.text-muted {
-    color: #8b9cb1 !important;
-}
-
-/* Override for dark mode to use lighter colors */
-[data-theme="dark"] .h2.text-warning { color: #ffc107 !important; }
-[data-theme="dark"] .h2.text-info { color: #0dcaf0 !important; }
-[data-theme="dark"] .card-header .text-warning { color: #ffc107 !important; }
-[data-theme="dark"] .card-header .text-info { color: #0dcaf0 !important; }
-
-
-/* Fix dark mode contrast for outline buttons */
-[data-theme="dark"] .btn-outline-primary {
-    color: #8bb9fe !important; /* Lighter blue for better contrast */
-    border-color: #0d6efd !important;
-}
-
-[data-theme="dark"] .btn-outline-primary:hover {
-    background-color: #0d6efd !important;
-    color: #fff !important;
-}
-
-[data-theme="dark"] .btn-outline-secondary {
-    color: #ced4da !important; /* Lighter gray for better contrast */
-    border-color: #6c757d !important;
-}
-
-[data-theme="dark"] .btn-outline-secondary:hover {
-    background-color: #6c757d !important;
-    color: #fff !important;
-}
-
-/* Fix dark mode tab contrast */
-[data-theme="dark"] .nav-tabs .nav-link {
-    color: #e9ecef !important; /* Much lighter text for inactive tabs */
-    background-color: transparent !important;
-    border-color: #495057 !important;
-}
-
-[data-theme="dark"] .nav-tabs .nav-link.active {
-    color: #0d6efd !important; /* Keep blue for active tab */
-    background-color: #212529 !important;
-    border-color: #495057 #495057 #212529 !important;
-    font-weight: 600; /* Make active tab text bolder */
-}
-
-[data-theme="dark"] .nav-tabs .nav-link:hover {
-    color: #0d6efd !important; /* Blue on hover for better visibility */
-    border-color: #495057 !important;
-}
-
-/* Fix dark mode badge contrast */
-[data-theme="dark"] .badge.bg-warning {
-    background-color: #ffc107 !important;
-    color: #000 !important;
-}
-
-[data-theme="dark"] .badge.bg-info {
-    background-color: #0dcaf0 !important;
-    color: #000 !important;
-}
-
-[data-theme="dark"] .badge.bg-success {
-    background-color: #198754 !important;
-    color: #fff !important;
-}
-
-[data-theme="dark"] .badge.bg-danger {
-    background-color: #dc3545 !important;
-    color: #fff !important;
-}
-
-/* Fix dark mode text colors for better contrast */
-[data-theme="dark"] .text-muted {
-    color: #adb5bd !important; /* Lighter gray for better contrast */
-}
-
-[data-theme="dark"] .h5.text-muted {
-    color: #adb5bd !important;
-}
-
-/* Fix dark mode card text contrast */
-[data-theme="dark"] .card-body .text-muted {
-    color: #adb5bd !important;
-}
-
-/* Fix dark mode task item text */
-[data-theme="dark"] .task-item {
-    color: #e9ecef !important;
-}
-
-[data-theme="dark"] .task-item .text-muted {
-    color: #adb5bd !important;
-}
-
-/* Fix dark mode modal text contrast */
-[data-theme="dark"] .modal-content {
-    background-color: #2d3748 !important;
-    color: #e9ecef !important;
-}
-
-[data-theme="dark"] .modal-content .text-muted {
-    color: #adb5bd !important;
-}
-
-/* Fix light mode contrast for muted text */
-.text-muted {
-    color: #5a6268 !important; /* Darker gray for better contrast in light mode */
-}
-
-/* Fix completed task text contrast */
-.task-item .text-decoration-line-through.text-muted {
-    color: #6c757d !important; /* Slightly lighter but still readable */
-    opacity: 0.8;
-}
-
-/* Fix small text contrast */
-.small.text-muted {
-    color: #6c757d !important; /* Darker for better contrast */
-}
-
-/* Fix card body muted text */
-.card-body .text-muted {
-    color: #6c757d !important;
-}
-
-/* Fix empty state text */
-.h5.text-muted {
-    color: #6c757d !important;
-}
-
-/* Fix stat card text */
-.card-custom .text-muted {
-    color: #6c757d !important;
-}
-
-/* Fix badge contrast in light mode */
-.badge.bg-warning {
-    background-color: #e0a800 !important; /* Darker yellow */
-    color: #000 !important;
-    font-weight: 600; /* Make text bolder */
-}
-
-.badge.bg-info {
-    background-color: #0aa2c0 !important; /* Darker blue */
-    color: #000 !important;
-    font-weight: 600; /* Make text bolder */
-}
-
-.badge.bg-success {
-    background-color: #198754 !important;
-    color: #fff !important;
-    font-weight: 600; /* Make text bolder */
-}
-
-.badge.bg-danger {
-    background-color: #dc3545 !important;
-    color: #fff !important;
-    font-weight: 600; /* Make text bolder */
-}
-
-/* Fix outline button contrast in light mode */
-.btn-outline-primary {
-    color: #0d6efd !important;
-    border-color: #0d6efd !important;
-}
-
-.btn-outline-primary:hover {
-    background-color: #0d6efd !important;
-    color: #fff !important;
-}
-
-.btn-outline-secondary {
-    color: #495057 !important;
-    border-color: #6c757d !important;
-}
-
-.btn-outline-secondary:hover {
-    background-color: #6c757d !important;
-    color: #fff !important;
-}
-
-/* Fix tab contrast in light mode */
-.nav-tabs .nav-link {
-    color: #000000 !important; /* Darker text for inactive tabs */
-}
-
-.nav-tabs .nav-link.active {
-    color: #0d6efd !important;
-    background-color: #fff !important;
-    border-color: #dee2e6 #dee2e6 #fff !important;
-    font-weight: 600;
-}
-
-.nav-tabs .nav-link:hover {
-    color: #0d6efd !important;
-    border-color: #dee2e6 #dee2e6 #dee2e6 !important;
-}
-
-/* Fix loading text contrast */
-.spinner-border + .text-muted {
-    color: #000000 !important;
-}
-
-/* Fix modal text contrast */
-.modal-body .text-muted {
-    color: #000000 !important;
-}
-
-/* Fix icon contrast in task items */
-.task-item .bi {
-    opacity: 0.9; /* Make icons slightly more visible */
-}
-
-/* Fix completed task background contrast */
-.task-item.bg-light {
-    background-color: #f8f9fa !important;
-}
-
-.task-item.bg-light .text-muted {
-    color: #000000 !important; /* Ensure text is readable on light background */
-}
-/* Fix outline-primary button contrast in light mode */
-.btn-outline-primary {
-    color: #0a58ca !important; /* Darker blue for better contrast */
-    border-color: #0a58ca !important;
-    font-weight: 500; /* Make text slightly bolder */
-}
-
-.btn-outline-primary:hover {
-    background-color: #0a58ca !important;
-    color: #000000 !important;
-}
-
-.btn-outline-primary:focus {
-    box-shadow: 0 0 0 0.25rem rgba(10, 88, 202, 0.25) !important;
-}
-
-/* Ensure buttons don't get light background on completed tasks */
-.task-item.bg-light .btn-outline-primary {
-    background-color: transparent !important;
-}
-
-.task-item.bg-light .btn-outline-primary:hover {
-    background-color: #0a58ca !important;
-}
-
-/* Fix completed task text contrast */
-.task-item .text-decoration-line-through.text-muted {
-    color: #000000 !important; /* Much darker gray for completed tasks */
-    opacity: 1 !important; /* Remove opacity reduction */
-    font-weight: 500; /* Make text slightly bolder */
-}
-
-/* Ensure completed task text is readable on light background */
-.task-item.bg-light .text-decoration-line-through.text-muted {
-    color: #000000 !important;
-    opacity: 1 !important;
-}
-
-/* Fix completed task description text */
-.task-item.bg-light .small.text-muted {
-    color: #000000 !important;
-    opacity: 0.9 !important;
-}
-/* Fix small text contrast in completed tasks */
-.task-item.bg-light .small.text-muted {
-    color: #000000 !important; /* Darker gray for better contrast */
-    opacity: 1 !important; /* Remove opacity reduction */
-}
-
-/* Fix all small muted text contrast */
-.small.text-muted {
-    color: #000000 !important; /* Darker gray for better contrast */
-    opacity: 1 !important; /* Remove opacity reduction */
-}
-
-/* Fix completed task description text specifically */
-.task-item.bg-light p.small.text-muted {
-    color: #000000 !important;
-    opacity: 1 !important;
-}
-
-/* Fix dark mode outline button contrast on light backgrounds */
-[data-theme="dark"] .task-item.bg-light .btn-outline-primary {
-    color: #000000 !important; /* Use the same darker blue as light mode */
-    border-color: #0a58ca !important;
-    background-color: transparent !important;
-}
-
-[data-theme="dark"] .task-item.bg-light .btn-outline-primary:hover {
-    background-color: #0a58ca !important;
-    color: #000000 !important;
-}
-
-/* Also fix the button background in dark mode for completed tasks */
-[data-theme="dark"] .task-item.bg-light {
-    background-color: #ffffff !important; /* Keep light background */
-}
-
-[data-theme="dark"] .task-item.bg-light .btn-outline-primary:focus {
-    box-shadow: 0 0 0 0.25rem rgba(10, 88, 202, 0.25) !important;
-}
-
-/* Fix the specific low contrast text in dark mode */
-[data-theme="dark"] p.mb-0.small[style*="color: rgb(192, 192, 192)"] {
-    color: #000000 !important; /* Much darker gray for better contrast */
-    opacity: 1 !important;
-}
-
-/* Alternative: Fix by targeting the specific background color in dark mode */
-[data-theme="dark"] [style*="background-color: rgb(248, 249, 250)"] {
-    background-color: #2d3748 !important; /* Dark background for dark mode */
-}
-
-
-/* Make task description text full black in light mode */
-.task-item p.small:not(.text-muted) {
-    color: #000000 !important;
-    opacity: 1 !important;
-    font-weight: 500;
-}
-
-/* For dark mode, make description text light for contrast */
-[data-theme="dark"] .task-item p.small:not(.text-muted) {
-    color: #e9ecef !important;
-    opacity: 1 !important;
-    font-weight: 500;
-}
-
-/* Also fix any inline style overrides for description text */
-.task-item p.small[style*="color: rgb(192, 192, 192)"] {
-    color: #000000 !important;
-    opacity: 1 !important;
-}
-
-[data-theme="dark"] .task-item p.small[style*="color: rgb(192, 192, 192)"] {
-    color: #e9ecef !important;
-    opacity: 1 !important;
-}
-
-/* Make task description text full black */
-.task-description {
-    color: #000000 !important;
-    opacity: 1 !important;
-    font-weight: 500;
-}
-
-/* For dark mode */
-[data-theme="dark"] .task-description {
-    color: #e9ecef !important;
-    opacity: 1 !important;
-    font-weight: 500;
-}
-
-</style>
-
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <!-- Left side: Back button -->
-        <a href="/dashboard" class="btn btn-outline-secondary">
-          <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
-        </a>
-        
-        <!-- Center: Title -->
-        <h1 class="h3 mb-0 text-center flex-grow-1 mx-3">
-          <i class="bi bi-list-check me-2"></i>Task Overview
-        </h1>
-        
-        <!-- Right side: Add button -->
-        <a href="/schedule-task" class="btn btn-custom">
-          <i class="bi bi-plus-circle me-1"></i>Add New Task
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-      <!-- Stats Overview -->
-      <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-          <div class="card card-custom text-center">
-            <div class="card-body">
-              <h2 class="h2 mb-0 text-danger" id="overdueCount">0</h2>
-              <p class="text-muted mb-0">Overdue</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-3">
-          <div class="card card-custom text-center">
-            <div class="card-body">
-              <h2 class="h2 mb-0 text-warning" id="todayCount">0</h2>
-              <p class="text-muted mb-0">Today</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-3">
-          <div class="card card-custom text-center">
-            <div class="card-body">
-              <h2 class="h2 mb-0 text-info" id="tomorrowCount">0</h2>
-              <p class="text-muted mb-0">Tomorrow</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-3">
-          <div class="card card-custom text-center">
-            <div class="card-body">
-              <h2 class="h2 mb-0 text-success" id="completedCount">0</h2>
-              <p class="text-muted mb-0">Completed</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabs Navigation -->
-      <ul class="nav nav-tabs mb-4" id="taskTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="overdue-tab" data-bs-toggle="tab" data-bs-target="#overdue" type="button" role="tab">
-            <i class="bi bi-exclamation-triangle me-1"></i>Overdue
-            <span class="badge bg-danger ms-1" id="overdueBadge">0</span>
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="today-tab" data-bs-toggle="tab" data-bs-target="#today" type="button" role="tab">
-            <i class="bi bi-sun me-1"></i>Today
-            <span class="badge bg-warning ms-1" id="todayBadge">0</span>
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tomorrow-tab" data-bs-toggle="tab" data-bs-target="#tomorrow" type="button" role="tab">
-            <i class="bi bi-calendar me-1"></i>Tomorrow
-            <span class="badge bg-info ms-1" id="tomorrowBadge">0</span>
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
-            <i class="bi bi-check-circle me-1"></i>Completed
-            <span class="badge bg-success ms-1" id="completedBadge">0</span>
-          </button>
-        </li>
-      </ul>
-
-      <!-- Tab Content -->
-      <div class="tab-content" id="taskTabsContent">
-        
-        <!-- Overdue Tasks -->
-        <div class="tab-pane fade show active" id="overdue" role="tabpanel">
-          <div class="card card-custom">
-           
-           
-           <div class="card-header">
-    <h2 class="h5 mb-0 text-danger">
-        <i class="bi bi-exclamation-triangle me-2"></i>Overdue Tasks
-    </h2>
-</div>
-
-
-
-            <div class="card-body">
-              <div id="overdueTasks">
-                <div class="text-center py-4">
-                  <div class="spinner-border text-danger" role="status"></div>
-                  <p class="mt-2 text-muted">Loading overdue tasks...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Today's Tasks -->
-        <div class="tab-pane fade" id="today" role="tabpanel">
-          <div class="card card-custom">
-            <div class="card-header">
-              <h5 class="mb-0 text-warning">
-                <i class="bi bi-sun me-2"></i>Today's Tasks
-              </h5>
-            </div>
-            <div class="card-body">
-              <div id="todayTasks">
-                <div class="text-center py-4">
-                  <div class="spinner-border text-warning" role="status"></div>
-                  <p class="mt-2 text-muted">Loading today's tasks...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tomorrow's Tasks -->
-        <div class="tab-pane fade" id="tomorrow" role="tabpanel">
-          <div class="card card-custom">
-            <div class="card-header">
-              <h5 class="mb-0 text-info">
-                <i class="bi bi-calendar me-2"></i>Tomorrow's Tasks
-              </h5>
-            </div>
-            <div class="card-body">
-              <div id="tomorrowTasks">
-                <div class="text-center py-4">
-                  <div class="spinner-border text-info" role="status"></div>
-                  <p class="mt-2 text-muted">Loading tomorrow's tasks...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Completed Tasks -->
-        <div class="tab-pane fade" id="completed" role="tabpanel">
-          <div class="card card-custom">
-            <div class="card-header">
-              <h5 class="mb-0 text-success">
-                <i class="bi bi-check-circle me-2"></i>Completed Tasks
-              </h5>
-            </div>
-            <div class="card-body">
-              <div id="completedTasks">
-                <div class="text-center py-4">
-                  <div class="spinner-border text-success" role="status"></div>
-                  <p class="mt-2 text-muted">Loading completed tasks...</p>
-                </div>
-              </div>
-            </div>
-           
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Task Details Modal -->
-<div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="taskModalTitle">Task Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="taskModalBody">
-        <!-- Content will be loaded dynamically -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" id="markCompleteBtn">Mark as Complete</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-class TaskOverview {
-  constructor() {
-    this.currentTaskId = null;
-    this.init();
-  }
-
-  async init() {
-    await this.loadAllTasks();
-    this.setupEventListeners();
-    
-    // Refresh data every 30 seconds
-    setInterval(() => {
-      this.loadAllTasks();
-    }, 30000);
-  }
-
-  async loadAllTasks() {
-    try {
-      // console.log('🔄 Loading tasks overview from /api/tasks/overview...');
-      
-      // Show loading state
-      this.showLoading();
-      const response = await fetch('/tasks/api/tasks/overview');
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
-      
-      const data = await response.json();
-      // console.log('✅ Tasks overview loaded successfully:', data);
-      
-      this.updateStats(data.stats);
-      this.renderTasks('overdue', data.overdue);
-      this.renderTasks('today', data.today);
-      this.renderTasks('tomorrow', data.tomorrow);
-      this.renderTasks('completed', data.completed);
-      
-    } catch (error) {
-      // console.error('❌ Error loading tasks:', error);
-      this.showError(`Failed to mark task as complete: ${error.message}`, true);
-      
-      // // Also log to console for debugging
-      // console.error('Full error details:', {
-      //   message: error.message,
-      //   stack: error.stack
-      // });
-    }
-  }
 
-  showLoading() {
-    const containers = ['overdueTasks', 'todayTasks', 'tomorrowTasks', 'completedTasks'];
-    containers.forEach(containerId => {
-      const container = document.getElementById(containerId);
-      if (container) {
-        container.innerHTML = `
+      .d-flex.justify-content-between.align-items-center.mb-4 .btn:last-child {
+        order: 3;
+      }
+    }
+
+    /* For medium devices */
+    @media (max-width: 768px) {
+      .d-flex.justify-content-between.align-items-center.mb-4 {
+        margin-top: 0.5rem !important;
+      }
+    }
+
+    /* ===== FIX ACCESSIBILITY ISSUES ===== */
+    .btn .bi::before {
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+    }
+
+    /* Fix contrast issues */
+    .btn-custom {
+      background-color: #1b5e20 !important;
+      color: white !important;
+      border: none;
+    }
+
+    /* Fix outline button contrast */
+    .btn-outline-secondary {
+      color: #495057 !important;
+      /* Darker gray for better contrast */
+      border-color: #6c757d !important;
+      background-color: transparent !important;
+    }
+
+    .btn-outline-secondary:hover {
+      color: #fff !important;
+      background-color: #6c757d !important;
+    }
+
+    /* Fix tab contrast in both light and dark modes */
+    .nav-tabs .nav-link {
+      color: var(--bs-body-color) !important;
+    }
+
+    .nav-tabs .nav-link.active {
+      color: var(--bs-primary) !important;
+      background-color: var(--bs-body-bg) !important;
+      border-color: var(--bs-border-color) !important;
+    }
+
+    /* Fix badge contrast */
+    .badge.bg-danger {
+      background-color: #dc3545 !important;
+      color: white !important;
+    }
+
+    .badge.bg-warning {
+      background-color: #e0a800 !important;
+      color: #000 !important;
+    }
+
+    .badge.bg-info {
+      background-color: #0aa2c0 !important;
+      color: #000 !important;
+    }
+
+    .badge.bg-success {
+      background-color: #198754 !important;
+      color: white !important;
+    }
+
+    /* Fix heading hierarchy */
+    .card-header h5 {
+      font-size: 1.25rem;
+      margin-bottom: 0;
+    }
+
+    /* use much darker colors for better contrast */
+    .h2.text-danger {
+      color: #a71e2a !important;
+    }
+
+    /* Much darker red */
+    .h2.text-warning {
+      color: #996500 !important;
+    }
+
+    /* Much darker yellow/brown */
+    .h2.text-info {
+      color: #0a6c87 !important;
+    }
+
+    /* Much darker blue */
+    .h2.text-success {
+      color: #146c43 !important;
+    }
+
+    /* Fix text-muted contrast */
+    .text-muted {
+      color: #6c757d !important;
+    }
+
+    /* Fix empty state headings */
+    .h5.text-muted {
+      color: #6c757d !important;
+    }
+
+    /* Fix card header text colors for better contrast */
+    .card-header .text-danger {
+      color: #a71e2a !important;
+    }
+
+    .card-header .text-warning {
+      color: #996500 !important;
+    }
+
+    .card-header .text-info {
+      color: #0a6c87 !important;
+    }
+
+    .card-header .text-success {
+      color: #146c43 !important;
+    }
+
+    /* Dark mode fixes */
+    [data-theme="dark"] .btn-outline-secondary {
+      color: #adb5bd !important;
+      border-color: #6c757d !important;
+    }
+
+    [data-theme="dark"] .text-muted {
+      color: #8b9cb1 !important;
+      /* Lighter gray for dark mode */
+    }
+
+    [data-theme="dark"] .nav-tabs .nav-link {
+      color: #f8f9fa !important;
+    }
+
+    [data-theme="dark"] .nav-tabs .nav-link.active {
+      color: #0d6efd !important;
+      background-color: #212529 !important;
+    }
+
+    [data-theme="dark"] .h5.text-muted {
+      color: #8b9cb1 !important;
+    }
+
+    /* Override for dark mode to use lighter colors */
+    [data-theme="dark"] .h2.text-warning {
+      color: #ffc107 !important;
+    }
+
+    [data-theme="dark"] .h2.text-info {
+      color: #0dcaf0 !important;
+    }
+
+    [data-theme="dark"] .card-header .text-warning {
+      color: #ffc107 !important;
+    }
+
+    [data-theme="dark"] .card-header .text-info {
+      color: #0dcaf0 !important;
+    }
+
+
+    /* Fix dark mode contrast for outline buttons */
+    [data-theme="dark"] .btn-outline-primary {
+      color: #8bb9fe !important;
+      /* Lighter blue for better contrast */
+      border-color: #0d6efd !important;
+    }
+
+    [data-theme="dark"] .btn-outline-primary:hover {
+      background-color: #0d6efd !important;
+      color: #fff !important;
+    }
+
+    [data-theme="dark"] .btn-outline-secondary {
+      color: #ced4da !important;
+      /* Lighter gray for better contrast */
+      border-color: #6c757d !important;
+    }
+
+    [data-theme="dark"] .btn-outline-secondary:hover {
+      background-color: #6c757d !important;
+      color: #fff !important;
+    }
+
+    /* Fix dark mode tab contrast */
+    [data-theme="dark"] .nav-tabs .nav-link {
+      color: #e9ecef !important;
+      /* Much lighter text for inactive tabs */
+      background-color: transparent !important;
+      border-color: #495057 !important;
+    }
+
+    [data-theme="dark"] .nav-tabs .nav-link.active {
+      color: #0d6efd !important;
+      /* Keep blue for active tab */
+      background-color: #212529 !important;
+      border-color: #495057 #495057 #212529 !important;
+      font-weight: 600;
+      /* Make active tab text bolder */
+    }
+
+    [data-theme="dark"] .nav-tabs .nav-link:hover {
+      color: #0d6efd !important;
+      /* Blue on hover for better visibility */
+      border-color: #495057 !important;
+    }
+
+    /* Fix dark mode badge contrast */
+    [data-theme="dark"] .badge.bg-warning {
+      background-color: #ffc107 !important;
+      color: #000 !important;
+    }
+
+    [data-theme="dark"] .badge.bg-info {
+      background-color: #0dcaf0 !important;
+      color: #000 !important;
+    }
+
+    [data-theme="dark"] .badge.bg-success {
+      background-color: #198754 !important;
+      color: #fff !important;
+    }
+
+    [data-theme="dark"] .badge.bg-danger {
+      background-color: #dc3545 !important;
+      color: #fff !important;
+    }
+
+    /* Fix dark mode text colors for better contrast */
+    [data-theme="dark"] .text-muted {
+      color: #adb5bd !important;
+      /* Lighter gray for better contrast */
+    }
+
+    [data-theme="dark"] .h5.text-muted {
+      color: #adb5bd !important;
+    }
+
+    /* Fix dark mode card text contrast */
+    [data-theme="dark"] .card-body .text-muted {
+      color: #adb5bd !important;
+    }
+
+    /* Fix dark mode task item text */
+    [data-theme="dark"] .task-item {
+      color: #e9ecef !important;
+    }
+
+    [data-theme="dark"] .task-item .text-muted {
+      color: #adb5bd !important;
+    }
+
+    /* Fix dark mode modal text contrast */
+    [data-theme="dark"] .modal-content {
+      background-color: #2d3748 !important;
+      color: #e9ecef !important;
+    }
+
+    [data-theme="dark"] .modal-content .text-muted {
+      color: #adb5bd !important;
+    }
+
+    /* Fix light mode contrast for muted text */
+    .text-muted {
+      color: #5a6268 !important;
+    }
+
+    .task-item .text-decoration-line-through.text-muted {
+      color: #6c757d !important;
+      /* Slightly lighter but still readable */
+      opacity: 0.8;
+    }
+
+    /* Fix small text contrast */
+    .small.text-muted {
+      color: #6c757d !important;
+      /* Darker for better contrast */
+    }
+
+    /* Fix card body muted text */
+    .card-body .text-muted {
+      color: #6c757d !important;
+    }
+
+    /* Fix empty state text */
+    .h5.text-muted {
+      color: #6c757d !important;
+    }
+
+    /* Fix stat card text */
+    .card-custom .text-muted {
+      color: #6c757d !important;
+    }
+
+    /* Fix badge contrast in light mode */
+    .badge.bg-warning {
+      background-color: #e0a800 !important;
+      /* Darker yellow */
+      color: #000 !important;
+      font-weight: 600;
+      /* Make text bolder */
+    }
+
+    .badge.bg-info {
+      background-color: #0aa2c0 !important;
+      /* Darker blue */
+      color: #000 !important;
+      font-weight: 600;
+      /* Make text bolder */
+    }
+
+    .badge.bg-success {
+      background-color: #198754 !important;
+      color: #fff !important;
+      font-weight: 600;
+      /* Make text bolder */
+    }
+
+    .badge.bg-danger {
+      background-color: #dc3545 !important;
+      color: #fff !important;
+      font-weight: 600;
+      /* Make text bolder */
+    }
+
+    /* Fix outline button contrast in light mode */
+    .btn-outline-primary {
+      color: #0d6efd !important;
+      border-color: #0d6efd !important;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #0d6efd !important;
+      color: #fff !important;
+    }
+
+    .btn-outline-secondary {
+      color: #495057 !important;
+      border-color: #6c757d !important;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #6c757d !important;
+      color: #fff !important;
+    }
+
+    /* Fix tab contrast in light mode */
+    .nav-tabs .nav-link {
+      color: #000000 !important;
+      /* Darker text for inactive tabs */
+    }
+
+    .nav-tabs .nav-link.active {
+      color: #0d6efd !important;
+      background-color: #fff !important;
+      border-color: #dee2e6 #dee2e6 #fff !important;
+      font-weight: 600;
+    }
+
+    .nav-tabs .nav-link:hover {
+      color: #0d6efd !important;
+      border-color: #dee2e6 #dee2e6 #dee2e6 !important;
+    }
+
+    /* Fix loading text contrast */
+    .spinner-border+.text-muted {
+      color: #000000 !important;
+    }
+
+    /* Fix modal text contrast */
+    .modal-body .text-muted {
+      color: #000000 !important;
+    }
+
+    /* Fix icon contrast in task items */
+    .task-item .bi {
+      opacity: 0.9;
+      /* Make icons slightly more visible */
+    }
+
+    /* Fix completed task background contrast */
+    .task-item.bg-light {
+      background-color: #f8f9fa !important;
+    }
+
+    .task-item.bg-light .text-muted {
+      color: #000000 !important;
+      /* Ensure text is readable on light background */
+    }
+
+    /* Fix outline-primary button contrast in light mode */
+    .btn-outline-primary {
+      color: #0a58ca !important;
+      /* Darker blue for better contrast */
+      border-color: #0a58ca !important;
+      font-weight: 500;
+      /* Make text slightly bolder */
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #0a58ca !important;
+      color: #000000 !important;
+    }
+
+    .btn-outline-primary:focus {
+      box-shadow: 0 0 0 0.25rem rgba(10, 88, 202, 0.25) !important;
+    }
+
+    /* Ensure buttons don't get light background on completed tasks */
+    .task-item.bg-light .btn-outline-primary {
+      background-color: transparent !important;
+    }
+
+    .task-item.bg-light .btn-outline-primary:hover {
+      background-color: #0a58ca !important;
+    }
+
+    /* Fix completed task text contrast */
+    .task-item .text-decoration-line-through.text-muted {
+      color: #000000 !important;
+      /* Much darker gray for completed tasks */
+      opacity: 1 !important;
+      /* Remove opacity reduction */
+      font-weight: 500;
+      /* Make text slightly bolder */
+    }
+
+    /* Ensure completed task text is readable on light background */
+    .task-item.bg-light .text-decoration-line-through.text-muted {
+      color: #000000 !important;
+      opacity: 1 !important;
+    }
+
+    /* Fix completed task description text */
+    .task-item.bg-light .small.text-muted {
+      color: #000000 !important;
+      opacity: 0.9 !important;
+    }
+
+    /* Fix small text contrast in completed tasks */
+    .task-item.bg-light .small.text-muted {
+      color: #000000 !important;
+      /* Darker gray for better contrast */
+      opacity: 1 !important;
+      /* Remove opacity reduction */
+    }
+
+    /* Fix all small muted text contrast */
+    .small.text-muted {
+      color: #000000 !important;
+      /* Darker gray for better contrast */
+      opacity: 1 !important;
+      /* Remove opacity reduction */
+    }
+
+    /* Fix completed task description text specifically */
+    .task-item.bg-light p.small.text-muted {
+      color: #000000 !important;
+      opacity: 1 !important;
+    }
+
+    /* Fix dark mode outline button contrast on light backgrounds */
+    [data-theme="dark"] .task-item.bg-light .btn-outline-primary {
+      color: #000000 !important;
+      /* Use the same darker blue as light mode */
+      border-color: #0a58ca !important;
+      background-color: transparent !important;
+    }
+
+    [data-theme="dark"] .task-item.bg-light .btn-outline-primary:hover {
+      background-color: #0a58ca !important;
+      color: #000000 !important;
+    }
+
+    [data-theme="dark"] .task-item.bg-light {
+      background-color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .task-item.bg-light .btn-outline-primary:focus {
+      box-shadow: 0 0 0 0.25rem rgba(10, 88, 202, 0.25) !important;
+    }
+
+    /* Fix the specific low contrast text in dark mode */
+    [data-theme="dark"] p.mb-0.small[style*="color: rgb(192, 192, 192)"] {
+      color: #000000 !important;
+      /* Much darker gray for better contrast */
+      opacity: 1 !important;
+    }
+
+    [data-theme="dark"] [style*="background-color: rgb(248, 249, 250)"] {
+      background-color: #2d3748 !important;
+      /* Dark background for dark mode */
+    }
+
+    /* Make task description text full black in light mode */
+    .task-item p.small:not(.text-muted) {
+      color: #000000 !important;
+      opacity: 1 !important;
+      font-weight: 500;
+    }
+
+    /* For dark mode, make description text light for contrast */
+    [data-theme="dark"] .task-item p.small:not(.text-muted) {
+      color: #e9ecef !important;
+      opacity: 1 !important;
+      font-weight: 500;
+    }
+
+    /* Also fix any inline style overrides for description text */
+    .task-item p.small[style*="color: rgb(192, 192, 192)"] {
+      color: #000000 !important;
+      opacity: 1 !important;
+    }
+
+    [data-theme="dark"] .task-item p.small[style*="color: rgb(192, 192, 192)"] {
+      color: #e9ecef !important;
+      opacity: 1 !important;
+    }
+
+    /* Make task description text full black */
+    .task-description {
+      color: #000000 !important;
+      opacity: 1 !important;
+      font-weight: 500;
+    }
+
+    /* For dark mode */
+    [data-theme="dark"] .task-description {
+      color: #e9ecef !important;
+      opacity: 1 !important;
+      font-weight: 500;
+    }
+  </style>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <!-- Left side: Back button -->
+          <a href="/dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+          </a>
+          <!-- Center: Title -->
+          <h1 class="h3 mb-0 text-center flex-grow-1 mx-3">
+            <i class="bi bi-list-check me-2"></i>Task Overview
+          </h1>
+          <!-- Right side: Add button -->
+          <a href="/schedule-task" class="btn btn-custom">
+            <i class="bi bi-plus-circle me-1"></i>Add New Task
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="card card-custom text-center">
+        <div class="card-body">
+          <h2 class="h2 mb-0 text-danger" id="overdueCount">0</h2>
+          <p class="text-muted mb-0">Overdue</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card card-custom text-center">
+        <div class="card-body">
+          <h2 class="h2 mb-0 text-warning" id="todayCount">0</h2>
+          <p class="text-muted mb-0">Today</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card card-custom text-center">
+        <div class="card-body">
+          <h2 class="h2 mb-0 text-info" id="tomorrowCount">0</h2>
+          <p class="text-muted mb-0">Tomorrow</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card card-custom text-center">
+        <div class="card-body">
+          <h2 class="h2 mb-0 text-success" id="completedCount">0</h2>
+          <p class="text-muted mb-0">Completed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-4" id="taskTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="overdue-tab" data-bs-toggle="tab" data-bs-target="#overdue" type="button"
+        role="tab">
+        <i class="bi bi-exclamation-triangle me-1"></i>Overdue
+        <span class="badge bg-danger ms-1" id="overdueBadge">0</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="today-tab" data-bs-toggle="tab" data-bs-target="#today" type="button" role="tab">
+        <i class="bi bi-sun me-1"></i>Today
+        <span class="badge bg-warning ms-1" id="todayBadge">0</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tomorrow-tab" data-bs-toggle="tab" data-bs-target="#tomorrow" type="button"
+        role="tab">
+        <i class="bi bi-calendar me-1"></i>Tomorrow
+        <span class="badge bg-info ms-1" id="tomorrowBadge">0</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button"
+        role="tab">
+        <i class="bi bi-check-circle me-1"></i>Completed
+        <span class="badge bg-success ms-1" id="completedBadge">0</span>
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="taskTabsContent">
+
+    <!-- Overdue Tasks -->
+    <div class="tab-pane fade show active" id="overdue" role="tabpanel">
+      <div class="card card-custom">
+        <div class="card-header">
+          <h2 class="h5 mb-0 text-danger">
+            <i class="bi bi-exclamation-triangle me-2"></i>Overdue Tasks
+          </h2>
+        </div>
+        <div class="card-body">
+          <div id="overdueTasks">
+            <div class="text-center py-4">
+              <div class="spinner-border text-danger" role="status"></div>
+              <p class="mt-2 text-muted">Loading overdue tasks...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's Tasks -->
+    <div class="tab-pane fade" id="today" role="tabpanel">
+      <div class="card card-custom">
+        <div class="card-header">
+          <h5 class="mb-0 text-warning">
+            <i class="bi bi-sun me-2"></i>Today's Tasks
+          </h5>
+        </div>
+        <div class="card-body">
+          <div id="todayTasks">
+            <div class="text-center py-4">
+              <div class="spinner-border text-warning" role="status"></div>
+              <p class="mt-2 text-muted">Loading today's tasks...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tomorrow's Tasks -->
+    <div class="tab-pane fade" id="tomorrow" role="tabpanel">
+      <div class="card card-custom">
+        <div class="card-header">
+          <h5 class="mb-0 text-info">
+            <i class="bi bi-calendar me-2"></i>Tomorrow's Tasks
+          </h5>
+        </div>
+        <div class="card-body">
+          <div id="tomorrowTasks">
+            <div class="text-center py-4">
+              <div class="spinner-border text-info" role="status"></div>
+              <p class="mt-2 text-muted">Loading tomorrow's tasks...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completed Tasks -->
+    <div class="tab-pane fade" id="completed" role="tabpanel">
+      <div class="card card-custom">
+        <div class="card-header">
+          <h5 class="mb-0 text-success">
+            <i class="bi bi-check-circle me-2"></i>Completed Tasks
+          </h5>
+        </div>
+        <div class="card-body">
+          <div id="completedTasks">
+            <div class="text-center py-4">
+              <div class="spinner-border text-success" role="status"></div>
+              <p class="mt-2 text-muted">Loading completed tasks...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- Task Details Modal -->
+  <div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="taskModalTitle">Task Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="taskModalBody">
+          <!-- Content will be loaded dynamically -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" id="markCompleteBtn">Mark as Complete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class TaskOverview {
+      constructor() {
+        this.currentTaskId = null;
+        this.init();
+      }
+
+      async init() {
+        await this.loadAllTasks();
+        this.setupEventListeners();
+
+        // Refresh data every 30 seconds
+        setInterval(() => {
+          this.loadAllTasks();
+        }, 30000);
+      }
+
+      async loadAllTasks() {
+        try {
+          // console.log('🔄 Loading tasks overview from /api/tasks/overview...');
+          // Show loading state
+          this.showLoading();
+          const response = await fetch('/tasks/api/tasks/overview');
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+          }
+
+          const data = await response.json();
+          // console.log('✅ Tasks overview loaded successfully:', data);
+          this.updateStats(data.stats);
+          this.renderTasks('overdue', data.overdue);
+          this.renderTasks('today', data.today);
+          this.renderTasks('tomorrow', data.tomorrow);
+          this.renderTasks('completed', data.completed);
+
+        } catch (error) {
+          // console.error('❌ Error loading tasks:', error);
+          this.showError(`Failed to mark task as complete: ${error.message}`, true);
+
+          // // Also log to console for debugging
+          // console.error('Full error details:', {
+          //   message: error.message,
+          //   stack: error.stack
+          // });
+        }
+      }
+      showLoading() {
+        const containers = ['overdueTasks', 'todayTasks', 'tomorrowTasks', 'completedTasks'];
+        containers.forEach(containerId => {
+          const container = document.getElementById(containerId);
+          if (container) {
+            container.innerHTML = `
           <div class="text-center py-4">
             <div class="spinner-border" role="status"></div>
             <p class="mt-2 text-muted">Loading tasks...</p>
           </div>
         `;
+          }
+        });
       }
-    });
-  }
-showError(message, isModal = false) {
-    if (isModal) {
-        // Show error in modal context
-        alert(message); // Simple alert for now
-    } else {
-        // Show error in task lists
-        const containers = ['overdueTasks', 'todayTasks', 'tomorrowTasks', 'completedTasks'];
-        containers.forEach(containerId => {
+      showError(message, isModal = false) {
+        if (isModal) {
+          // Show error in modal context
+          alert(message); // Simple alert for now
+        } else {
+          // Show error in task lists
+          const containers = ['overdueTasks', 'todayTasks', 'tomorrowTasks', 'completedTasks'];
+          containers.forEach(containerId => {
             const container = document.getElementById(containerId);
             if (container) {
-                container.innerHTML = `
+              container.innerHTML = `
                     <div class="alert alert-danger m-3">
                         <i class="bi bi-exclamation-triangle me-2"></i>
                         ${message}
@@ -794,43 +848,43 @@ showError(message, isModal = false) {
                     </div>
                 `;
             }
-        });
-    }
-}
+          });
+        }
+      }
 
-  updateStats(stats) {
-    document.getElementById('overdueCount').textContent = stats.overdue;
-    document.getElementById('todayCount').textContent = stats.today;
-    document.getElementById('tomorrowCount').textContent = stats.tomorrow;
-    document.getElementById('completedCount').textContent = stats.completed;
-    
-    document.getElementById('overdueBadge').textContent = stats.overdue;
-    document.getElementById('todayBadge').textContent = stats.today;
-    document.getElementById('tomorrowBadge').textContent = stats.tomorrow;
-    document.getElementById('completedBadge').textContent = stats.completed;
-  }
+      updateStats(stats) {
+        document.getElementById('overdueCount').textContent = stats.overdue;
+        document.getElementById('todayCount').textContent = stats.today;
+        document.getElementById('tomorrowCount').textContent = stats.tomorrow;
+        document.getElementById('completedCount').textContent = stats.completed;
 
-  renderTasks(type, tasks) {
-    const container = document.getElementById(`${type}Tasks`);
-    
-    if (tasks.length === 0) {
-      const messages = {
-        overdue: 'No overdue tasks. Great job! 🎉',
-        today: 'No tasks for today. Enjoy your day! 😊',
-        tomorrow: 'No tasks scheduled for tomorrow.',
-        completed: 'No completed tasks yet.'
-      };
-      
-      container.innerHTML = `
+        document.getElementById('overdueBadge').textContent = stats.overdue;
+        document.getElementById('todayBadge').textContent = stats.today;
+        document.getElementById('tomorrowBadge').textContent = stats.tomorrow;
+        document.getElementById('completedBadge').textContent = stats.completed;
+      }
+
+      renderTasks(type, tasks) {
+        const container = document.getElementById(`${type}Tasks`);
+
+        if (tasks.length === 0) {
+          const messages = {
+            overdue: 'No overdue tasks. Great job! 🎉',
+            today: 'No tasks for today. Enjoy your day! 😊',
+            tomorrow: 'No tasks scheduled for tomorrow.',
+            completed: 'No completed tasks yet.'
+          };
+
+          container.innerHTML = `
         <div class="text-center py-5">
     <i class="bi bi-${this.getIcon(type)} text-muted" style="font-size: 3rem;"></i>
     <h2 class="h5 mt-3 text-muted">${messages[type]}</h2>
 </div>
       `;
-      return;
-    }
+          return;
+        }
 
-    container.innerHTML = tasks.map(task => `
+        container.innerHTML = tasks.map(task => `
       <div class="task-item border-bottom p-3 ${task.completed ? 'bg-light' : ''}">
         <div class="d-flex align-items-center">
           <div class="flex-grow-1">
@@ -849,72 +903,63 @@ showError(message, isModal = false) {
             ${task.description ? `<p class="mb-0 small task-description">${task.description}</p>` : ''}
           </div>
           <div class="flex-shrink-0 ms-3">
-           
-           
-           
-           
         <div class="btn-group btn-group-sm">
     <button class="btn btn-outline-primary view-task-btn" data-task-id="${task.task_id}" 
             aria-label="View task details">
         <i class="bi bi-eye"></i> View
     </button>
 </div>
-
-
-
           </div>
         </div>
       </div>
     `).join('');
 
-    this.setupTaskEvents(type);
-  }
-
-  getIcon(type) {
-    const icons = {
-      overdue: 'exclamation-triangle',
-      today: 'sun',
-      tomorrow: 'calendar',
-      completed: 'check-circle'
-    };
-    return icons[type];
-  }
-setupTaskEvents(type) {
-    // View task buttons
-    document.querySelectorAll('.view-task-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            this.viewTaskDetails(btn.dataset.taskId);
-        });
-    });
-
-    
-}
-
-  setupEventListeners() {
-    // Mark complete button in modal
-    document.getElementById('markCompleteBtn').addEventListener('click', () => {
-      if (this.currentTaskId) {
-        this.completeTask(this.currentTaskId);
+        this.setupTaskEvents(type);
       }
-    });
 
-    // Auto-refresh when switching tabs
-    document.querySelectorAll('#taskTabs button').forEach(tab => {
-      tab.addEventListener('shown.bs.tab', () => {
-        this.loadAllTasks();
-      });
-    });
-  }
+      getIcon(type) {
+        const icons = {
+          overdue: 'exclamation-triangle',
+          today: 'sun',
+          tomorrow: 'calendar',
+          completed: 'check-circle'
+        };
+        return icons[type];
+      }
+      setupTaskEvents(type) {
+        // View task buttons
+        document.querySelectorAll('.view-task-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            this.viewTaskDetails(btn.dataset.taskId);
+          });
+        });
+      }
 
-  async viewTaskDetails(taskId) {
-    try {
-      const response = await fetch(`/tasks/${taskId}`);
-      const task = await response.json();
-      
-      this.currentTaskId = taskId;
-      
-      document.getElementById('taskModalTitle').textContent = task.title;
-      document.getElementById('taskModalBody').innerHTML = `
+      setupEventListeners() {
+        // Mark complete button in modal
+        document.getElementById('markCompleteBtn').addEventListener('click', () => {
+          if (this.currentTaskId) {
+            this.completeTask(this.currentTaskId);
+          }
+        });
+
+        // Auto-refresh when switching tabs
+        document.querySelectorAll('#taskTabs button').forEach(tab => {
+          tab.addEventListener('shown.bs.tab', () => {
+            this.loadAllTasks();
+          });
+        });
+      }
+
+      async viewTaskDetails(taskId) {
+        try {
+          const response = await fetch(`/tasks/${taskId}`);
+          const task = await response.json();
+
+          this.currentTaskId = taskId;
+
+          document.getElementById('taskModalTitle').textContent = task.title;
+          document.getElementById('taskModalBody').innerHTML = `
         <div class="mb-3">
           <strong>Pet:</strong> ${task.pet_name}
         </div>
@@ -947,120 +992,104 @@ setupTaskEvents(type) {
   </div>
 ` : ''}
       `;
-      
-      // Show/hide complete button based on task status
-      document.getElementById('markCompleteBtn').style.display = task.completed ? 'none' : 'block';
-      
-      const modal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
-      modal.show();
-      
-    } catch (error) {
-      // console.error('Error loading task details:', error);
-      alert('Failed to load task details');
-    }
-  }
 
+          // Show/hide complete button based on task status
+          document.getElementById('markCompleteBtn').style.display = task.completed ? 'none' : 'block';
 
-async completeTask(taskId) {
-    if (!confirm('Are you sure you want to mark this task as complete?')) {
-        return;
-    }
+          const modal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
+          modal.show();
 
-    try {
-        // console.log('🔄 Attempting to complete task:', taskId);
-        
-        const response = await fetch(`/tasks/${taskId}/complete`, {
+        } catch (error) {
+          // console.error('Error loading task details:', error);
+          alert('Failed to load task details');
+        }
+      }
+      async completeTask(taskId) {
+        if (!confirm('Are you sure you want to mark this task as complete?')) {
+          return;
+        }
+
+        try {
+          // console.log('🔄 Attempting to complete task:', taskId);
+          const response = await fetch(`/tasks/${taskId}/complete`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+              'Content-Type': 'application/json',
             }
-        });
-        
-        // console.log('📡 Response status:', response.status);
-        // console.log('📡 Response ok:', response.ok);
-        
-        if (response.ok) {
+          });
+          // console.log('📡 Response status:', response.status);
+          // console.log('📡 Response ok:', response.ok);
+          if (response.ok) {
             // Close modal if open
             const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailsModal'));
             if (modal) {
-                modal.hide();
+              modal.hide();
             }
-            
             // Show success message
             this.showSuccess('Task marked as complete!');
-            
             // console.log('🔄 Reloading tasks after completion...');
-            
             // Use a simpler approach - reload the entire page after a short delay
             setTimeout(() => {
-                window.location.reload();
+              window.location.reload();
             }, 1000);
-            
-        } else {
+
+          } else {
             // Get the actual error message from the response
             const errorText = await response.text();
             // console.error('❌ Server error response:', errorText);
-            
+
             let errorMessage = 'Failed to mark task as complete';
             try {
-                // Try to parse as JSON first
-                const errorData = JSON.parse(errorText);
-                errorMessage = errorData.message || errorMessage;
+              // Try to parse as JSON first
+              const errorData = JSON.parse(errorText);
+              errorMessage = errorData.message || errorMessage;
             } catch (e) {
-                // If not JSON, use the text directly
-                errorMessage = errorText || errorMessage;
+              // If not JSON, use the text directly
+              errorMessage = errorText || errorMessage;
             }
-            
+
             throw new Error(errorMessage);
+          }
+        } catch (error) {
+          // console.error('❌ Error completing task:', error);
+          // console.error('Error details:', {
+          //     message: error.message,
+          //     name: error.name,
+          //     stack: error.stack
+          // });
+
+          // Show error but don't break the page
+          alert(`Failed to mark task as complete: ${error.message}`);
         }
-    } catch (error) {
-        // console.error('❌ Error completing task:', error);
-        // console.error('Error details:', {
-        //     message: error.message,
-        //     name: error.name,
-        //     stack: error.stack
-        // });
-        
-        // Show error but don't break the page
-        alert(`Failed to mark task as complete: ${error.message}`);
-    }
-}
-
-
-// Add this new method to auto-switch to Completed tab
-switchToCompletedTab() {
-    const completedTab = document.getElementById('completed-tab');
-    if (completedTab) {
-        const tab = new bootstrap.Tab(completedTab);
-        tab.show();
-        // console.log('🔀 Switched to Completed tab');
-    }
-}
-
-
-
-  showSuccess(message) {
-    // Create a simple toast notification
-    const toast = document.createElement('div');
-    toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
-    toast.style.zIndex = '1060';
-    toast.innerHTML = `
+      }
+      // new method to auto-switch to Completed tab
+      switchToCompletedTab() {
+        const completedTab = document.getElementById('completed-tab');
+        if (completedTab) {
+          const tab = new bootstrap.Tab(completedTab);
+          tab.show();
+          // console.log('🔀 Switched to Completed tab');
+        }
+      }
+      showSuccess(message) {
+        // Create a simple toast notification
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+        toast.style.zIndex = '1060';
+        toast.innerHTML = `
       <i class="bi bi-check-circle me-2"></i>
       ${message}
     `;
-    document.body.appendChild(toast);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      toast.remove();
-    }, 3000);
-  }
-}
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', () => {
-  new TaskOverview();
-});
-</script>
-
-<%- include('partials/footer') %>
+        document.body.appendChild(toast);
+        // Remove after 3 seconds
+        setTimeout(() => {
+          toast.remove();
+        }, 3000);
+      }
+    }
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new TaskOverview();
+    });
+  </script>
+  <%- include('partials/footer') %>

@@ -1,10 +1,15 @@
 const { query } = require('../config/database');
 
+/**
+ * Initializes the notification system by creating required database tables and columns.
+ * Creates a notifications table for storing user notifications and adds notification-related
+ * columns to existing tasks table. Includes proper indexing for performance optimization.
+ * 
+ * @returns {Promise<void>} Resolves when setup is complete, rejects on error
+ * @throws {Error} If database operations fail
+ */
 async function setupNotifications() {
   try {
-    // console.log('🔄 Setting up notification system...');
-    
-    // Create notifications table
     await query(`
       CREATE TABLE IF NOT EXISTS notifications (
         notification_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -20,40 +25,28 @@ async function setupNotifications() {
         INDEX idx_created_at (created_at)
       )
     `);
-    // console.log('✅ Notifications table created/verified');
     
-    // Add notification_sent column to tasks table if it doesn't exist
     try {
       await query('ALTER TABLE tasks ADD COLUMN notification_sent BOOLEAN DEFAULT FALSE');
-      // console.log('✅ Added notification_sent column to tasks');
     } catch (error) {
-      if (error.code === 'ER_DUP_FIELDNAME') {
-        // console.log('✅ notification_sent column already exists');
-      } else {
+      if (error.code !== 'ER_DUP_FIELDNAME') {
         throw error;
       }
     }
     
-    // Add index if it doesn't exist
     try {
       await query('CREATE INDEX idx_notification_sent ON tasks (notification_sent)');
-      // console.log('✅ Added notification_sent index');
     } catch (error) {
-      if (error.code === 'ER_DUP_KEYNAME') {
-        // console.log('✅ notification_sent index already exists');
-      } else {
+      if (error.code !== 'ER_DUP_KEYNAME') {
         throw error;
       }
     }
-    
-    // console.log('🎉 Notification system setup completed!');
   } catch (error) {
     // console.error('❌ Notification setup failed:', error);
     throw error;
   }
 }
 
-// Run if called directly
 if (require.main === module) {
   setupNotifications()
     .then(() => process.exit(0))

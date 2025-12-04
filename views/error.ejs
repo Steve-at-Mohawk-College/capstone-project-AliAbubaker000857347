@@ -1,29 +1,31 @@
 <%- include('partials/header', {title: title}) %>
 
-<div class="row justify-content-center">
-  <div class="col-md-8 col-lg-6">
-    <div class="card card-custom">
-      <div class="card-body p-5 text-center">
-        <h1 class="display-4 text-danger">Oops!</h1>
-        <p class="lead"><%= message %></p>
-        
-        <% if (typeof error !== 'undefined' && error && error.stack) { %>
-          <div class="alert alert-secondary text-start mt-4">
-            <pre class="mb-0" style="white-space:pre-wrap;"><%= error.stack %></pre>
-          </div>
-        <% } else if (typeof error !== 'undefined' && error) { %>
-          <div class="alert alert-secondary text-start mt-4">
-            <pre class="mb-0" style="white-space:pre-wrap;"><%= JSON.stringify(error, null, 2) %></pre>
-          </div>
-        <% } %>
-        
-        <div class="mt-4">
-          <a class="btn btn-custom" href="/dashboard">Go to Dashboard</a>
-          <a class="btn btn-outline-secondary ms-2" href="/login">Go to Login</a>
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card card-custom">
+        <div class="card-body p-5 text-center">
+          <h1 class="display-4 text-danger">Oops!</h1>
+          <p class="lead">
+            <%= message %>
+          </p>
+
+          <% if (typeof error !=='undefined' && error && error.stack) { %>
+            <div class="alert alert-secondary text-start mt-4">
+              <pre class="mb-0" style="white-space:pre-wrap;"><%= error.stack %></pre>
+            </div>
+            <% } else if (typeof error !=='undefined' && error) { %>
+              <div class="alert alert-secondary text-start mt-4">
+                <pre class="mb-0" style="white-space:pre-wrap;"><%= JSON.stringify(error, null, 2) %></pre>
+              </div>
+              <% } %>
+
+                <div class="mt-4">
+                  <a class="btn btn-custom" href="/dashboard">Go to Dashboard</a>
+                  <a class="btn btn-outline-secondary ms-2" href="/login">Go to Login</a>
+                </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<%- include('partials/footer') %>
+  <%- include('partials/footer') %>

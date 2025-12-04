@@ -1,445 +1,394 @@
-<%- include('partials/header', {title: 'Schedule Task'}) %>
+<%- include('partials/header', {title: 'Schedule Task' }) %>
 
-<style>
-/* ===== FIX HEADER GAP FOR SCHEDULE TASK PAGE ===== */
-/* Remove ALL spacing from body */
-body {
-    padding-top: 0 !important;
-    margin: 0 !important;
-}
+  <style>
+    /* Remove ALL spacing from body */
+    body {
+      padding-top: 0 !important;
+      margin: 0 !important;
+    }
 
-/* Target the navbar directly */
-.navbar-modern {
-    position: relative !important;
-    top: auto !important;
-}
-/* Add to your CSS in schedule-task.ejs */
-input[type="datetime-local"] {
-  -webkit-appearance: none;
-  appearance: none;
-  min-height: 44px; /* Minimum touch target size */
-}
+    /* Target the navbar directly */
+    .navbar-modern {
+      position: relative !important;
+      top: auto !important;
+    }
+    input[type="datetime-local"] {
+      -webkit-appearance: none;
+      appearance: none;
+      min-height: 44px;
+    }
 
-/* For better mobile experience */
-@media (max-width: 768px) {
-  .col-md-6 {
-    margin-bottom: 1rem;
-  }
-}
+    /* For better mobile experience */
+    @media (max-width: 768px) {
+      .col-md-6 {
+        margin-bottom: 1rem;
+      }
+    }
+    /* Removing ALL padding and margins from main container */
+    .container-fluid {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
 
-/* Remove ALL padding and margins from main container */
-.container-fluid {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-}
+    /* Removing spacing from the row and card */
+    .row.justify-content-center {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
 
-/* Remove spacing from the row and card */
-.row.justify-content-center {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+    .col-md-8.col-lg-6 {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
 
-.col-md-8.col-lg-6 {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+    .card.card-custom {
+      margin-top: 0 !important;
+      border-top: none !important;
+    }
 
-.card.card-custom {
-    margin-top: 0 !important;
-    border-top: none !important;
-}
+    /* Removing any potential spacing from header partial */
+    header {
+      margin-bottom: 0 !important;
+    }
 
-/* Remove any potential spacing from header partial */
-header {
-    margin-bottom: 0 !important;
-}
+    /* Ensure no extra spacing in card body */
+    .card-body.p-4 {
+      padding-top: 1rem !important;
+    }
 
-/* Ensure no extra spacing in card body */
-.card-body.p-4 {
-    padding-top: 1rem !important;
-}
+    .card-custom {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+    }
 
-/* Your existing card styles */
-.card-custom {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    overflow: hidden;
-}
+    .card-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    }
 
-.card-custom:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-}
+    .btn-custom {
+      background-color: #1b5e20 !important;
+      color: white !important;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
 
-.btn-custom {
-    background-color: #1b5e20 !important;
-    color: white !important;
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.btn-custom:hover {
-    background-color: #2e7d32 !important;
-    color: white !important;
-    transform: translateY(-1px);
-}
+    .btn-custom:hover {
+      background-color: #2e7d32 !important;
+      color: white !important;
+      transform: translateY(-1px);
+    }
 
 
-.form-label {
-    color: var(--bs-body-color) !important;
-}
+    .form-label {
+      color: var(--bs-body-color) !important;
+    }
 
-/* Fix specific label that has inline styles */
-label[for="pet_id"] {
-    color: var(--bs-body-color) !important;
-    opacity: 1 !important;
-    background-color: transparent !important;
-}
+    /* Fix specific label that has inline styles */
+    label[for="pet_id"] {
+      color: var(--bs-body-color) !important;
+      opacity: 1 !important;
+      background-color: transparent !important;
+    }
 
-/* Ensure all form labels have proper contrast */
-label[for="task_type"],
-label[for="title"], 
-label[for="description"],
-label[for="due_date"],
-label[for="priority"] {
-    color: var(--bs-body-color) !important;
-}
+    /* Ensure all form labels have proper contrast */
+    label[for="task_type"],
+    label[for="title"],
+    label[for="description"],
+    label[for="due_date"],
+    label[for="priority"] {
+      color: var(--bs-body-color) !important;
+    }
+    input[type="datetime-local"][readonly] {
+      background-color: #f8f9fa;
+      cursor: pointer;
+    }
 
-/* Add this to your existing CSS */
-input[type="datetime-local"][readonly] {
-  background-color: #f8f9fa;
-  cursor: pointer;
-}
+    input[type="datetime-local"][readonly]:focus {
+      background-color: #fff;
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
 
-input[type="datetime-local"][readonly]:focus {
-  background-color: #fff;
-  border-color: #86b7fe;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
+    /* Style for the Back to Dashboard button */
+    .back-to-dashboard-btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+      border: 2px solid #6c757d;
+      border-radius: 8px;
+      background-color: transparent;
+      color: #6c757d;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
 
-/* Style for the Back to Dashboard button */
-.back-to-dashboard-btn {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    font-weight: 500;
-    text-align: center;
-    text-decoration: none;
-    border: 2px solid #6c757d;
-    border-radius: 8px; /* Same as btn-custom */
-    background-color: transparent;
-    color: #6c757d;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1rem;
-}
+    .back-to-dashboard-btn:hover {
+      background-color: #6c757d;
+      color: white !important;
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+    }
 
-.back-to-dashboard-btn:hover {
-    background-color: #6c757d;
-    color: white !important;
-    text-decoration: none;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
-}
+    .back-to-dashboard-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+    }
 
-.back-to-dashboard-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
-}
+    /* Dark mode support */
+    [data-bs-theme="dark"] .back-to-dashboard-btn {
+      border-color: #a7acb1;
+      color: #a7acb1;
+    }
 
-/* Dark mode support */
-[data-bs-theme="dark"] .back-to-dashboard-btn {
-    border-color: #a7acb1;
-    color: #a7acb1;
-}
+    [data-bs-theme="dark"] .back-to-dashboard-btn:hover {
+      background-color: #a7acb1;
+      color: #000000 !important;
+      box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
+    }
 
-[data-bs-theme="dark"] .back-to-dashboard-btn:hover {
-    background-color: #a7acb1;
-    color: #000000 !important;
-    box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
-}
+    /* Ensure proper spacing and center alignment */
+    .mt-4.text-center {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem !important;
+    }
+    .back-to-dashboard-btn {
+      padding: 0.625rem 1.75rem;
+      font-size: 0.95rem;
+    }
+  </style>
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card card-custom">
+        <div class="card-body p-4">
+          <h1 class="h3 mb-4 text-center">Schedule Task</h1>
 
-/* Ensure proper spacing and center alignment */
-.mt-4.text-center {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem !important;
-}
-
-
-.back-to-dashboard-btn {
-    padding: 0.625rem 1.75rem; /* Slightly smaller padding than Save Task */
-    font-size: 0.95rem;
-}
-</style>
-<div class="row justify-content-center">
-  <div class="col-md-8 col-lg-6">
-    <div class="card card-custom">
-      <div class="card-body p-4">
-        <h1 class="h3 mb-4 text-center">Schedule Task</h1>
-        
-        <!-- Debug Info Panel -->
-        <div class="alert alert-info d-none" id="debugPanel">
-          <h6>Debug Information:</h6>
-          <div id="debugContent"></div>
-        </div>
-        
-        <% if (typeof message !== 'undefined' && message) { %>
-          <div class="alert alert-info"><%- message %></div>
-        <% } %>
-        
-        <% if (typeof error !== 'undefined' && error) { %>
-          <div class="alert alert-danger"><%- error %></div>
-        <% } %>
-
-        <% if (pets.length === 0) { %>
-          <div class="alert alert-warning">
-            No pets available. Please <a href="/pets/add">add a pet</a> first.
+          <!-- Debug Info Panel -->
+          <div class="alert alert-info d-none" id="debugPanel">
+            <h6>Debug Information:</h6>
+            <div id="debugContent"></div>
           </div>
-        <% } else { %>
-          <form id="taskForm" action="/tasks" method="POST" novalidate>
-            <!-- CSRF Protection -->
-            <% if (typeof csrfToken !== 'undefined') { %>
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <% if (typeof message !=='undefined' && message) { %>
+            <div class="alert alert-info"><%- message %></div>
             <% } %>
 
-            <!-- Your form fields remain the same -->
-            <div class="mb-3">
-              <label for="pet_id" class="form-label">Pet *</label>
-              <select class="form-select" id="pet_id" name="pet_id" required>
-                <option value="">Select a Pet</option>
-                <% pets.forEach(pet => { %>
-                  <option value="<%= pet.pet_id %>" 
-                    <%= (typeof preservedPetId !== 'undefined' && preservedPetId == pet.pet_id) ? 'selected' : '' %>>
-                    <%- pet.name %> (<%- pet.species %>)
-                  </option>
-                <% }); %>
-              </select>
-              <div class="invalid-feedback">Please select a valid pet.</div>
-            </div>
+              <% if (typeof error !=='undefined' && error) { %>
+                <div class="alert alert-danger"><%- error %></div>
+                <% } %>
 
-            <div class="mb-3">
-              <label for="task_type" class="form-label">Task Type *</label>
-              <select class="form-select" id="task_type" name="task_type" required>
-                <option value="">Select Task Type</option>
-                <option value="feeding" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'feeding') ? 'selected' : '' %>>Feeding</option>
-                <option value="cleaning" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'cleaning') ? 'selected' : '' %>>Cleaning</option>
-                <option value="vaccination" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'vaccination') ? 'selected' : '' %>>Vaccination</option>
-                <option value="medication" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'medication') ? 'selected' : '' %>>Medication</option>
-                <option value="grooming" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'grooming') ? 'selected' : '' %>>Grooming</option>
-                <option value="vet_visit" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'vet_visit') ? 'selected' : '' %>>Vet Visit</option>
-                <option value="exercise" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'exercise') ? 'selected' : '' %>>Exercise</option>
-                <option value="other" <%= (typeof preservedTaskType !== 'undefined' && preservedTaskType === 'other') ? 'selected' : '' %>>Other</option>
-              </select>
-              <div class="invalid-feedback">Please select a valid task type.</div>
-            </div>
+                  <% if (pets.length===0) { %>
+                    <div class="alert alert-warning">
+                      No pets available. Please <a href="/pets/add">add a pet</a> first.
+                    </div>
+                    <% } else { %>
+                      <form id="taskForm" action="/tasks" method="POST" novalidate>
+                        <!-- CSRF Protection -->
+                        <% if (typeof csrfToken !=='undefined' ) { %>
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <% } %>
+                            <div class="mb-3">
+                              <label for="pet_id" class="form-label">Pet *</label>
+                              <select class="form-select" id="pet_id" name="pet_id" required>
+                                <option value="">Select a Pet</option>
+                                <% pets.forEach(pet=> { %>
+                                  <option value="<%= pet.pet_id %>" <%=(typeof preservedPetId !=='undefined' &&
+                                    preservedPetId==pet.pet_id) ? 'selected' : '' %>>
+                                    <%- pet.name %> (<%- pet.species %>)
+                                  </option>
+                                  <% }); %>
+                              </select>
+                              <div class="invalid-feedback">Please select a valid pet.</div>
+                            </div>
 
-            <div class="mb-3">
-              <label for="title" class="form-label">Title *</label>
-            <input type="text" class="form-control" id="title" name="title" 
-       required maxlength="100"
-       value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
-              <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers, spaces, and basic punctuation.</div>
-            </div>
+                            <div class="mb-3">
+                              <label for="task_type" class="form-label">Task Type *</label>
+                              <select class="form-select" id="task_type" name="task_type" required>
+                                <option value="">Select Task Type</option>
+                                <option value="feeding" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='feeding' ) ? 'selected' : '' %>>Feeding</option>
+                                <option value="cleaning" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='cleaning' ) ? 'selected' : '' %>>Cleaning</option>
+                                <option value="vaccination" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='vaccination' ) ? 'selected' : '' %>>Vaccination</option>
+                                <option value="medication" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='medication' ) ? 'selected' : '' %>>Medication</option>
+                                <option value="grooming" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='grooming' ) ? 'selected' : '' %>>Grooming</option>
+                                <option value="vet_visit" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='vet_visit' ) ? 'selected' : '' %>>Vet Visit</option>
+                                <option value="exercise" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='exercise' ) ? 'selected' : '' %>>Exercise</option>
+                                <option value="other" <%=(typeof preservedTaskType !=='undefined' &&
+                                  preservedTaskType==='other' ) ? 'selected' : '' %>>Other</option>
+                              </select>
+                              <div class="invalid-feedback">Please select a valid task type.</div>
+                            </div>
 
-            <div class="mb-3">
-              <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" name="description" rows="3" maxlength="500"><%= typeof preservedDescription !== 'undefined' ? preservedDescription : '' %></textarea>
-              <small class="form-text text-muted"><span id="charCount">0</span>/500 characters</small>
-            </div>
+                            <div class="mb-3">
+                              <label for="title" class="form-label">Title *</label>
+                              <input type="text" class="form-control" id="title" name="title" required maxlength="100"
+                                value="<%= typeof preservedTitle !== 'undefined' ? preservedTitle : '' %>">
+                              <div class="invalid-feedback">Title must be 1-100 characters with only letters, numbers,
+                                spaces, and basic punctuation.</div>
+                            </div>
 
-           
+                            <div class="mb-3">
+                              <label for="description" class="form-label">Description</label>
+                              <textarea class="form-control" id="description" name="description" rows="3"
+                                maxlength="500"><%= typeof preservedDescription !== 'undefined' ? preservedDescription : '' %></textarea>
+                              <small class="form-text text-muted"><span id="charCount">0</span>/500 characters</small>
+                            </div>
+                            <div class="row mb-3">
+                              <div class="col-md-6">
+                                <label for="start_time" class="form-label">Start Time *</label>
+                                <input type="datetime-local" class="form-control" id="start_time" name="start_time"
+                                  required
+                                  value="<%= typeof preservedStartTime !== 'undefined' ? preservedStartTime : '' %>">
+                                <div class="invalid-feedback">Start time must be in the future.</div>
+                              </div>
 
-
-
-
-<!-- In schedule-task.ejs -->
-<div class="row mb-3">
-    <div class="col-md-6">
-        <label for="start_time" class="form-label">Start Time *</label>
-        <input type="datetime-local" class="form-control" id="start_time" name="start_time" 
-               required 
-               value="<%= typeof preservedStartTime !== 'undefined' ? preservedStartTime : '' %>">
-        <div class="invalid-feedback">Start time must be in the future.</div>
-    </div>
-    
-    <div class="col-md-6">
-        <label for="end_time" class="form-label">End Time *</label>
-        <input type="datetime-local" class="form-control" id="end_time" name="end_time" 
-               required 
-               value="<%= typeof preservedEndTime !== 'undefined' ? preservedEndTime : '' %>">
-        <div class="invalid-feedback">End time must be after start time.</div>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <div class="mb-4">
-              <label for="priority" class="form-label">Priority</label>
-              <select class="form-select" id="priority" name="priority">
-                <option value="low" <%= (typeof preservedPriority !== 'undefined' && preservedPriority === 'low') ? 'selected' : '' %>>Low</option>
-                <option value="medium" <%= (typeof preservedPriority !== 'undefined' && preservedPriority === 'medium') || true ? 'selected' : '' %>>Medium</option>
-                <option value="high" <%= (typeof preservedPriority !== 'undefined' && preservedPriority === 'high') ? 'selected' : '' %>>High</option>
-              </select>
-            </div>
-
-            <button type="submit" class="btn btn-custom w-100 btn-lg">Save Task</button>
-        <p></p>
-            
-    <a href="/dashboard" class="back-to-dashboard-btn">
-        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-    </a>
-
-          </form>
-        <% } %>
-
-        
+                              <div class="col-md-6">
+                                <label for="end_time" class="form-label">End Time *</label>
+                                <input type="datetime-local" class="form-control" id="end_time" name="end_time" required
+                                  value="<%= typeof preservedEndTime !== 'undefined' ? preservedEndTime : '' %>">
+                                <div class="invalid-feedback">End time must be after start time.</div>
+                              </div>
+                            </div>
+                            <div class="mb-4">
+                              <label for="priority" class="form-label">Priority</label>
+                              <select class="form-select" id="priority" name="priority">
+                                <option value="low" <%=(typeof preservedPriority !=='undefined' &&
+                                  preservedPriority==='low' ) ? 'selected' : '' %>>Low</option>
+                                <option value="medium" <%=(typeof preservedPriority !=='undefined' &&
+                                  preservedPriority==='medium' ) || true ? 'selected' : '' %>>Medium</option>
+                                <option value="high" <%=(typeof preservedPriority !=='undefined' &&
+                                  preservedPriority==='high' ) ? 'selected' : '' %>>High</option>
+                              </select>
+                            </div>
+                            <button type="submit" class="btn btn-custom w-100 btn-lg">Save Task</button>
+                            <p></p>
+                            <a href="/dashboard" class="back-to-dashboard-btn">
+                              <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                      </form>
+                      <% } %>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('taskForm');
-  const startTimeInput = document.getElementById('start_time');
-  const endTimeInput = document.getElementById('end_time');
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('taskForm');
+      const startTimeInput = document.getElementById('start_time');
+      const endTimeInput = document.getElementById('end_time');
+      const timezoneInput = document.createElement('input');
+      timezoneInput.type = 'hidden';
+      timezoneInput.name = 'timezone';
+      timezoneInput.id = 'timezone';
+      timezoneInput.value = 'America/New_York';
+      form.appendChild(timezoneInput);
 
-  // Add hidden field for timezone
-  const timezoneInput = document.createElement('input');
-  timezoneInput.type = 'hidden';
-  timezoneInput.name = 'timezone';
-  timezoneInput.id = 'timezone';
-  timezoneInput.value = 'America/New_York';
-  form.appendChild(timezoneInput);
-  
-  // console.log('🌐 Using timezone:', timezoneInput.value);
+      // console.log('🌐 Using timezone:', timezoneInput.value);
 
-  // Set minimum datetime to current time
-  function setMinDateTime() {
-    const now = new Date();
-    
-    // Add 10 minutes buffer
-    const minTime = new Date(now.getTime() + (10 * 60 * 1000));
-    
-    // Format for datetime-local input (YYYY-MM-DDTHH:mm)
-    const minValue = formatDateForInput(minTime);
-    
-    startTimeInput.min = minValue;
-    endTimeInput.min = minValue;
-    
-    // Set default start time (30 minutes from now)
-    if (!startTimeInput.value) {
-      const defaultStart = new Date(now.getTime() + (30 * 60 * 1000));
-      startTimeInput.value = formatDateForInput(defaultStart);
-    }
-    
-    // Set default end time (1 hour after start)
-    if (!endTimeInput.value && startTimeInput.value) {
-      const startValue = new Date(startTimeInput.value);
-      const defaultEndTime = new Date(startValue.getTime() + 60 * 60 * 1000);
-      endTimeInput.value = formatDateForInput(defaultEndTime);
-    }
-  }
+      // Set minimum datetime to current time
+      function setMinDateTime() {
+        const now = new Date();
+        // Add 10 minutes buffer
+        const minTime = new Date(now.getTime() + (10 * 60 * 1000));
+        // Format for datetime-local input (YYYY-MM-DDTHH:mm)
+        const minValue = formatDateForInput(minTime);
+        startTimeInput.min = minValue;
+        endTimeInput.min = minValue;
+        // Set default start time (30 minutes from now)
+        if (!startTimeInput.value) {
+          const defaultStart = new Date(now.getTime() + (30 * 60 * 1000));
+          startTimeInput.value = formatDateForInput(defaultStart);
+        }
+        // Set default end time (1 hour after start)
+        if (!endTimeInput.value && startTimeInput.value) {
+          const startValue = new Date(startTimeInput.value);
+          const defaultEndTime = new Date(startValue.getTime() + 60 * 60 * 1000);
+          endTimeInput.value = formatDateForInput(defaultEndTime);
+        }
+      }
+      // Helper function to format date for datetime-local input
+      function formatDateForInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
 
-  // Helper function to format date for datetime-local input
-  function formatDateForInput(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+      }
+      // Validate times
+      function validateTimes() {
+        const startValue = startTimeInput.value;
+        const endValue = endTimeInput.value;
 
-  // Validate times
-  function validateTimes() {
-    const startValue = startTimeInput.value;
-    const endValue = endTimeInput.value;
-    
-    if (!startValue || !endValue) {
-      startTimeInput.setCustomValidity('Start time is required');
-      endTimeInput.setCustomValidity('End time is required');
-      return false;
-    }
-
-    const startDate = new Date(startValue);
-    const endDate = new Date(endValue);
-    const now = new Date();
-    
-    // Start time must be in the future (with 15 minute buffer)
-    const bufferMs = 15 * 60 * 1000;
-    if (startDate.getTime() <= (now.getTime() - bufferMs)) {
-      // startTimeInput.setCustomValidity('Start time must be in the future (allowing 15 minutes for timezone differences)');
-      startTimeInput.classList.add('is-invalid');
-      return false;
-    }
-    
-    // End time must be after start time
-    if (endDate <= startDate) {
-      endTimeInput.setCustomValidity('End time must be after start time');
-      endTimeInput.classList.add('is-invalid');
-      return false;
-    }
-    
-    // Maximum 1 year in the future
-    const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
-    if (endDate.getTime() > maxTime) {
-      endTimeInput.setCustomValidity('End time must be within 1 year from now');
-      endTimeInput.classList.add('is-invalid');
-      return false;
-    }
-    
-    startTimeInput.setCustomValidity('');
-    endTimeInput.setCustomValidity('');
-    startTimeInput.classList.remove('is-invalid');
-    endTimeInput.classList.remove('is-invalid');
-    return true;
-  }
-
-  // Real-time validation
-  startTimeInput.addEventListener('change', validateTimes);
-  endTimeInput.addEventListener('change', validateTimes);
-  
-  // Form submission
-  form.addEventListener('submit', function(event) {
-    if (!validateTimes()) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    
-    form.classList.add('was-validated');
-  });
-
-  // Initialize
-  setMinDateTime();
-});
-</script>
-
-<%- include('partials/footer') %>
+        if (!startValue || !endValue) {
+          startTimeInput.setCustomValidity('Start time is required');
+          endTimeInput.setCustomValidity('End time is required');
+          return false;
+        }
+        const startDate = new Date(startValue);
+        const endDate = new Date(endValue);
+        const now = new Date();
+        // Start time must be in the future (with 15 minute buffer)
+        const bufferMs = 15 * 60 * 1000;
+        if (startDate.getTime() <= (now.getTime() - bufferMs)) {
+          // startTimeInput.setCustomValidity('Start time must be in the future (allowing 15 minutes for timezone differences)');
+          startTimeInput.classList.add('is-invalid');
+          return false;
+        }
+        // End time must be after start time
+        if (endDate <= startDate) {
+          endTimeInput.setCustomValidity('End time must be after start time');
+          endTimeInput.classList.add('is-invalid');
+          return false;
+        }
+        // Maximum 1 year in the future
+        const maxTime = now.getTime() + (365 * 24 * 60 * 60 * 1000);
+        if (endDate.getTime() > maxTime) {
+          endTimeInput.setCustomValidity('End time must be within 1 year from now');
+          endTimeInput.classList.add('is-invalid');
+          return false;
+        }
+        startTimeInput.setCustomValidity('');
+        endTimeInput.setCustomValidity('');
+        startTimeInput.classList.remove('is-invalid');
+        endTimeInput.classList.remove('is-invalid');
+        return true;
+      }
+      // Real-time validation
+      startTimeInput.addEventListener('change', validateTimes);
+      endTimeInput.addEventListener('change', validateTimes);
+      // Form submission
+      form.addEventListener('submit', function (event) {
+        if (!validateTimes()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      });
+      // Initialize
+      setMinDateTime();
+    });
+  </script>
+  <%- include('partials/footer') %>

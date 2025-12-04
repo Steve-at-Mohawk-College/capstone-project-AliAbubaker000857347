@@ -1,4 +1,8 @@
-// Enhanced AJAX Pagination for Dashboard
+/**
+ * DashboardPaginationEnhanced - AJAX-based pagination system for dashboard content.
+ * Provides seamless pagination for pets and tasks with filter state persistence,
+ * smooth transitions, and error handling.
+ */
 class DashboardPaginationEnhanced {
     constructor() {
         this.currentPetPage = 1;
@@ -7,20 +11,26 @@ class DashboardPaginationEnhanced {
         this.init();
     }
 
+    /**
+     * Initializes the pagination system.
+     * Binds event listeners and loads saved filter state.
+     */
     init() {
         this.bindEvents();
         this.loadFilterState();
         // console.log('🔄 Enhanced Pagination initialized');
     }
 
+    /**
+     * Binds event listeners for pagination links and filter changes.
+     * Uses event delegation for dynamically loaded content.
+     */
     bindEvents() {
-        // Pet pagination
         document.addEventListener('click', (e) => {
             if (e.target.closest('.pagination-pet')) {
                 e.preventDefault();
                 const link = e.target.closest('.pagination-pet');
                 const page = parseInt(link.getAttribute('data-page'));
-                // console.log('🐕 Loading pets page:', page);
                 this.loadPetsPage(page);
             }
 
@@ -28,12 +38,10 @@ class DashboardPaginationEnhanced {
                 e.preventDefault();
                 const link = e.target.closest('.pagination-task');
                 const page = parseInt(link.getAttribute('data-page'));
-                // console.log('📝 Loading tasks page:', page);
                 this.loadTasksPage(page);
             }
         });
 
-        // Save filters when they change
         const filterElements = document.querySelectorAll('#filterSpecies, #filterGender, #filterAgeMin, #filterAgeMax, #filterPriority, #filterTaskType, #filterDueDateFrom, #filterDueDateTo');
         filterElements.forEach(filter => {
             filter.addEventListener('change', () => {
@@ -41,7 +49,6 @@ class DashboardPaginationEnhanced {
             });
         });
 
-        // Clear filters button
         document.getElementById('clearAllFilters')?.addEventListener('click', () => {
             setTimeout(() => {
                 this.saveFilterState();
@@ -49,6 +56,10 @@ class DashboardPaginationEnhanced {
         });
     }
 
+    /**
+     * Saves current filter state to localStorage.
+     * Persists filter selections across page reloads and browser sessions.
+     */
     saveFilterState() {
         this.activeFilters = {
             species: document.getElementById('filterSpecies')?.value || '',
@@ -63,12 +74,15 @@ class DashboardPaginationEnhanced {
         localStorage.setItem('dashboardFilters', JSON.stringify(this.activeFilters));
     }
 
+    /**
+     * Loads saved filter state from localStorage.
+     * Applies previously selected filters to form elements on page load.
+     */
     loadFilterState() {
         const savedFilters = localStorage.getItem('dashboardFilters');
         if (savedFilters) {
             this.activeFilters = JSON.parse(savedFilters);
             
-            // Apply saved filters to form
             Object.keys(this.activeFilters).forEach(key => {
                 const element = document.getElementById(`filter${key.charAt(0).toUpperCase() + key.slice(1)}`);
                 if (element && this.activeFilters[key]) {
@@ -78,14 +92,18 @@ class DashboardPaginationEnhanced {
         }
     }
 
+    /**
+     * Builds query parameters for API requests.
+     * Includes current pagination and filter states.
+     * 
+     * @returns {URLSearchParams} URL parameters for the request
+     */
     getQueryParams() {
         const params = new URLSearchParams();
         
-        // Add pagination
         params.append('petPage', this.currentPetPage);
         params.append('taskPage', this.currentTaskPage);
         
-        // Add filters
         Object.keys(this.activeFilters).forEach(key => {
             if (this.activeFilters[key]) {
                 params.append(key, this.activeFilters[key]);
@@ -95,6 +113,12 @@ class DashboardPaginationEnhanced {
         return params;
     }
 
+    /**
+     * Loads a specific page of pet data via AJAX.
+     * Updates only the pets section of the dashboard without full page reload.
+     * 
+     * @param {number} page - Page number to load
+     */
     async loadPetsPage(page) {
         try {
             this.showLoading('pets');
@@ -102,8 +126,6 @@ class DashboardPaginationEnhanced {
 
             const params = this.getQueryParams();
             
-            // console.log('📤 Fetching pets with params:', params.toString());
-
             const response = await fetch(`/dashboard?${params}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,7 +141,6 @@ class DashboardPaginationEnhanced {
                 this.updateURL(params);
                 this.restoreScrollPosition('pets');
                 this.reinitializeEventHandlers();
-                // console.log('✅ Pets page loaded successfully');
             } else {
                 throw new Error('Pets container not found in response');
             }
@@ -127,7 +148,6 @@ class DashboardPaginationEnhanced {
         } catch (error) {
             // console.error('❌ Error loading pets page:', error);
             this.showError('pets', 'Failed to load pets. Please try again.');
-            // Fallback to regular navigation
             setTimeout(() => {
                 const params = this.getQueryParams();
                 window.location.href = `/dashboard?${params}`;
@@ -135,6 +155,12 @@ class DashboardPaginationEnhanced {
         }
     }
 
+    /**
+     * Loads a specific page of task data via AJAX.
+     * Updates only the tasks section of the dashboard without full page reload.
+     * 
+     * @param {number} page - Page number to load
+     */
     async loadTasksPage(page) {
         try {
             this.showLoading('tasks');
@@ -142,8 +168,6 @@ class DashboardPaginationEnhanced {
 
             const params = this.getQueryParams();
             
-            // console.log('📤 Fetching tasks with params:', params.toString());
-
             const response = await fetch(`/dashboard?${params}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -160,7 +184,6 @@ class DashboardPaginationEnhanced {
                 this.updateURL(params);
                 this.restoreScrollPosition('tasks');
                 this.reinitializeEventHandlers();
-                // console.log('✅ Tasks page loaded successfully');
             } else {
                 throw new Error('Tasks section not found in response');
             }
@@ -168,7 +191,6 @@ class DashboardPaginationEnhanced {
         } catch (error) {
             // console.error('❌ Error loading tasks page:', error);
             this.showError('tasks', 'Failed to load tasks. Please try again.');
-            // Fallback to regular navigation
             setTimeout(() => {
                 const params = this.getQueryParams();
                 window.location.href = `/dashboard?${params}`;
@@ -176,6 +198,12 @@ class DashboardPaginationEnhanced {
         }
     }
 
+    /**
+     * Shows loading indicator during AJAX requests.
+     * Preserves original content for potential restoration on error.
+     * 
+     * @param {string} type - Content type ('pets' or 'tasks')
+     */
     showLoading(type) {
         const container = type === 'pets' 
             ? document.getElementById('petsListContainer')
@@ -196,6 +224,13 @@ class DashboardPaginationEnhanced {
         }
     }
 
+    /**
+     * Shows error message when AJAX request fails.
+     * Provides user with reload option to recover from error state.
+     * 
+     * @param {string} type - Content type ('pets' or 'tasks')
+     * @param {string} message - Error message to display
+     */
     showError(type, message) {
         const container = type === 'pets' 
             ? document.getElementById('petsListContainer')
@@ -215,13 +250,24 @@ class DashboardPaginationEnhanced {
         }
     }
 
+    /**
+     * Updates browser URL without page reload.
+     * Maintains browser history and allows bookmarking of filtered/paged states.
+     * 
+     * @param {URLSearchParams} params - URL parameters to update
+     */
     updateURL(params) {
         const newUrl = `${window.location.pathname}?${params}`;
         window.history.pushState({}, '', newUrl);
     }
 
+    /**
+     * Restores scroll position after content update.
+     * Provides smooth user experience by maintaining viewport position.
+     * 
+     * @param {string} type - Content type ('pets' or 'tasks')
+     */
     restoreScrollPosition(type) {
-        // Maintain scroll position for better UX
         const section = type === 'pets' 
             ? document.querySelector('.section-card:first-child')
             : document.querySelector('.section-card:nth-child(2)');
@@ -233,22 +279,20 @@ class DashboardPaginationEnhanced {
         }
     }
 
+    /**
+     * Reinitializes event handlers after content replacement.
+     * Ensures interactive elements continue to work after AJAX updates.
+     */
     reinitializeEventHandlers() {
-        // Reinitialize any event handlers that might be lost during content replacement
         if (window.enhancedDashboard) {
             window.enhancedDashboard.testEditButtons();
-        }
-        
-        // Reinitialize filters
-        if (window.modernFilterSystem) {
-            // The filter system should handle its own event delegation
-            // console.log('🔄 Reinitializing event handlers');
         }
     }
 }
 
-// Initialize when DOM is loaded
+/**
+ * Initializes the enhanced pagination system when the DOM is fully loaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     window.dashboardPagination = new DashboardPaginationEnhanced();
-    // console.log('🎯 Pagination system ready - Next/Previous buttons should work now');
 });

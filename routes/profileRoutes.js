@@ -2,67 +2,73 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const { uploadProfile } = require('../config/upload-cloudinary');
-
 const { query, queryOne } = require('../config/database');
-const { 
-  updateUserProfilePicture, 
+const {
+  updateUserProfilePicture,
   getUserProfileWithStats,
-  updateUsername, 
+  updateUsername,
   checkUserExistsExcludingCurrent,
   updateUserBio,
   updateBioModerationStatus,
   getUserBio,
   getUserProfile,
-  updateUserEmail, 
-  checkEmailExistsExcludingCurrent, 
+  updateUserEmail,
+  checkEmailExistsExcludingCurrent,
   findById,
-  getPendingEmail,           
-  cancelPendingEmail,        
-  verifyPendingEmail 
+  getPendingEmail,
+  cancelPendingEmail,
+  verifyPendingEmail
 } = require('../models/userModel');
-
 const router = express.Router();
 
+/**
+ * Middleware function that checks if a user is authenticated.
+ * If authenticated, proceeds to the next middleware/route handler.
+ * Otherwise, redirects to the login page.
+ *
+ * @function requireAuth
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 function requireAuth(req, res, next) {
   if (req.session?.userId) return next();
   return res.redirect('/login');
 }
 
-// POST /profile/bio - Update user bio
+/**
+ * POST /profile/bio
+ * Updates the user's biography text.
+ * Regular users require admin approval for bio updates, while admins can update without moderation.
+ *
+ * @name POST /profile/bio
+ * @function
+ * @memberof module:routes/profileRoute
+ * @param {string} req.body.bio - The new biography text
+ * @returns {Object} JSON response with success status and message
+ */
 router.post('/bio', requireAuth, async (req, res) => {
   try {
     const { bio } = req.body;
     const userId = req.session.userId;
     const userRole = req.session.role;
 
-    // console.log("➡️ POST /profile/bio called");
-    // console.log("User ID:", userId, "Role:", userRole);
-    // console.log("Bio content:", bio);
-
-    // Determine if bio requires moderation
-    // For regular users, any bio update requires admin approval
-    // For admins, no moderation needed
     const requiresModeration = userRole === 'regular';
-
-    // Update bio and moderation status
     await updateUserBio(userId, bio);
     await updateBioModerationStatus(userId, requiresModeration);
-
     let message;
     if (requiresModeration) {
       message = 'Bio updated successfully! It will be visible after admin approval.';
     } else {
       message = 'Bio updated successfully!';
     }
-
     res.json({
       success: true,
       message: message,
       requiresModeration: requiresModeration
     });
-
   } catch (error) {
-    // console.error('Bio update error:', error);
+
     res.status(500).json({
       success: false,
       error: 'Error updating bio: ' + error.message
@@ -70,13 +76,18 @@ router.post('/bio', requireAuth, async (req, res) => {
   }
 });
 
-
-
-
-// GET /profile/verify-email-change - Verify email change (for profile routes)
+/**
+ * GET /profile/verify-email-change
+ * Verifies an email change request using a verification token.
+ * Updates the user's email in the database and session upon successful verification.
+ *
+ * @name GET /profile/verify-email-change
+ * @function
+ * @memberof module:routes/profileRoute
+ * @param {string} req.query.token - Email verification token
+ */
 router.get('/verify-email-change', async (req, res) => {
   const { token } = req.query;
-  
   if (!token) {
     return res.status(400).render('error', {
       title: 'Error',
@@ -84,14 +95,11 @@ router.get('/verify-email-change', async (req, res) => {
       error: {}
     });
   }
-
   try {
-    // Find user by pending email token
     const user = await queryOne(
       'SELECT * FROM users WHERE pending_email_token = ? AND pending_email_expiry > NOW()',
       [token]
     );
-
     if (!user) {
       return res.render('error', {
         title: 'Error',
@@ -99,10 +107,7 @@ router.get('/verify-email-change', async (req, res) => {
         error: {}
       });
     }
-
-    // Verify the pending email
     const result = await verifyPendingEmail(token);
-    
     if (result.affectedRows === 0) {
       return res.render('error', {
         title: 'Error',
@@ -110,18 +115,15 @@ router.get('/verify-email-change', async (req, res) => {
         error: {}
       });
     }
-
-    // Update session if user is logged in
     if (req.session && req.session.userId === user.user_id) {
-      req.session.email = user.pending_email; // Now it's the actual email
+      req.session.email = user.pending_email;
     }
-    
-    res.render('verify', { 
+    res.render('verify', {
       title: 'Email Changed Successfully - Pet Care',
       message: 'Your email has been successfully updated and verified!'
     });
   } catch (error) {
-    // console.error('Email change verification error:', error);
+
     res.status(500).render('error', {
       title: 'Error',
       message: 'Database error during email verification.',
@@ -130,18 +132,19 @@ router.get('/verify-email-change', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-// GET /profile/bio - Get user bio
+/**
+ * GET /profile/bio
+ * Retrieves the current user's biography text and moderation status.
+ *
+ * @name GET /profile/bio
+ * @function
+ * @memberof module:routes/profileRoute
+ * @returns {Object} JSON response with bio content and moderation status
+ */
 router.get('/bio', requireAuth, async (req, res) => {
   try {
     const userId = req.params.userId || req.session.userId;
     const bioData = await getUserBio(userId);
-    
     res.json({
       success: true,
       bio: bioData?.bio || '',
@@ -149,7 +152,7 @@ router.get('/bio', requireAuth, async (req, res) => {
       isApproved: !bioData?.bio_requires_moderation
     });
   } catch (error) {
-    // console.error('Get bio error:', error);
+
     res.status(500).json({
       success: false,
       error: 'Error fetching bio'
@@ -157,22 +160,28 @@ router.get('/bio', requireAuth, async (req, res) => {
   }
 });
 
-// POST /profile/username - Update username (for regular users)
+/**
+ * POST /profile/username
+ * Updates the user's username with validation for uniqueness and length.
+ * Updates the session with the new username upon successful update.
+ *
+ * @name POST /profile/username
+ * @function
+ * @memberof module:routes/profileRoute
+ * @param {string} req.body.username - New username (minimum 3 characters)
+ * @returns {Object} JSON response with success status and new username
+ */
 router.post('/username', requireAuth, async (req, res) => {
   try {
     const { username } = req.body;
     const userId = req.session.userId;
-
     if (!username || username.trim().length < 3) {
       return res.status(400).json({
         success: false,
         error: 'Username must be at least 3 characters long'
       });
     }
-
     const trimmedUsername = username.trim();
-
-    // Check if username already exists (excluding current user)
     const existingUser = await checkUserExistsExcludingCurrent(userId, trimmedUsername, null);
     if (existingUser) {
       return res.status(400).json({
@@ -180,21 +189,15 @@ router.post('/username', requireAuth, async (req, res) => {
         error: 'Username already taken'
       });
     }
-
-    // Update username
     await updateUsername(userId, trimmedUsername);
-
-    // Update session
     req.session.username = trimmedUsername;
-
     res.json({
       success: true,
       message: 'Username updated successfully',
       newUsername: trimmedUsername
     });
-
   } catch (error) {
-    // console.error('Username update error:', error);
+
     res.status(500).json({
       success: false,
       error: 'Error updating username'
@@ -202,25 +205,28 @@ router.post('/username', requireAuth, async (req, res) => {
   }
 });
 
-// GET /profile - Profile page
+/**
+ * GET /profile
+ * Renders the user's profile page with statistics and user information.
+ *
+ * @name GET /profile
+ * @function
+ * @memberof module:routes/profileRoute
+ */
 router.get('/', requireAuth, async (req, res) => {
   try {
     const userProfile = await getUserProfileWithStats(req.session.userId);
-
-    // console.log("➡️ GET /profile called");
-    // console.log("Session userId:", req.session.userId);
-    // console.log("User profile:", userProfile);
 
     res.render('profile', {
       title: 'My Profile - Pet Care',
       user: userProfile,
       username: req.session.username,
-      profilePicture: req.session.profilePicture, // Add this line
+      profilePicture: req.session.profilePicture,
       error: null,
       message: null
     });
   } catch (error) {
-    // console.error('Profile error:', error);
+
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading profile.',
@@ -229,102 +235,83 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
-
-
-
-// POST /profile/picture - Update with better session handling
+/**
+ * POST /profile/picture
+ * Uploads and updates the user's profile picture using Cloudinary storage.
+ * Updates both the database and user session with the new picture URL.
+ *
+ * @name POST /profile/picture
+ * @function
+ * @memberof module:routes/profileRoute
+ * @returns {Object} JSON response with success status and new profile picture URL
+ */
 router.post('/picture', requireAuth, uploadProfile, async (req, res) => {
-    try {
-        // console.log("➡️ POST /profile/picture route hit");
-        // console.log("User ID:", req.session.userId);
-        // console.log("Session ID:", req.sessionID);
+  try {
 
-        if (!req.cloudinaryResult) {
-            return res.status(400).json({
-                success: false,
-                error: 'No file uploaded or upload failed'
-            });
-        }
-
-        const userId = req.session.userId;
-        
-        // Verify user session is valid
-        const user = await findById(userId);
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-        }
-
-        // Get Cloudinary URL
-        const profilePictureUrl = req.cloudinaryResult.secure_url;
-        
-        // console.log("Updating profile picture for user:", userId);
-        // console.log("New profile picture URL:", profilePictureUrl);
-
-        // Update database with Cloudinary URL
-        const updateResult = await updateUserProfilePicture(userId, profilePictureUrl);
-        
-        if (updateResult.affectedRows === 0) {
-            throw new Error('Failed to update profile picture in database');
-        }
-
-        // Update session IMMEDIATELY with proper error handling
-        req.session.profilePicture = profilePictureUrl;
-        req.session.touch(); // Refresh session
-        
-        // Save session with callback
-        req.session.save((err) => {
-            if (err) {
-                // console.error('❌ Session save error:', err);
-                return res.status(500).json({
-                    success: false,
-                    error: 'Error updating session'
-                });
-            }
-            
-            // console.log('✅ Session updated successfully');
-            
-            res.json({
-                success: true,
-                message: 'Profile picture updated successfully!',
-                profilePicture: profilePictureUrl,
-                timestamp: Date.now()
-            });
-        });
-
-    } catch (error) {
-        // console.error('❌ Profile picture upload error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Error uploading profile picture: ' + error.message
-        });
+    if (!req.cloudinaryResult) {
+      return res.status(400).json({
+        success: false,
+        error: 'No file uploaded or upload failed'
+      });
     }
+    const userId = req.session.userId;
+    const user = await findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+    const profilePictureUrl = req.cloudinaryResult.secure_url;
+
+    const updateResult = await updateUserProfilePicture(userId, profilePictureUrl);
+    if (updateResult.affectedRows === 0) {
+      throw new Error('Failed to update profile picture in database');
+    }
+    req.session.profilePicture = profilePictureUrl;
+    req.session.touch();
+    req.session.save((err) => {
+      if (err) {
+
+        return res.status(500).json({
+          success: false,
+          error: 'Error updating session'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Profile picture updated successfully!',
+        profilePicture: profilePictureUrl,
+        timestamp: Date.now()
+      });
+    });
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      error: 'Error uploading profile picture: ' + error.message
+    });
+  }
 });
 
-
-
-
-
-
-
-
-
-
-
-// In routes/profile.js - UPDATE the email route
+/**
+ * POST /profile/email
+ * Initiates an email change request with email validation and uniqueness checking.
+ * Sends a verification email to the new email address for confirmation.
+ *
+ * @name POST /profile/email
+ * @function
+ * @memberof module:routes/profileRoute
+ * @param {string} req.body.email - New email address
+ * @returns {Object} JSON response with success status and verification information
+ */
 router.post('/email', requireAuth, async (req, res) => {
   let connection;
-  
   try {
     const { email } = req.body;
     const userId = req.session.userId;
     const currentEmail = req.session.email;
-
-    // console.log("➡️ POST /profile/email called");
-    // console.log("User ID:", userId, "Current email:", currentEmail);
-    // console.log("New email:", email);
 
     if (!email || !email.trim()) {
       return res.status(400).json({
@@ -332,10 +319,7 @@ router.post('/email', requireAuth, async (req, res) => {
         error: 'Email is required'
       });
     }
-
     const trimmedEmail = email.trim().toLowerCase();
-
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
       return res.status(400).json({
@@ -343,16 +327,12 @@ router.post('/email', requireAuth, async (req, res) => {
         error: 'Please enter a valid email address'
       });
     }
-
-    // Check if email is the same as current
     if (trimmedEmail === currentEmail) {
       return res.status(400).json({
         success: false,
         error: 'Please enter a different email address'
       });
     }
-
-    // Check if email already exists
     const existingUser = await checkEmailExistsExcludingCurrent(userId, trimmedEmail);
     if (existingUser) {
       return res.status(400).json({
@@ -360,60 +340,45 @@ router.post('/email', requireAuth, async (req, res) => {
         error: 'Email already in use by another account'
       });
     }
-
-    // Generate verification token
     const crypto = require('crypto');
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    
-    // Set pending email
     await updateUserEmail(userId, trimmedEmail, verificationToken);
-
-    // Send verification email
     const sendEmail = require('../email/sendVerification');
     const verificationLink = `${process.env.BASE_URL}/profile/verify-email-change?token=${verificationToken}`;
-
     try {
       const emailSent = await sendEmail(
-        trimmedEmail, 
-        verificationToken, 
-        req.session.username, 
-        verificationLink, 
+        trimmedEmail,
+        verificationToken,
+        req.session.username,
+        verificationLink,
         'email_change'
       );
-
       if (!emailSent) {
-        // console.error('Failed to send verification email');
+
       }
     } catch (emailError) {
-      // console.error('Email sending error:', emailError);
-      // Don't fail the request if email fails
-    }
 
+    }
     res.json({
       success: true,
       message: 'Verification email sent! Please check your new email to confirm the change.',
       requiresVerification: true,
       pendingEmail: trimmedEmail
     });
-
   } catch (error) {
-    // console.error('Email update error:', error);
-    
+
     if (error.message === 'EMAIL_IN_USE') {
       return res.status(400).json({
         success: false,
         error: 'Email already in use by another account'
       });
     }
-    
-    // Handle connection errors gracefully
     if (error.code === 'ER_USER_LIMIT_REACHED') {
       return res.status(503).json({
         success: false,
         error: 'Service temporarily unavailable. Please try again in a moment.'
       });
     }
-    
     res.status(500).json({
       success: false,
       error: 'Error updating email: ' + error.message
@@ -421,30 +386,35 @@ router.post('/email', requireAuth, async (req, res) => {
   }
 });
 
-// In routes/profile.js - UPDATE the pending email route
+/**
+ * GET /profile/email/pending
+ * Checks if the user has a pending email change request and returns its status.
+ * Includes retry logic for database connection issues.
+ *
+ * @name GET /profile/email/pending
+ * @function
+ * @memberof module:routes/profileRoute
+ * @returns {Object} JSON response with pending email information
+ */
 router.get('/email/pending', requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
-    
-    // Add timeout and retry logic with better error handling
-    const getPendingEmailWithRetry = async (retries = 2) => { // Reduced retries
+    const getPendingEmailWithRetry = async (retries = 2) => {
       for (let i = 0; i < retries; i++) {
         try {
           const result = await getPendingEmail(userId);
           return result;
         } catch (error) {
           if (error.code === 'ER_USER_LIMIT_REACHED' && i < retries - 1) {
-            // console.log(`Retrying pending email check... (${i + 1}/${retries})`);
-            await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1))); // Longer delay
+
+            await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1)));
             continue;
           }
           throw error;
         }
       }
     };
-    
     const pendingEmail = await getPendingEmailWithRetry();
-    
     res.json({
       success: true,
       hasPendingEmail: !!pendingEmail?.pending_email,
@@ -452,10 +422,7 @@ router.get('/email/pending', requireAuth, async (req, res) => {
       expiresAt: pendingEmail?.pending_email_expiry || null
     });
   } catch (error) {
-    // console.error('Pending email status error:', error);
-    
-    // Don't crash the page if we can't check pending status
-    // Return a safe default response
+
     res.json({
       success: true,
       hasPendingEmail: false,
@@ -465,19 +432,26 @@ router.get('/email/pending', requireAuth, async (req, res) => {
     });
   }
 });
-// POST /profile/email/cancel - Cancel pending email change
+
+/**
+ * POST /profile/email/cancel
+ * Cancels a pending email change request for the user.
+ *
+ * @name POST /profile/email/cancel
+ * @function
+ * @memberof module:routes/profileRoute
+ * @returns {Object} JSON response with success status
+ */
 router.post('/email/cancel', requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
-    
     await cancelPendingEmail(userId);
-    
     res.json({
       success: true,
       message: 'Pending email change cancelled successfully'
     });
   } catch (error) {
-    // console.error('Cancel pending email error:', error);
+
     res.status(500).json({
       success: false,
       error: 'Error cancelling pending email change'
@@ -485,50 +459,25 @@ router.post('/email/cancel', requireAuth, async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// GET /profile/email/status - Check email verification status
+/**
+ * GET /profile/email/status
+ * Checks the verification status of the user's current email.
+ *
+ * @name GET /profile/email/status
+ * @function
+ * @memberof module:routes/profileRoute
+ * @returns {Object} JSON response with email verification status
+ */
 router.get('/email/status', requireAuth, async (req, res) => {
   try {
     const user = await findById(req.session.userId);
-    
     res.json({
       success: true,
       isVerified: user.is_verified,
       email: user.email
     });
   } catch (error) {
-    // console.error('Email status error:', error);
+
     res.status(500).json({
       success: false,
       error: 'Error checking email status'
@@ -536,41 +485,28 @@ router.get('/email/status', requireAuth, async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// DELETE /profile/picture - Remove profile picture (Updated for Cloudinary)
+/**
+ * DELETE /profile/picture
+ * Removes the user's profile picture from both database and session.
+ *
+ * @name DELETE /profile/picture
+ * @function
+ * @memberof module:routes/profileRoute
+ * @returns {Object} JSON response with success status
+ */
 router.delete('/picture', requireAuth, async (req, res) => {
   try {
-    // console.log("➡️ DELETE /profile/picture called");
-    // console.log("Session userId:", req.session.userId);
 
-    // Set profile picture to null in database
     await updateUserProfilePicture(req.session.userId, null);
-    
-    // Clear from session
     req.session.profilePicture = null;
-
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Profile picture removed successfully'
     });
   } catch (error) {
-    // console.error('Delete error:', error);
+
     res.status(500).json({ error: 'Error removing profile picture' });
   }
 });
-
 
 module.exports = router;

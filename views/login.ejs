@@ -1,660 +1,677 @@
-<%- include('partials/header', {title: 'Login - Pet Care Management', showBackButton: true}) %>
-
+<%- include('partials/header', {title: 'Login - Pet Care Management' , showBackButton: true}) %>
 <style>
-
-body {
-    padding-top: 60px !important; /* Height of your navbar */
-    margin: 0 !important;
-    background-color: #f8f9fa;
-}
-
-/* Target the navbar */
-.navbar-modern {
-    position: fixed !important;
-    top: 0 !important;
-    width: 100%;
-    z-index: 1030;
-}
-
-/* Main content container */
-.row.justify-content-center {
-    margin-top: 0 !important;
-    padding-top: 1rem !important;
-}
-
-/* Card container */
-.col-md-6.col-lg-5 {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-/* Card styling */
-.card.card-custom {
-    margin-top: 2rem !important;
-    border-top: none !important;
-    animation: fadeIn 0.5s ease;
-}
-
-/* Remove the old back-to-home button styles */
-.back-to-home {
-    display: none !important;
-}
-
-/* Animation */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Your existing login styles */
-.avatar-circle {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
-
-.avatar-circle i {
-    font-size: 2.5rem;
-    color: white;
-}
-
-.card-custom {
-    border-radius: 1rem;
-    overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background: white;
-}
-
-.card-custom:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-}
-
-.input-group-lg .input-group-text,
-.input-group-lg .form-control {
-    padding: 0.75rem 1rem;
-}
-
-/* Primary button styling - used for both Sign In and Back to Home */
-.btn-primary, .btn-home {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    border: none;
-    transition: all 0.3s ease;
-    color: white !important;
-    font-weight: 500;
-}
-
-.btn-primary:hover, .btn-home:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-    color: white !important;
-}
-
-.form-control:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
-}
-
-.btn-outline-secondary:hover {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: white;
-}
-
-/* Dark mode adjustments */
-[data-theme="dark"] .card-custom {
-    background: var(--light);
-    border-color: var(--glass-border);
-}
-
-[data-theme="dark"] body {
-    background-color: var(--light);
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
     body {
         padding-top: 60px !important;
+        margin: 0 !important;
+        background-color: #f8f9fa;
     }
-    
-    .card.card-custom {
-        margin-top: 1rem !important;
-        margin-bottom: 2rem;
-    }
-    
-    .card-body.p-5 {
-        padding: 1.5rem !important;
-    }
-    
-    /* Hide mobile back button on mobile (we're putting it inside the card now) */
-    .d-block.d-md-none.mb-4 {
-        display: none !important;
-    }
-}
 
-/* Tablet adjustments */
-@media (min-width: 769px) and (max-width: 992px) {
+    /* Target the navbar */
+    .navbar-modern {
+        position: fixed !important;
+        top: 0 !important;
+        width: 100%;
+        z-index: 1030;
+    }
+
+    /* Main content container */
+    .row.justify-content-center {
+        margin-top: 0 !important;
+        padding-top: 1rem !important;
+    }
+
+    /* Card container */
     .col-md-6.col-lg-5 {
-        max-width: 450px;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
-}
 
-
-
-/* Fix for form labels in dark mode */
-[data-theme="dark"] .form-label,
-[data-theme="dark"] .fw-semibold {
-    color: #ffffff !important;
-    opacity: 1 !important;
-    background-color: transparent !important;
-}
-
-/* Fix for "Forgot password?" link */
-[data-theme="dark"] .text-primary {
-    color: #86b7fe !important; /* Brighter blue for dark mode */
-    font-weight: 500;
-}
-
-/* Fix for "Sign up here" link */
-[data-theme="dark"] a.text-primary {
-    color: #86b7fe !important; /* Brighter blue for dark mode */
-    font-weight: 600;
-}
-
-/* Fix for "Welcome Back" heading */
-[data-theme="dark"] .text-dark {
-    color: #ffffff !important;
-}
-
-/* Fix for muted text in dark mode */
-[data-theme="dark"] .text-muted {
-    color: #adb5bd !important; /* Brighter gray for dark mode */
-}
-
-/* Fix for divider text in dark mode */
-[data-theme="dark"] .bg-white {
-    background-color: var(--light) !important;
-    color: var(--dark) !important;
-}
-
-/* Fix for input group text icons in dark mode */
-[data-theme="dark"] .input-group-text {
-    background-color: var(--light-gray) !important;
-    border-color: var(--glass-border) !important;
-}
-
-[data-theme="dark"] .input-group-text .text-primary {
-    color: var(--primary) !important;
-}
-
-/* Ensure all form labels have proper contrast */
-.form-label {
-    color: var(--dark) !important;
-    opacity: 1 !important;
-    background-color: transparent !important;
-}
-
-/* Specific fix for email label */
-label[for="email"] {
-    color: var(--dark) !important;
-}
-
-/* Specific fix for password label */
-label[for="password"] {
-    color: var(--dark) !important;
-}
-
-/* Fix for "Remember me" label */
-[data-theme="dark"] .form-check-label {
-    color: #e9ecef !important;
-}
-
-/* Ensure proper contrast for text in light mode */
-[data-theme="light"] .text-dark {
-    color: #212529 !important;
-}
-
-[data-theme="light"] .form-label {
-    color: #212529 !important;
-}
-
-[data-theme="light"] .text-primary {
-    color: #0d6efd !important; /* Standard Bootstrap blue */
-}
-
-/* Fix for the "or" divider text contrast */
-[data-theme="dark"] .small.text-muted {
-    color: #adb5bd !important;
-}
-/* ===== REDUCE FONT SIZE FOR MOBILE TEXT INPUTS ===== */
-
-/* Reduce font size for input fields on mobile */
-@media (max-width: 768px) {
-    .input-group-lg .form-control {
-        font-size: 14px !important; /* Reduced from default */
+    /* Card styling */
+    .card.card-custom {
+        margin-top: 2rem !important;
+        border-top: none !important;
+        animation: fadeIn 0.5s ease;
     }
-    
-    /* Also reduce placeholder font size */
-    .form-control::placeholder {
-        font-size: 14px !important;
-    }
-    
-    /* Reduce padding slightly to fit more text */
-    .input-group-lg .form-control {
-        padding: 0.6rem 0.75rem !important;
-    }
-    
-    .input-group-lg .input-group-text {
-        padding: 0.6rem !important;
-    }
-}
 
-/* Extra small screens */
-@media (max-width: 375px) {
-    .input-group-lg .form-control {
-        font-size: 13px !important;
-    }
-    
-    .form-control::placeholder {
-        font-size: 13px !important;
-    }
-    
-    /* Even smaller padding for very small screens */
-    .input-group-lg .form-control {
-        padding: 0.5rem 0.6rem !important;
-    }
-    
-    .input-group-lg .input-group-text {
-        padding: 0.5rem !important;
-        font-size: 0.9rem !important;
-    }
-}
-
-/* Ensure text doesn't overflow visually */
-.form-control {
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-}
-
-/* Prevent zoom on iOS for small fonts */
-@media (max-width: 768px) {
-    input[type="email"],
-    input[type="password"],
-    input[type="text"] {
-        font-size: 14px !important;
-    }
-    
-    /* Important for iOS to prevent zoom */
-    input[type="email"]:focus,
-    input[type="password"]:focus,
-    input[type="text"]:focus {
-        font-size: 16px !important; /* iOS requires 16px+ to prevent zoom */
-    }
-}
-
-/* ===== HIDE SUBTITLE ON MOBILE ===== */
-
-@media (max-width: 768px) {
-    .text-center.mb-4 p.text-muted {
+    /* Remove the old back-to-home button styles */
+    .back-to-home {
         display: none !important;
     }
-    
-    /* Optional: Adjust spacing when subtitle is hidden */
-    .text-center.mb-4 {
-        margin-bottom: 1.5rem !important;
-    }
-    
-    .avatar-circle.mb-3 {
-        margin-bottom: 1rem !important;
-    }
-}
 
-/* ===== REMOVE EMAIL AND PASSWORD ICONS ON MOBILE ===== */
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
 
-@media (max-width: 768px) {
-    /* Hide the input group icons */
-    .input-group-text {
-        display: none !important;
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    
-    /* Adjust form control to take full width when icon is hidden */
-    .form-control {
-        border-radius: 0.375rem !important; /* Restore full border radius */
-        border: 1px solid #ced4da !important;
-        padding-left: 0.75rem !important;
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
     }
-    
-    /* Remove border-start-0 class effect */
-    .form-control.border-start-0 {
-        border-left: 1px solid #ced4da !important;
+
+    .avatar-circle i {
+        font-size: 2.5rem;
+        color: white;
     }
-    
-    /* Adjust dark mode borders */
-    [data-theme="dark"] .form-control {
+
+    .card-custom {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background: white;
+    }
+
+    .card-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .input-group-lg .input-group-text,
+    .input-group-lg .form-control {
+        padding: 0.75rem 1rem;
+    }
+
+    /*used for both Sign In and Back to Home */
+    .btn-primary,
+    .btn-home {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border: none;
+        transition: all 0.3s ease;
+        color: white !important;
+        font-weight: 500;
+    }
+
+    .btn-primary:hover,
+    .btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+        color: white !important;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    /* Dark mode adjustments */
+    [data-theme="dark"] .card-custom {
+        background: var(--light);
+        border-color: var(--glass-border);
+    }
+
+    [data-theme="dark"] body {
+        background-color: var(--light);
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+        body {
+            padding-top: 60px !important;
+        }
+
+        .card.card-custom {
+            margin-top: 1rem !important;
+            margin-bottom: 2rem;
+        }
+
+        .card-body.p-5 {
+            padding: 1.5rem !important;
+        }
+
+        /* Hide mobile back button on mobile (we're putting it inside the card now) */
+        .d-block.d-md-none.mb-4 {
+            display: none !important;
+        }
+    }
+
+    /* Tablet adjustments */
+    @media (min-width: 769px) and (max-width: 992px) {
+        .col-md-6.col-lg-5 {
+            max-width: 450px;
+        }
+    }
+    /* Fix for form labels in dark mode */
+    [data-theme="dark"] .form-label,
+    [data-theme="dark"] .fw-semibold {
+        color: #ffffff !important;
+        opacity: 1 !important;
+        background-color: transparent !important;
+    }
+
+    /* Fix for "Forgot password?" link */
+    [data-theme="dark"] .text-primary {
+        color: #86b7fe !important;
+        /* Brighter blue for dark mode */
+        font-weight: 500;
+    }
+
+    /* Fix for "Sign up here" link */
+    [data-theme="dark"] a.text-primary {
+        color: #86b7fe !important;
+        /* Brighter blue for dark mode */
+        font-weight: 600;
+    }
+
+    /* Fix for "Welcome Back" heading */
+    [data-theme="dark"] .text-dark {
+        color: #ffffff !important;
+    }
+
+    /* Fix for muted text in dark mode */
+    [data-theme="dark"] .text-muted {
+        color: #adb5bd !important;
+        /* Brighter gray for dark mode */
+    }
+
+    /* Fix for divider text in dark mode */
+    [data-theme="dark"] .bg-white {
+        background-color: var(--light) !important;
+        color: var(--dark) !important;
+    }
+
+    /* Fix for input group text icons in dark mode */
+    [data-theme="dark"] .input-group-text {
+        background-color: var(--light-gray) !important;
         border-color: var(--glass-border) !important;
     }
-}
 
-/* Extra small screens - ensure proper spacing */
-@media (max-width: 375px) {
-    .form-control {
-        padding: 0.5rem 0.75rem !important;
+    [data-theme="dark"] .input-group-text .text-primary {
+        color: var(--primary) !important;
     }
-}
-/* ===== SECONDARY BUTTON STYLING FOR "BACK TO HOME" ===== */
-/* Secondary button styling for "Back to Home" */
-.btn-secondary-custom {
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-    border: none;
-    transition: all 0.3s ease;
-    color: white !important;
-    font-weight: 500;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    text-decoration: none !important;
-    display: inline-block;
-    text-align: center;
-    width: 100%;
-    font-size: 1.1rem;
-}
 
-.btn-secondary-custom:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
-    background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);
-    color: white !important;
-    text-decoration: none !important;
-}
+    /* Ensure all form labels have proper contrast */
+    .form-label {
+        color: var(--dark) !important;
+        opacity: 1 !important;
+        background-color: transparent !important;
+    }
 
-/* Ensure both buttons have the same size */
-.btn-primary, .btn-secondary-custom {
-    font-size: 1.1rem;
-    font-weight: 500;
-    line-height: 1.5;
-    height: auto;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
+    /* Specific fix for email label */
+    label[for="email"] {
+        color: var(--dark) !important;
+    }
 
-/* Fix for dark mode */
-[data-theme="dark"] .btn-secondary-custom {
-    background: linear-gradient(135deg, #495057 0%, #343a40 100%);
-}
+    /* Specific fix for password label */
+    label[for="password"] {
+        color: var(--dark) !important;
+    }
 
-[data-theme="dark"] .btn-secondary-custom:hover {
-    background: linear-gradient(135deg, #343a40 0%, #495057 100%);
-}
+    /* Fix for "Remember me" label */
+    [data-theme="dark"] .form-check-label {
+        color: #e9ecef !important;
+    }
+
+    /* Ensure proper contrast for text in light mode */
+    [data-theme="light"] .text-dark {
+        color: #212529 !important;
+    }
+
+    [data-theme="light"] .form-label {
+        color: #212529 !important;
+    }
+
+    [data-theme="light"] .text-primary {
+        color: #0d6efd !important;
+        /* Standard Bootstrap blue */
+    }
+
+    /* Fix for the "or" divider text contrast */
+    [data-theme="dark"] .small.text-muted {
+        color: #adb5bd !important;
+    }
+
+    /* ===== REDUCE FONT SIZE FOR MOBILE TEXT INPUTS ===== */
+
+    /* Reduce font size for input fields on mobile */
+    @media (max-width: 768px) {
+        .input-group-lg .form-control {
+            font-size: 14px !important;
+            /* Reduced from default */
+        }
+
+        /* Also reduce placeholder font size */
+        .form-control::placeholder {
+            font-size: 14px !important;
+        }
+
+        /* Reduce padding slightly to fit more text */
+        .input-group-lg .form-control {
+            padding: 0.6rem 0.75rem !important;
+        }
+
+        .input-group-lg .input-group-text {
+            padding: 0.6rem !important;
+        }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 375px) {
+        .input-group-lg .form-control {
+            font-size: 13px !important;
+        }
+
+        .form-control::placeholder {
+            font-size: 13px !important;
+        }
+
+        /* Even smaller padding for very small screens */
+        .input-group-lg .form-control {
+            padding: 0.5rem 0.6rem !important;
+        }
+
+        .input-group-lg .input-group-text {
+            padding: 0.5rem !important;
+            font-size: 0.9rem !important;
+        }
+    }
+
+    /* Ensure text doesn't overflow visually */
+    .form-control {
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+    }
+
+    /* Prevent zoom on iOS for small fonts */
+    @media (max-width: 768px) {
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            font-size: 14px !important;
+        }
+
+        /* Important for iOS to prevent zoom */
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            font-size: 16px !important;
+            /* iOS requires 16px+ to prevent zoom */
+        }
+    }
+
+    /* ===== HIDE SUBTITLE ON MOBILE ===== */
+
+    @media (max-width: 768px) {
+        .text-center.mb-4 p.text-muted {
+            display: none !important;
+        }
+
+        /* Optional: Adjust spacing when subtitle is hidden */
+        .text-center.mb-4 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .avatar-circle.mb-3 {
+            margin-bottom: 1rem !important;
+        }
+    }
+
+    /* ===== REMOVE EMAIL AND PASSWORD ICONS ON MOBILE ===== */
+
+    @media (max-width: 768px) {
+
+        /* Hide the input group icons */
+        .input-group-text {
+            display: none !important;
+        }
+
+        /* Adjust form control to take full width when icon is hidden */
+        .form-control {
+            border-radius: 0.375rem !important;
+            /* Restore full border radius */
+            border: 1px solid #ced4da !important;
+            padding-left: 0.75rem !important;
+        }
+
+        /* Remove border-start-0 class effect */
+        .form-control.border-start-0 {
+            border-left: 1px solid #ced4da !important;
+        }
+
+        /* Adjust dark mode borders */
+        [data-theme="dark"] .form-control {
+            border-color: var(--glass-border) !important;
+        }
+    }
+
+    /* Extra small screens - ensure proper spacing */
+    @media (max-width: 375px) {
+        .form-control {
+            padding: 0.5rem 0.75rem !important;
+        }
+    }
+    /* ===== SECONDARY BUTTON STYLING FOR "BACK TO HOME" ===== */
+    .btn-secondary-custom {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        border: none;
+        transition: all 0.3s ease;
+        color: white !important;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none !important;
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+        font-size: 1.1rem;
+    }
+
+    .btn-secondary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);
+        color: white !important;
+        text-decoration: none !important;
+    }
+
+    /* Ensure both buttons have the same size */
+    .btn-primary,
+    .btn-secondary-custom {
+        font-size: 1.1rem;
+        font-weight: 500;
+        line-height: 1.5;
+        height: auto;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    /* Fix for dark mode */
+    [data-theme="dark"] .btn-secondary-custom {
+        background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+    }
+
+    [data-theme="dark"] .btn-secondary-custom:hover {
+        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    }
 </style>
 
-<div class="container">
-    <div class="row justify-content-center align-items-center min-vh-80 py-5">
-        <div class="col-md-6 col-lg-5">
-            <div class="card card-custom shadow-lg border-0">
-                <div class="card-body p-5">
-                    <!-- Header Section -->
-                    <div class="text-center mb-4">
-                        <div class="avatar-circle mb-3">
-                            <i class="bi bi-person-circle"></i>
-                        </div>
-                        <h1 class="h3 fw-bold text-dark">Welcome Back</h1>
-                        <p class="text-muted">Sign in to manage your pets' health and happiness</p>
-                    </div>
-
-                    <!-- Messages -->
-                    <% if (typeof message !=='undefined' && message) { %>
-                        <div class="alert alert-info alert-dismissible fade show" role="alert">
-                            <i class="bi bi-info-circle me-2"></i>
-                            <%= message %>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <% } %>
-
-                    <% if (typeof error !=='undefined' && error) { %>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            <%= error %>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <% } %>
-
-                    <!-- Login Form -->
-                    <form action="/auth/login" method="POST" class="needs-validation" novalidate>
-                        <div class="mb-4">
-                            <label for="email" class="form-label fw-semibold">Email Address</label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-envelope text-primary"></i>
-                                </span>
-                                <input type="email" class="form-control border-start-0 ps-2" id="email" name="email"
-                                    placeholder="your@email.com" required>
-                                <div class="invalid-feedback">
-                                    Please provide a valid email address.
-                                </div>
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-80 py-5">
+            <div class="col-md-6 col-lg-5">
+                <div class="card card-custom shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <!-- Header Section -->
+                        <div class="text-center mb-4">
+                            <div class="avatar-circle mb-3">
+                                <i class="bi bi-person-circle"></i>
                             </div>
+                            <h1 class="h3 fw-bold text-dark">Welcome Back</h1>
+                            <p class="text-muted">Sign in to manage your pets' health and happiness</p>
                         </div>
 
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label for="password" class="form-label fw-semibold">Password</label>
-                                <a href="/forgot-password" class="text-decoration-none small text-primary">
-                                    Forgot password?
-                                </a>
+                        <!-- Messages -->
+                        <% if (typeof message !=='undefined' && message) { %>
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <%= message %>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
                             </div>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-lock text-primary"></i>
-                                </span>
-                                <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="Enter your password" required>
-                                <div class="invalid-feedback">
-                                    Please enter your password.
-                                </div>
-                            </div>
-                        </div>
+                            <% } %>
 
-                        <div class="mb-4 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
-                            <label class="form-check-label small" for="rememberMe">Remember me</label>
-                        </div>
+                                <% if (typeof error !=='undefined' && error) { %>
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <%= error %>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <% } %>
 
-                        <button type="submit" class="btn btn-primary w-100 btn-lg py-3 fw-semibold">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                        </button>
-                    </form>
+                                        <!-- Login Form -->
+                                        <form action="/auth/login" method="POST" class="needs-validation" novalidate>
+                                            <div class="mb-4">
+                                                <label for="email" class="form-label fw-semibold">Email Address</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span class="input-group-text bg-light border-end-0">
+                                                        <i class="bi bi-envelope text-primary"></i>
+                                                    </span>
+                                                    <input type="email" class="form-control border-start-0 ps-2"
+                                                        id="email" name="email" placeholder="your@email.com" required>
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid email address.
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                    <!-- Divider -->
-                    <div class="position-relative my-4">
-                        <hr>
-                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 small text-muted">or</span>
+                                            <div class="mb-4">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <label for="password"
+                                                        class="form-label fw-semibold">Password</label>
+                                                    <a href="/forgot-password"
+                                                        class="text-decoration-none small text-primary">
+                                                        Forgot password?
+                                                    </a>
+                                                </div>
+                                                <div class="input-group input-group-lg">
+                                                    <span class="input-group-text bg-light border-end-0">
+                                                        <i class="bi bi-lock text-primary"></i>
+                                                    </span>
+                                                    <input type="password" class="form-control" id="password"
+                                                        name="password" placeholder="Enter your password" required>
+                                                    <div class="invalid-feedback">
+                                                        Please enter your password.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4 form-check">
+                                                <input type="checkbox" class="form-check-input" id="rememberMe"
+                                                    name="rememberMe">
+                                                <label class="form-check-label small" for="rememberMe">Remember
+                                                    me</label>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary w-100 btn-lg py-3 fw-semibold">
+                                                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                                            </button>
+                                        </form>
+
+                                        <!-- Divider -->
+                                        <div class="position-relative my-4">
+                                            <hr>
+                                            <span
+                                                class="position-absolute top-50 start-50 translate-middle bg-white px-3 small text-muted">or</span>
+                                        </div>
+
+                                        <!-- Sign Up Link and Back to Home Button -->
+                                        <div class="text-center mt-4 pt-3 border-top">
+                                            <p class="mb-3">Don't have an account?
+                                                <a href="/register"
+                                                    class="text-decoration-none fw-semibold text-primary">Sign up
+                                                    here</a>
+                                            </p>
+
+                                            <!-- Back to Home Button - Same style as Sign In -->
+                                            <a href="/" class="btn btn-secondary-custom w-100 btn-lg py-3 fw-semibold">
+                                                <i class="bi bi-arrow-left me-2"></i>Back to Home
+                                            </a>
+                                        </div>
+
+                                        <!-- Session timeout alert -->
+                                        <% if (typeof message !=='undefined' && message.includes('session has expired'))
+                                            { %>
+                                            <div class="alert alert-warning alert-dismissible fade show mt-3"
+                                                role="alert">
+                                                <i class="bi bi-clock-history me-2"></i>
+                                                <%= message %>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <% } %>
                     </div>
-
-                    <!-- Sign Up Link and Back to Home Button -->
-                    <div class="text-center mt-4 pt-3 border-top">
-                        <p class="mb-3">Don't have an account?
-                            <a href="/register" class="text-decoration-none fw-semibold text-primary">Sign up here</a>
-                        </p>
-                        
-                        <!-- Back to Home Button - Same style as Sign In -->
-                        <a href="/" class="btn btn-secondary-custom w-100 btn-lg py-3 fw-semibold">
-                            <i class="bi bi-arrow-left me-2"></i>Back to Home
-                        </a>
-                    </div>
-
-                    <!-- Session timeout alert -->
-                    <% if (typeof message !== 'undefined' && message.includes('session has expired')) { %>
-                        <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
-                            <i class="bi bi-clock-history me-2"></i>
-                            <%= message %>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <% } %>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<script>
-    // Form validation
-    document.addEventListener('DOMContentLoaded', function () {
-        // Form validation
-        const forms = document.querySelectorAll('.needs-validation');
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-        
-        // Function to update contrast for all elements
-        function updateContrast() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            
-            // Update all form labels
-            document.querySelectorAll('.form-label').forEach(label => {
-                label.style.color = isDark ? '#ffffff' : '#212529';
-                label.style.backgroundColor = 'transparent';
-                label.style.opacity = '1';
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
             });
-            
-            // Update primary text links
-            document.querySelectorAll('.text-primary').forEach(link => {
-                link.style.color = isDark ? '#86b7fe' : '#0d6efd';
-            });
-            
-            // Update dark text elements
-            document.querySelectorAll('.text-dark').forEach(el => {
-                el.style.color = isDark ? '#ffffff' : '#212529';
-            });
-            
-            // Update muted text elements
-            document.querySelectorAll('.text-muted').forEach(el => {
-                el.style.color = isDark ? '#adb5bd' : '#6c757d';
-            });
-        }
-        
-        // Apply contrast on load
-        updateContrast();
-        
-        // Watch for theme changes
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.attributeName === 'data-theme') {
-                    updateContrast();
-                }
-            });
-        });
-        
-        observer.observe(document.documentElement, { attributes: true });
-        
-        // ===== FIX FOR MOBILE TEXT INPUT WIDTH =====
-        
-        // Function to adjust input widths on mobile
-        function adjustInputWidths() {
-            const isMobile = window.innerWidth <= 768;
-            
-            if (isMobile) {
-                // Get the container width
-                const container = document.querySelector('.col-md-6.col-lg-5');
-                if (container) {
-                    const containerWidth = container.offsetWidth;
-                    
-                    // Set input fields to 95% of container width
-                    const inputs = document.querySelectorAll('#email, #password');
-                    inputs.forEach(input => {
-                        input.style.width = '100%';
-                        input.style.maxWidth = '100%';
-                        input.style.boxSizing = 'border-box';
-                    });
-                    
-                    // Adjust input group
-                    const inputGroups = document.querySelectorAll('.input-group');
-                    inputGroups.forEach(group => {
-                        group.style.width = '100%';
-                        group.style.maxWidth = '100%';
-                    });
-                }
-            } else {
-                // Reset for desktop
-                const inputs = document.querySelectorAll('#email, #password');
-                inputs.forEach(input => {
-                    input.style.width = '';
-                    input.style.maxWidth = '';
+
+            // Function to update contrast for all elements
+            function updateContrast() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+                // Update all form labels
+                document.querySelectorAll('.form-label').forEach(label => {
+                    label.style.color = isDark ? '#ffffff' : '#212529';
+                    label.style.backgroundColor = 'transparent';
+                    label.style.opacity = '1';
                 });
-                
-                const inputGroups = document.querySelectorAll('.input-group');
-                inputGroups.forEach(group => {
-                    group.style.width = '';
+
+                // Update primary text links
+                document.querySelectorAll('.text-primary').forEach(link => {
+                    link.style.color = isDark ? '#86b7fe' : '#0d6efd';
+                });
+
+                // Update dark text elements
+                document.querySelectorAll('.text-dark').forEach(el => {
+                    el.style.color = isDark ? '#ffffff' : '#212529';
+                });
+
+                // Update muted text elements
+                document.querySelectorAll('.text-muted').forEach(el => {
+                    el.style.color = isDark ? '#adb5bd' : '#6c757d';
                 });
             }
-        }
 
+            // Apply contrast on load
+            updateContrast();
 
-        // Add font size adjustment for mobile
-function adjustFontSizesForMobile() {
-    const isMobile = window.innerWidth <= 768;
-    
-    if (isMobile) {
-        // Reduce font size for input fields
-        const inputs = document.querySelectorAll('#email, #password');
-        inputs.forEach(input => {
-            input.style.fontSize = '14px';
-            input.style.lineHeight = '1.4';
-        });
-    } else {
-        // Reset for desktop
-        const inputs = document.querySelectorAll('#email, #password');
-        inputs.forEach(input => {
-            input.style.fontSize = '';
-            input.style.lineHeight = '';
-        });
-    }
-}
+            // Watch for theme changes
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.attributeName === 'data-theme') {
+                        updateContrast();
+                    }
+                });
+            });
 
-// Call on load and resize
-adjustFontSizesForMobile();
-window.addEventListener('resize', adjustFontSizesForMobile);
-        // Adjust on load and resize
-        adjustInputWidths();
-        window.addEventListener('resize', adjustInputWidths);
-        
-        // Auto-scroll long email addresses
-        const emailInput = document.getElementById('email');
-        if (emailInput) {
-            emailInput.addEventListener('input', function() {
-                if (this.value.length > 20) {
-                    this.scrollLeft = this.scrollWidth;
+            observer.observe(document.documentElement, { attributes: true });
+
+            // Function to adjust input widths on mobile
+            function adjustInputWidths() {
+                const isMobile = window.innerWidth <= 768;
+
+                if (isMobile) {
+                    // Get the container width
+                    const container = document.querySelector('.col-md-6.col-lg-5');
+                    if (container) {
+                        const containerWidth = container.offsetWidth;
+
+                        // Set input fields to 95% of container width
+                        const inputs = document.querySelectorAll('#email, #password');
+                        inputs.forEach(input => {
+                            input.style.width = '100%';
+                            input.style.maxWidth = '100%';
+                            input.style.boxSizing = 'border-box';
+                        });
+
+                        // Adjust input group
+                        const inputGroups = document.querySelectorAll('.input-group');
+                        inputGroups.forEach(group => {
+                            group.style.width = '100%';
+                            group.style.maxWidth = '100%';
+                        });
+                    }
+                } else {
+                    // Reset for desktop
+                    const inputs = document.querySelectorAll('#email, #password');
+                    inputs.forEach(input => {
+                        input.style.width = '';
+                        input.style.maxWidth = '';
+                    });
+
+                    const inputGroups = document.querySelectorAll('.input-group');
+                    inputGroups.forEach(group => {
+                        group.style.width = '';
+                    });
                 }
-            });
-        }
-        
-        // Fix iOS zoom issue
-        const inputs = document.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.style.fontSize = '16px';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.style.fontSize = '';
+            }
+            function adjustFontSizesForMobile() {
+                const isMobile = window.innerWidth <= 768;
+
+                if (isMobile) {
+                    // Reduce font size for input fields
+                    const inputs = document.querySelectorAll('#email, #password');
+                    inputs.forEach(input => {
+                        input.style.fontSize = '14px';
+                        input.style.lineHeight = '1.4';
+                    });
+                } else {
+                    // Reset for desktop
+                    const inputs = document.querySelectorAll('#email, #password');
+                    inputs.forEach(input => {
+                        input.style.fontSize = '';
+                        input.style.lineHeight = '';
+                    });
+                }
+            }
+
+            // Call on load and resize
+            adjustFontSizesForMobile();
+            window.addEventListener('resize', adjustFontSizesForMobile);
+            // Adjust on load and resize
+            adjustInputWidths();
+            window.addEventListener('resize', adjustInputWidths);
+
+            // Auto-scroll long email addresses
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.addEventListener('input', function () {
+                    if (this.value.length > 20) {
+                        this.scrollLeft = this.scrollWidth;
+                    }
+                });
+            }
+            // Fix iOS zoom issue
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.style.fontSize = '16px';
+                });
+
+                input.addEventListener('blur', function () {
+                    this.style.fontSize = '';
+                });
             });
         });
-    });
-</script>
+    </script>
 
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>

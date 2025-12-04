@@ -1,256 +1,252 @@
-<%- include('partials/header', {title: 'Register - Pet Care Management'}) %>
+<%- include('partials/header', {title: 'Register - Pet Care Management' }) %>
 
-<style>
-/* ===== FIX HEADER GAP FOR REGISTER PAGE ===== */
-/* Remove ALL spacing from body */
-body {
-    padding-top: 0 !important;
-    margin: 0 !important;
-}
+  <style>
+    /* Remove ALL spacing from body */
+    body {
+      padding-top: 0 !important;
+      margin: 0 !important;
+    }
 
-/* Target the navbar directly */
-.navbar-modern {
-    position: relative !important;
-    top: auto !important;
-}
+    /* Target the navbar directly */
+    .navbar-modern {
+      position: relative !important;
+      top: auto !important;
+    }
 
-/* Remove ALL padding and margins from main container */
-.container-fluid {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-}
+    /* Remove ALL padding and margins from main container */
+    .container-fluid {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
 
-/* Remove spacing from the row and card */
-.row.justify-content-center {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+    /* Remove spacing from the row and card */
+    .row.justify-content-center {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
 
-.col-md-6.col-lg-5 {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+    .col-md-6.col-lg-5 {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
 
-.card.card-custom {
-    margin-top: 0 !important;
-    border-top: none !important;
-}
+    .card.card-custom {
+      margin-top: 0 !important;
+      border-top: none !important;
+    }
 
-/* Remove any potential spacing from header partial */
-header {
-    margin-bottom: 0 !important;
-}
+    /* Remove any potential spacing from header partial */
+    header {
+      margin-bottom: 0 !important;
+    }
+    .card-custom {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+    }
 
-/* Your existing register styles */
-.card-custom {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    overflow: hidden;
-}
+    .card-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    }
 
-.card-custom:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-}
+    .btn-custom {
+      background-color: #0d6efd !important;
+      color: white !important;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
 
-.btn-custom {
-    background-color: #0d6efd !important; 
-    color: white !important;
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
+    .btn-custom:hover {
+      background-color: #0d6efd !important;
+      color: white !important;
+      transform: translateY(-1px);
+    }
 
-.btn-custom:hover {
-    background-color: #0d6efd !important;
-    color: white !important;
-    transform: translateY(-1px);
-}
+    .form-control:focus {
+      border-color: #0d6efd !important;
+      box-shadow: 0 0 0 0.2rem rgba(27, 94, 32, 0.25);
+    }
 
-.form-control:focus {
-    border-color: #0d6efd !important;
-    box-shadow: 0 0 0 0.2rem rgba(27, 94, 32, 0.25);
-}
+    .bi-person-plus.text-primary {
+      color: #1b5e20 !important;
+    }
 
-.bi-person-plus.text-primary {
-    color: #1b5e20 !important;
-}
+    /* Fix for form labels in dark mode */
+    [data-theme="dark"] .form-label {
+      color: #ffffff !important;
+      opacity: 1 !important;
+      background-color: transparent !important;
+    }
 
-/* ===== FIX CONTRAST ISSUES FOR REGISTER PAGE ===== */
+    /* Fix for headings in dark mode */
+    [data-theme="dark"] .text-dark,
+    [data-theme="dark"] .h3,
+    [data-theme="dark"] h1,
+    [data-theme="dark"] h3 {
+      color: #ffffff !important;
+    }
 
-/* Fix for form labels in dark mode */
-[data-theme="dark"] .form-label {
-    color: #ffffff !important;
-    opacity: 1 !important;
-    background-color: transparent !important;
-}
+    /* Fix for muted text in dark mode */
+    [data-theme="dark"] .text-muted {
+      color: #adb5bd !important;
+    }
 
-/* Fix for headings in dark mode */
-[data-theme="dark"] .text-dark,
-[data-theme="dark"] .h3,
-[data-theme="dark"] h1,
-[data-theme="dark"] h3 {
-    color: #ffffff !important;
-}
+    /* Fix for form text in dark mode */
+    [data-theme="dark"] .form-text {
+      color: #adb5bd !important;
+    }
 
-/* Fix for muted text in dark mode */
-[data-theme="dark"] .text-muted {
-    color: #adb5bd !important;
-}
+    /* Fix for links in dark mode */
+    [data-theme="dark"] .text-decoration-none {
+      color: #86b7fe !important;
+    }
 
-/* Fix for form text in dark mode */
-[data-theme="dark"] .form-text {
-    color: #adb5bd !important;
-}
+    /* Fix for dark mode card background */
+    [data-theme="dark"] .card-custom {
+      background: var(--light) !important;
+      border-color: var(--glass-border) !important;
+    }
 
-/* Fix for links in dark mode */
-[data-theme="dark"] .text-decoration-none {
-    color: #86b7fe !important;
-}
+    [data-theme="dark"] body {
+      background-color: var(--light) !important;
+    }
 
-/* Fix for dark mode card background */
-[data-theme="dark"] .card-custom {
-    background: var(--light) !important;
-    border-color: var(--glass-border) !important;
-}
+    /* Fix for input group text in dark mode */
+    [data-theme="dark"] .input-group-text {
+      background-color: var(--light-gray) !important;
+      border-color: var(--glass-border) !important;
+      color: var(--dark) !important;
+    }
 
-[data-theme="dark"] body {
-    background-color: var(--light) !important;
-}
+    /* Ensure proper contrast for text in light mode */
+    [data-theme="light"] .form-label {
+      color: #212529 !important;
+    }
 
-/* Fix for input group text in dark mode */
-[data-theme="dark"] .input-group-text {
-    background-color: var(--light-gray) !important;
-    border-color: var(--glass-border) !important;
-    color: var(--dark) !important;
-}
+    [data-theme="light"] .text-dark {
+      color: #212529 !important;
+    }
 
-/* Ensure proper contrast for text in light mode */
-[data-theme="light"] .form-label {
-    color: #212529 !important;
-}
+    [data-theme="light"] .text-muted {
+      color: #6c757d !important;
+    }
+  </style>
 
-[data-theme="light"] .text-dark {
-    color: #212529 !important;
-}
-
-[data-theme="light"] .text-muted {
-    color: #6c757d !important;
-}
-</style>
-
-<div class="row justify-content-center">
-  <div class="col-md-6 col-lg-5">
-    <div class="card card-custom">
-      <div class="card-body p-4">
-        <div class="text-center mb-4">
-          <i class="bi bi-person-plus text-primary" style="font-size: 3rem;"></i>
-          <h1 class="h3 mt-2">Create Account</h1>
-          <p class="text-muted">Join our pet care community</p>
-        </div>
-        
-        <% if (typeof message !== 'undefined' && message) { %>
-          <div class="alert alert-info"><%= message %></div>
-        <% } %>
-        
-        <% if (typeof error !== 'undefined' && error) { %>
-          <div class="alert alert-danger"><%= error %></div>
-        <% } %>
-
-        <form action="/auth/register" method="POST">
-          <div class="mb-3">
-            <label for="username" class="form-label">Username *</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-person"></i>
-              </span>
-              <input type="text" class="form-control" id="username" name="username" 
-                     placeholder="Choose a username" 
-                     value="<%= typeof formData !== 'undefined' && formData.username ? formData.username : '' %>" 
-                     required>
-            </div>
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card card-custom">
+        <div class="card-body p-4">
+          <div class="text-center mb-4">
+            <i class="bi bi-person-plus text-primary" style="font-size: 3rem;"></i>
+            <h1 class="h3 mt-2">Create Account</h1>
+            <p class="text-muted">Join our pet care community</p>
           </div>
-          
-          <div class="mb-3">
-            <label for="email" class="form-label">Email Address *</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-envelope"></i>
-              </span>
-              <input type="email" class="form-control" id="email" name="email" 
-                     placeholder="your@email.com" 
-                     value="<%= typeof formData !== 'undefined' && formData.email ? formData.email : '' %>" 
-                     required>
-            </div>
-          </div>
-          
-          <div class="mb-4">
-            <label for="password" class="form-label">Password *</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="bi bi-lock"></i>
-              </span>
-              <input type="password" class="form-control" id="password" name="password" 
-                     placeholder="Create a password" minlength="8" required>
-            </div>
-            <div class="form-text">Password must be at least 8 characters long.</div>
-          </div>
-          
-          <button type="submit" class="btn btn-custom w-100 btn-lg">
-            <i class="bi bi-person-plus me-2"></i>Create Account
-          </button>
-        </form>
 
-        <div class="mt-4 text-center">
-          <p>Already have an account? <a href="/login" class="text-decoration-none">Sign in here</a></p>
+          <% if (typeof message !=='undefined' && message) { %>
+            <div class="alert alert-info">
+              <%= message %>
+            </div>
+            <% } %>
+
+              <% if (typeof error !=='undefined' && error) { %>
+                <div class="alert alert-danger">
+                  <%= error %>
+                </div>
+                <% } %>
+
+                  <form action="/auth/register" method="POST">
+                    <div class="mb-3">
+                      <label for="username" class="form-label">Username *</label>
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control" id="username" name="username"
+                          placeholder="Choose a username"
+                          value="<%= typeof formData !== 'undefined' && formData.username ? formData.username : '' %>"
+                          required>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email Address *</label>
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="bi bi-envelope"></i>
+                        </span>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com"
+                          value="<%= typeof formData !== 'undefined' && formData.email ? formData.email : '' %>"
+                          required>
+                      </div>
+                    </div>
+
+                    <div class="mb-4">
+                      <label for="password" class="form-label">Password *</label>
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="bi bi-lock"></i>
+                        </span>
+                        <input type="password" class="form-control" id="password" name="password"
+                          placeholder="Create a password" minlength="8" required>
+                      </div>
+                      <div class="form-text">Password must be at least 8 characters long.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-custom w-100 btn-lg">
+                      <i class="bi bi-person-plus me-2"></i>Create Account
+                    </button>
+                  </form>
+
+                  <div class="mt-4 text-center">
+                    <p>Already have an account? <a href="/login" class="text-decoration-none">Sign in here</a></p>
+                  </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<%- include('partials/footer') %>
-<script>
-    // Function to update contrast for form labels
-    function updateContrast() {
+  <%- include('partials/footer') %>
+    <script>
+      // Function to update contrast for form labels
+      function updateContrast() {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        
+
         // Update all form labels
         document.querySelectorAll('.form-label').forEach(label => {
-            label.style.color = isDark ? '#ffffff' : '#212529';
-            label.style.backgroundColor = 'transparent';
-            label.style.opacity = '1';
+          label.style.color = isDark ? '#ffffff' : '#212529';
+          label.style.backgroundColor = 'transparent';
+          label.style.opacity = '1';
         });
-        
+
         // Update headings
         document.querySelectorAll('.text-dark, .h3, h1, h3').forEach(el => {
-            el.style.color = isDark ? '#ffffff' : '#212529';
+          el.style.color = isDark ? '#ffffff' : '#212529';
         });
-        
+
         // Update muted text
         document.querySelectorAll('.text-muted, .form-text').forEach(el => {
-            el.style.color = isDark ? '#adb5bd' : '#6c757d';
+          el.style.color = isDark ? '#adb5bd' : '#6c757d';
         });
-    }
-    
-    // Apply contrast on load
-    document.addEventListener('DOMContentLoaded', function() {
+      }
+
+      // Apply contrast on load
+      document.addEventListener('DOMContentLoaded', function () {
         updateContrast();
-        
+
         // Watch for theme changes
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.attributeName === 'data-theme') {
-                    updateContrast();
-                }
-            });
+        const observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (mutation.attributeName === 'data-theme') {
+              updateContrast();
+            }
+          });
         });
-        
+
         observer.observe(document.documentElement, { attributes: true });
-    });
-</script>
-
-
+      });
+    </script>

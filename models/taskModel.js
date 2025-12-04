@@ -1,18 +1,18 @@
 const { query } = require('../config/database');
 const { 
   toMySQLDateTime, 
-  formatForDateTimeLocal,
-  parseDateTimeLocalToEST,
-  isFutureDate,
-  DEFAULT_TIMEZONE 
+  formatForDateTimeLocal
 } = require('../utils/timezone');
-
-const moment = require('moment-timezone');
 
 const validationRules = {
   taskType: ['feeding', 'cleaning', 'vaccination', 'medication', 'grooming', 'vet_visit', 'exercise', 'other'],
   priority: ['low', 'medium', 'high'],
   
+  /**
+   * Validates task title format and length.
+   * @param {string} title - Task title to validate
+   * @returns {boolean} True if title is valid (1-100 chars, alphanumeric + basic punctuation)
+   */
   validateTitle: (title) => {
     if (typeof title !== 'string') return false;
     const trimmed = title.trim();
@@ -21,26 +21,40 @@ const validationRules = {
            /^[a-zA-Z0-9\s\-_,.!()]+$/.test(trimmed);
   },
   
+  /**
+   * Validates task description length.
+   * @param {string} description - Task description to validate
+   * @returns {boolean} True if description is valid or empty (max 500 chars)
+   */
   validateDescription: (description) => {
     if (!description) return true;
     if (typeof description !== 'string') return false;
     return description.length <= 500;
   },
 
+  /**
+   * Validates task start time is a valid date.
+   * @param {string} startTime - Start time to validate
+   * @returns {boolean} True if start time is a valid date
+   */
   validateStartTime: (startTime) => {
     if (!startTime) return false;
-    // For editing, just check it's a valid date, not the time restriction
     const date = new Date(startTime);
     return !isNaN(date.getTime());
   },
   
+  /**
+   * Validates task end time is after start time.
+   * @param {string} endTime - End time to validate
+   * @param {string} startTime - Start time to compare against
+   * @returns {boolean} True if end time is valid and after start time
+   */
   validateEndTime: (endTime, startTime) => {
     if (!endTime || !startTime) return false;
     
     const endDate = new Date(endTime);
     const startDate = new Date(startTime);
     
-    // Just check that end is after start (if both dates are valid)
     if (isNaN(endDate.getTime()) || isNaN(startDate.getTime())) {
       return false;
     }
@@ -48,41 +62,64 @@ const validationRules = {
     return endDate > startDate;
   },
 
-  // UPDATED: Remove time restriction for editing
+  /**
+   * Validates task due date is a valid date.
+   * @param {string} dueDate - Due date to validate
+   * @returns {boolean} True if due date is a valid date
+   */
   validateDueDate: (dueDate) => {
     if (!dueDate) return false;
-    
-    // Just validate that it's a valid date
     const date = new Date(dueDate);
     return !isNaN(date.getTime());
   }
 };
 
-// Update formatDateForInput function
+/**
+ * Formats a date string for datetime-local input fields.
+ * Converts database UTC time to local timezone.
+ * @param {string} dateString - Date string to format
+ * @returns {string} Formatted date string or empty string if invalid
+ */
 function formatDateForInput(dateString) {
   if (!dateString) return '';
-  
-  // Convert database UTC time to local timezone
   return formatForDateTimeLocal(dateString);
 }
 
-// Update parseDateTimeLocalInput function
+/**
+ * Parses datetime-local input string to Date object.
+ * datetime-local input is in local timezone.
+ * @param {string} dateTimeString - datetime-local format string (YYYY-MM-DDTHH:mm)
+ * @returns {Date|null} Date object or null if invalid
+ */
 function parseDateTimeLocalInput(dateTimeString) {
   if (!dateTimeString) return null;
   
-  // Parse as local time (datetime-local input is in local time)
   const [datePart, timePart] = dateTimeString.split('T');
   const [year, month, day] = datePart.split('-').map(Number);
   const [hours, minutes] = timePart.split(':').map(Number);
   
-  // Create date in local timezone
   const localDate = new Date(year, month - 1, day, hours, minutes);
   
   return localDate;
 }
 
+/**
+ * Creates a new task with comprehensive validation.
+ * Verifies pet ownership and converts dates to MySQL format (EST).
+ * 
+ * @param {number} userId - ID of the user creating the task
+ * @param {Object} taskData - Task information
+ * @param {number} taskData.pet_id - ID of the associated pet
+ * @param {string} taskData.task_type - Type of task (must be in validationRules.taskType)
+ * @param {string} taskData.title - Task title
+ * @param {string} taskData.description - Task description (optional)
+ * @param {string} taskData.start_time - Task start time
+ * @param {string} taskData.end_time - Task end time
+ * @param {string} taskData.priority - Task priority (must be in validationRules.priority)
+ * @returns {Promise<Object>} Database insert result
+ * @throws {Error} If validation fails or pet not found
+ */
 async function createTask(userId, taskData) {
-  // Input validation
   if (!validationRules.validateTitle(taskData.title)) {
     throw new Error('Invalid title format');
   }
@@ -99,7 +136,6 @@ async function createTask(userId, taskData) {
     throw new Error('Invalid priority');
   }
 
-  // Verify pet ownership
   const petCheck = await query(
     'SELECT pet_id FROM pets WHERE pet_id = ? AND user_id = ?',
     [taskData.pet_id, userId]
@@ -109,7 +145,6 @@ async function createTask(userId, taskData) {
     throw new Error('Pet not found or access denied');
   }
 
-  // Add validation for start_time and end_time
   if (!validationRules.validateStartTime(taskData.start_time)) {
     throw new Error('Start time must be in the future');
   }
@@ -118,10 +153,9 @@ async function createTask(userId, taskData) {
     throw new Error('End time must be after start time and within 1 year');
   }
 
-  // Convert dates to MySQL datetime strings (in EST)
   const startTimeMySQL = toMySQLDateTime(taskData.start_time);
   const endTimeMySQL = toMySQLDateTime(taskData.end_time);
-  const dueDateMySQL = toMySQLDateTime(taskData.start_time); // due_date = start_time
+  const dueDateMySQL = toMySQLDateTime(taskData.start_time);
   
   const sql = `
     INSERT INTO tasks (user_id, pet_id, task_type, title, description, due_date, start_time, end_time, priority)
@@ -147,6 +181,14 @@ async function createTask(userId, taskData) {
   }
 }
 
+/**
+ * Retrieves upcoming tasks for a user within specified days.
+ * Tasks are ordered by start time (earliest first).
+ * 
+ * @param {number} userId - ID of the user
+ * @param {number} [days=3] - Number of days ahead to look for tasks
+ * @returns {Promise<Array>} Array of task objects with formatted dates and pet names
+ */
 async function getUpcomingTasks(userId, days = 3) {
   const now = new Date();
   const futureDate = new Date();
@@ -164,7 +206,6 @@ async function getUpcomingTasks(userId, days = 3) {
   
   const tasks = await query(sql, [userId, now, futureDate]);
   
-  // Format dates for display (local time)
   return tasks.map(task => {
     task.due_date = formatDateForInput(task.due_date);
     task.start_time = formatDateForInput(task.start_time);
@@ -173,6 +214,13 @@ async function getUpcomingTasks(userId, days = 3) {
   });
 }
 
+/**
+ * Retrieves all tasks for a specific user.
+ * Includes pet names and formats dates for display.
+ * 
+ * @param {number} userId - ID of the user
+ * @returns {Promise<Array>} Array of all user's task objects
+ */
 async function getTasksByUser(userId) {
   const sql = `
     SELECT t.*, p.name as pet_name 
@@ -184,7 +232,6 @@ async function getTasksByUser(userId) {
   
   const tasks = await query(sql, [userId, userId]);
   
-  // Format dates for display (local time)
   return tasks.map(task => {
     task.due_date = formatDateForInput(task.due_date);
     task.start_time = formatDateForInput(task.start_time);
@@ -193,9 +240,20 @@ async function getTasksByUser(userId) {
   });
 }
 
-// FIXED: Add the missing updateTask function
+/**
+ * Updates an existing task with validation and ownership verification.
+ * 
+ * @param {number} taskId - ID of the task to update
+ * @param {number} userId - ID of the user who owns the task
+ * @param {Object} taskData - Fields to update
+ * @param {string} taskData.title - Updated task title
+ * @param {string} taskData.description - Updated task description
+ * @param {string} taskData.due_date - Updated due date (also sets start_time)
+ * @param {string} taskData.priority - Updated task priority
+ * @returns {Promise<Object>} Database update result
+ * @throws {Error} If validation fails, task not found, or access denied
+ */
 async function updateTask(taskId, userId, taskData) {
-  // First verify task ownership
   const taskCheck = await query(
     'SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?',
     [taskId, userId]
@@ -205,7 +263,6 @@ async function updateTask(taskId, userId, taskData) {
     throw new Error('Task not found or access denied');
   }
 
-  // Input validation
   if (!validationRules.validateTitle(taskData.title)) {
     throw new Error('Invalid title format');
   }
@@ -214,8 +271,7 @@ async function updateTask(taskId, userId, taskData) {
     throw new Error('Invalid description format');
   }
   
-  // UPDATED: Use start_time validation (with time restriction for editing)
-  if (!validationRules.validateStartTime(taskData.due_date)) { // Changed from start_time to due_date
+  if (!validationRules.validateStartTime(taskData.due_date)) {
     throw new Error('Start time must be in the future');
   }
   
@@ -223,8 +279,7 @@ async function updateTask(taskId, userId, taskData) {
     throw new Error('Invalid priority');
   }
 
-  // Parse the datetime-local input (already in local time)
-  const startDate = parseDateTimeLocalInput(taskData.due_date); // Changed from start_time to due_date
+  const startDate = parseDateTimeLocalInput(taskData.due_date);
   
   if (!startDate || isNaN(startDate.getTime())) {
     throw new Error('Invalid start time format');
@@ -238,14 +293,20 @@ async function updateTask(taskId, userId, taskData) {
   return query(sql, [
     taskData.title.trim(),
     taskData.description ? taskData.description.trim() : null,
-    startDate,  // due_date = start_time
-    startDate,  // start_time
+    startDate,
+    startDate,
     taskData.priority,
     taskId,
     userId
   ]);
 }
 
+/**
+ * Retrieves future tasks (uncompleted tasks with start time after now).
+ * 
+ * @param {number} userId - ID of the user
+ * @returns {Promise<Array>} Array of future task objects with formatted dates
+ */
 async function getFutureTasks(userId) {
   const now = new Date();
   
@@ -261,7 +322,6 @@ async function getFutureTasks(userId) {
   
   const tasks = await query(sql, [userId, now]);
   
-  // Format dates for display (local time)
   return tasks.map(task => {
     task.due_date = formatDateForInput(task.due_date);
     task.start_time = formatDateForInput(task.start_time);
@@ -269,8 +329,16 @@ async function getFutureTasks(userId) {
     return task;
   });
 }
+
+/**
+ * Marks a task as completed.
+ * 
+ * @param {number} taskId - ID of the task to complete
+ * @param {number} userId - ID of the user who owns the task
+ * @returns {Promise<Object>} Database update result
+ * @throws {Error} If task not found or access denied
+ */
 async function completeTask(taskId, userId) {
-  // Verify ownership
   const taskCheck = await query(
     'SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?',
     [taskId, userId]
@@ -289,8 +357,15 @@ async function completeTask(taskId, userId) {
   return query(sql, [taskId, userId]);
 }
 
+/**
+ * Deletes a task after verifying ownership.
+ * 
+ * @param {number} taskId - ID of the task to delete
+ * @param {number} userId - ID of the user who owns the task
+ * @returns {Promise<Object>} Database delete result
+ * @throws {Error} If task not found or access denied
+ */
 async function deleteTask(taskId, userId) {
-  // Verify ownership before deletion
   const taskCheck = await query(
     'SELECT task_id FROM tasks WHERE task_id = ? AND user_id = ?',
     [taskId, userId]
@@ -303,6 +378,13 @@ async function deleteTask(taskId, userId) {
   return query('DELETE FROM tasks WHERE task_id=? AND user_id=?', [taskId, userId]);
 }
 
+/**
+ * Retrieves a specific task by ID with ownership verification.
+ * 
+ * @param {number} taskId - ID of the task
+ * @param {number} userId - ID of the user who owns the task
+ * @returns {Promise<Object|null>} Task object with formatted dates or null if not found
+ */
 async function getTaskById(taskId, userId) {
   const sql = `
     SELECT t.*, p.name as pet_name 
@@ -324,7 +406,6 @@ async function getTaskById(taskId, userId) {
   return null;
 }
 
-// FIXED: Only ONE module.exports statement at the end
 module.exports = { 
   getTasksByUser, 
   createTask, 

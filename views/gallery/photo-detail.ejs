@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/theme.css">
@@ -12,7 +15,7 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        
+
         /* Photo image styling */
         .photo-image-wrapper {
             position: relative;
@@ -20,16 +23,16 @@
             width: 100%;
             margin-bottom: 1.5rem;
         }
-        
+
         .photo-image {
             width: 100%;
             max-width: 100%;
             border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             display: block;
         }
 
-        /* Beautiful Love Icon Design - FIXED POSITIONING */
+        /* Beautiful Love Icon Design*/
         .love-icon-container {
             position: absolute;
             top: 20px;
@@ -105,14 +108,28 @@
         }
 
         @keyframes heartBeat {
-            0% { transform: scale(1); }
-            25% { transform: scale(1.4); }
-            50% { transform: scale(0.9); }
-            75% { transform: scale(1.3); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.4);
+            }
+
+            50% {
+                transform: scale(0.9);
+            }
+
+            75% {
+                transform: scale(1.3);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
-        /* Love count badge - MOVED OUTSIDE IMAGE */
+        /* Love count badge */
         .love-count-container {
             display: flex;
             align-items: center;
@@ -144,17 +161,19 @@
 
         /* Pulse animation for attention */
         @keyframes pulseGlow {
-            0% { 
+            0% {
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2),
-                          0 0 0 0 rgba(255, 107, 107, 0.7); 
+                    0 0 0 0 rgba(255, 107, 107, 0.7);
             }
-            70% { 
+
+            70% {
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2),
-                          0 0 0 12px rgba(255, 107, 107, 0); 
+                    0 0 0 12px rgba(255, 107, 107, 0);
             }
-            100% { 
+
+            100% {
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2),
-                          0 0 0 0 rgba(255, 107, 107, 0); 
+                    0 0 0 0 rgba(255, 107, 107, 0);
             }
         }
 
@@ -187,13 +206,13 @@
                 height: 55px;
                 font-size: 1.4rem;
             }
-            
+
             .love-count-badge {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.9rem;
                 min-width: 35px;
             }
-            
+
             .love-icon-container {
                 top: 15px;
                 right: 15px;
@@ -206,18 +225,18 @@
                 height: 50px;
                 font-size: 1.3rem;
             }
-            
+
             .love-count-badge {
                 padding: 0.35rem 0.7rem;
                 font-size: 0.85rem;
                 min-width: 32px;
             }
-            
+
             .love-icon-container {
                 top: 12px;
                 right: 12px;
             }
-            
+
             .photo-image {
                 border-radius: 10px;
             }
@@ -228,27 +247,25 @@
             }
         }
 
-        /* Other existing styles */
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
         }
-        
+
         .action-btn {
             transition: all 0.2s;
         }
-        
+
         .action-btn:hover {
             transform: scale(1.1);
         }
-        
+
         .tag-badge {
             cursor: pointer;
         }
 
-        /* Fix container spacing */
         .container.mt-4 {
             margin-top: 2rem !important;
         }
@@ -259,7 +276,6 @@
             }
         }
 
-        /* Remove any old favorite button styles */
         .btn-outline-danger.action-btn {
             display: none !important;
         }
@@ -275,16 +291,16 @@
                 flex-direction: column;
                 gap: 1rem;
             }
-            
+
             .card-body .d-flex.align-items-center.text-muted {
                 flex-wrap: wrap;
                 gap: 0.5rem;
             }
-            
+
             .card-body .d-flex.align-items-center.text-muted .mx-2 {
                 display: none;
             }
-            
+
             .card-title {
                 font-size: 1.25rem;
                 line-height: 1.3;
@@ -298,463 +314,473 @@
             }
         }
 
-       @media (max-width: 576px) {
-    .container.mt-4 .alert {
-        margin-top: 2rem !important;
-    }
-    
-    .container.mt-4 .text-center.mt-4 {
-        margin-top: 2.5rem !important;
-    }
-}
+        @media (max-width: 576px) {
+            .container.mt-4 .alert {
+                margin-top: 2rem !important;
+            }
 
-@media (max-width: 420px) {
-    .container.mt-4 .alert {
-        margin-top: 2.5rem !important;
-    }
-    
-    .container.mt-4 .text-center.mt-4 {
-        margin-top: 3rem !important;
-    }
-} 
-    @media (max-width: 576px) {
-    .container.mt-4 {
-        margin-top: 6rem !important;
-    }
-}
+            .container.mt-4 .text-center.mt-4 {
+                margin-top: 2.5rem !important;
+            }
+        }
 
-@media (max-width: 420px) {
-    .container.mt-4 {
-        margin-top: 7rem !important;
-    }
-}
+        @media (max-width: 420px) {
+            .container.mt-4 .alert {
+                margin-top: 2.5rem !important;
+            }
 
-@media (max-width: 900px) {
-    .container.mt-4 {
-        margin-top: 7rem !important;
-    }
-}
+            .container.mt-4 .text-center.mt-4 {
+                margin-top: 3rem !important;
+            }
+        }
 
-/* Add this to your existing CSS */
-.photo-image {
-    max-height: 600px !important;
-    object-fit: contain !important;
-    width: auto !important;
-    margin: 0 auto !important;
-    display: block !important;
-}
+        @media (max-width: 576px) {
+            .container.mt-4 {
+                margin-top: 6rem !important;
+            }
+        }
 
-.photo-image-wrapper {
-    text-align: center !important;
-    background: #000000 !important;
-    padding: 20px !important;
-    border-radius: 12px !important;
-}
+        @media (max-width: 420px) {
+            .container.mt-4 {
+                margin-top: 7rem !important;
+            }
+        }
 
-[data-bs-theme="dark"] .photo-image-wrapper {
-    background: #1a1d21 !important;
-}
+        @media (max-width: 900px) {
+            .container.mt-4 {
+                margin-top: 7rem !important;
+            }
+        }
 
-/* For smaller screens */
-@media (max-width: 768px) {
-    .photo-image {
-        max-height: 500px !important;
-        max-width: 100% !important;
-    }
-}
+        /* Add this to your existing CSS */
+        .photo-image {
+            max-height: 600px !important;
+            object-fit: contain !important;
+            width: auto !important;
+            margin: 0 auto !important;
+            display: block !important;
+        }
 
-@media (max-width: 576px) {
-    .photo-image {
-        max-height: 400px !important;
-        max-width: 100% !important;
-    }
-    
-    .photo-image-wrapper {
-        padding: 15px !important;
-    }
-}
+        .photo-image-wrapper {
+            text-align: center !important;
+            background: #000000 !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+        }
 
-@media (max-width: 400px) {
-    .photo-image {
-        max-height: 350px !important;
-        max-width: 100% !important;
-    }
-    
-    .photo-image-wrapper {
-        padding: 10px !important;
-    }
-}
+        [data-bs-theme="dark"] .photo-image-wrapper {
+            background: #1a1d21 !important;
+        }
 
-/* Update the image container to maintain aspect ratio */
-.image-container {
-  position: relative;
-  width: 100%;
-  height: 240px; /* Or your desired height */
-  overflow: hidden;
-}
+        /* For smaller screens */
+        @media (max-width: 768px) {
+            .photo-image {
+                max-height: 500px !important;
+                max-width: 100% !important;
+            }
+        }
 
-.photo-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* This is key - maintains aspect ratio while filling container */
-  object-position: center; /* Centers the image */
-  transition: transform 0.5s ease;
-}
+        @media (max-width: 576px) {
+            .photo-image {
+                max-height: 400px !important;
+                max-width: 100% !important;
+            }
 
-/* For the detail view in photo-detail.ejs */
-.photo-image-wrapper {
-  text-align: center;
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-}
+            .photo-image-wrapper {
+                padding: 15px !important;
+            }
+        }
 
-.photo-detail-image {
-  max-height: 600px;
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain; /* Show entire image without cropping */
-  border-radius: 8px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
+        @media (max-width: 400px) {
+            .photo-image {
+                max-height: 350px !important;
+                max-width: 100% !important;
+            }
 
-/* Dark theme support */
-[data-bs-theme="dark"] .photo-image-wrapper {
-  background: #1a1d21;
-}
+            .photo-image-wrapper {
+                padding: 10px !important;
+            }
+        }
 
+        /* Update the image container to maintain aspect ratio */
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            /* Or your desired height */
+            overflow: hidden;
+        }
+
+        .photo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-image-wrapper {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .photo-detail-image {
+            max-height: 600px;
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Dark theme support */
+        [data-bs-theme="dark"] .photo-image-wrapper {
+            background: #1a1d21;
+        }
     </style>
 </head>
+
 <body>
     <%- include('../partials/header') %>
-    
-    <div class="container mt-4">
-        <% if (!photo) { %>
-            <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle"></i> Photo not found or you don't have permission to view it.
-            </div>
-            <div class="text-center mt-4">
-                <a href="/gallery" class="btn btn-primary">Back to Gallery</a>
-            </div>
-        <% } else { %>
-            <div class="photo-container">
-                <!-- Back Button -->
-                <div class="mb-4">
-                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </a>
-                </div>
 
-                <!-- Photo with Love Icon INSIDE the image -->
-                <div class="photo-image-wrapper">
-                    <img src="<%= photo.photo_url %>" 
-                         class="photo-image" 
-                         alt="<%= photo.title %>">
-                    
-                    <!-- Beautiful Love Icon - INSIDE IMAGE -->
-                    <div class="love-icon-container">
-                        <button class="love-btn <%= photo.is_favorited ? 'active' : '' %> <%= !photo.is_favorited ? 'pulse' : '' %>" 
-                                onclick="toggleFavorite(<%= photo.photo_id %>, this)"
-                                aria-label="<%= photo.is_favorited ? 'Remove from favorites' : 'Add to favorites' %>">
-                            <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
-                        </button>
-                    </div>
+        <div class="container mt-4">
+            <% if (!photo) { %>
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Photo not found or you don't have permission to view it.
                 </div>
-
-                <!-- Love Count - NOW OUTSIDE THE IMAGE -->
-                <div class="love-count-container">
-                    <span class="love-count-badge" id="loveCountBadge">
-                        <i class="bi bi-heart-fill"></i>
-                        <span><%= photo.favorite_count || 0 %></span>
-                    </span>
+                <div class="text-center mt-4">
+                    <a href="/gallery" class="btn btn-primary">Back to Gallery</a>
                 </div>
+                <% } else { %>
+                    <div class="photo-container">
+                        <!-- Back Button -->
+                        <div class="mb-4">
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back
+                            </a>
+                        </div>
 
-                <!-- Photo Info -->
-                <div class="card">
-                    <div class="card-body">
-                        <!-- Header with title - REMOVED OLD FAVORITE BUTTON -->
-                        <div class="mb-3">
-                            <h2 class="card-title mb-2"><%= photo.title || 'Untitled' %></h2>
-                            <div class="d-flex align-items-center text-muted">
-                                <img src="<%= photo.profile_picture_url || '/images/default-avatar.png' %>" 
-                                     class="user-avatar me-2" 
-                                     alt="<%= photo.username %>">
-                                <span>By <%= photo.username %></span>
-                                <span class="mx-2">•</span>
-                                <span><%= new Date(photo.created_at).toLocaleDateString() %></span>
-                                <span class="mx-2">•</span>
-                                <span class="badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
-                                    <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
-                                    <%= photo.is_public ? 'Public' : 'Private' %>
+                        <!-- Photo with Love Icon INSIDE the image -->
+                        <div class="photo-image-wrapper">
+                            <img src="<%= photo.photo_url %>" class="photo-image" alt="<%= photo.title %>">
+
+                            <!-- Beautiful Love Icon - INSIDE IMAGE -->
+                            <div class="love-icon-container">
+                                <button
+                                    class="love-btn <%= photo.is_favorited ? 'active' : '' %> <%= !photo.is_favorited ? 'pulse' : '' %>"
+                                    onclick="toggleFavorite(<%= photo.photo_id %>, this)"
+                                    aria-label="<%= photo.is_favorited ? 'Remove from favorites' : 'Add to favorites' %>">
+                                    <i class="bi bi-heart<%= photo.is_favorited ? '-fill' : '' %>"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Love Count - NOW OUTSIDE THE IMAGE -->
+                        <div class="love-count-container">
+                            <span class="love-count-badge" id="loveCountBadge">
+                                <i class="bi bi-heart-fill"></i>
+                                <span>
+                                    <%= photo.favorite_count || 0 %>
                                 </span>
+                            </span>
+                        </div>
+
+                        <!-- Photo Info -->
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Header with title -->
+                                <div class="mb-3">
+                                    <h2 class="card-title mb-2">
+                                        <%= photo.title || 'Untitled' %>
+                                    </h2>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <img src="<%= photo.profile_picture_url || '/images/default-avatar.png' %>"
+                                            class="user-avatar me-2" alt="<%= photo.username %>">
+                                        <span>By <%= photo.username %></span>
+                                        <span class="mx-2">•</span>
+                                        <span>
+                                            <%= new Date(photo.created_at).toLocaleDateString() %>
+                                        </span>
+                                        <span class="mx-2">•</span>
+                                        <span class="badge <%= photo.is_public ? 'bg-success' : 'bg-secondary' %>">
+                                            <i class="bi bi-<%= photo.is_public ? 'globe' : 'lock' %>"></i>
+                                            <%= photo.is_public ? 'Public' : 'Private' %>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <% if (photo.description) { %>
+                                    <p class="card-text mb-3">
+                                        <%= photo.description %>
+                                    </p>
+                                    <% } %>
+
+                                        <!-- Tags -->
+                                        <% if (photo.tags) { %>
+                                            <div class="mb-3">
+                                                <strong>Tags:</strong>
+                                                <% photo.tags.split(',').forEach(tag=> { %>
+                                                    <span class="badge bg-primary tag-badge me-1"
+                                                        onclick="window.location.href='/gallery?tag=<%= tag %>'">
+                                                        #<%= tag %>
+                                                    </span>
+                                                    <% }); %>
+                                            </div>
+                                            <% } %>
+
+                                                <!-- Add Tag Form (only for photo owner) -->
+                                                <% if (locals.userId===photo.user_id) { %>
+                                                    <div class="mt-4 p-3 bg-light rounded">
+                                                        <h6>Add Tags</h6>
+                                                        <form class="d-flex gap-2"
+                                                            onsubmit="addTag(event, <%= photo.photo_id %>)">
+                                                            <input type="text" class="form-control" id="tagInput"
+                                                                placeholder="Enter a tag..." required>
+                                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                                <i class="bi bi-plus"></i> Add
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                    <% } %>
                             </div>
                         </div>
 
-                        <!-- Description -->
-                        <% if (photo.description) { %>
-                            <p class="card-text mb-3"><%= photo.description %></p>
-                        <% } %>
+                        <!-- Owner Actions -->
+                        <% if (locals.userId===photo.user_id) { %>
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Photo Management</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-warning"
+                                            onclick="editPhoto(<%= photo.photo_id %>)">
+                                            <i class="bi bi-pencil"></i> Edit Details
+                                        </button>
+                                        <button class="btn btn-outline-danger"
+                                            onclick="deletePhoto(<%= photo.photo_id %>, '<%= photo.title %>')">
+                                            <i class="bi bi-trash"></i> Delete Photo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                    </div>
+                    <% } %>
+        </div>
 
-                        <!-- Tags -->
-                        <% if (photo.tags) { %>
+        <!-- Edit Photo Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Photo Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm">
                             <div class="mb-3">
-                                <strong>Tags:</strong>
-                                <% photo.tags.split(',').forEach(tag => { %>
-                                    <span class="badge bg-primary tag-badge me-1" 
-                                          onclick="window.location.href='/gallery?tag=<%= tag %>'">
-                                        #<%= tag %>
-                                    </span>
-                                <% }); %>
+                                <label for="editTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="editTitle" required>
                             </div>
-                        <% } %>
-
-                        <!-- Add Tag Form (only for photo owner) -->
-                        <% if (locals.userId === photo.user_id) { %>
-                            <div class="mt-4 p-3 bg-light rounded">
-                                <h6>Add Tags</h6>
-                                <form class="d-flex gap-2" onsubmit="addTag(event, <%= photo.photo_id %>)">
-                                    <input type="text" class="form-control" id="tagInput" 
-                                           placeholder="Enter a tag..." required>
-                                    <button type="submit" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-plus"></i> Add
-                                    </button>
-                                </form>
+                            <div class="mb-3">
+                                <label for="editDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="editDescription" rows="3"></textarea>
                             </div>
-                        <% } %>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="editIsPublic">
+                                    <label class="form-check-label" for="editIsPublic">
+                                        Make photo public
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </div>
-
-                <!-- Owner Actions -->
-                <% if (locals.userId === photo.user_id) { %>
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h6 class="mb-0">Photo Management</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-outline-warning" onclick="editPhoto(<%= photo.photo_id %>)">
-                                    <i class="bi bi-pencil"></i> Edit Details
-                                </button>
-                                <button class="btn btn-outline-danger" 
-                                        onclick="deletePhoto(<%= photo.photo_id %>, '<%= photo.title %>')">
-                                    <i class="bi bi-trash"></i> Delete Photo
-                                </button>
-                            </div>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="savePhotoChanges()">Save Changes</button>
                     </div>
-                <% } %>
-            </div>
-        <% } %>
-    </div>
-
-    <!-- Edit Photo Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Photo Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editForm">
-                        <div class="mb-3">
-                            <label for="editTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="editTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="editDescription" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="editIsPublic">
-                                <label class="form-check-label" for="editIsPublic">
-                                    Make photo public
-                                </label>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="savePhotoChanges()">Save Changes</button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Add Bootstrap JS -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
-    <script>
-        // Store modal instance globally
-        let editModal = null;
+        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
-        // Initialize modal when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            const modalElement = document.getElementById('editModal');
-            if (modalElement) {
-                editModal = new bootstrap.Modal(modalElement);
-            }
-        });
+        <script>
+            // Store modal instance globally
+            let editModal = null;
 
-        async function toggleFavorite(photoId, button) {
-            try {
-                const response = await fetch(`/gallery/photo/${photoId}/favorite`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+            // Initialize modal when DOM is loaded
+            document.addEventListener('DOMContentLoaded', function () {
+                const modalElement = document.getElementById('editModal');
+                if (modalElement) {
+                    editModal = new bootstrap.Modal(modalElement);
+                }
+            });
 
-                const result = await response.json();
-                
-                if (result.success) {
-                    const icon = button.querySelector('i');
-                    const countBadge = document.getElementById('loveCountBadge');
-                    
-                    if (result.action === 'added') {
-                        icon.classList.remove('bi-heart');
-                        icon.classList.add('bi-heart-fill');
-                        button.classList.add('active');
-                        button.classList.remove('pulse');
-                    } else {
-                        icon.classList.remove('bi-heart-fill');
-                        icon.classList.add('bi-heart');
-                        button.classList.remove('active');
-                        button.classList.add('pulse');
-                    }
-                    
-                    // Update the favorite count badge (now outside the image)
-                    if (countBadge) {
-                        const countSpan = countBadge.querySelector('span');
-                        if (countSpan) {
-                            countSpan.textContent = result.favorite_count;
+            async function toggleFavorite(photoId, button) {
+                try {
+                    const response = await fetch(`/gallery/photo/${photoId}/favorite`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const icon = button.querySelector('i');
+                        const countBadge = document.getElementById('loveCountBadge');
+
+                        if (result.action === 'added') {
+                            icon.classList.remove('bi-heart');
+                            icon.classList.add('bi-heart-fill');
+                            button.classList.add('active');
+                            button.classList.remove('pulse');
+                        } else {
+                            icon.classList.remove('bi-heart-fill');
+                            icon.classList.add('bi-heart');
+                            button.classList.remove('active');
+                            button.classList.add('pulse');
+                        }
+
+                        // Update the favorite count badge (now outside the image)
+                        if (countBadge) {
+                            const countSpan = countBadge.querySelector('span');
+                            if (countSpan) {
+                                countSpan.textContent = result.favorite_count;
+                            }
                         }
                     }
+                } catch (error) {
+                    // console.error('Favorite error:', error);
+                    alert('Error updating favorite');
                 }
-            } catch (error) {
-                // console.error('Favorite error:', error);
-                alert('Error updating favorite');
-            }
-        }
-
-        async function addTag(event, photoId) {
-            event.preventDefault();
-            const tagInput = document.getElementById('tagInput');
-            const tag = tagInput.value.trim();
-            
-            if (!tag) return;
-
-            try {
-                const response = await fetch(`/gallery/photo/${photoId}/tags`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ tag })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    location.reload();
-                } else {
-                    alert('Error adding tag: ' + result.error);
-                }
-            } catch (error) {
-                // console.error('Add tag error:', error);
-                alert('Error adding tag');
-            }
-        }
-
-        function editPhoto(photoId) {
-            document.getElementById('editTitle').value = '<%= photo.title || "" %>';
-            document.getElementById('editDescription').value = '<%= photo.description || "" %>';
-            document.getElementById('editIsPublic').checked = <%= photo.is_public %>;
-            document.getElementById('editForm').dataset.photoId = photoId;
-            
-            if (editModal) {
-                editModal.show();
-            }
-        }
-
-        async function savePhotoChanges() {
-            const photoId = document.getElementById('editForm').dataset.photoId;
-            const title = document.getElementById('editTitle').value;
-            const description = document.getElementById('editDescription').value;
-            const is_public = document.getElementById('editIsPublic').checked;
-
-            if (!title.trim()) {
-                alert('Please enter a title');
-                return;
             }
 
-            try {
-                const response = await fetch(`/gallery/photo/${photoId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        title: title.trim(), 
-                        description: description.trim(), 
-                        is_public: is_public 
-                    })
-                });
+            async function addTag(event, photoId) {
+                event.preventDefault();
+                const tagInput = document.getElementById('tagInput');
+                const tag = tagInput.value.trim();
 
-                const result = await response.json();
-                
-                if (result.success) {
-                    if (editModal) editModal.hide();
-                    location.reload();
-                } else {
-                    alert('Error updating photo: ' + result.error);
-                }
-            } catch (error) {
-                // console.error('Update error:', error);
-                alert('Error updating photo: ' + error.message);
-            }
-        }
+                if (!tag) return;
 
-        async function deletePhoto(photoId, photoTitle) {
-            if (!confirm(`Are you sure you want to delete "${photoTitle}"? This action cannot be undone.`)) {
-                return;
-            }
+                try {
+                    const response = await fetch(`/gallery/photo/${photoId}/tags`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ tag })
+                    });
 
-            try {
-                const response = await fetch(`/gallery/photo/${photoId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
+                    const result = await response.json();
+
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Error adding tag: ' + result.error);
                     }
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    window.location.href = '/gallery/my-photos?message=Photo deleted successfully';
-                } else {
-                    alert('Error deleting photo: ' + result.error);
+                } catch (error) {
+                    // console.error('Add tag error:', error);
+                    alert('Error adding tag');
                 }
-            } catch (error) {
-                // console.error('Delete error:', error);
-                alert('Error deleting photo: ' + error.message);
             }
-        }
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && editModal) {
-                editModal.hide();
+            function editPhoto(photoId) {
+                document.getElementById('editTitle').value = '<%= photo.title || "" %>';
+                document.getElementById('editDescription').value = '<%= photo.description || "" %>';
+                document.getElementById('editIsPublic').checked = <%= photo.is_public %>;
+                document.getElementById('editForm').dataset.photoId = photoId;
+
+                if (editModal) {
+                    editModal.show();
+                }
             }
-        });
-    </script>
-    <%- include('../partials/footer') %>
+
+            async function savePhotoChanges() {
+                const photoId = document.getElementById('editForm').dataset.photoId;
+                const title = document.getElementById('editTitle').value;
+                const description = document.getElementById('editDescription').value;
+                const is_public = document.getElementById('editIsPublic').checked;
+
+                if (!title.trim()) {
+                    alert('Please enter a title');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/gallery/photo/${photoId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title: title.trim(),
+                            description: description.trim(),
+                            is_public: is_public
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        if (editModal) editModal.hide();
+                        location.reload();
+                    } else {
+                        alert('Error updating photo: ' + result.error);
+                    }
+                } catch (error) {
+                    // console.error('Update error:', error);
+                    alert('Error updating photo: ' + error.message);
+                }
+            }
+
+            async function deletePhoto(photoId, photoTitle) {
+                if (!confirm(`Are you sure you want to delete "${photoTitle}"? This action cannot be undone.`)) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/gallery/photo/${photoId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        window.location.href = '/gallery/my-photos?message=Photo deleted successfully';
+                    } else {
+                        alert('Error deleting photo: ' + result.error);
+                    }
+                } catch (error) {
+                    // console.error('Delete error:', error);
+                    alert('Error deleting photo: ' + error.message);
+                }
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && editModal) {
+                    editModal.hide();
+                }
+            });
+        </script>
+        <%- include('../partials/footer') %>
 </body>
-</html>
 
+</html>

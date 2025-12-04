@@ -1,21 +1,28 @@
-// routes/communityRoutes.js
 const express = require('express');
 const { query } = require('../config/database');
 const router = express.Router();
 
+/**
+ * Middleware to require authentication for community routes.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 function requireAuth(req, res, next) {
-  if (req.session?.userId) return next();
-  return res.redirect('/login');
+    if (req.session?.userId) return next();
+    return res.redirect('/login');
 }
 
-
-
-// routes/communityRoutes.js - Update the GET /community route
+/**
+ * GET /community - Renders the main community page with posts and user profiles.
+ * Shows community posts with comments and lists regular users (excludes admins).
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/', requireAuth, async (req, res) => {
-    // console.log('GET /community - Loading community page');
-    
     try {
-        // Get community posts with comments (existing code)
         const postsWithComments = await query(`
             SELECT 
                 cp.*, 
@@ -34,7 +41,6 @@ router.get('/', requireAuth, async (req, res) => {
             ORDER BY cp.created_at DESC, c.created_at ASC
         `, [req.session.userId]);
 
-        // Group comments by post (existing code)
         const postsMap = new Map();
         postsWithComments.forEach(row => {
             if (!postsMap.has(row.post_id)) {
@@ -48,7 +54,7 @@ router.get('/', requireAuth, async (req, res) => {
                     comments: []
                 });
             }
-            
+
             if (row.comment_id) {
                 postsMap.get(row.post_id).comments.push({
                     comment_id: row.comment_id,
@@ -62,7 +68,6 @@ router.get('/', requireAuth, async (req, res) => {
 
         const posts = Array.from(postsMap.values());
 
-        // UPDATED: Get community users with their stats - EXCLUDE ADMINS
         const communityUsers = await query(`
             SELECT 
                 u.user_id,
@@ -76,13 +81,11 @@ router.get('/', requireAuth, async (req, res) => {
             FROM users u
             LEFT JOIN pets p ON u.user_id = p.user_id
             WHERE u.is_verified = true 
-            AND u.role = 'regular'  -- EXCLUDE ADMIN USERS
+            AND u.role = 'regular'
             GROUP BY u.user_id, u.username, u.profile_picture_url, u.bio, u.bio_requires_moderation, u.created_at, u.role
             ORDER BY u.created_at DESC
             LIMIT 20
         `);
-
-        // console.log(`✅ Loaded ${posts.length} community posts and ${communityUsers.length} regular users (admins hidden)`);
 
         res.render('community', {
             title: 'Community - Pet Care',
@@ -95,7 +98,7 @@ router.get('/', requireAuth, async (req, res) => {
                 const now = new Date();
                 const diffTime = Math.abs(now - joinDate);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
+
                 if (diffDays < 30) {
                     return `${diffDays} day${diffDays === 1 ? '' : 's'}`;
                 } else if (diffDays < 365) {
@@ -124,18 +127,17 @@ router.get('/', requireAuth, async (req, res) => {
     }
 });
 
-
-
-
-
-
-
-// GET /community/profile/:userId - View user profile
+/**
+ * GET /community/profile/:userId - Renders a user's public profile page.
+ * Shows user stats, recent posts, and pet information. Excludes admin profiles.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/profile/:userId', requireAuth, async (req, res) => {
     try {
         const userId = req.params.userId;
-        
-        // Get user profile with stats - EXCLUDE ADMINS
+
         const userProfile = await query(`
             SELECT 
                 u.user_id,
@@ -152,7 +154,7 @@ router.get('/profile/:userId', requireAuth, async (req, res) => {
             LEFT JOIN pets p ON u.user_id = p.user_id
             WHERE u.user_id = ? 
             AND u.is_verified = true
-            AND u.role = 'regular'  -- EXCLUDE ADMIN PROFILES
+            AND u.role = 'regular'
             GROUP BY u.user_id, u.username, u.profile_picture_url, u.bio, u.bio_requires_moderation, u.created_at, u.role
         `, [userId]);
 
@@ -165,8 +167,7 @@ router.get('/profile/:userId', requireAuth, async (req, res) => {
         }
 
         const profile = userProfile[0];
-        
-        // Get user's recent posts
+
         const userPosts = await query(`
             SELECT cp.*, COUNT(c.comment_id) as comment_count
             FROM community_posts cp
@@ -177,12 +178,11 @@ router.get('/profile/:userId', requireAuth, async (req, res) => {
             LIMIT 5
         `, [userId]);
 
-        // Calculate pet care duration
         const joinDate = new Date(profile.created_at);
         const now = new Date();
         const diffTime = Math.abs(now - joinDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         let petCareDuration;
         if (diffDays < 30) {
             petCareDuration = `${diffDays} day${diffDays === 1 ? '' : 's'}`;
@@ -219,17 +219,17 @@ router.get('/profile/:userId', requireAuth, async (req, res) => {
     }
 });
 
-
-
-// POST /community - Create a new post
+/**
+ * POST /community - Creates a new community post.
+ * Validates input and inserts post into database with auto-approval.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/', requireAuth, async (req, res) => {
-    // console.log('POST /community - Creating new post');
-    
     try {
         const { title, content } = req.body;
         const userId = req.session.userId;
-
-        // console.log('New post data:', { title, content, userId });
 
         if (!title || !content) {
             return res.status(400).render('community', {
@@ -243,10 +243,9 @@ router.post('/', requireAuth, async (req, res) => {
 
         await query(
             'INSERT INTO community_posts (user_id, title, content, is_approved) VALUES (?, ?, ?, ?)',
-            [userId, title, content, true] // Auto-approve for now
+            [userId, title, content, true]
         );
 
-        // console.log('Post created successfully');
         res.redirect('/community');
     } catch (error) {
         // console.error('Create post error:', error);
@@ -260,57 +259,51 @@ router.post('/', requireAuth, async (req, res) => {
     }
 });
 
-// POST /community/comments/:postId - Add comment to a post
+/**
+ * POST /community/comments/:postId - Adds a comment to a community post.
+ * Validates input, checks post existence, and inserts comment.
+ * Returns new comment data as JSON response.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/comments/:postId', requireAuth, async (req, res) => {
-    // console.log('POST /community/comments/:postId - Adding comment');
-    
     try {
         const { content } = req.body;
         const { postId } = req.params;
         const userId = req.session.userId;
 
-        // console.log('Comment data:', { content, postId, userId });
-
-        // Validation
         if (!content) {
-            // console.log('No content provided');
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Content is required' 
+            return res.status(400).json({
+                success: false,
+                error: 'Content is required'
             });
         }
 
         if (!postId || isNaN(postId)) {
-            // console.log('Invalid post ID:', postId);
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Invalid post ID' 
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid post ID'
             });
         }
 
-        // Check if post exists
         const post = await query(
             'SELECT * FROM community_posts WHERE post_id = ? AND (is_approved = true OR user_id = ?)',
             [postId, userId]
         );
 
         if (post.length === 0) {
-            // console.log('Post not found or not approved:', postId);
-            return res.status(404).json({ 
-                success: false, 
-                error: 'Post not found' 
+            return res.status(404).json({
+                success: false,
+                error: 'Post not found'
             });
         }
 
-        // Insert comment
         const result = await query(
             'INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)',
             [userId, postId, content]
         );
 
-        // console.log('Comment inserted successfully:', result.insertId);
-
-        // Get the new comment with username AND profile_picture_url
         const newComment = await query(`
             SELECT c.*, u.username, u.profile_picture_url 
             FROM comments c 
@@ -318,21 +311,27 @@ router.post('/comments/:postId', requireAuth, async (req, res) => {
             WHERE c.comment_id = ?
         `, [result.insertId]);
 
-        res.json({ 
-            success: true, 
-            comment: newComment[0] 
+        res.json({
+            success: true,
+            comment: newComment[0]
         });
 
     } catch (error) {
         // console.error('Add comment error:', error);
-        res.status(500).json({ 
-            success: false, 
-            error: 'Error posting comment' 
+        res.status(500).json({
+            success: false,
+            error: 'Error posting comment'
         });
     }
 });
 
-// GET /community/posts - API endpoint to get posts
+/**
+ * GET /community/posts - API endpoint to retrieve community posts.
+ * Returns JSON data of all approved posts.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/posts', requireAuth, async (req, res) => {
     try {
         const posts = await query(`
@@ -342,7 +341,7 @@ router.get('/posts', requireAuth, async (req, res) => {
             WHERE cp.is_approved = true
             ORDER BY cp.created_at DESC
         `);
-        
+
         res.json({ success: true, posts });
     } catch (error) {
         // console.error('Get posts API error:', error);
@@ -350,11 +349,17 @@ router.get('/posts', requireAuth, async (req, res) => {
     }
 });
 
-// GET /community/comments/:postId - API endpoint to get comments for a post
+/**
+ * GET /community/comments/:postId - API endpoint to retrieve comments for a specific post.
+ * Returns JSON data of comments for the specified post ID.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/comments/:postId', requireAuth, async (req, res) => {
     try {
         const { postId } = req.params;
-        
+
         const comments = await query(`
             SELECT c.*, u.username, u.profile_picture_url 
             FROM comments c
@@ -362,7 +367,7 @@ router.get('/comments/:postId', requireAuth, async (req, res) => {
             WHERE c.post_id = ?
             ORDER BY c.created_at ASC
         `, [postId]);
-        
+
         res.json({ success: true, comments });
     } catch (error) {
         // console.error('Get comments API error:', error);

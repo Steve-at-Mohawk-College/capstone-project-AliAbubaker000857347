@@ -1,7 +1,16 @@
 const { query } = require('../config/database');
 
 class NotificationModel {
-  // Create a new notification
+  /**
+   * Creates a new notification for a user.
+   * 
+   * @param {number} userId - ID of the user receiving the notification
+   * @param {string} type - Notification type (task_due, daily_digest, system, etc.)
+   * @param {string} title - Notification title
+   * @param {string} message - Notification message content
+   * @param {number|null} [relatedId=null] - ID of related item (task_id, etc.)
+   * @returns {Promise<Object>} Database insert result
+   */
   async createNotification(userId, type, title, message, relatedId = null) {
     const sql = `
       INSERT INTO notifications (user_id, type, title, message, related_id, is_read)
@@ -18,12 +27,17 @@ class NotificationModel {
     ]);
   }
 
-  // Get all notifications for a user - FIXED: Use template literal for LIMIT
+  /**
+   * Retrieves notifications for a specific user with pagination.
+   * Results are sorted by creation date (newest first).
+   * 
+   * @param {number} userId - ID of the user
+   * @param {number} [limit=50] - Maximum number of notifications to return (1-1000)
+   * @returns {Promise<Array>} Array of notification objects
+   */
   async getNotificationsByUser(userId, limit = 50) {
-    // Convert limit to integer and validate
     const limitInt = Math.max(1, Math.min(parseInt(limit, 10) || 50, 1000));
     
-    // Use template literal for LIMIT to avoid parameter binding issues
     const sql = `
       SELECT * FROM notifications 
       WHERE user_id = ? 
@@ -34,7 +48,12 @@ class NotificationModel {
     return query(sql, [userId]);
   }
 
-  // Get unread notifications count
+  /**
+   * Counts unread notifications for a user.
+   * 
+   * @param {number} userId - ID of the user
+   * @returns {Promise<number>} Count of unread notifications
+   */
   async getUnreadCount(userId) {
     const sql = `
       SELECT COUNT(*) as count 
@@ -45,7 +64,13 @@ class NotificationModel {
     return result[0].count;
   }
 
-  // Mark notification as read
+  /**
+   * Marks a specific notification as read for a user.
+   * 
+   * @param {number} notificationId - ID of the notification to mark as read
+   * @param {number} userId - ID of the user who owns the notification
+   * @returns {Promise<Object>} Database update result
+   */
   async markAsRead(notificationId, userId) {
     const sql = `
       UPDATE notifications 
@@ -55,7 +80,12 @@ class NotificationModel {
     return query(sql, [notificationId, userId]);
   }
 
-  // Mark all notifications as read
+  /**
+   * Marks all unread notifications as read for a user.
+   * 
+   * @param {number} userId - ID of the user
+   * @returns {Promise<Object>} Database update result
+   */
   async markAllAsRead(userId) {
     const sql = `
       UPDATE notifications 
@@ -65,7 +95,13 @@ class NotificationModel {
     return query(sql, [userId]);
   }
 
-  // Delete a notification
+  /**
+   * Deletes a specific notification belonging to a user.
+   * 
+   * @param {number} notificationId - ID of the notification to delete
+   * @param {number} userId - ID of the user who owns the notification
+   * @returns {Promise<Object>} Database delete result
+   */
   async deleteNotification(notificationId, userId) {
     const sql = `
       DELETE FROM notifications 
@@ -74,7 +110,13 @@ class NotificationModel {
     return query(sql, [notificationId, userId]);
   }
 
-  // Clean up old notifications (keep only last 100 per user)
+  /**
+   * Cleans up old notifications, keeping only the most recent 100 per user.
+   * Helps prevent notification table bloat.
+   * 
+   * @param {number} userId - ID of the user
+   * @returns {Promise<Object>} Database delete result
+   */
   async cleanupOldNotifications(userId) {
     const sql = `
       DELETE FROM notifications 
@@ -90,10 +132,6 @@ class NotificationModel {
     `;
     return query(sql, [userId, userId]);
   }
-
-  
 }
-
-
 
 module.exports = new NotificationModel();

@@ -1,33 +1,40 @@
-<%- include('partials/header', {title: 'Calendar - Pet Care Management'}) %>
-  
+<%- include('partials/header', {title: 'Calendar - Pet Care Management' }) %>
+
   <style>
     /* Reduce spacing */
     main {
       padding-top: 2rem;
       padding-bottom: 2rem;
     }
+
     h1 {
       margin-bottom: 1rem;
     }
+
     .lead {
       font-size: 1rem;
       margin-bottom: 1.5rem;
     }
+
     .nav-pills .nav-link {
       padding: 0.35rem 0.75rem;
       font-size: 0.9rem;
     }
+
     .accordion-button {
       padding: 0.6rem 1rem;
       font-size: 1rem;
     }
+
     .accordion-body {
       padding: 0.75rem 1rem;
       font-size: 0.95rem;
       line-height: 1.5;
     }
+
     .accordion-item {
-      margin-bottom: 0.5rem; /* reduce gap between sections */
+      margin-bottom: 0.5rem;
+      /* reduce gap between sections */
       border-radius: 0.5rem;
       overflow: hidden;
     }
@@ -37,12 +44,15 @@
       main {
         padding-top: 4rem;
       }
+
       .text-center.mb-4 {
         margin-top: 1rem;
       }
+
       h1 {
         font-size: 1.75rem;
       }
+
       .lead {
         font-size: 0.9rem;
       }
@@ -67,15 +77,16 @@
         </h2>
         <div id="collapseCollect" class="accordion-collapse collapse show" data-bs-parent="#privacyAccordion">
           <div class="accordion-body">
-            <p>We may collect personal details you provide such as your name, email, and pet information. 
-            We also track usage data such as schedules, health tracking, and community interactions.</p>
+            <p>We may collect personal details you provide such as your name, email, and pet information.
+              We also track usage data such as schedules, health tracking, and community interactions.</p>
           </div>
         </div>
       </div>
 
       <div class="accordion-item" id="storage">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStorage">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseStorage">
             2. How Your Data Is Stored
           </button>
         </h2>
@@ -92,7 +103,8 @@
 
       <div class="accordion-item" id="usage">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsage">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseUsage">
             3. How We Use Your Data
           </button>
         </h2>
@@ -109,21 +121,23 @@
 
       <div class="accordion-item" id="sharing">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSharing">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseSharing">
             4. Sharing of Information
           </button>
         </h2>
         <div id="collapseSharing" class="accordion-collapse collapse" data-bs-parent="#privacyAccordion">
           <div class="accordion-body">
-            <p>We <strong>do not sell</strong> your personal data.  
-            Limited sharing may occur with trusted providers (e.g., hosting, email) strictly to run the platform.</p>
+            <p>We <strong>do not sell</strong> your personal data.
+              Limited sharing may occur with trusted providers (e.g., hosting, email) strictly to run the platform.</p>
           </div>
         </div>
       </div>
 
       <div class="accordion-item" id="rights">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRights">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseRights">
             5. Your Rights
           </button>
         </h2>
@@ -140,35 +154,38 @@
 
       <div class="accordion-item" id="retention">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRetention">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseRetention">
             6. Data Retention
           </button>
         </h2>
         <div id="collapseRetention" class="accordion-collapse collapse" data-bs-parent="#privacyAccordion">
           <div class="accordion-body">
-            <p>Your data is stored while your account is active.  
-            If deleted, data is permanently removed except where legally required.</p>
+            <p>Your data is stored while your account is active.
+              If deleted, data is permanently removed except where legally required.</p>
           </div>
         </div>
       </div>
 
       <div class="accordion-item" id="contact">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContact">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseContact">
             7. Contact Us
           </button>
         </h2>
         <div id="collapseContact" class="accordion-collapse collapse" data-bs-parent="#privacyAccordion">
           <div class="accordion-body">
-            <p>If you have questions, email us at  
-              <a href="mailto:support@petcare.com">support@petcare.com</a>.</p>
+            <p>If you have questions, email us at
+              <a href="mailto:support@petcare.com">support@petcare.com</a>
+            </p>
           </div>
         </div>
       </div>
     </div>
   </main>
 
-  
 
 
-<%- include('partials/footer') %>
+
+  <%- include('partials/footer') %>

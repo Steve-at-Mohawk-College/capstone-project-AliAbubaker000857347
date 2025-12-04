@@ -1,323 +1,329 @@
 <%- include('partials/header', { title: 'Add New Pet' }) %>
 
-<style>
-/* ===== FIX HEADER GAP FOR ADD PET PAGE ===== */
-/* Remove ALL spacing from body */
-body {
-    padding-top: 0 !important;
-    margin: 0 !important;
-}
+  <style>
+    /* Remove ALL spacing from body */
+    body {
+      padding-top: 0 !important;
+      margin: 0 !important;
+    }
 
-/* Target the navbar directly */
-.navbar-modern {
-    position: relative !important;
-    top: auto !important;
-}
+    /* Target the navbar directly */
+    .navbar-modern {
+      position: relative !important;
+      top: auto !important;
+    }
 
-/* Remove ALL padding and margins from main container */
-.container-fluid {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-}
+    .container-fluid {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
 
-/* Remove spacing from the row and card */
-.row.justify-content-center {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+    /* Remove spacing from the row and card */
+    .row.justify-content-center {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
 
-.col-md-8.col-lg-6 {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
+    .col-md-8.col-lg-6 {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
 
-.card.shadow-sm {
-    margin-top: 0 !important;
-    border-top: none !important;
-}
+    .card.shadow-sm {
+      margin-top: 0 !important;
+      border-top: none !important;
+    }
 
-/* Remove any potential spacing from header partial */
-header {
-    margin-bottom: 0 !important;
-}
+    /* Remove any potential spacing from header partial */
+    header {
+      margin-bottom: 0 !important;
+    }
 
-/* Your existing styles */
-.list-group-item {
-  border: 1px solid #dee2e6;
-  border-top: none;
-  cursor: pointer;
-  transition: background-color 0.15s ease-in-out;
-}
+    .list-group-item {
+      border: 1px solid #dee2e6;
+      border-top: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease-in-out;
+    }
 
-.list-group-item:first-child {
-  border-top: 1px solid #dee2e6;
-  border-top-left-radius: 0.375rem;
-  border-top-right-radius: 0.375rem;
-}
+    .list-group-item:first-child {
+      border-top: 1px solid #dee2e6;
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+    }
 
-.list-group-item:last-child {
-  border-bottom-left-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
-}
+    .list-group-item:last-child {
+      border-bottom-left-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
+    }
 
-.list-group-item:hover {
-  background-color: #f8f9fa;
-}
+    .list-group-item:hover {
+      background-color: #f8f9fa;
+    }
 
-#breedSuggestions {
-  max-height: 200px;
-  overflow-y: auto;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  border-radius: 0.375rem;
-}
+    #breedSuggestions {
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      border-radius: 0.375rem;
+    }
 
-.is-invalid {
-  border-color: #dc3545;
-  padding-right: calc(1.5em + 0.75rem);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6.4.4.4-.4'/%3e%3cpath d='M6 7v1'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right calc(0.375em + 0.1875rem) center;
-  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-}
+    .is-invalid {
+      border-color: #dc3545;
+      padding-right: calc(1.5em + 0.75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6.4.4.4-.4'/%3e%3cpath d='M6 7v1'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
 
-.is-valid {
-  border-color: #198754;
-  padding-right: calc(1.5em + 0.75rem);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right calc(0.375em + 0.1875rem) center;
-  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-}
+    .is-valid {
+      border-color: #198754;
+      padding-right: calc(1.5em + 0.75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
 
-.form-label {
-    color: var(--bs-body-color) !important;
-}
+    .form-label {
+      color: var(--bs-body-color) !important;
+    }
 
-/* Ensure tooltip icons have proper contrast */
-.bi-info-circle {
-    color: var(--bs-secondary) !important;
-}
+    /* Ensure tooltip icons have proper contrast */
+    .bi-info-circle {
+      color: var(--bs-secondary) !important;
+    }
 
-/* Fix any specific label overrides */
-label[for="name"],
-label[for="species"],
-label[for="breed"],
-label[for="age"],
-label[for="gender"],
-label[for="weight"] {
-    color: var(--bs-body-color) !important;
-    opacity: 1 !important;
-}
+    /* Fix any specific label overrides */
+    label[for="name"],
+    label[for="species"],
+    label[for="breed"],
+    label[for="age"],
+    label[for="gender"],
+    label[for="weight"] {
+      color: var(--bs-body-color) !important;
+      opacity: 1 !important;
+    }
 
-/* Style for the Back to Dashboard button */
-.back-to-dashboard-btn {
-    display: inline-block;
-    padding: 0.625rem 2rem;
-    font-weight: 600;
-    text-align: center;
-    text-decoration: none;
-    border: 2px solid #6c757d;
-    border-radius: 50rem; /* Same rounded-pill as Save Pet */
-    background-color: transparent;
-    color: #6c757d;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    width: 100%;
-}
+    /* Style for the Back to Dashboard button */
+    .back-to-dashboard-btn {
+      display: inline-block;
+      padding: 0.625rem 2rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      border: 2px solid #6c757d;
+      border-radius: 50rem;
+      /* Same rounded-pill as Save Pet */
+      background-color: transparent;
+      color: #6c757d;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+      width: 100%;
+    }
 
-.back-to-dashboard-btn:hover {
-    background-color: #6c757d;
-    color: white;
-    text-decoration: none;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
-}
+    .back-to-dashboard-btn:hover {
+      background-color: #6c757d;
+      color: white;
+      text-decoration: none;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+    }
 
-.back-to-dashboard-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
-}
+    .back-to-dashboard-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+    }
 
-/* Dark mode support */
-[data-bs-theme="dark"] .back-to-dashboard-btn {
-    border-color: #a7acb1;
-    color: #a7acb1;
-}
+    /* Dark mode support */
+    [data-bs-theme="dark"] .back-to-dashboard-btn {
+      border-color: #a7acb1;
+      color: #a7acb1;
+    }
 
-[data-bs-theme="dark"] .back-to-dashboard-btn:hover {
-    background-color: #a7acb1;
-    color: #000000;
-    box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
-}
+    [data-bs-theme="dark"] .back-to-dashboard-btn:hover {
+      background-color: #a7acb1;
+      color: #000000;
+      box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
+    }
 
-/* Ensure proper spacing */
-.mt-4.text-center {
-    display: flex;
-    justify-content: center;
-}
-</style>
+    /* Ensure proper spacing */
+    .mt-4.text-center {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
 
-<div class="row justify-content-center">
-  <div class="col-md-8 col-lg-6">
-    <div class="card shadow-sm border-0 rounded-4">
-      <div class="card-body p-4">
-        <h1 class="h3 mb-4 text-center text-primary fw-bold">Add a Pet</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+          <h1 class="h3 mb-4 text-center text-primary fw-bold">Add a Pet</h1>
 
-        <% if (typeof message !== 'undefined' && message) { %>
-          <div class="alert alert-info text-center"><%= message %></div>
-        <% } %>
+          <% if (typeof message !=='undefined' && message) { %>
+            <div class="alert alert-info text-center">
+              <%= message %>
+            </div>
+            <% } %>
 
-        <% if (typeof error !== 'undefined' && error) { %>
-          <div class="alert alert-danger text-center"><%= error %></div>
-        <% } %>
+              <% if (typeof error !=='undefined' && error) { %>
+                <div class="alert alert-danger text-center">
+                  <%= error %>
+                </div>
+                <% } %>
 
-        <form id="petForm" action="/pets" method="POST" novalidate>
-          <!-- CSRF Protection -->
-          <% if (typeof csrfToken !== 'undefined') { %>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <% } %>
+                  <form id="petForm" action="/pets" method="POST" novalidate>
+                    <!-- CSRF Protection -->
+                    <% if (typeof csrfToken !=='undefined' ) { %>
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <% } %>
 
-          <!-- Hidden fields to preserve form data after submission -->
-          <input type="hidden" id="preservedName" value="<%= typeof name !== 'undefined' ? name : '' %>">
-          <input type="hidden" id="preservedSpecies" value="<%= typeof species !== 'undefined' ? species : '' %>">
-          <input type="hidden" id="preservedOtherSpecies" value="<%= typeof otherSpecies !== 'undefined' ? otherSpecies : '' %>">
-          <input type="hidden" id="preservedBreed" value="<%= typeof breed !== 'undefined' ? breed : '' %>">
-          <input type="hidden" id="preservedAge" value="<%= typeof age !== 'undefined' ? age : '' %>">
-          <input type="hidden" id="preservedGender" value="<%= typeof gender !== 'undefined' ? gender : '' %>">
-          <input type="hidden" id="preservedWeight" value="<%= typeof weight !== 'undefined' ? weight : '' %>">
-          <input type="hidden" id="fieldErrors" value='<%= typeof fieldErrors !== 'undefined' ? JSON.stringify(fieldErrors) : "{}" %>'>
+                        <!-- Hidden fields to preserve form data after submission -->
+                        <input type="hidden" id="preservedName" value="<%= typeof name !== 'undefined' ? name : '' %>">
+                        <input type="hidden" id="preservedSpecies"
+                          value="<%= typeof species !== 'undefined' ? species : '' %>">
+                        <input type="hidden" id="preservedOtherSpecies"
+                          value="<%= typeof otherSpecies !== 'undefined' ? otherSpecies : '' %>">
+                        <input type="hidden" id="preservedBreed"
+                          value="<%= typeof breed !== 'undefined' ? breed : '' %>">
+                        <input type="hidden" id="preservedAge" value="<%= typeof age !== 'undefined' ? age : '' %>">
+                        <input type="hidden" id="preservedGender"
+                          value="<%= typeof gender !== 'undefined' ? gender : '' %>">
+                        <input type="hidden" id="preservedWeight"
+                          value="<%= typeof weight !== 'undefined' ? weight : '' %>">
+                        <input type="hidden" id="fieldErrors" value='<%= typeof fieldErrors !== 'undefined' ?
+                          JSON.stringify(fieldErrors) : "{}" %>'>
 
-          <!-- Pet Name -->
-          <div class="mb-3">
-            <label for="name" class="form-label fw-semibold">
-              Pet Name *
-              <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
-   data-bs-trigger="hover focus"
-   title="2–50 letters, spaces, apostrophes, or hyphens. Example: Buddy, O'Malley, Rex Jr"></i>
+                        <!-- Pet Name -->
+                        <div class="mb-3">
+                          <label for="name" class="form-label fw-semibold">
+                            Pet Name *
+                            <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
+                              data-bs-trigger="hover focus"
+                              title="2–50 letters, spaces, apostrophes, or hyphens. Example: Buddy, O'Malley, Rex Jr"></i>
 
-            </label>
-            <input type="text" class="form-control" id="name" name="name"
-       required minlength="2" maxlength="50"
-       autocomplete="off"
-       value="<%= typeof name !== 'undefined' ? name : '' %>">
-            <div class="invalid-feedback" id="nameError">Enter a valid pet name (letters only).</div>
-          </div>
+                          </label>
+                          <input type="text" class="form-control" id="name" name="name" required minlength="2"
+                            maxlength="50" autocomplete="off" value="<%= typeof name !== 'undefined' ? name : '' %>">
+                          <div class="invalid-feedback" id="nameError">Enter a valid pet name (letters only).</div>
+                        </div>
 
-          <!-- Species Dropdown -->
-          <div class="mb-3">
-            <label for="species" class="form-label fw-semibold">
-              Species *
+                        <!-- Species Dropdown -->
+                        <div class="mb-3">
+                          <label for="species" class="form-label fw-semibold">
+                            Species *
 
-              <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
-   data-bs-trigger="hover focus"
-   title="Select the species of your pet"></i>
+                            <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
+                              data-bs-trigger="hover focus" title="Select the species of your pet"></i>
 
-              
-            </label>
-            <select class="form-select" id="species" name="species" required>
-              <option value="">-- Select Species --</option>
-              <option value="dog" <%= (typeof species !== 'undefined' && species === 'dog') ? 'selected' : '' %>>Dog</option>
-              <option value="cat" <%= (typeof species !== 'undefined' && species === 'cat') ? 'selected' : '' %>>Cat</option>
-              <option value="bird" <%= (typeof species !== 'undefined' && species === 'bird') ? 'selected' : '' %>>Bird</option>
-              <option value="other" <%= (typeof species !== 'undefined' && species === 'other') ? 'selected' : '' %>>Other</option>
-            </select>
-            <div class="invalid-feedback" id="speciesError">Please select a species.</div>
-          </div>
 
-          <!-- Other Species Input (Hidden by default) -->
-          <div class="mb-3" id="otherSpeciesContainer" style="display: <%= (typeof species !== 'undefined' && species === 'other') ? 'block' : 'none' %>;">
-            <label for="otherSpecies" class="form-label fw-semibold">
-              Specify Species *
-             
-<i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
-   data-bs-trigger="hover focus"
-   title="Please specify the species of your pet"></i>
-              
-                
-            </label>
-            <input type="text" class="form-control" id="otherSpecies" name="otherSpecies"
-                   pattern="^[A-Za-z\s]+$" autocomplete="off"
-                   value="<%= typeof otherSpecies !== 'undefined' ? otherSpecies : '' %>"
-                   <%= (typeof species !== 'undefined' && species === 'other') ? 'required' : '' %>>
-            <div class="invalid-feedback" id="otherSpeciesError">Please enter a valid species name.</div>
-          </div>
+                          </label>
+                          <select class="form-select" id="species" name="species" required>
+                            <option value="">-- Select Species --</option>
+                            <option value="dog" <%=(typeof species !=='undefined' && species==='dog' ) ? 'selected' : ''
+                              %>>Dog</option>
+                            <option value="cat" <%=(typeof species !=='undefined' && species==='cat' ) ? 'selected' : ''
+                              %>>Cat</option>
+                            <option value="bird" <%=(typeof species !=='undefined' && species==='bird' ) ? 'selected'
+                              : '' %>>Bird</option>
+                            <option value="other" <%=(typeof species !=='undefined' && species==='other' ) ? 'selected'
+                              : '' %>>Other</option>
+                          </select>
+                          <div class="invalid-feedback" id="speciesError">Please select a species.</div>
+                        </div>
 
-          <!-- Breed -->
-          <div class="mb-3 position-relative">
-            <label for="breed" class="form-label fw-semibold">
-              Breed *
-              <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
-                 data-bs-trigger="hover focus"
-                 title="Example: Golden Retriever, Siamese, Persian."></i>
-            </label>
-            <input type="text" class="form-control" id="breed" name="breed" required autocomplete="off"
-                   value="<%= typeof breed !== 'undefined' ? breed : '' %>">
-            <div id="breedSuggestions" class="list-group position-absolute w-100 mt-1" style="z-index: 1000; display: none;"></div>
-            <div class="invalid-feedback" id="breedError">Please enter a valid breed.</div>
-          </div>
+                        <!-- Other Species Input (Hidden by default) -->
+                        <div class="mb-3" id="otherSpeciesContainer"
+                          style="display: <%= (typeof species !== 'undefined' && species === 'other') ? 'block' : 'none' %>;">
+                          <label for="otherSpecies" class="form-label fw-semibold">
+                            Specify Species *
 
-          <!-- Age -->
-          <div class="mb-3">
-            <label for="age" class="form-label fw-semibold">
-              Age (years) *
-              <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
-                 data-bs-trigger="hover focus"
-                 title="Enter in years. Example: 0.5 = 6 months, 2.0 = 2 years."></i>
-            </label>
-            <input type="number" class="form-control" id="age" name="age"
-                   min="0.1" step="0.1" required
-                   value="<%= typeof age !== 'undefined' ? age : '' %>">
-            <div class="invalid-feedback" id="ageError">Please enter a valid age greater than 0 and less than 50.</div>
-          </div>
+                            <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
+                              data-bs-trigger="hover focus" title="Please specify the species of your pet"></i>
 
-          <!-- Gender -->
-          <div class="mb-3">
-            <label for="gender" class="form-label fw-semibold">
-              Gender *
-              <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
-                 data-bs-trigger="hover focus"
-                 title="Choose one: Male, Female, Other."></i>
-            </label>
-            <select class="form-select" id="gender" name="gender" required>
-              <option value="">-- Select Gender --</option>
-              <option value="male" <%= (typeof gender !== 'undefined' && gender === 'male') ? 'selected' : '' %>>Male</option>
-              <option value="female" <%= (typeof gender !== 'undefined' && gender === 'female') ? 'selected' : '' %>>Female</option>
-              <option value="other" <%= (typeof gender !== 'undefined' && gender === 'other') ? 'selected' : '' %>>Other</option>
-            </select>
-            <div class="invalid-feedback" id="genderError">Please select a gender.</div>
-          </div>
 
-          <!-- Weight -->
-          <div class="mb-4">
-            <label for="weight" class="form-label fw-semibold">
-              Weight (kg) *
-              <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
-                 data-bs-trigger="hover focus"
-                 title="Example: 4.5, 10.0, 30.2."></i>
-            </label>
-            <input type="number" class="form-control" id="weight" name="weight"
-                   min="0.1" step="0.1" required
-                   value="<%= typeof weight !== 'undefined' ? weight : '' %>">
-            <div class="invalid-feedback" id="weightError">Weight must be a positive number.</div>
-          </div>
+                          </label>
+                          <input type="text" class="form-control" id="otherSpecies" name="otherSpecies"
+                            pattern="^[A-Za-z\s]+$" autocomplete="off"
+                            value="<%= typeof otherSpecies !== 'undefined' ? otherSpecies : '' %>" <%=(typeof species
+                            !=='undefined' && species==='other' ) ? 'required' : '' %>>
+                          <div class="invalid-feedback" id="otherSpeciesError">Please enter a valid species name.</div>
+                        </div>
 
-          <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-semibold">
-            <i class="bi bi-plus-circle me-2"></i> Save Pet
-          </button>
-           <div class="mt-4 text-center">
-    <a href="/dashboard" class="back-to-dashboard-btn">
-        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-    </a>
-</div>
-        </form>
+                        <!-- Breed -->
+                        <div class="mb-3 position-relative">
+                          <label for="breed" class="form-label fw-semibold">
+                            Breed *
+                            <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
+                              data-bs-trigger="hover focus" title="Example: Golden Retriever, Siamese, Persian."></i>
+                          </label>
+                          <input type="text" class="form-control" id="breed" name="breed" required autocomplete="off"
+                            value="<%= typeof breed !== 'undefined' ? breed : '' %>">
+                          <div id="breedSuggestions" class="list-group position-absolute w-100 mt-1"
+                            style="z-index: 1000; display: none;"></div>
+                          <div class="invalid-feedback" id="breedError">Please enter a valid breed.</div>
+                        </div>
 
-      
+                        <!-- Age -->
+                        <div class="mb-3">
+                          <label for="age" class="form-label fw-semibold">
+                            Age (years) *
+                            <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
+                              data-bs-trigger="hover focus"
+                              title="Enter in years. Example: 0.5 = 6 months, 2.0 = 2 years."></i>
+                          </label>
+                          <input type="number" class="form-control" id="age" name="age" min="0.1" step="0.1" required
+                            value="<%= typeof age !== 'undefined' ? age : '' %>">
+                          <div class="invalid-feedback" id="ageError">Please enter a valid age greater than 0 and less
+                            than 50.</div>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="mb-3">
+                          <label for="gender" class="form-label fw-semibold">
+                            Gender *
+                            <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
+                              data-bs-trigger="hover focus" title="Choose one: Male, Female, Other."></i>
+                          </label>
+                          <select class="form-select" id="gender" name="gender" required>
+                            <option value="">-- Select Gender --</option>
+                            <option value="male" <%=(typeof gender !=='undefined' && gender==='male' ) ? 'selected' : ''
+                              %>>Male</option>
+                            <option value="female" <%=(typeof gender !=='undefined' && gender==='female' ) ? 'selected'
+                              : '' %>>Female</option>
+                            <option value="other" <%=(typeof gender !=='undefined' && gender==='other' ) ? 'selected'
+                              : '' %>>Other</option>
+                          </select>
+                          <div class="invalid-feedback" id="genderError">Please select a gender.</div>
+                        </div>
+
+                        <!-- Weight -->
+                        <div class="mb-4">
+                          <label for="weight" class="form-label fw-semibold">
+                            Weight (kg) *
+                            <i class="bi bi-info-circle text-muted ms-1" tabindex="0" data-bs-toggle="tooltip"
+                              data-bs-trigger="hover focus" title="Example: 4.5, 10.0, 30.2."></i>
+                          </label>
+                          <input type="number" class="form-control" id="weight" name="weight" min="0.1" step="0.1"
+                            required value="<%= typeof weight !== 'undefined' ? weight : '' %>">
+                          <div class="invalid-feedback" id="weightError">Weight must be a positive number.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-semibold">
+                          <i class="bi bi-plus-circle me-2"></i> Save Pet
+                        </button>
+                        <div class="mt-4 text-center">
+                          <a href="/dashboard" class="back-to-dashboard-btn">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                          </a>
+                        </div>
+                  </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script src="/js/addingPet.js"></script>
+  <script src="/js/addingPet.js"></script>
 
-<%- include('partials/footer') %>
-
+  <%- include('partials/footer') %>

@@ -19,11 +19,13 @@
                 <ul class="list-unstyled">
                     <% if (typeof username !=='undefined' ) { %>
                         <li class="mb-2"><a href="/dashboard" class="text-light text-decoration-none">Dashboard</a></li>
-                        <li class="mb-2"><a href="/health-tracker-history" class="text-light text-decoration-none">Health</a></li>
-                    <% } else { %>
-                        <li class="mb-2"><a href="/login" class="text-light text-decoration-none">Login</a></li>
-                        <li class="mb-2"><a href="/register" class="text-light text-decoration-none">Register</a></li>
-                    <% } %>
+                        <li class="mb-2"><a href="/health-tracker-history"
+                                class="text-light text-decoration-none">Health</a></li>
+                        <% } else { %>
+                            <li class="mb-2"><a href="/login" class="text-light text-decoration-none">Login</a></li>
+                            <li class="mb-2"><a href="/register" class="text-light text-decoration-none">Register</a>
+                            </li>
+                            <% } %>
                 </ul>
             </div>
 
@@ -66,8 +68,9 @@
 <% if (typeof additionalScripts !=='undefined' ) { %>
     <% additionalScripts.forEach(script=> { %>
         <script src="<%= script %>"></script>
-    <% }); %>
-<% } %>
+        <% }); %>
+            <% } %>
 
 </body>
+
 </html>

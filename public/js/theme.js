@@ -1,3 +1,7 @@
+/**
+ * ThemeManager - Manages theme switching between light and dark modes.
+ * Provides persistent theme storage, system preference detection, and visual feedback.
+ */
 class ThemeManager {
     constructor() {
         this.themeToggle = document.getElementById('themeToggle');
@@ -11,25 +15,51 @@ class ThemeManager {
         }
     }
 
+    /**
+     * Initializes the theme manager.
+     * Applies stored theme and sets up event listeners.
+     */
     init() {
         this.applyTheme(this.currentTheme);
         this.setupEventListeners();
     }
 
+    /**
+     * Retrieves stored theme preference from localStorage.
+     * 
+     * @returns {string|null} Stored theme preference or null if not set
+     */
     getStoredTheme() {
         return localStorage.getItem('theme');
     }
 
+    /**
+     * Stores theme preference in localStorage.
+     * 
+     * @param {string} theme - Theme to store ('light' or 'dark')
+     */
     setStoredTheme(theme) {
         localStorage.setItem('theme', theme);
     }
 
+    /**
+     * Applies the specified theme to the document.
+     * Updates data-theme attribute, toggle icon, and storage.
+     * 
+     * @param {string} theme - Theme to apply ('light' or 'dark')
+     */
     applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         this.updateToggleIcon(theme);
         this.setStoredTheme(theme);
     }
 
+    /**
+     * Updates the theme toggle icon based on current theme.
+     * Shows/hides appropriate sun/moon icons and updates tooltip.
+     * 
+     * @param {string} theme - Current theme ('light' or 'dark')
+     */
     updateToggleIcon(theme) {
         if (!this.lightIcon || !this.darkIcon) return;
         
@@ -44,6 +74,10 @@ class ThemeManager {
         }
     }
 
+    /**
+     * Toggles between light and dark themes.
+     * Applies new theme and dispatches custom event for other components.
+     */
     toggleTheme() {
         this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
         this.applyTheme(this.currentTheme);
@@ -54,6 +88,9 @@ class ThemeManager {
         }));
     }
 
+    /**
+     * Sets up event listeners for theme toggle and system preference changes.
+     */
     setupEventListeners() {
         if (this.themeToggle) {
             this.themeToggle.addEventListener('click', () => this.toggleTheme());
@@ -68,13 +105,20 @@ class ThemeManager {
         });
     }
 
-    // Method to get current theme (can be used by other scripts)
+    /**
+     * Returns the current theme.
+     * 
+     * @returns {string} Current theme ('light' or 'dark')
+     */
     getCurrentTheme() {
         return this.currentTheme;
     }
 }
 
-// Initialize theme manager when DOM is loaded
+/**
+ * Initializes the ThemeManager when the DOM is fully loaded.
+ * Makes themeManager globally available for other scripts.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     window.themeManager = new ThemeManager();
 });

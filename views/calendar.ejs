@@ -1,614 +1,609 @@
-<%- include('partials/header', {title: 'Calendar - Pet Care Management'}) %>
-
-<style>
-/* ===== MODERN CALENDAR STYLES ===== */
-.calendar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: var(--light-card);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    border: 1px solid var(--light-border);
-}
-
-.calendar-nav {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.calendar-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
-    color: var(--light-text);
-    min-width: 200px;
-    text-align: center;
-}
-
-.calendar-nav button {
-    background: var(--light-bg);
-    border: 1px solid var(--light-border);
-    border-radius: 10px;
-    padding: 0.75rem;
-    color: var(--light-text);
-    transition: all 0.3s ease;
-}
-
-.calendar-nav button:hover {
-    background: var(--accent);
-    color: white;
-    transform: translateY(-2px);
-}
-
-.calendar-actions {
-    display: flex;
-    gap: 1rem;
-}
-
-.calendar-actions .btn {
-    border-radius: 10px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.calendar-actions .btn:hover {
-    transform: translateY(-2px);
-}
-
-/* Calendar Grid - Card Style */
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.calendar-day-header {
-    text-align: center;
-    font-weight: 600;
-    color: var(--light-muted);
-    padding: 1rem 0.5rem;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: var(--light-card);
-    border-radius: 10px;
-    border: 1px solid var(--light-border);
-}
-
-.calendar-day-card {
-    background: var(--light-card);
-    border: 2px solid var(--light-border);
-    border-radius: 12px;
-    padding: 1rem 0.75rem;
-    min-height: 140px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-.calendar-day-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.15);
-}
-
-.calendar-day-card.today {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(67, 97, 238, 0.02) 100%);
-}
-
-.calendar-day-card.selected {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, var(--accent) 0%, #5a7aff 100%);
-    color: white;
-}
-
-.calendar-day-card.selected .day-number {
-    color: white;
-}
-
-.calendar-day-card.selected .task-indicator {
-    background: rgba(255,255,255,0.2);
-    border-color: rgba(255,255,255,0.3);
-    color: white;
-}
-
-.calendar-day-card.empty {
-    background: transparent;
-    border-color: transparent;
-    cursor: default;
-}
-
-.calendar-day-card.empty:hover {
-    background: transparent;
-    transform: none;
-    box-shadow: none;
-}
-
-.day-number {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--light-text);
-    margin-bottom: 0.75rem;
-    text-align: center;
-}
-
-.task-indicators {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    overflow: hidden;
-}
-
-.task-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.6rem;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: rgba(67, 97, 238, 0.08);
-    border: 1px solid rgba(67, 97, 238, 0.12);
-    transition: all 0.3s ease;
-}
-
-.task-indicator.high {
-    background: rgba(220, 53, 69, 0.1);
-    border-color: rgba(220, 53, 69, 0.2);
-    color: #dc3545;
-}
-
-.task-indicator.medium {
-    background: rgba(255, 193, 7, 0.1);
-    border-color: rgba(255, 193, 7, 0.2);
-    color: #d4a907;
-}
-
-.task-indicator.low {
-    background: rgba(40, 167, 69, 0.1);
-    border-color: rgba(40, 167, 69, 0.2);
-    color: #28a745;
-}
-
-.more-tasks {
-    text-align: center;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--light-muted);
-    background: rgba(108, 117, 125, 0.1);
-    border-radius: 6px;
-    padding: 0.2rem 0.4rem;
-    margin-top: 0.2rem;
-}
-
-/* Task Items in Modal */
-.task-item-calendar {
-    background: var(--light-card);
-    border: 1px solid var(--light-border);
-    border-radius: 10px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
-}
-
-.task-item-calendar:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-/* Modal Styling */
-.modal-content {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-    background: var(--light-card);
-    border-bottom: 1px solid var(--light-border);
-    padding: 1.5rem 2rem;
-}
-
-.modal-title {
-    font-weight: 700;
-    color: var(--light-text);
-    margin: 0;
-}
-
-.modal-body {
-    padding: 2rem;
-    color: var(--light-text);
-}
-
-.modal-footer {
-    border-top: 1px solid var(--light-border);
-    padding: 1rem 2rem;
-}
-
-/* ===== DARK THEME SUPPORT ===== */
-[data-theme="dark"] .calendar-header {
-    background: var(--dark-card);
-    border-color: var(--dark-border);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-[data-theme="dark"] .calendar-nav button {
-    background: var(--dark-bg);
-    border-color: var(--dark-border);
-    color: var(--dark-text);
-}
-
-[data-theme="dark"] .calendar-nav button:hover {
-    background: var(--accent);
-    color: white;
-}
-
-[data-theme="dark"] .calendar-day-header {
-    background: var(--dark-card);
-    border-color: var(--dark-border);
-    color: var(--dark-muted);
-}
-
-[data-theme="dark"] .calendar-day-card {
-    background: var(--dark-card);
-    border-color: var(--dark-border);
-}
-
-[data-theme="dark"] .calendar-day-card:hover {
-    border-color: var(--accent);
-}
-
-[data-theme="dark"] .calendar-day-card.today {
-    border-color: var(--accent);
-    background: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(67, 97, 238, 0.05) 100%);
-}
-
-[data-theme="dark"] .calendar-day-card.selected {
-    background: linear-gradient(135deg, var(--accent) 0%, #5a7aff 100%);
-}
-
-[data-theme="dark"] .day-number {
-    color: var(--dark-text);
-}
-
-[data-theme="dark"] .task-indicator {
-    background: rgba(67, 97, 238, 0.15);
-    border-color: rgba(67, 97, 238, 0.25);
-    color: #8bb9fe;
-}
-
-[data-theme="dark"] .task-item-calendar {
-    background: var(--dark-card);
-    border-color: var(--dark-border);
-}
-
-[data-theme="dark"] .modal-header {
-    background: var(--dark-card);
-    border-bottom-color: var(--dark-border);
-}
-
-[data-theme="dark"] .modal-title {
-    color: var(--dark-text);
-}
-
-[data-theme="dark"] .modal-body {
-    color: var(--dark-text);
-    background: var(--dark-bg);
-}
-
-[data-theme="dark"] .modal-footer {
-    border-top-color: var(--dark-border);
-    background: var(--dark-card);
-}
-
-[data-theme="dark"] .modal-content {
-    background: var(--dark-bg);
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1024px) {
-    .calendar-container {
-        padding: 0.75rem;
-    }
-    
-    .calendar-day-card {
-        min-height: 120px;
-        padding: 0.75rem 0.5rem;
-    }
-    
-    .day-number {
-        font-size: 1rem;
-    }
-    
-    .task-indicator {
-        padding: 0.3rem 0.4rem;
-        font-size: 0.7rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .calendar-header {
-        flex-direction: column;
-        gap: 1.5rem;
-        text-align: center;
-        padding: 1.25rem;
-    }
-    
-    .calendar-nav {
-        order: 2;
-    }
-    
-    .calendar-actions {
-        order: 1;
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .calendar-title {
-        min-width: auto;
-        font-size: 1.25rem;
-    }
-    
-    .calendar-grid {
-        gap: 0.5rem;
-    }
-    
-    .calendar-day-card {
-        min-height: 100px;
-        padding: 0.5rem 0.25rem;
-    }
-    
-    .day-number {
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .task-indicators {
-        gap: 0.2rem;
-    }
-    
-    .task-indicator {
-        padding: 0.2rem 0.3rem;
-        font-size: 0.65rem;
-    }
-    
-    .modal-body {
-        padding: 1.5rem;
-    }
-}
-
-@media (max-width: 640px) {
-    .calendar-grid {
-        grid-template-columns: repeat(7, 1fr);
-        gap: 0.25rem;
-    }
-    
-    .calendar-day-header {
-        padding: 0.75rem 0.25rem;
-        font-size: 0.75rem;
-    }
-    
-    .calendar-day-card {
-        min-height: 80px;
-        padding: 0.4rem 0.2rem;
-    }
-    
-    .day-number {
-        font-size: 0.8rem;
-        margin-bottom: 0.25rem;
-    }
-    
-    .task-indicator {
-        padding: 0.15rem 0.2rem;
-        font-size: 0.6rem;
-    }
-    
-    .more-tasks {
-        font-size: 0.6rem;
-        padding: 0.1rem 0.2rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .calendar-container {
-        padding: 0.5rem;
-    }
-    
-    .calendar-header {
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .calendar-actions .btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.875rem;
-    }
-    
-    .calendar-nav button {
-        padding: 0.6rem;
-    }
-    
-    .modal-header,
-    .modal-footer {
-        padding: 1rem 1.5rem;
-    }
-    
-    .modal-body {
-        padding: 1.25rem;
-    }
-}
-
-/* Empty state styling */
-.calendar-empty-state {
-    text-align: center;
-    padding: 3rem 2rem;
-    color: var(--light-muted);
-}
-
-[data-theme="dark"] .calendar-empty-state {
-    color: var(--dark-muted);
-}
-
-/* Ensure all text is visible */
-.calendar-day-card,
-.calendar-day-header,
-.modal-title,
-.modal-body,
-.task-item-calendar {
-    color: inherit !important;
-}
-
-.text-muted {
-    color: #6c757d !important;
-}
-
-[data-theme="dark"] .text-muted {
-    color: #adb5bd !important;
-}
-/* Fix dark mode for modal - SOLID BLACK BACKGROUND */
-[data-theme="dark"] .modal-content {
-    background: #000000 !important;
-    color: #ffffff !important;
-    border: 1px solid #333333 !important;
-}
-
-[data-theme="dark"] .modal-header {
-    background: #000000 !important;
-    border-bottom-color: #333333 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .modal-body {
-    background: #000000 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .modal-footer {
-    background: #000000 !important;
-    border-top-color: #333333 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .task-item-calendar {
-    background: #111111 !important;
-    border-color: #333333 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .task-item-calendar h6 {
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .task-item-calendar .text-muted {
-    color: #cccccc !important;
-}
-
-[data-theme="dark"] .task-item-calendar .badge {
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
-}
-</style>
-
-<div class="calendar-container">
-    <div class="calendar-header mb-4 mt-5 pt-5">
-        <div class="calendar-nav">
-            <button class="btn btn-outline-secondary" id="prevMonth" title="Previous month">
-                <i class="bi bi-chevron-left"></i>
-            </button>
-            <h2 class="calendar-title" id="calendarMonthYear">Loading...</h2>
-            <button class="btn btn-outline-secondary" id="nextMonth" title="Next month">
-                <i class="bi bi-chevron-right"></i>
-            </button>
-        </div>
-        <div class="calendar-actions">
-            <button class="btn btn-outline-primary" id="todayBtn">
-                <i class="bi bi-calendar-event"></i> Today
-            </button>
-            <button class="btn btn-primary" id="addCalendarEvent">
-                <i class="bi bi-plus-circle"></i> Add Task
-            </button>
-        </div>
-    </div>
-
-   <!-- Calendar Grid -->
-<div class="calendar-grid">
-    <div class="calendar-day-header">Sun</div>
-    <div class="calendar-day-header">Mon</div>
-    <div class="calendar-day-header">Tue</div>
-    <div class="calendar-day-header">Wed</div>
-    <div class="calendar-day-header">Thu</div>
-    <div class="calendar-day-header">Fri</div>
-    <div class="calendar-day-header">Sat</div>
-</div>
-
-<!-- Calendar Days Container -->
-<div class="calendar-grid" id="calendarDaysGrid">
-    <!-- Calendar days will be populated by JavaScript -->
-</div>
-
-    <!-- Loading State -->
-    <div id="calendarLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading calendar...</span>
-        </div>
-        <p class="mt-2 text-muted">Loading your calendar...</p>
-    </div>
-</div>
-
-<!-- Day Tasks Modal -->
-<div class="modal fade" id="dayTasksModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="dayTasksModalLabel">Day Tasks</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<%- include('partials/header', {title: 'Calendar - Pet Care Management' }) %>
+    <style>
+        .calendar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--light-card);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--light-border);
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--light-text);
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .calendar-nav button {
+            background: var(--light-bg);
+            border: 1px solid var(--light-border);
+            border-radius: 10px;
+            padding: 0.75rem;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .calendar-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .calendar-actions .btn {
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-actions .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Calendar Grid - Card Style */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 600;
+            color: var(--light-muted);
+            padding: 1rem 0.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--light-card);
+            border-radius: 10px;
+            border: 1px solid var(--light-border);
+        }
+
+        .calendar-day-card {
+            background: var(--light-card);
+            border: 2px solid var(--light-border);
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            min-height: 140px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-day-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.15);
+        }
+
+        .calendar-day-card.today {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(67, 97, 238, 0.02) 100%);
+        }
+
+        .calendar-day-card.selected {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, #5a7aff 100%);
+            color: white;
+        }
+
+        .calendar-day-card.selected .day-number {
+            color: white;
+        }
+
+        .calendar-day-card.selected .task-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .calendar-day-card.empty {
+            background: transparent;
+            border-color: transparent;
+            cursor: default;
+        }
+
+        .calendar-day-card.empty:hover {
+            background: transparent;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .day-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--light-text);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .task-indicators {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            overflow: hidden;
+        }
+
+        .task-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(67, 97, 238, 0.08);
+            border: 1px solid rgba(67, 97, 238, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .task-indicator.high {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .task-indicator.medium {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: rgba(255, 193, 7, 0.2);
+            color: #d4a907;
+        }
+
+        .task-indicator.low {
+            background: rgba(40, 167, 69, 0.1);
+            border-color: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+
+        .more-tasks {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--light-muted);
+            background: rgba(108, 117, 125, 0.1);
+            border-radius: 6px;
+            padding: 0.2rem 0.4rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Task Items in Modal */
+        .task-item-calendar {
+            background: var(--light-card);
+            border: 1px solid var(--light-border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .task-item-calendar:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Modal Styling */
+        .modal-content {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background: var(--light-card);
+            border-bottom: 1px solid var(--light-border);
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            color: var(--light-text);
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            color: var(--light-text);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--light-border);
+            padding: 1rem 2rem;
+        }
+
+        /* ===== DARK THEME SUPPORT ===== */
+        [data-theme="dark"] .calendar-header {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="dark"] .calendar-nav button {
+            background: var(--dark-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        [data-theme="dark"] .calendar-nav button:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        [data-theme="dark"] .calendar-day-header {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+            color: var(--dark-muted);
+        }
+
+        [data-theme="dark"] .calendar-day-card {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+
+        [data-theme="dark"] .calendar-day-card:hover {
+            border-color: var(--accent);
+        }
+
+        [data-theme="dark"] .calendar-day-card.today {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(67, 97, 238, 0.05) 100%);
+        }
+
+        [data-theme="dark"] .calendar-day-card.selected {
+            background: linear-gradient(135deg, var(--accent) 0%, #5a7aff 100%);
+        }
+
+        [data-theme="dark"] .day-number {
+            color: var(--dark-text);
+        }
+
+        [data-theme="dark"] .task-indicator {
+            background: rgba(67, 97, 238, 0.15);
+            border-color: rgba(67, 97, 238, 0.25);
+            color: #8bb9fe;
+        }
+
+        [data-theme="dark"] .task-item-calendar {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+
+        [data-theme="dark"] .modal-header {
+            background: var(--dark-card);
+            border-bottom-color: var(--dark-border);
+        }
+
+        [data-theme="dark"] .modal-title {
+            color: var(--dark-text);
+        }
+
+        [data-theme="dark"] .modal-body {
+            color: var(--dark-text);
+            background: var(--dark-bg);
+        }
+
+        [data-theme="dark"] .modal-footer {
+            border-top-color: var(--dark-border);
+            background: var(--dark-card);
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: var(--dark-bg);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .calendar-container {
+                padding: 0.75rem;
+            }
+
+            .calendar-day-card {
+                min-height: 120px;
+                padding: 0.75rem 0.5rem;
+            }
+
+            .day-number {
+                font-size: 1rem;
+            }
+
+            .task-indicator {
+                padding: 0.3rem 0.4rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .calendar-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+                padding: 1.25rem;
+            }
+
+            .calendar-nav {
+                order: 2;
+            }
+
+            .calendar-actions {
+                order: 1;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .calendar-title {
+                min-width: auto;
+                font-size: 1.25rem;
+            }
+
+            .calendar-grid {
+                gap: 0.5rem;
+            }
+
+            .calendar-day-card {
+                min-height: 100px;
+                padding: 0.5rem 0.25rem;
+            }
+
+            .day-number {
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .task-indicators {
+                gap: 0.2rem;
+            }
+
+            .task-indicator {
+                padding: 0.2rem 0.3rem;
+                font-size: 0.65rem;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .calendar-grid {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 0.25rem;
+            }
+
+            .calendar-day-header {
+                padding: 0.75rem 0.25rem;
+                font-size: 0.75rem;
+            }
+
+            .calendar-day-card {
+                min-height: 80px;
+                padding: 0.4rem 0.2rem;
+            }
+
+            .day-number {
+                font-size: 0.8rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .task-indicator {
+                padding: 0.15rem 0.2rem;
+                font-size: 0.6rem;
+            }
+
+            .more-tasks {
+                font-size: 0.6rem;
+                padding: 0.1rem 0.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-container {
+                padding: 0.5rem;
+            }
+
+            .calendar-header {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .calendar-actions .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .calendar-nav button {
+                padding: 0.6rem;
+            }
+
+            .modal-header,
+            .modal-footer {
+                padding: 1rem 1.5rem;
+            }
+
+            .modal-body {
+                padding: 1.25rem;
+            }
+        }
+
+        /* Empty state styling */
+        .calendar-empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--light-muted);
+        }
+
+        [data-theme="dark"] .calendar-empty-state {
+            color: var(--dark-muted);
+        }
+
+        /* Ensure all text is visible */
+        .calendar-day-card,
+        .calendar-day-header,
+        .modal-title,
+        .modal-body,
+        .task-item-calendar {
+            color: inherit !important;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: #adb5bd !important;
+        }
+        [data-theme="dark"] .modal-content {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border: 1px solid #333333 !important;
+        }
+
+        [data-theme="dark"] .modal-header {
+            background: #000000 !important;
+            border-bottom-color: #333333 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .modal-body {
+            background: #000000 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .modal-footer {
+            background: #000000 !important;
+            border-top-color: #333333 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .task-item-calendar {
+            background: #111111 !important;
+            border-color: #333333 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .task-item-calendar h6 {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .task-item-calendar .text-muted {
+            color: #cccccc !important;
+        }
+
+        [data-theme="dark"] .task-item-calendar .badge {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+    </style>
+
+    <div class="calendar-container">
+        <div class="calendar-header mb-4 mt-5 pt-5">
+            <div class="calendar-nav">
+                <button class="btn btn-outline-secondary" id="prevMonth" title="Previous month">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <h2 class="calendar-title" id="calendarMonthYear">Loading...</h2>
+                <button class="btn btn-outline-secondary" id="nextMonth" title="Next month">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
             </div>
-            <div class="modal-body" id="dayTasksModalBody">
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading tasks...</span>
+            <div class="calendar-actions">
+                <button class="btn btn-outline-primary" id="todayBtn">
+                    <i class="bi bi-calendar-event"></i> Today
+                </button>
+                <button class="btn btn-primary" id="addCalendarEvent">
+                    <i class="bi bi-plus-circle"></i> Add Task
+                </button>
+            </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="calendar-grid">
+            <div class="calendar-day-header">Sun</div>
+            <div class="calendar-day-header">Mon</div>
+            <div class="calendar-day-header">Tue</div>
+            <div class="calendar-day-header">Wed</div>
+            <div class="calendar-day-header">Thu</div>
+            <div class="calendar-day-header">Fri</div>
+            <div class="calendar-day-header">Sat</div>
+        </div>
+
+        <!-- Calendar Days Container -->
+        <div class="calendar-grid" id="calendarDaysGrid">
+            <!-- Calendar days will be populated by JavaScript -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="calendarLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading calendar...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading your calendar...</p>
+        </div>
+    </div>
+
+    <!-- Day Tasks Modal -->
+    <div class="modal fade" id="dayTasksModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dayTasksModalLabel">Day Tasks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="dayTasksModalBody">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading tasks...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading tasks...</p>
                     </div>
-                    <p class="mt-2 text-muted">Loading tasks...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="/schedule-task" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add New Task
+                    </a>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="/schedule-task" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Add New Task
-                </a>
-            </div>
         </div>
     </div>
-</div>
-<script src="/js/calendar.js"></script>
-<script>
-// Simple initialization without complex overrides
-document.addEventListener('DOMContentLoaded', function() {
-    window.calendarManager = new CalendarManager();
-});
-</script>
+    <script src="/js/calendar.js"></script>
+    <script>
+        // Simple initialization without complex overrides
+        document.addEventListener('DOMContentLoaded', function () {
+            window.calendarManager = new CalendarManager();
+        });
+    </script>
 
-<%- include('partials/footer') %>
-
-
+    <%- include('partials/footer') %>

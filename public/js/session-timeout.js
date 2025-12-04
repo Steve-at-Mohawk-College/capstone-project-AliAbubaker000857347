@@ -1,7 +1,11 @@
+/**
+ * SessionTimeout - Manages user session timeout with warning and auto-logout functionality.
+ * Monitors user activity and displays warning modal before session expiration.
+ */
 class SessionTimeout {
     constructor() {
-        this.timeoutMinutes = 10; // Session timeout in minutes
-        this.warningMinutes = 1; // Show warning 1 minute before timeout
+        this.timeoutMinutes = 10;
+        this.warningMinutes = 1;
         this.timeoutMilliseconds = this.timeoutMinutes * 60 * 1000;
         this.warningMilliseconds = this.warningMinutes * 60 * 1000;
         
@@ -14,14 +18,21 @@ class SessionTimeout {
         this.init();
     }
     
+    /**
+     * Initializes the session timeout handler.
+     * Sets up event listeners and starts timers.
+     */
     init() {
         this.setupEventListeners();
         this.resetTimers();
         // console.log('Session timeout handler initialized');
     }
     
+    /**
+     * Sets up event listeners for user activity detection.
+     * Listens for mouse, keyboard, scroll, and touch events.
+     */
     setupEventListeners() {
-        // Listen for user activity
         const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
         
         events.forEach(event => {
@@ -31,7 +42,6 @@ class SessionTimeout {
             }, { passive: true });
         });
         
-        // Handle visibility change (tab switching)
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 this.userIsActive = true;
@@ -39,7 +49,6 @@ class SessionTimeout {
             }
         });
         
-        // Handle modal buttons
         document.addEventListener('click', (e) => {
             if (e.target.id === 'extendSessionBtn') {
                 this.extendSession();
@@ -49,13 +58,15 @@ class SessionTimeout {
         });
     }
     
+    /**
+     * Resets all timers when user activity is detected.
+     * Clears existing timers and sets new warning and logout timers.
+     */
     resetTimers() {
         if (this.userIsActive) {
-            // Clear existing timers
             clearTimeout(this.timeoutTimer);
             clearTimeout(this.warningTimer);
             
-            // Set new timers
             this.warningTimer = setTimeout(() => {
                 this.showWarning();
             }, this.timeoutMilliseconds - this.warningMilliseconds);
@@ -68,22 +79,27 @@ class SessionTimeout {
         }
     }
     
+    /**
+     * Shows warning modal when session is about to expire.
+     * Creates modal if it doesn't exist and displays with countdown timer.
+     */
     showWarning() {
         if (!this.modalShown) {
             this.modalShown = true;
             this.createWarningModal();
             
-            // Show the modal with animation
             const modal = new bootstrap.Modal(document.getElementById('sessionTimeoutModal'));
             modal.show();
             
-            // Start countdown in the modal
             this.startCountdown();
         }
     }
     
+    /**
+     * Creates the session timeout warning modal.
+     * Injects modal HTML into the DOM if it doesn't already exist.
+     */
     createWarningModal() {
-        // Create modal HTML if it doesn't exist
         if (!document.getElementById('sessionTimeoutModal')) {
             const modalHTML = `
                 <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -108,6 +124,10 @@ class SessionTimeout {
         }
     }
     
+    /**
+     * Starts countdown timer in the warning modal.
+     * Updates countdown display every second until expiration.
+     */
     startCountdown() {
         let seconds = this.warningMinutes * 60;
         const countdownElement = document.getElementById('countdown');
@@ -128,19 +148,19 @@ class SessionTimeout {
         }, 1000);
     }
     
+    /**
+     * Extends user session when "Continue Session" is clicked.
+     * Sends request to server and resets timers on success.
+     */
     extendSession() {
-        // Hide modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('sessionTimeoutModal'));
         if (modal) modal.hide();
         
         this.modalShown = false;
         
-        // Send request to extend session
         fetch('/auth/extend-session', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin'
         })
         .then(response => {
@@ -158,32 +178,42 @@ class SessionTimeout {
         });
     }
     
+    /**
+     * Immediately logs out user when "Log Out Now" is clicked.
+     */
     logoutNow() {
         this.logout();
     }
     
+    /**
+     * Logs out user and redirects to logout page.
+     * Clears timers and hides modal before redirecting.
+     */
     logout() {
-        // Clear all timers
         clearTimeout(this.timeoutTimer);
         clearTimeout(this.warningTimer);
         
-        // Hide modal if shown
         if (this.modalShown) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('sessionTimeoutModal'));
             if (modal) modal.hide();
         }
         
-        // Redirect to logout or show message
         window.location.href = '/auth/logout?reason=timeout';
     }
     
-    // Public method to manually reset timers (useful for AJAX requests)
+    /**
+     * Public method to manually reset session timers.
+     * Useful for resetting timers after AJAX requests or specific user actions.
+     */
     reset() {
         this.userIsActive = true;
         this.resetTimers();
     }
     
-    // Public method to destroy the instance
+    /**
+     * Destroys the session timeout handler.
+     * Clears timers, removes event listeners, and cleans up modal.
+     */
     destroy() {
         clearTimeout(this.timeoutTimer);
         clearTimeout(this.warningTimer);
@@ -198,11 +228,13 @@ class SessionTimeout {
     }
 }
 
-// Initialize session timeout when DOM is loaded
+/**
+ * Initializes the session timeout handler when the DOM is fully loaded.
+ * Also sets up AJAX completion monitoring if jQuery is available.
+ */
 document.addEventListener('DOMContentLoaded', function() {
     window.sessionTimeout = new SessionTimeout();
     
-    // Also reset on AJAX requests (if using jQuery)
     if (typeof jQuery !== 'undefined') {
         $(document).ajaxComplete(function() {
             if (window.sessionTimeout) {
@@ -211,7 +243,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Export for manual control
+    /**
+     * Global function to manually reset the session timer.
+     * Can be called from other scripts to keep session alive during long operations.
+     */
     window.resetSessionTimer = function() {
         if (window.sessionTimeout) {
             window.sessionTimeout.reset();

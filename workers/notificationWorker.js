@@ -6,60 +6,60 @@ class NotificationWorker {
     this.intervals = [];
   }
 
+  /**
+   * Starts the notification worker with two intervals:
+   * 1. Checks for due tasks every minute
+   * 2. Checks for tomorrow's tasks daily at 8 PM (runs hourly, triggers at 20:00)
+   * 
+   * @method start
+   * @returns {void}
+   */
   start() {
     if (this.isRunning) {
-      // console.log('Notification worker is already running');
       return;
     }
-
-    // console.log('🚀 Starting notification worker...');
     this.isRunning = true;
-
-    // Check for due tasks every minute
     const taskCheckInterval = setInterval(async () => {
       try {
         await notificationService.checkDueTasks();
-      } catch (error) {
-        // console.error('Error in task check interval:', error);
-      }
-    }, 60 * 1000); // Every minute
-
-    // Check for tomorrow's tasks every hour
+      } catch (error) { }
+    }, 60 * 1000);
     const digestInterval = setInterval(async () => {
       try {
-        // Only run at 8 PM daily
         const now = new Date();
-        if (now.getHours() === 20) { // 8 PM
+        if (now.getHours() === 20) {
           await notificationService.checkTomorrowTasks();
         }
-      } catch (error) {
-        // console.error('Error in digest interval:', error);
-      }
-    }, 60 * 60 * 1000); // Every hour
-
+      } catch (error) { }
+    }, 60 * 60 * 1000);
     this.intervals.push(taskCheckInterval, digestInterval);
-
-    // Run initial check
-    notificationService.checkDueTasks().catch(console.error);
+    notificationService.checkDueTasks().catch(() => { });
   }
 
+  /**
+   * Stops all active intervals and halts the notification worker.
+   * 
+   * @method stop
+   * @returns {void}
+   */
   stop() {
-    // console.log('🛑 Stopping notification worker...');
     this.isRunning = false;
     this.intervals.forEach(interval => clearInterval(interval));
     this.intervals = [];
   }
 
-  // Manual trigger for testing
+  /**
+   * Manually triggers both due and tomorrow task checks.
+   * Primarily used for testing purposes.
+   * 
+   * @async
+   * @method manualCheck
+   * @returns {Promise<Object>} Object containing counts of processed tasks
+   */
   async manualCheck() {
-    // console.log('🔍 Manual notification check triggered');
     const dueCount = await notificationService.checkDueTasks();
     const tomorrowCount = await notificationService.checkTomorrowTasks();
-    
-    return {
-      dueTasksProcessed: dueCount,
-      tomorrowTasksProcessed: tomorrowCount
-    };
+    return { dueTasksProcessed: dueCount, tomorrowTasksProcessed: tomorrowCount };
   }
 }
 

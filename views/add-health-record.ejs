@@ -1,320 +1,341 @@
-<%- include('partials/header', {title: 'Add Health Record'}) %>
-<style>
-/* ===== FIX CONTRAST ISSUES FOR DARK MODE ===== */
-.form-label {
-    color: var(--bs-body-color) !important;
-}
+<%- include('partials/header', {title: 'Add Health Record' }) %>
+  <style>
+    .form-label {
+      color: var(--bs-body-color) !important;
+    }
 
-/* Fix specific label that has inline styles */
-label[for="pet_id"] {
-    color: var(--bs-body-color) !important;
-    opacity: 1 !important;
-    background-color: transparent !important;
-}
+    label[for="pet_id"] {
+      color: var(--bs-body-color) !important;
+      opacity: 1 !important;
+      background-color: transparent !important;
+    }
 
-/* Ensure all form labels have proper contrast */
-label[for="weight"],
-label[for="diet"],
-label[for="medical_notes"],
-label[for="vet_visit_date"],
-label[for="vaccination_date"],
-label[for="next_vaccination_date"],
-label[for="date_recorded"] {
-    color: var(--bs-body-color) !important;
-}
+    label[for="weight"],
+    label[for="diet"],
+    label[for="medical_notes"],
+    label[for="vet_visit_date"],
+    label[for="vaccination_date"],
+    label[for="next_vaccination_date"],
+    label[for="date_recorded"] {
+      color: var(--bs-body-color) !important;
+    }
 
-/* Fix form text contrast as well */
-.form-text {
-    color: var(--bs-secondary-color) !important;
-}
-.card-body.p-4 {
-    padding-top: 2rem !important;
-}
+    .form-text {
+      color: var(--bs-secondary-color) !important;
+    }
 
-/* For smaller mobile devices */
-@media (max-width: 576px) {
     .card-body.p-4 {
+      padding-top: 2rem !important;
+    }
+
+    @media (max-width: 576px) {
+      .card-body.p-4 {
         padding-top: 5rem !important;
-    }
-    
-    h1.h3.mb-4.text-center {
+      }
+
+      h1.h3.mb-4.text-center {
         margin-top: 1rem !important;
+      }
     }
-}
 
-/* Style for the Back to Health Tracker button */
-.back-to-health-tracker-btn {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    font-weight: 500;
-    text-align: center;
-    text-decoration: none;
-    border: 2px solid #6c757d;
-    border-radius: 8px; /* Same as btn-custom */
-    background-color: transparent;
-    color: #6c757d;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1rem;
-    margin-top: 1.5rem;
-}
+    .back-to-health-tracker-btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+      border: 2px solid #6c757d;
+      border-radius: 8px;
+      background-color: transparent;
+      color: #6c757d;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+      margin-top: 1.5rem;
+    }
 
-.back-to-health-tracker-btn:hover {
-    background-color: #6c757d;
-    color: white !important;
-    text-decoration: none;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
-}
+    .back-to-health-tracker-btn:hover {
+      background-color: #6c757d;
+      color: white !important;
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+    }
 
-.back-to-health-tracker-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
-}
+    .back-to-health-tracker-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+    }
 
-/* Dark mode support */
-[data-bs-theme="dark"] .back-to-health-tracker-btn {
-    border-color: #a7acb1;
-    color: #a7acb1;
-}
+    /* Dark mode support */
+    [data-bs-theme="dark"] .back-to-health-tracker-btn {
+      border-color: #a7acb1;
+      color: #a7acb1;
+    }
 
-[data-bs-theme="dark"] .back-to-health-tracker-btn:hover {
-    background-color: #a7acb1;
-    color: #000000 !important;
-    box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
-}
+    [data-bs-theme="dark"] .back-to-health-tracker-btn:hover {
+      background-color: #a7acb1;
+      color: #000000 !important;
+      box-shadow: 0 4px 8px rgba(167, 172, 177, 0.3);
+    }
 
-/* Ensure proper spacing and center alignment */
-.mt-4.text-center {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem !important;
-}
+    /* Ensure proper spacing and center alignment */
+    .mt-4.text-center {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem !important;
+    }
 
-/* Optional: Make the back button slightly smaller than Save Health Record */
-.back-to-health-tracker-btn {
-    padding: 0.625rem 1.75rem; /* Slightly smaller padding */
-    font-size: 0.95rem;
-}
-</style>
-<div class="row justify-content-center">
-  <div class="col-md-8 col-lg-6">
-    <div class="card card-custom">
-      <div class="card-body p-4">
-        <h1 class="h3 mb-4 text-center">Add Health Record</h1>
-        
-        <% if (typeof message !== 'undefined' && message) { %>
-          <div class="alert alert-success"><%= message %></div>
-        <% } %>
-        
-        <% if (typeof error !== 'undefined' && error) { %>
-          <div class="alert alert-danger"><%= error %></div>
-        <% } %>
+    /* Make the back button slightly smaller than Save Health Record */
+    .back-to-health-tracker-btn {
+      padding: 0.625rem 1.75rem;
+      /* Slightly smaller padding */
+      font-size: 0.95rem;
+    }
+  </style>
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card card-custom">
+        <div class="card-body p-4">
+          <h1 class="h3 mb-4 text-center">Add Health Record</h1>
 
-        <!-- Display field-specific errors -->
-        <% if (fieldErrors && typeof fieldErrors === 'object' && Object.keys(fieldErrors).length > 0) { %>
-          <div class="alert alert-warning">
-            <strong>Please correct the following errors:</strong>
-            <ul class="mb-0 mt-2">
-              <% Object.values(fieldErrors).forEach(error => { %>
-                <li><%= error %></li>
-              <% }); %>
-            </ul>
-          </div>
-        <% } %>
-
-        <% if (pets.length === 0) { %>
-          <div class="alert alert-warning">
-            No pets available. Please <a href="/pets/add">add a pet</a> first.
-          </div>
-        <% } else { %>
-          <form action="/health" method="POST" id="healthForm" novalidate>
-            <div class="mb-3">
-              <label for="pet_id" class="form-label">Pet *</label>
-              <select class="form-select <%= (fieldErrors && fieldErrors.pet_id) ? 'is-invalid' : '' %>" 
-                      id="pet_id" name="pet_id" required>
-                <option value="">Select a Pet</option>
-                <% pets.forEach(pet => { %>
-                  <option value="<%= pet.pet_id %>" 
-                          <%= (body && body.pet_id == pet.pet_id) ? 'selected' : '' %>>
-                    <%= pet.name %> (<%= pet.species %>)
-                  </option>
-                <% }); %>
-              </select>
-              <% if (fieldErrors && fieldErrors.pet_id) { %>
-                <div class="invalid-feedback"><%= fieldErrors.pet_id %></div>
-              <% } %>
+          <% if (typeof message !=='undefined' && message) { %>
+            <div class="alert alert-success">
+              <%= message %>
             </div>
+            <% } %>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="weight" class="form-label">Weight (kg)</label>
-                  <input type="number" step="0.01" min="0.1" max="200" 
-                         class="form-control <%= (fieldErrors && fieldErrors.weight) ? 'is-invalid' : '' %>" 
-                         id="weight" name="weight" 
-                         placeholder="e.g., 5.2"
-                         value="<%= (body && body.weight) ? body.weight : '' %>">
-                  <% if (fieldErrors && fieldErrors.weight) { %>
-                    <div class="invalid-feedback"><%= fieldErrors.weight %></div>
-                  <% } else { %>
-                    <div class="form-text">Must be between 0.1 and 200 kg</div>
-                  <% } %>
+              <% if (typeof error !=='undefined' && error) { %>
+                <div class="alert alert-danger">
+                  <%= error %>
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="date_recorded" class="form-label">Record Date *</label>
-                  <input type="date" class="form-control <%= (fieldErrors && fieldErrors.date_recorded) ? 'is-invalid' : '' %>" 
-                         id="date_recorded" name="date_recorded" required 
-                         value="<%= (body && body.date_recorded) ? body.date_recorded : new Date().toISOString().split('T')[0] %>"
-                         max="<%= new Date().toISOString().split('T')[0] %>">
-                  <% if (fieldErrors && fieldErrors.date_recorded) { %>
-                    <div class="invalid-feedback"><%= fieldErrors.date_recorded %></div>
-                  <% } %>
-                </div>
-              </div>
-            </div>
+                <% } %>
 
-            <div class="mb-3">
-              <label for="diet" class="form-label">Diet</label>
-              <input type="text" class="form-control <%= (fieldErrors && fieldErrors.diet) ? 'is-invalid' : '' %>" 
-                     id="diet" name="diet" 
-                     placeholder="e.g., Kibble, Wet food, Raw diet"
-                     value="<%= (body && body.diet) ? body.diet : '' %>"
-                     maxlength="255">
-              <% if (fieldErrors && fieldErrors.diet) { %>
-                <div class="invalid-feedback"><%= fieldErrors.diet %></div>
-              <% } else { %>
-                <div class="form-text">Maximum 255 characters</div>
-              <% } %>
-            </div>
+                  <!-- Display field-specific errors -->
+                  <% if (fieldErrors && typeof fieldErrors==='object' && Object.keys(fieldErrors).length> 0) { %>
+                    <div class="alert alert-warning">
+                      <strong>Please correct the following errors:</strong>
+                      <ul class="mb-0 mt-2">
+                        <% Object.values(fieldErrors).forEach(error=> { %>
+                          <li>
+                            <%= error %>
+                          </li>
+                          <% }); %>
+                      </ul>
+                    </div>
+                    <% } %>
 
-            <div class="mb-3">
-              <label for="medical_notes" class="form-label">Medical Notes</label>
-              <textarea class="form-control <%= (fieldErrors && fieldErrors.medical_notes) ? 'is-invalid' : '' %>" 
-                        id="medical_notes" name="medical_notes" rows="3" 
-                        placeholder="Any medical observations, symptoms, or notes..."
-                        maxlength="1000"><%= (body && body.medical_notes) ? body.medical_notes : '' %></textarea>
-              <% if (fieldErrors && fieldErrors.medical_notes) { %>
-                <div class="invalid-feedback"><%= fieldErrors.medical_notes %></div>
-              <% } else { %>
-                <div class="form-text">Maximum 1000 characters</div>
-              <% } %>
-            </div>
+                      <% if (pets.length===0) { %>
+                        <div class="alert alert-warning">
+                          No pets available. Please <a href="/pets/add">add a pet</a> first.
+                        </div>
+                        <% } else { %>
+                          <form action="/health" method="POST" id="healthForm" novalidate>
+                            <div class="mb-3">
+                              <label for="pet_id" class="form-label">Pet *</label>
+                              <select class="form-select <%= (fieldErrors && fieldErrors.pet_id) ? 'is-invalid' : '' %>"
+                                id="pet_id" name="pet_id" required>
+                                <option value="">Select a Pet</option>
+                                <% pets.forEach(pet=> { %>
+                                  <option value="<%= pet.pet_id %>" <%=(body && body.pet_id==pet.pet_id) ? 'selected'
+                                    : '' %>>
+                                    <%= pet.name %> (<%= pet.species %>)
+                                  </option>
+                                  <% }); %>
+                              </select>
+                              <% if (fieldErrors && fieldErrors.pet_id) { %>
+                                <div class="invalid-feedback">
+                                  <%= fieldErrors.pet_id %>
+                                </div>
+                                <% } %>
+                            </div>
 
-            <div class="row">
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label for="vet_visit_date" class="form-label">Vet Visit Date</label>
-                  <input type="date" class="form-control <%= (fieldErrors && fieldErrors.vet_visit_date) ? 'is-invalid' : '' %>" 
-                         id="vet_visit_date" name="vet_visit_date"
-                         value="<%= (body && body.vet_visit_date) ? body.vet_visit_date : '' %>"
-                         max="<%= new Date().toISOString().split('T')[0] %>">
-                  <% if (fieldErrors && fieldErrors.vet_visit_date) { %>
-                    <div class="invalid-feedback"><%= fieldErrors.vet_visit_date %></div>
-                  <% } %>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label for="vaccination_date" class="form-label">Vaccination Date</label>
-                  <input type="date" class="form-control <%= (fieldErrors && fieldErrors.vaccination_date) ? 'is-invalid' : '' %>" 
-                         id="vaccination_date" name="vaccination_date"
-                         value="<%= (body && body.vaccination_date) ? body.vaccination_date : '' %>"
-                         max="<%= new Date().toISOString().split('T')[0] %>">
-                  <% if (fieldErrors && fieldErrors.vaccination_date) { %>
-                    <div class="invalid-feedback"><%= fieldErrors.vaccination_date %></div>
-                  <% } %>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label for="next_vaccination_date" class="form-label">Next Vaccination</label>
-                  <input type="date" class="form-control <%= (fieldErrors && fieldErrors.next_vaccination_date) ? 'is-invalid' : '' %>" 
-                         id="next_vaccination_date" name="next_vaccination_date"
-                         value="<%= (body && body.next_vaccination_date) ? body.next_vaccination_date : '' %>"
-                         min="<%= new Date().toISOString().split('T')[0] %>">
-                  <% if (fieldErrors && fieldErrors.next_vaccination_date) { %>
-                    <div class="invalid-feedback"><%= fieldErrors.next_vaccination_date %></div>
-                  <% } %>
-                </div>
-              </div>
-            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="mb-3">
+                                  <label for="weight" class="form-label">Weight (kg)</label>
+                                  <input type="number" step="0.01" min="0.1" max="200"
+                                    class="form-control <%= (fieldErrors && fieldErrors.weight) ? 'is-invalid' : '' %>"
+                                    id="weight" name="weight" placeholder="e.g., 5.2"
+                                    value="<%= (body && body.weight) ? body.weight : '' %>">
+                                  <% if (fieldErrors && fieldErrors.weight) { %>
+                                    <div class="invalid-feedback">
+                                      <%= fieldErrors.weight %>
+                                    </div>
+                                    <% } else { %>
+                                      <div class="form-text">Must be between 0.1 and 200 kg</div>
+                                      <% } %>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="mb-3">
+                                  <label for="date_recorded" class="form-label">Record Date *</label>
+                                  <input type="date"
+                                    class="form-control <%= (fieldErrors && fieldErrors.date_recorded) ? 'is-invalid' : '' %>"
+                                    id="date_recorded" name="date_recorded" required
+                                    value="<%= (body && body.date_recorded) ? body.date_recorded : new Date().toISOString().split('T')[0] %>"
+                                    max="<%= new Date().toISOString().split('T')[0] %>">
+                                  <% if (fieldErrors && fieldErrors.date_recorded) { %>
+                                    <div class="invalid-feedback">
+                                      <%= fieldErrors.date_recorded %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                              </div>
+                            </div>
 
-            <button type="submit" class="btn btn-custom w-100 btn-lg">Save Health Record</button>
-            <a href="/health-tracker-history" class="back-to-health-tracker-btn">
-        <i class="bi bi-arrow-left me-2"></i>Back to Health History
-    </a>
-          </form>
-        <% } %>
+                            <div class="mb-3">
+                              <label for="diet" class="form-label">Diet</label>
+                              <input type="text"
+                                class="form-control <%= (fieldErrors && fieldErrors.diet) ? 'is-invalid' : '' %>"
+                                id="diet" name="diet" placeholder="e.g., Kibble, Wet food, Raw diet"
+                                value="<%= (body && body.diet) ? body.diet : '' %>" maxlength="255">
+                              <% if (fieldErrors && fieldErrors.diet) { %>
+                                <div class="invalid-feedback">
+                                  <%= fieldErrors.diet %>
+                                </div>
+                                <% } else { %>
+                                  <div class="form-text">Maximum 255 characters</div>
+                                  <% } %>
+                            </div>
 
-      
+                            <div class="mb-3">
+                              <label for="medical_notes" class="form-label">Medical Notes</label>
+                              <textarea
+                                class="form-control <%= (fieldErrors && fieldErrors.medical_notes) ? 'is-invalid' : '' %>"
+                                id="medical_notes" name="medical_notes" rows="3"
+                                placeholder="Any medical observations, symptoms, or notes..."
+                                maxlength="1000"><%= (body && body.medical_notes) ? body.medical_notes : '' %></textarea>
+                              <% if (fieldErrors && fieldErrors.medical_notes) { %>
+                                <div class="invalid-feedback">
+                                  <%= fieldErrors.medical_notes %>
+                                </div>
+                                <% } else { %>
+                                  <div class="form-text">Maximum 1000 characters</div>
+                                  <% } %>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-md-4">
+                                <div class="mb-3">
+                                  <label for="vet_visit_date" class="form-label">Vet Visit Date</label>
+                                  <input type="date"
+                                    class="form-control <%= (fieldErrors && fieldErrors.vet_visit_date) ? 'is-invalid' : '' %>"
+                                    id="vet_visit_date" name="vet_visit_date"
+                                    value="<%= (body && body.vet_visit_date) ? body.vet_visit_date : '' %>"
+                                    max="<%= new Date().toISOString().split('T')[0] %>">
+                                  <% if (fieldErrors && fieldErrors.vet_visit_date) { %>
+                                    <div class="invalid-feedback">
+                                      <%= fieldErrors.vet_visit_date %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                              </div>
+                              <div class="col-md-4">
+                                <div class="mb-3">
+                                  <label for="vaccination_date" class="form-label">Vaccination Date</label>
+                                  <input type="date"
+                                    class="form-control <%= (fieldErrors && fieldErrors.vaccination_date) ? 'is-invalid' : '' %>"
+                                    id="vaccination_date" name="vaccination_date"
+                                    value="<%= (body && body.vaccination_date) ? body.vaccination_date : '' %>"
+                                    max="<%= new Date().toISOString().split('T')[0] %>">
+                                  <% if (fieldErrors && fieldErrors.vaccination_date) { %>
+                                    <div class="invalid-feedback">
+                                      <%= fieldErrors.vaccination_date %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                              </div>
+                              <div class="col-md-4">
+                                <div class="mb-3">
+                                  <label for="next_vaccination_date" class="form-label">Next Vaccination</label>
+                                  <input type="date"
+                                    class="form-control <%= (fieldErrors && fieldErrors.next_vaccination_date) ? 'is-invalid' : '' %>"
+                                    id="next_vaccination_date" name="next_vaccination_date"
+                                    value="<%= (body && body.next_vaccination_date) ? body.next_vaccination_date : '' %>"
+                                    min="<%= new Date().toISOString().split('T')[0] %>">
+                                  <% if (fieldErrors && fieldErrors.next_vaccination_date) { %>
+                                    <div class="invalid-feedback">
+                                      <%= fieldErrors.next_vaccination_date %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                              </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-custom w-100 btn-lg">Save Health Record</button>
+                            <a href="/health-tracker-history" class="back-to-health-tracker-btn">
+                              <i class="bi bi-arrow-left me-2"></i>Back to Health History
+                            </a>
+                          </form>
+                          <% } %>
+
+
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-// Client-side validation
-document.getElementById('healthForm').addEventListener('submit', function(e) {
-  const weight = document.getElementById('weight');
-  const dateRecorded = document.getElementById('date_recorded');
-  const nextVaccination = document.getElementById('next_vaccination_date');
-  
-  let isValid = true;
-  
-  // Validate weight if provided
-  if (weight.value) {
-    const weightValue = parseFloat(weight.value);
-    if (weightValue < 0.1 || weightValue > 200) {
-      showFieldError(weight, 'Weight must be between 0.1 and 200 kg');
-      isValid = false;
-    } else {
-      clearFieldError(weight);
+  <script>
+    // Client-side validation
+    document.getElementById('healthForm').addEventListener('submit', function (e) {
+      const weight = document.getElementById('weight');
+      const dateRecorded = document.getElementById('date_recorded');
+      const nextVaccination = document.getElementById('next_vaccination_date');
+
+      let isValid = true;
+
+      // Validate weight if provided
+      if (weight.value) {
+        const weightValue = parseFloat(weight.value);
+        if (weightValue < 0.1 || weightValue > 200) {
+          showFieldError(weight, 'Weight must be between 0.1 and 200 kg');
+          isValid = false;
+        } else {
+          clearFieldError(weight);
+        }
+      }
+
+      // Validate date recorded is not in future
+      if (dateRecorded.value > new Date().toISOString().split('T')[0]) {
+        showFieldError(dateRecorded, 'Record date cannot be in the future');
+        isValid = false;
+      } else {
+        clearFieldError(dateRecorded);
+      }
+
+      // Validate next vaccination is in future
+      if (nextVaccination.value && nextVaccination.value <= new Date().toISOString().split('T')[0]) {
+        showFieldError(nextVaccination, 'Next vaccination date must be in the future');
+        isValid = false;
+      } else {
+        clearFieldError(nextVaccination);
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+
+    function showFieldError(field, message) {
+      field.classList.add('is-invalid');
+      let feedback = field.nextElementSibling;
+      if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+        feedback = document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        field.parentNode.insertBefore(feedback, field.nextSibling);
+      }
+      feedback.textContent = message;
     }
-  }
-  
-  // Validate date recorded is not in future
-  if (dateRecorded.value > new Date().toISOString().split('T')[0]) {
-    showFieldError(dateRecorded, 'Record date cannot be in the future');
-    isValid = false;
-  } else {
-    clearFieldError(dateRecorded);
-  }
-  
-  // Validate next vaccination is in future
-  if (nextVaccination.value && nextVaccination.value <= new Date().toISOString().split('T')[0]) {
-    showFieldError(nextVaccination, 'Next vaccination date must be in the future');
-    isValid = false;
-  } else {
-    clearFieldError(nextVaccination);
-  }
-  
-  if (!isValid) {
-    e.preventDefault();
-  }
-});
 
-function showFieldError(field, message) {
-  field.classList.add('is-invalid');
-  let feedback = field.nextElementSibling;
-  if (!feedback || !feedback.classList.contains('invalid-feedback')) {
-    feedback = document.createElement('div');
-    feedback.className = 'invalid-feedback';
-    field.parentNode.insertBefore(feedback, field.nextSibling);
-  }
-  feedback.textContent = message;
-}
+    function clearFieldError(field) {
+      field.classList.remove('is-invalid');
+      const feedback = field.nextElementSibling;
+      if (feedback && feedback.classList.contains('invalid-feedback')) {
+        feedback.remove();
+      }
+    }
+  </script>
 
-function clearFieldError(field) {
-  field.classList.remove('is-invalid');
-  const feedback = field.nextElementSibling;
-  if (feedback && feedback.classList.contains('invalid-feedback')) {
-    feedback.remove();
-  }
-}
-</script>
-
-<%- include('partials/footer') %>
+  <%- include('partials/footer') %>

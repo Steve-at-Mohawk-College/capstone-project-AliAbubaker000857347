@@ -1,14 +1,22 @@
 const express = require('express');
 const { query, queryOne } = require('../config/database');
 const router = express.Router();
-const { 
-  updateUsername, 
+const {
+  updateUsername,
   checkUserExistsExcludingCurrent,
   updateUserBio,
   updateBioModerationStatus
 } = require('../models/userModel');
-const { uploadMultiple } = require('../config/upload'); 
-// Admin authentication middleware
+const { uploadMultiple } = require('../config/upload');
+
+/**
+ * Middleware to require admin privileges for accessing routes.
+ * Checks session role and returns 403 if user is not an admin.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 function requireAdmin(req, res, next) {
   if (req.session?.role === 'admin') return next();
   return res.status(403).render('error', {
@@ -17,149 +25,192 @@ function requireAdmin(req, res, next) {
   });
 }
 
-
-// Admin gallery management
+/**
+ * GET /admin/gallery - Renders gallery management page for administrators.
+ * Shows all photos with pagination and pending tag approvals.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/gallery', requireAdmin, async (req, res) => {
-    try {
-        const page = Math.max(1, parseInt(req.query.page) || 1);
-        const limit = 12;
-        const filters = {
-            search: req.query.search,
-            current_user_id: req.session.userId
-        };
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = 12;
+    const filters = {
+      search: req.query.search,
+      current_user_id: req.session.userId
+    };
 
-        // Get all photos (admin can see everything)
-        const photos = await photoModel.getPublicPhotos(page, limit, { ...filters, includeAll: true });
-        const pendingTags = await query('SELECT * FROM tags WHERE is_approved = 0');
+    const photos = await photoModel.getPublicPhotos(page, limit, { ...filters, includeAll: true });
+    const pendingTags = await query('SELECT * FROM tags WHERE is_approved = 0');
 
-        res.render('admin/gallery', {
-            title: 'Gallery Management - Admin',
-            photos,
-            pendingTags,
-            currentPage: page,
-            currentSearch: req.query.search,
-            hasMore: photos.length === limit
-        });
-    } catch (error) {
-        // console.error('Admin gallery error:', error);
-        res.status(500).render('error', {
-            title: 'Error',
-            message: 'Error loading gallery management.',
-            error: process.env.NODE_ENV === 'development' ? error : {}
-        });
-    }
+    res.render('admin/gallery', {
+      title: 'Gallery Management - Admin',
+      photos,
+      pendingTags,
+      currentPage: page,
+      currentSearch: req.query.search,
+      hasMore: photos.length === limit
+    });
+  } catch (error) {
+    // console.error('Admin gallery error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Error loading gallery management.',
+      error: process.env.NODE_ENV === 'development' ? error : {}
+    });
+  }
 });
 
-// Admin bulk upload
+/**
+ * GET /admin/gallery/bulk-upload - Renders bulk upload page for administrators.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/gallery/bulk-upload', requireAdmin, (req, res) => {
-    res.render('admin/bulk-upload', {
-        title: 'Bulk Upload - Admin'
-    });
+  res.render('admin/bulk-upload', {
+    title: 'Bulk Upload - Admin'
+  });
 });
 
-// Admin bulk upload route
+/**
+ * POST /admin/gallery/bulk-upload - Handles bulk photo uploads by administrators.
+ * Processes multiple files and applies tags if provided.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/gallery/bulk-upload', requireAdmin, (req, res, next) => {
-    uploadMultiple(req, res, function (err) {
-        if (err) {
-            return res.status(400).render('admin/bulk-upload', {
-                title: 'Bulk Upload - Admin',
-                error: err.message
-            });
-        }
-        handleBulkUpload(req, res);
-    });
+  uploadMultiple(req, res, function (err) {
+    if (err) {
+      return res.status(400).render('admin/bulk-upload', {
+        title: 'Bulk Upload - Admin',
+        error: err.message
+      });
+    }
+    handleBulkUpload(req, res);
+  });
 });
 
+/**
+ * Processes bulk upload of multiple photos.
+ * Creates photo records and applies tags to each uploaded photo.
+ * 
+ * @param {Object} req - Express request object with uploaded files
+ * @param {Object} res - Express response object
+ */
 async function handleBulkUpload(req, res) {
-    try {
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).render('admin/bulk-upload', {
-                title: 'Bulk Upload - Admin',
-                error: 'Please select photos to upload.'
-            });
-        }
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).render('admin/bulk-upload', {
+        title: 'Bulk Upload - Admin',
+        error: 'Please select photos to upload.'
+      });
+    }
 
-        const { title, description, tags } = req.body;
-        const results = [];
+    const { title, description, tags } = req.body;
+    const results = [];
 
-        for (const file of req.files) {
+    for (const file of req.files) {
+      try {
+        const photoId = await photoModel.createPhoto({
+          user_id: req.session.userId,
+          photo_url: `/uploads/gallery/${file.filename}`,
+          title: title || `Admin Upload - ${file.originalname}`,
+          description: description || '',
+          is_public: 1
+        });
+
+        if (tags) {
+          const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+          for (const tagName of tagList) {
             try {
-                const photoId = await photoModel.createPhoto({
-                    user_id: req.session.userId,
-                    photo_url: `/uploads/gallery/${file.filename}`,
-                    title: title || `Admin Upload - ${file.originalname}`,
-                    description: description || '',
-                    is_public: 1
-                });
-
-                // Process tags if provided
-                if (tags) {
-                    const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-                    for (const tagName of tagList) {
-                        try {
-                            await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
-                        } catch (tagError) {
-                            // console.log('Tag error:', tagError.message);
-                        }
-                    }
-                }
-
-                results.push({ success: true, file: file.originalname });
-            } catch (error) {
-                results.push({ success: false, file: file.originalname, error: error.message });
+              await photoModel.addTagToPhoto(photoId, tagName, req.session.userId);
+            } catch (tagError) {
+              // console.log('Tag error:', tagError.message);
             }
+          }
         }
 
-        res.render('admin/bulk-upload', {
-            title: 'Bulk Upload - Admin',
-            message: `Uploaded ${req.files.length} photos`,
-            results
-        });
-    } catch (error) {
-        // console.error('Bulk upload error:', error);
-        res.status(500).render('admin/bulk-upload', {
-            title: 'Bulk Upload - Admin',
-            error: 'Error during bulk upload: ' + error.message
-        });
+        results.push({ success: true, file: file.originalname });
+      } catch (error) {
+        results.push({ success: false, file: file.originalname, error: error.message });
+      }
     }
+
+    res.render('admin/bulk-upload', {
+      title: 'Bulk Upload - Admin',
+      message: `Uploaded ${req.files.length} photos`,
+      results
+    });
+  } catch (error) {
+    // console.error('Bulk upload error:', error);
+    res.status(500).render('admin/bulk-upload', {
+      title: 'Bulk Upload - Admin',
+      error: 'Error during bulk upload: ' + error.message
+    });
+  }
 }
-// Admin tag management
+
+/**
+ * POST /admin/tags/:id/approve - Approves a pending tag for public use.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/tags/:id/approve', requireAdmin, async (req, res) => {
-    try {
-        await query('UPDATE tags SET is_approved = 1 WHERE tag_id = ?', [req.params.id]);
-        res.json({ success: true, message: 'Tag approved successfully' });
-    } catch (error) {
-        // console.error('Approve tag error:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
+  try {
+    await query('UPDATE tags SET is_approved = 1 WHERE tag_id = ?', [req.params.id]);
+    res.json({ success: true, message: 'Tag approved successfully' });
+  } catch (error) {
+    // console.error('Approve tag error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
+/**
+ * POST /admin/tags/:id/reject - Rejects and deletes a pending tag.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/tags/:id/reject', requireAdmin, async (req, res) => {
-    try {
-        await query('DELETE FROM tags WHERE tag_id = ? AND is_approved = 0', [req.params.id]);
-        res.json({ success: true, message: 'Tag rejected successfully' });
-    } catch (error) {
-        // console.error('Reject tag error:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
+  try {
+    await query('DELETE FROM tags WHERE tag_id = ? AND is_approved = 0', [req.params.id]);
+    res.json({ success: true, message: 'Tag rejected successfully' });
+  } catch (error) {
+    // console.error('Reject tag error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
-// Admin photo deletion
+/**
+ * POST /admin/gallery/photo/:id/delete - Deletes a photo from the gallery.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/gallery/photo/:id/delete', requireAdmin, async (req, res) => {
-    try {
-        await query('DELETE FROM photos WHERE photo_id = ?', [req.params.id]);
-        res.json({ success: true, message: 'Photo deleted successfully' });
-    } catch (error) {
-        // console.error('Admin delete photo error:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
+  try {
+    await query('DELETE FROM photos WHERE photo_id = ?', [req.params.id]);
+    res.json({ success: true, message: 'Photo deleted successfully' });
+  } catch (error) {
+    // console.error('Admin delete photo error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
-
-// In your admin routes - enhance the pending bios view
+/**
+ * GET /admin/pending-bios - Renders page with user bios pending moderation.
+ * Shows users with bios that require administrative approval.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/pending-bios', requireAdmin, async (req, res) => {
-    try {
-        const pendingBios = await query(`
+  try {
+    const pendingBios = await query(`
             SELECT 
                 u.user_id,
                 u.username,
@@ -175,30 +226,32 @@ router.get('/pending-bios', requireAdmin, async (req, res) => {
             ORDER BY u.created_at DESC
         `);
 
-        res.render('admin/pending-bios', {
-            title: 'Pending Bio Approvals',
-            users: pendingBios
-        });
-    } catch (error) {
-        // console.error('Pending bios error:', error);
-        res.status(500).render('error', {
-            title: 'Error',
-            message: 'Error loading pending bios.',
-            error: process.env.NODE_ENV === 'development' ? error : {}
-        });
-    }
+    res.render('admin/pending-bios', {
+      title: 'Pending Bio Approvals',
+      users: pendingBios
+    });
+  } catch (error) {
+    // console.error('Pending bios error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Error loading pending bios.',
+      error: process.env.NODE_ENV === 'development' ? error : {}
+    });
+  }
 });
 
-// POST /admin/users/:id/bio - Admin update user bio
+/**
+ * POST /admin/users/:id/bio - Updates a user's bio as an administrator.
+ * Admin updates bypass moderation and automatically mark bio as approved.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/users/:id/bio', requireAdmin, async (req, res) => {
   try {
     const { bio } = req.body;
     const targetUserId = req.params.id;
 
-    // console.log("Admin updating bio for user:", targetUserId);
-    // console.log("Bio content:", bio);
-
-    // Admin updates don't require moderation
     await updateUserBio(targetUserId, bio);
     await updateBioModerationStatus(targetUserId, false);
 
@@ -216,7 +269,13 @@ router.post('/users/:id/bio', requireAdmin, async (req, res) => {
   }
 });
 
-// POST /admin/users/:id/bio/approve - Approve user bio
+/**
+ * POST /admin/users/:id/bio/approve - Approves a user's pending bio.
+ * Removes the moderation requirement for the specified user's bio.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/users/:id/bio/approve', requireAdmin, async (req, res) => {
   try {
     const targetUserId = req.params.id;
@@ -237,7 +296,13 @@ router.post('/users/:id/bio/approve', requireAdmin, async (req, res) => {
   }
 });
 
-// GET /admin/users-with-pending-bios - Get users with pending bios
+/**
+ * GET /admin/users-with-pending-bios - Retrieves users with bios pending moderation.
+ * Returns JSON data for users whose bios require administrative approval.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/users-with-pending-bios', requireAdmin, async (req, res) => {
   try {
     const users = await query(`
@@ -248,7 +313,7 @@ router.get('/users-with-pending-bios', requireAdmin, async (req, res) => {
       AND bio != ''
       ORDER BY created_at DESC
     `);
-    
+
     res.json({
       success: true,
       users: users
@@ -262,12 +327,13 @@ router.get('/users-with-pending-bios', requireAdmin, async (req, res) => {
   }
 });
 
-
-
-
-
-
-// Update username (admin functionality)
+/**
+ * POST /admin/users/:id/username - Updates a user's username as an administrator.
+ * Validates username length and uniqueness before updating.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/users/:id/username', requireAdmin, async (req, res) => {
   try {
     const { username } = req.body;
@@ -282,7 +348,6 @@ router.post('/users/:id/username', requireAdmin, async (req, res) => {
 
     const trimmedUsername = username.trim();
 
-    // Check if username already exists (excluding target user)
     const existingUser = await checkUserExistsExcludingCurrent(targetUserId, trimmedUsername, null);
     if (existingUser) {
       return res.status(400).json({
@@ -291,7 +356,6 @@ router.post('/users/:id/username', requireAdmin, async (req, res) => {
       });
     }
 
-    // Update username
     await updateUsername(targetUserId, trimmedUsername);
 
     res.json({
@@ -309,10 +373,15 @@ router.post('/users/:id/username', requireAdmin, async (req, res) => {
   }
 });
 
-// Modify your admin routes to pass additional data
+/**
+ * GET /admin/dashboard - Renders the main administrator dashboard.
+ * Displays system statistics, recent users, and pending posts for approval.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/dashboard', requireAdmin, async (req, res) => {
   try {
-    // Get stats for admin dashboard
     const [userCount, petCount, taskCount, postCount] = await Promise.all([
       query('SELECT COUNT(*) as count FROM users'),
       query('SELECT COUNT(*) as count FROM pets'),
@@ -320,7 +389,6 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
       query('SELECT COUNT(*) as count FROM community_posts')
     ]);
 
-    // Get recent users
     const recentUsers = await query(`
       SELECT user_id, username, email, created_at 
       FROM users 
@@ -328,7 +396,6 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
       LIMIT 5
     `);
 
-    // Get pending posts for approval
     const pendingPosts = await query(`
       SELECT p.post_id, p.title, u.username, p.created_at 
       FROM community_posts p 
@@ -345,7 +412,6 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
       postCount: postCount[0].count,
       recentUsers,
       pendingPosts,
-      // Pass these for the admin header
       profilePicture: req.session.profilePicture,
       username: req.session.username
     });
@@ -354,13 +420,18 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading admin dashboard.',
-      error: process.env.NODE_ENV === 'development' ? error : {} 
-
+      error: process.env.NODE_ENV === 'development' ? error : {}
     });
   }
 });
 
-// User management
+/**
+ * GET /admin/users - Renders user management page for administrators.
+ * Displays all users with their roles and moderation status.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/users', requireAdmin, async (req, res) => {
   try {
     const users = await query(`
@@ -376,13 +447,13 @@ router.get('/users', requireAdmin, async (req, res) => {
       FROM users 
       ORDER BY created_at DESC
     `);
-    
+
     res.render('admin/users', {
       title: 'User Management',
       users
     });
   } catch (error) {
-    //  console.error('User management error:', error);
+    // console.error('User management error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading user management.',
@@ -391,7 +462,13 @@ router.get('/users', requireAdmin, async (req, res) => {
   }
 });
 
-// Post moderation
+/**
+ * GET /admin/posts - Renders post moderation page for administrators.
+ * Displays all community posts with approval status.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/posts', requireAdmin, async (req, res) => {
   try {
     const posts = await query(`
@@ -400,13 +477,13 @@ router.get('/posts', requireAdmin, async (req, res) => {
       JOIN users u ON p.user_id = u.user_id 
       ORDER BY p.created_at DESC
     `);
-    
+
     res.render('admin/posts', {
       title: 'Post Moderation',
       posts
     });
   } catch (error) {
-  //  console.error('Post moderation error:', error);
+    // console.error('Post moderation error:', error);
     res.status(500).render('error', {
       title: 'Error',
       message: 'Error loading post moderation.',
@@ -415,12 +492,15 @@ router.get('/posts', requireAdmin, async (req, res) => {
   }
 });
 
-// Update your approve post route
+/**
+ * POST /admin/posts/:id/approve - Approves a pending community post.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/posts/:id/approve', requireAdmin, async (req, res) => {
   try {
-    // console.log('Approving post ID:', req.params.id);
     const result = await query('UPDATE community_posts SET is_approved = TRUE WHERE post_id = ?', [req.params.id]);
-    // console.log('Update result:', result);
     res.json({ success: true });
   } catch (error) {
     // console.error('Approve post error:', error);
@@ -428,12 +508,15 @@ router.post('/posts/:id/approve', requireAdmin, async (req, res) => {
   }
 });
 
-// Update your delete post route
+/**
+ * POST /admin/posts/:id/delete - Deletes a community post.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/posts/:id/delete', requireAdmin, async (req, res) => {
   try {
-    // console.log('Deleting post ID:', req.params.id);
     const result = await query('DELETE FROM community_posts WHERE post_id = ?', [req.params.id]);
-    // console.log('Delete result:', result);
     res.json({ success: true });
   } catch (error) {
     // console.error('Delete post error:', error);
@@ -441,22 +524,22 @@ router.post('/posts/:id/delete', requireAdmin, async (req, res) => {
   }
 });
 
-
-
-// Update your delete user route
+/**
+ * POST /admin/users/:id/delete - Deletes a user account.
+ * Prevents administrators from deleting their own account.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/users/:id/delete', requireAdmin, async (req, res) => {
   try {
     const userId = req.params.id;
-    // console.log('Deleting user ID:', userId);
-    
-    // Prevent admin from deleting themselves
+
     if (parseInt(userId) === req.session.userId) {
-      // console.log('Prevented self-deletion attempt');
       return res.status(400).json({ success: false, error: 'Cannot delete your own account' });
     }
-    
+
     const result = await query('DELETE FROM users WHERE user_id = ?', [userId]);
-    // console.log('User delete result:', result);
     res.json({ success: true });
   } catch (error) {
     // console.error('Delete user error:', error);
@@ -464,18 +547,24 @@ router.post('/users/:id/delete', requireAdmin, async (req, res) => {
   }
 });
 
-// Get user details for editing
+/**
+ * GET /admin/users/:id - Retrieves user details for editing.
+ * Returns JSON data for a specific user.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/users/:id', requireAdmin, async (req, res) => {
   try {
     const user = await queryOne(`
       SELECT user_id, username, email, role, is_verified, created_at 
       FROM users WHERE user_id = ?
     `, [req.params.id]);
-    
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json(user);
   } catch (error) {
     // console.error('Get user error:', error);
@@ -483,22 +572,26 @@ router.get('/users/:id', requireAdmin, async (req, res) => {
   }
 });
 
-// Update user role 
+/**
+ * POST /admin/users/:id/role - Updates a user's role (regular/admin).
+ * Prevents administrators from changing their own role.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/users/:id/role', requireAdmin, async (req, res) => {
   try {
     const { role } = req.body;
     const userId = req.params.id;
-    
-    // Validate role
+
     if (!['regular', 'admin'].includes(role)) {
       return res.status(400).json({ success: false, error: 'Invalid role' });
     }
-    
-    // Prevent admin from changing their own role
+
     if (parseInt(userId) === req.session.userId) {
       return res.status(400).json({ success: false, error: 'Cannot change your own role' });
     }
-    
+
     await query('UPDATE users SET role = ? WHERE user_id = ?', [role, userId]);
     res.json({ success: true });
   } catch (error) {

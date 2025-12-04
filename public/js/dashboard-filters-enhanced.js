@@ -1,4 +1,8 @@
-// dashboard-filters-enhanced.js
+/**
+ * Dashboard Filters Enhanced - Advanced filtering system for pet care dashboard.
+ * Provides species, gender, age, priority, task type, and date range filtering
+ * with active filter display and results counting.
+ */
 document.addEventListener('DOMContentLoaded', function() {
     // Filter elements
     const filterSpecies = document.getElementById('filterSpecies');
@@ -14,13 +18,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const activeFilters = document.getElementById('activeFilters');
     const resultsCounter = document.getElementById('resultsCounter');
     
-    // All filter elements
+    // All filter elements in an array for easier management
     const filterElements = [
         filterSpecies, filterGender, filterAgeMin, filterAgeMax,
         filterPriority, filterTaskType, filterDueDateFrom, filterDueDateTo
     ];
     
-    // Add event listeners to all filters
+    /**
+     * Applies event listeners to all filter elements.
+     * Uses 'change' for select elements and 'input' for number/date inputs.
+     */
     filterElements.forEach(filter => {
         if (filter) {
             filter.addEventListener('change', applyFilters);
@@ -30,7 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Clear all filters
+    /**
+     * Clears all filter selections when the clear button is clicked.
+     * Resets select elements to first option and clears input values.
+     */
     if (clearAllFilters) {
         clearAllFilters.addEventListener('click', function() {
             filterElements.forEach(filter => {
@@ -46,6 +56,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    /**
+     * Applies all active filters to pet and task items.
+     * Evaluates each item against filter criteria and updates visibility.
+     * Counts visible items and updates UI accordingly.
+     */
     function applyFilters() {
         const petItems = document.querySelectorAll('.pet-item');
         const taskItems = document.querySelectorAll('.task-item');
@@ -53,7 +68,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let visiblePets = 0;
         let visibleTasks = 0;
         
-        // Filter pets
+        /**
+         * Filters pet items based on species, gender, and age range.
+         * Uses data attributes from pet item elements for comparison.
+         */
         petItems.forEach(item => {
             const species = item.getAttribute('data-species');
             const gender = item.getAttribute('data-gender');
@@ -70,7 +88,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isVisible) visiblePets++;
         });
         
-        // Filter tasks
+        /**
+         * Filters task items based on priority, type, and due date range.
+         * Parses date strings for accurate date comparisons.
+         */
         taskItems.forEach(item => {
             const priority = item.getAttribute('data-priority');
             const taskType = item.getAttribute('data-task-type');
@@ -87,13 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isVisible) visibleTasks++;
         });
         
-        // Update active filters display
         updateActiveFilters();
-        
-        // Update results counter
         updateResultsCounter(visiblePets, visibleTasks);
     }
     
+    /**
+     * Updates the active filters display area.
+     * Creates visual tags for each active filter with remove buttons.
+     * Shows/hides the active filters container based on filter activity.
+     */
     function updateActiveFilters() {
         activeFilters.innerHTML = '';
         let hasActiveFilters = false;
@@ -124,7 +147,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         activeFiltersContainer.style.display = hasActiveFilters ? 'block' : 'none';
         
-        // Add event listeners to remove buttons
+        /**
+         * Adds event listeners to remove buttons on filter tags.
+         * Clears the corresponding filter when remove button is clicked.
+         */
         document.querySelectorAll('.remove-filter').forEach(button => {
             button.addEventListener('click', function() {
                 const filterId = this.getAttribute('data-filter');
@@ -141,6 +167,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    /**
+     * Updates the results counter with current filter results.
+     * Shows counts of visible items versus total items for both pets and tasks.
+     * 
+     * @param {number} visiblePets - Number of visible pet items
+     * @param {number} visibleTasks - Number of visible task items
+     */
     function updateResultsCounter(visiblePets, visibleTasks) {
         if (resultsCounter) {
             const totalPets = document.querySelectorAll('.pet-item').length;
@@ -155,6 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Initialize filters
+    // Initialize filters on page load
     applyFilters();
 });

@@ -3,6 +3,18 @@ require('dotenv').config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+/**
+ * Sends a verification or password reset email using SendGrid.
+ * Generates appropriate email content based on the email type and includes
+ * a secure token-based link for verification or password reset.
+ *
+ * @param {string} email - Recipient email address
+ * @param {string} token - Secure token for verification/reset link
+ * @param {string} [username='User'] - Recipient's username for personalization
+ * @param {string|null} [linkOverride=null] - Custom link to override default URL
+ * @param {boolean} [isReset=false] - Whether this is a password reset email (true) or verification email (false)
+ * @returns {Promise<boolean>} True if email sent successfully, false otherwise
+ */
 async function sendVerificationEmail(email, token, username = 'User', linkOverride = null, isReset = false) {
   try {
     const actionLink = linkOverride || `${process.env.BASE_URL}/auth/${isReset ? 'reset-password' : 'verify'}?token=${token}`;
@@ -31,7 +43,7 @@ async function sendVerificationEmail(email, token, username = 'User', linkOverri
 
     const msg = {
       to: email,
-      from: 'no-reply@em3996.pet-care.live', // Use simple string format
+      from: 'no-reply@em3996.pet-care.live',
       subject: subject,
       html: htmlContent,
       text: textContent

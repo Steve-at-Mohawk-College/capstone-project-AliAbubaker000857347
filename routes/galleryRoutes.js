@@ -4,21 +4,31 @@ const photoModel = require('../models/photoModel');
 const { query } = require('../config/database');
 const { uploadGallery } = require('../config/upload-cloudinary');
 
-// Middleware
+/**
+ * Middleware to require authentication for gallery routes.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 function requireAuth(req, res, next) {
     if (req.session?.userId) return next();
     return res.redirect('/login');
 }
 
-
-
-// Gallery homepage - public photos
+/**
+ * GET /gallery - Renders the main gallery page with public photos.
+ * Supports pagination, filtering by tags/search, and sorting options.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/', requireAuth, async (req, res) => {
     try {
         const page = Math.max(1, parseInt(req.query.page) || 1);
         const limit = 12;
-        const sortBy = req.query.sort || 'newest'; // Default to newest
-        
+        const sortBy = req.query.sort || 'newest';
+
         const filters = {
             tag: req.query.tag,
             search: req.query.search,
@@ -35,7 +45,7 @@ router.get('/', requireAuth, async (req, res) => {
             currentPage: page,
             currentTag: req.query.tag,
             currentSearch: req.query.search,
-            currentSort: sortBy, // Pass current sort to template
+            currentSort: sortBy,
             hasMore: photos.length === limit
         });
     } catch (error) {
@@ -48,12 +58,18 @@ router.get('/', requireAuth, async (req, res) => {
     }
 });
 
-// My photos page
+/**
+ * GET /gallery/my-photos - Renders user's personal photo gallery.
+ * Supports pagination and sorting of user's uploaded photos.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/my-photos', requireAuth, async (req, res) => {
     try {
         const page = Math.max(1, parseInt(req.query.page) || 1);
         const limit = 12;
-        const sortBy = req.query.sort || 'newest'; // Default to newest
+        const sortBy = req.query.sort || 'newest';
 
         const photos = await photoModel.getUserPhotos(req.session.userId, page, limit, sortBy);
 
@@ -61,7 +77,7 @@ router.get('/my-photos', requireAuth, async (req, res) => {
             title: 'My Photos - Pet Care',
             photos,
             currentPage: page,
-            currentSort: sortBy, // Pass current sort to template
+            currentSort: sortBy,
             hasMore: photos.length === limit
         });
     } catch (error) {
@@ -74,16 +90,22 @@ router.get('/my-photos', requireAuth, async (req, res) => {
     }
 });
 
-// Health-filtered gallery
+/**
+ * GET /gallery/health-status/:status - Renders gallery filtered by pet health status.
+ * Shows photos of pets with specific health conditions.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/health-status/:status', requireAuth, async (req, res) => {
     try {
         const healthStatus = req.params.status;
         const page = Math.max(1, parseInt(req.query.page) || 1);
         const limit = 12;
-        const sortBy = req.query.sort || 'newest'; // Default to newest
-        
+        const sortBy = req.query.sort || 'newest';
+
         const validStatuses = ['healthy', 'needs_vaccination', 'underweight', 'overweight', 'recent_vet_visit'];
-        
+
         if (!validStatuses.includes(healthStatus)) {
             return res.redirect('/gallery');
         }
@@ -93,17 +115,16 @@ router.get('/health-status/:status', requireAuth, async (req, res) => {
         };
 
         const photos = await photoModel.getPhotosByHealthStatus(
-            req.session.userId, 
-            healthStatus, 
-            page, 
+            req.session.userId,
+            healthStatus,
+            page,
             limit,
             sortBy
         );
-        
+
         const popularTags = await photoModel.getPopularTags();
         const healthSummary = await photoModel.getHealthStatusSummary(req.session.userId);
 
-        // Status labels for display
         const statusLabels = {
             'healthy': 'Healthy Pets',
             'needs_vaccination': 'Needs Vaccination',
@@ -119,7 +140,7 @@ router.get('/health-status/:status', requireAuth, async (req, res) => {
             healthSummary,
             currentPage: page,
             currentHealthStatus: healthStatus,
-            currentSort: sortBy, // Pass current sort to template
+            currentSort: sortBy,
             statusLabels,
             hasMore: photos.length === limit
         });
@@ -133,7 +154,13 @@ router.get('/health-status/:status', requireAuth, async (req, res) => {
     }
 });
 
-// Upload photo page
+/**
+ * GET /gallery/upload - Renders photo upload form.
+ * Pre-populates form with user's pets for association.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/upload', requireAuth, async (req, res) => {
     try {
         let pets = [];
@@ -142,7 +169,7 @@ router.get('/upload', requireAuth, async (req, res) => {
         } catch (dbError) {
             // console.error('Error fetching pets:', dbError);
         }
-        
+
         res.render('gallery/upload', {
             title: 'Upload Photo - Pet Care',
             pets,
@@ -160,16 +187,22 @@ router.get('/upload', requireAuth, async (req, res) => {
     }
 });
 
-// Handle photo upload - SIMPLIFIED VERSION
+/**
+ * POST /gallery/upload - Handles photo upload to Cloudinary.
+ * Supports single upload for regular users and multiple upload for admins.
+ * Processes tags and associates photos with pets.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
     try {
         const isAdmin = req.session?.role === 'admin';
-        
-        // Check if files were uploaded
+
         if (isAdmin && (!req.cloudinaryResults || req.cloudinaryResults.length === 0)) {
             return renderUploadError(res, 'Please select photos to upload.', req.body);
         }
-        
+
         if (!isAdmin && !req.cloudinaryResult) {
             return renderUploadError(res, 'Please select a photo to upload.', req.body);
         }
@@ -177,7 +210,6 @@ router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
         const { title, description, is_public, pet_id, tags } = req.body;
 
         if (isAdmin) {
-            // Handle admin multiple upload
             let successCount = 0;
             let errorCount = 0;
 
@@ -203,7 +235,6 @@ router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
             const message = `Uploaded ${successCount} photos successfully${errorCount > 0 ? ` (${errorCount} failed)` : ''}`;
             res.redirect(`/gallery/my-photos?message=${encodeURIComponent(message)}`);
         } else {
-            // Handle regular user single upload
             const photoUrl = req.cloudinaryResult.secure_url;
 
             const photoId = await photoModel.createPhoto({
@@ -224,7 +255,13 @@ router.post('/upload', requireAuth, uploadGallery, async (req, res) => {
     }
 });
 
-// Helper function to process tags
+/**
+ * Processes and adds tags to a photo.
+ * 
+ * @param {number} photoId - ID of the photo
+ * @param {string} tags - Comma-separated tag string
+ * @param {number} userId - ID of the user adding tags
+ */
 async function processTags(photoId, tags, userId) {
     if (tags) {
         const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
@@ -238,7 +275,13 @@ async function processTags(photoId, tags, userId) {
     }
 }
 
-// Helper function to render upload error page
+/**
+ * Renders upload error page with form data preserved.
+ * 
+ * @param {Object} res - Express response object
+ * @param {string} errorMessage - Error message to display
+ * @param {Object} formData - Form data to repopulate
+ */
 async function renderUploadError(res, errorMessage, formData = {}) {
     const pets = await getUsersPets(res.locals.userId);
     res.status(500).render('gallery/upload', {
@@ -250,7 +293,12 @@ async function renderUploadError(res, errorMessage, formData = {}) {
     });
 }
 
-// Helper function to get user's pets
+/**
+ * Retrieves user's pets from database.
+ * 
+ * @param {number} userId - ID of the user
+ * @returns {Promise<Array>} Array of pet objects
+ */
 async function getUsersPets(userId) {
     try {
         return await query('SELECT * FROM pets WHERE user_id = ?', [userId]);
@@ -260,13 +308,17 @@ async function getUsersPets(userId) {
     }
 }
 
-
-
-// Health overview page
+/**
+ * GET /gallery/health-overview - Renders pet health overview dashboard.
+ * Shows health statistics summary for user's pets.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/health-overview', requireAuth, async (req, res) => {
     try {
         const healthSummary = await photoModel.getHealthStatusSummary(req.session.userId);
-        
+
         res.render('gallery/health-overview', {
             title: 'Pet Health Overview - Gallery',
             healthSummary
@@ -281,15 +333,17 @@ router.get('/health-overview', requireAuth, async (req, res) => {
     }
 });
 
-
-
-
-
-// View single photo
+/**
+ * GET /gallery/photo/:id - Renders detailed view of a single photo.
+ * Shows photo metadata, tags, and interactive features.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.get('/photo/:id', requireAuth, async (req, res) => {
     try {
         const photo = await photoModel.getPhotoById(req.params.id, req.session.userId);
-        
+
         if (!photo) {
             return res.status(404).render('error', {
                 title: 'Photo Not Found',
@@ -312,9 +366,13 @@ router.get('/photo/:id', requireAuth, async (req, res) => {
     }
 });
 
-// API Routes for AJAX actions
-
-// Toggle favorite
+/**
+ * POST /gallery/photo/:id/favorite - Toggles favorite status for a photo.
+ * API endpoint for AJAX favorite toggling.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/photo/:id/favorite', requireAuth, async (req, res) => {
     try {
         const result = await photoModel.toggleFavorite(req.params.id, req.session.userId);
@@ -325,11 +383,17 @@ router.post('/photo/:id/favorite', requireAuth, async (req, res) => {
     }
 });
 
-// Add tag to photo
+/**
+ * POST /gallery/photo/:id/tags - Adds a tag to a photo.
+ * API endpoint for AJAX tag addition.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.post('/photo/:id/tags', requireAuth, async (req, res) => {
     try {
         const { tag } = req.body;
-        
+
         if (!tag || tag.trim().length === 0) {
             return res.status(400).json({ success: false, error: 'Tag is required' });
         }
@@ -342,15 +406,21 @@ router.post('/photo/:id/tags', requireAuth, async (req, res) => {
     }
 });
 
-// Remove tag from photo
+/**
+ * DELETE /gallery/photo/:photoId/tags/:tagId - Removes a tag from a photo.
+ * API endpoint for AJAX tag removal.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.delete('/photo/:photoId/tags/:tagId', requireAuth, async (req, res) => {
     try {
         const success = await photoModel.removeTagFromPhoto(
-            req.params.photoId, 
-            req.params.tagId, 
+            req.params.photoId,
+            req.params.tagId,
             req.session.userId
         );
-        
+
         if (success) {
             res.json({ success: true, message: 'Tag removed successfully' });
         } else {
@@ -362,23 +432,17 @@ router.delete('/photo/:photoId/tags/:tagId', requireAuth, async (req, res) => {
     }
 });
 
-// Update photo details
-
+/**
+ * PUT /gallery/photo/:id - Updates photo metadata.
+ * API endpoint for editing photo title, description, visibility, and pet association.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.put('/photo/:id', requireAuth, async (req, res) => {
     try {
         const { title, description, is_public, pet_id } = req.body;
-        
-        // console.log('Update photo request:', {
-        //     photoId: req.params.id,
-        //     userId: req.session.userId,
-        //     title,
-        //     description,
-        //     is_public,
-        //     is_public_type: typeof is_public,
-        //     pet_id
-        // });
 
-        // Convert is_public to proper boolean/INT for MySQL
         let isPublicValue;
         if (typeof is_public === 'boolean') {
             isPublicValue = is_public ? 1 : 0;
@@ -387,10 +451,8 @@ router.put('/photo/:id', requireAuth, async (req, res) => {
         } else if (typeof is_public === 'number') {
             isPublicValue = is_public ? 1 : 0;
         } else {
-            isPublicValue = 0; // Default to private if unclear
+            isPublicValue = 0;
         }
-
-        // console.log('Processed is_public value:', isPublicValue);
 
         await photoModel.updatePhoto(req.params.id, req.session.userId, {
             title,
@@ -398,23 +460,29 @@ router.put('/photo/:id', requireAuth, async (req, res) => {
             is_public: isPublicValue,
             pet_id: pet_id || null
         });
-        
-        res.json({ 
-            success: true, 
+
+        res.json({
+            success: true,
             message: 'Photo updated successfully',
             updatedFields: { title, description, is_public: isPublicValue }
         });
     } catch (error) {
         // console.error('Update photo error:', error);
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             error: error.message,
             receivedData: req.body
         });
     }
 });
 
-// Delete photo
+/**
+ * DELETE /gallery/photo/:id - Deletes a photo.
+ * API endpoint for photo deletion with ownership validation.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 router.delete('/photo/:id', requireAuth, async (req, res) => {
     try {
         await photoModel.deletePhoto(req.params.id, req.session.userId);

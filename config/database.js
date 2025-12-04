@@ -3,13 +3,12 @@ require('dotenv').config();
 
 let dbConfig = {};
 
-// config/database.js - UPDATED SECTION
 const commonConfig = {
   waitForConnections: true,
   connectionLimit: 3,
   queueLimit: 10,
   charset: 'utf8mb4',
-  timezone: '-05:00', // USE OFFSET, not named timezone
+  timezone: '-05:00',
   idleTimeout: 60000,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
@@ -17,7 +16,6 @@ const commonConfig = {
   supportBigNumbers: true,
   bigNumberStrings: true
 };
-
 
 if (process.env.JAWSDB_URL) {
   const url = new URL(process.env.JAWSDB_URL);
@@ -29,7 +27,6 @@ if (process.env.JAWSDB_URL) {
     database: url.pathname.replace('/', ''),
     port: url.port || 3306,
   };
-  // console.log('✅ Using JawsDB connection with FORCED EST timezone');
 } else {
   dbConfig = {
     ...commonConfig,
@@ -40,12 +37,10 @@ if (process.env.JAWSDB_URL) {
     port: process.env.DB_PORT || 3306,
     connectTimeout: 60000,
   };
-  // console.log('✅ Using local MySQL connection with FORCED EST timezone');
 }
 
 const pool = mysql.createPool(dbConfig);
 
-// SIMPLIFIED connection monitoring
 pool.on('acquire', (connection) => {
   // console.log(`✅ Connection ${connection.threadId} acquired`);
 });
@@ -62,28 +57,20 @@ pool.on('error', (err) => {
   // console.error('💥 Database pool error:', err);
 });
 
-// FIXED: Test connection with SIMPLIFIED timezone verification
+/**
+ * Tests the database connection and verifies timezone configuration.
+ * Enforces EST timezone (-05:00) for the test session and checks database time.
+ * 
+ * @returns {Promise<boolean>} True if connection is successful, false otherwise
+ */
 async function testConnection() {
   let connection;
   try {
     connection = await pool.getConnection();
-    
-    // Force timezone for this test connection
     await connection.execute(`SET time_zone = '-05:00'`);
-    
-    // console.log('✅ Connected to MySQL database successfully');
-    
-    // FIXED: Use simpler SQL query without problematic functions
     const [result] = await connection.execute(
       'SELECT @@session.time_zone as timezone, NOW() as db_time, CURTIME() as db_time_only'
     );
-    
-    // console.log('🔍 Database session timezone:', result[0].timezone);
-    // console.log('🔍 Database current time:', result[0].db_time);
-    // console.log('🔍 Database time only:', result[0].db_time_only);
-    // console.log('🔍 Node.js local time:', new Date().toString());
-    // console.log('🔍 Node.js local time ISO:', new Date().toISOString());
-    
     return true;
   } catch (error) {
     // console.error('❌ Database connection failed:', error.message);
@@ -95,55 +82,36 @@ async function testConnection() {
   }
 }
 
-// ENHANCED query function with timezone enforcement and better date handling
+/**
+ * Executes a SQL query with parameterized inputs and enforces EST timezone.
+ * Automatically converts JavaScript Date objects to MySQL datetime strings.
+ * 
+ * @param {string} sql - SQL query string
+ * @param {Array} params - Query parameters (optional, defaults to empty array)
+ * @returns {Promise<Array>} Query results as an array of rows
+ * @throws {Error} If the query execution fails
+ */
 async function query(sql, params = []) {
   let connection;
   try {
     connection = await pool.getConnection();
-    
-    // Ensure timezone is set for this connection
     await connection.execute(`SET time_zone = '-05:00'`);
-    
-    // console.log('📝 Executing SQL:', sql);
-    // console.log('📝 With params:', params);
-    
-    // Enhanced parameter processing - handle dates properly in LOCAL time
     const processedParams = params.map(param => {
       if (param === null || param === undefined) {
         return null;
       }
       if (param instanceof Date) {
-        // Format as MySQL datetime string in LOCAL time (EST)
         const year = param.getFullYear();
         const month = String(param.getMonth() + 1).padStart(2, '0');
         const day = String(param.getDate()).padStart(2, '0');
         const hours = String(param.getHours()).padStart(2, '0');
         const minutes = String(param.getMinutes()).padStart(2, '0');
         const seconds = String(param.getSeconds()).padStart(2, '0');
-        
-        const mysqlDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-        // console.log('📅 Date conversion:', {
-        //   original: param.toString(),
-        //   toMySQL: mysqlDateTime
-        // });
-        
-        return mysqlDateTime;
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       }
       return param;
     });
-    
-    // console.log('📝 Processed params:', processedParams);
-    
     const [rows] = await connection.execute(sql, processedParams);
-    
-    // Log results for debugging
-    if (rows && rows.length > 0) {
-      // console.log(`✅ Query returned ${rows.length} rows`);
-      if (rows[0].due_date) {
-        // console.log('📅 Sample due_date in result:', rows[0].due_date);
-      }
-    }
-    
     return rows;
   } catch (error) {
     // console.error('❌ Database query error:', error);
@@ -157,29 +125,25 @@ async function query(sql, params = []) {
   }
 }
 
-// Query paginated function
+/**
+ * Executes a paginated SQL query with offset-based pagination.
+ * Enforces EST timezone and automatically limits results.
+ * 
+ * @param {string} sql - SQL query string (without LIMIT/OFFSET)
+ * @param {Array} params - Query parameters (optional, defaults to empty array)
+ * @param {number} limit - Maximum number of rows to return (default: 5)
+ * @param {number} offset - Number of rows to skip (default: 0)
+ * @returns {Promise<Array>} Paginated query results
+ * @throws {Error} If the query execution fails
+ */
 async function queryPaginated(sql, params = [], limit = 5, offset = 0) {
   let connection;
   try {
     connection = await pool.getConnection();
-    
-    // Force timezone
     await connection.execute(`SET time_zone = '-05:00'`);
-    
     const numLimit = parseInt(limit);
     const numOffset = parseInt(offset);
-    
-    // console.log('🔢 Pagination query:', {
-    //   sql,
-    //   params,
-    //   limit: numLimit,
-    //   offset: numOffset
-    // });
-    
     const paginatedSQL = `${sql} LIMIT ${numLimit} OFFSET ${numOffset}`;
-    
-    // console.log('📋 Final SQL:', paginatedSQL);
-    
     const [rows] = await connection.execute(paginatedSQL, params);
     return rows;
   } catch (error) {
@@ -192,13 +156,25 @@ async function queryPaginated(sql, params = [], limit = 5, offset = 0) {
   }
 }
 
-// Query one helper
+/**
+ * Executes a SQL query and returns only the first result.
+ * Convenience wrapper around query() for single-row queries.
+ * 
+ * @param {string} sql - SQL query string
+ * @param {Array} params - Query parameters (optional)
+ * @returns {Promise<Object|null>} First row of results or null if no results
+ */
 async function queryOne(sql, params) {
   const rows = await query(sql, params);
   return rows[0] || null;
 }
 
-// Close pool function
+/**
+ * Gracefully closes the database connection pool.
+ * Should be called during application shutdown.
+ * 
+ * @returns {Promise<void>}
+ */
 async function closePool() {
   if (pool && pool.end) {
     await pool.end();

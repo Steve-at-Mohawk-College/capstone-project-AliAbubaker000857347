@@ -1,4 +1,8 @@
-// Dashboard Filtering System
+/**
+ * PetFilterSystem - Advanced filtering system for pet management dashboard.
+ * Provides comprehensive filtering by species, age, weight, and gender with
+ * visual feedback, active filter display, and no-results handling.
+ */
 class PetFilterSystem {
     constructor() {
         this.currentFilters = {
@@ -12,25 +16,35 @@ class PetFilterSystem {
         this.init();
     }
 
+    /**
+     * Initializes the filter system.
+     * Binds event listeners and logs initialization.
+     */
     init() {
         this.bindEvents();
         // console.log('🎯 Pet Filter System initialized');
     }
 
+    /**
+     * Binds event listeners to filter controls.
+     * Handles apply and clear filter actions.
+     */
     bindEvents() {
-        // Apply filters
         document.getElementById('applyFilters')?.addEventListener('click', () => {
             this.updateCurrentFilters();
             this.applyFilters();
             this.updateActiveFiltersDisplay();
         });
 
-        // Clear filters
         document.getElementById('clearFilters')?.addEventListener('click', () => {
             this.clearFilters();
         });
     }
 
+    /**
+     * Updates current filter values from form inputs.
+     * Reads values from all filter form fields.
+     */
     updateCurrentFilters() {
         this.currentFilters = {
             species: document.getElementById('filterSpecies').value,
@@ -42,6 +56,11 @@ class PetFilterSystem {
         };
     }
 
+    /**
+     * Applies current filters to pet cards.
+     * Evaluates each pet card against filter criteria and updates visibility.
+     * Handles results counting and no-results messaging.
+     */
     applyFilters() {
         const petsList = document.getElementById('petsList');
         const petsListContainer = document.getElementById('petsListContainer');
@@ -59,7 +78,6 @@ class PetFilterSystem {
 
             let isVisible = true;
 
-            // Apply all filters
             if (this.currentFilters.species && species !== this.currentFilters.species.toLowerCase()) {
                 isVisible = false;
             }
@@ -79,7 +97,6 @@ class PetFilterSystem {
                 isVisible = false;
             }
 
-            // Show/hide card
             card.style.display = isVisible ? 'flex' : 'none';
             if (isVisible) visibleCount++;
         });
@@ -88,6 +105,13 @@ class PetFilterSystem {
         this.handleNoResults(visibleCount, petCards.length, petsListContainer);
     }
 
+    /**
+     * Updates the results counter display.
+     * Shows count of visible pets versus total pets.
+     * 
+     * @param {number} visible - Number of currently visible pets
+     * @param {number} total - Total number of pets
+     */
     updateResultsCounter(visible, total) {
         const filterResults = document.getElementById('filterResults');
         if (filterResults) {
@@ -95,6 +119,14 @@ class PetFilterSystem {
         }
     }
 
+    /**
+     * Handles no-results scenario by displaying a helpful message.
+     * Creates or removes no-results message based on filter results.
+     * 
+     * @param {number} visibleCount - Number of visible pets
+     * @param {number} totalCount - Total number of pets
+     * @param {HTMLElement} container - Container element for pets list
+     */
     handleNoResults(visibleCount, totalCount, container) {
         const existingMessage = document.getElementById('noResultsMessage');
         
@@ -122,6 +154,10 @@ class PetFilterSystem {
         }
     }
 
+    /**
+     * Updates the active filters display area.
+     * Creates visual badges for each active filter with remove functionality.
+     */
     updateActiveFiltersDisplay() {
         const activeFiltersContainer = document.getElementById('activeFilters');
         if (!activeFiltersContainer) return;
@@ -138,6 +174,14 @@ class PetFilterSystem {
         });
     }
 
+    /**
+     * Generates display information for a specific filter.
+     * Provides formatted text and Bootstrap badge class for visual representation.
+     * 
+     * @param {string} key - Filter key (species, ageMin, etc.)
+     * @param {string} value - Filter value
+     * @returns {Object} Display text and badge class
+     */
     getFilterDisplayInfo(key, value) {
         const config = {
             species: { text: `Species: ${this.capitalizeFirst(value)}`, class: 'bg-success' },
@@ -154,6 +198,14 @@ class PetFilterSystem {
         };
     }
 
+    /**
+     * Creates a filter badge element with remove functionality.
+     * 
+     * @param {string} displayText - Text to display on badge
+     * @param {string} badgeClass - Bootstrap badge class for styling
+     * @param {string} filterKey - Key identifier for the filter
+     * @returns {HTMLElement} Badge element with remove button
+     */
     createFilterBadge(displayText, badgeClass, filterKey) {
         const badge = document.createElement('span');
         badge.className = `badge ${badgeClass} filter-badge`;
@@ -166,6 +218,11 @@ class PetFilterSystem {
         return badge;
     }
 
+    /**
+     * Clears a single filter and re-applies remaining filters.
+     * 
+     * @param {string} filterKey - Key of the filter to clear
+     */
     clearSingleFilter(filterKey) {
         const elementMap = {
             species: 'filterSpecies',
@@ -186,6 +243,9 @@ class PetFilterSystem {
         this.updateActiveFiltersDisplay();
     }
 
+    /**
+     * Clears all filters and resets the filter form.
+     */
     clearFilters() {
         document.getElementById('petFilterForm')?.reset();
         this.currentFilters = {
@@ -200,6 +260,12 @@ class PetFilterSystem {
         this.updateActiveFiltersDisplay();
     }
 
+    /**
+     * Capitalizes the first letter of a string.
+     * 
+     * @param {string} string - String to capitalize
+     * @returns {string} Capitalized string
+     */
     capitalizeFirst(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }

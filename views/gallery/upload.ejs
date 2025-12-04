@@ -37,7 +37,6 @@
             display: none;
         }
 
-        /* FIXED: Improved contrast for light theme */
         .form-label {
             color: #212529 !important;
             font-weight: 600;
@@ -47,7 +46,6 @@
             color: #212529 !important;
         }
 
-        /* FIXED: Dark theme support with better contrast */
         [data-theme="dark"] .upload-area {
             border-color: #6c757d;
             background: #343a40;
@@ -63,7 +61,6 @@
             background: #1a365d;
         }
 
-        /* FIXED: Better text contrast in dark theme */
         [data-theme="dark"] .upload-area h4 {
             color: #f8f9fa !important;
         }
@@ -80,7 +77,6 @@
             color: #adb5bd !important;
         }
 
-        /* FIXED: Form labels contrast in dark theme */
         [data-theme="dark"] .form-label {
             color: #f8f9fa !important;
         }
@@ -93,7 +89,6 @@
             color: #adb5bd !important;
         }
 
-        /* FIXED: Card text contrast */
         [data-theme="dark"] .card-header h2 {
             color: #f8f9fa !important;
         }
@@ -102,7 +97,6 @@
             color: #e9ecef !important;
         }
 
-        /* FIXED: Alert text contrast */
         [data-theme="dark"] .alert-info {
             background-color: #03254c;
             border-color: #0d6efd;
@@ -115,7 +109,6 @@
             color: #f8d7da !important;
         }
 
-        /* ===== FIX MOBILE HEADING POSITION ===== */
         .container.mt-4 {
             margin-top: 2rem !important;
         }
@@ -148,13 +141,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* This is key - maintains aspect ratio while filling container */
             object-position: center;
-            /* Centers the image */
             transition: transform 0.5s ease;
         }
 
-        /* For the detail view in photo-detail.ejs */
         .photo-image-wrapper {
             text-align: center;
             background: #f8f9fa;
@@ -193,7 +183,6 @@
                     <div class="card">
                         <div class="card-header">
                             <h1 class="card-title h4 mb-0">
-                                <!-- FIXED: Changed from h2 to h1 for proper heading structure -->
                                 <i class="bi bi-cloud-upload"></i> Upload Photo
                             </h1>
                         </div>
@@ -221,8 +210,6 @@
                                                         You can upload one photo at a time.
                                                     </div>
                                                     <% } %>
-
-                                                        <!-- FIXED: Added proper label association -->
                                                         <label for="photoInput" class="form-label fw-bold">
                                                             <% if (isAdmin) { %>Select Photos *<% } else { %>Select
                                                                     Photo *<% } %>
@@ -231,14 +218,11 @@
                                                         <div class="upload-area" id="uploadArea">
                                                             <i
                                                                 class="bi bi-cloud-arrow-up display-4 text-muted mb-3"></i>
-                                                            <!-- FIXED: Changed from h5 to h4 for proper heading structure -->
                                                             <h4 class="h5">
-                                                                <!-- Using h4 with h5 styling for semantic correctness -->
                                                                 <% if (isAdmin) { %>Drag & Drop your photos here<% }
                                                                         else { %>Drag & Drop your photo here<% } %>
                                                             </h4>
                                                             <p class="text-muted">or click to browse</p>
-                                                            <!-- FIXED: Added aria-label for better accessibility -->
                                                             <input type="file" name="photos" id="photoInput"
                                                                 accept="image/*" class="d-none" <%=isAdmin ? 'multiple'
                                                                 : '' %>
@@ -341,7 +325,6 @@
             const chooseFileBtn = document.getElementById('chooseFileBtn'); // Get by ID instead
             const isAdmin = <%= isAdmin %>;
 
-            // Remove any existing click handlers first
             uploadArea.onclick = null;
             if (chooseFileBtn) {
                 chooseFileBtn.onclick = null;
@@ -508,7 +491,6 @@
 
             // Add a button to change file
             function addChangeFileButton() {
-                // Remove existing change file button if it exists
                 const existingBtn = document.querySelector('.change-file-btn');
                 if (existingBtn) {
                     existingBtn.remove();
@@ -524,7 +506,7 @@
                     photoInput.value = '';
                     previewContainer.innerHTML = '';
                     uploadArea.style.display = 'block';
-                    this.remove(); // Remove this button
+                    this.remove();
                 });
 
                 previewContainer.appendChild(changeFileBtn);

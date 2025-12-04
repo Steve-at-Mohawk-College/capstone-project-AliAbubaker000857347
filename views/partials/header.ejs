@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title || 'Pet Care Management' %></title>
+  <title>
+    <%= title || 'Pet Care Management' %>
+  </title>
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,1981 +18,1963 @@
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <link href="/css/dashboard.css" rel="stylesheet">
-   
-<style>
-/* ===== MODERN HEADER VARIABLES ===== */
-:root {
-  --primary: #4361ee;
-  --primary-dark: #3a56d4;
-  --primary-light: #eef2ff;
-  --secondary: #06d6a0;
-  --accent: #ff6b6b;
-  --light: #f8f9fa;
-  --dark: #1a1d21;
-  --gray: #6c757d;
-  --light-gray: #e9ecef;
-  --border-radius: 12px;
-  --border-radius-sm: 8px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="dark"] {
-  --light: #1a1d21;
-  --dark: #f8f9fa;
-  --gray: #a0a0a0;
-  --light-gray: #2d3239;
-  --glass-bg: rgba(26, 29, 33, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.35);
-}
-
-/* ===== BASE STYLES ===== */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--light);
-  color: var(--dark);
-  transition: var(--transition);
-}
-
-/* ===== MODERN NAVBAR STYLES ===== */
-.navbar-modern {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
-  padding: 0.75rem 0;
-  box-shadow: var(--shadow);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: 1030;
-  transition: var(--transition);
-}
-
-/* Brand Logo */
-.navbar-brand-modern {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  color: var(--primary) !important;
-  display: flex;
-  align-items: center;
-  transition: var(--transition);
-  font-size: 1.5rem;
-  text-decoration: none;
-  gap: 0.5rem;
-}
-
-.navbar-brand-modern i {
-  font-size: 1.8rem;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Container Layout */
-.navbar-modern .container-fluid {
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-}
-
-/* ===== MOBILE STYLES ===== */
-@media (max-width: 991.98px) {
-  /* Mobile Header Layout */
-  .navbar-modern .container-fluid {
-    padding: 0 0.75rem;
-  }
-
-
-/* Mobile Navigation Menu - Opens from left */
-  .navbar-collapse-modern {
-    position: fixed;
-    top: 100%;
-    left: 0;
-    width: 85%;
-    max-width: 320px;
-    height: calc(100vh - 70px);
-    background: var(--light); /* Changed from glass-bg to solid light */
-    backdrop-filter: none; /* Remove blur effect */
-    -webkit-backdrop-filter: none; /* Remove blur effect */
-    border-right: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-lg);
-    z-index: 1020;
-    margin-top: 0;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .navbar-collapse-modern.show {
-    transform: translateX(0);
-  }
-
-  /* Mobile Navigation Items */
-  .navbar-nav-modern {
-    padding: 1rem 0;
-    margin: 0;
-    height: 100%;
-    overflow-y: auto;
-    background: var(--light); /* Ensure solid background */
-  }
-
-  .nav-item-modern {
-    margin: 0;
-  }
-
-  .nav-link-modern {
-    font-weight: 500;
-    color: var(--dark) !important;
-    transition: var(--transition);
-    border-radius: 0;
-    padding: 1rem 1.5rem !important;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--light-gray); /* Use light-gray for better contrast */
-    font-size: 1rem;
-    text-decoration: none;
-    background: var(--light); /* Solid background for links */
-  }
-
-  .nav-link-modern:hover,
-  .nav-link-modern:focus {
-    color: var(--primary) !important;
-    background-color: rgba(67, 97, 238, 0.08);
-  }
-
-  .nav-link-modern.active {
-    color: var(--primary) !important;
-    font-weight: 600;
-    background-color: rgba(67, 97, 238, 0.05);
-    border-left: 4px solid var(--primary);
-  }
-
-  /* Mobile Dropdown Menus */
-  .navbar-collapse-modern .dropdown-menu {
-    position: static !important;
-    float: none !important;
-    width: 100% !important;
-    margin: 0 !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    background: var(--light); /* Solid background for dropdowns */
-    padding: 0;
-  }
-
-  .navbar-collapse-modern .dropdown-item {
-    padding: 0.9rem 2rem !important;
-    border-radius: 0 !important;
-    border-bottom: 1px solid var(--light-gray); /* Use light-gray for better contrast */
-    font-size: 0.95rem;
-    color: var(--dark);
-    background: var(--light); /* Solid background for dropdown items */
-  }
-
-  .navbar-collapse-modern .dropdown-item:hover {
-    background-color: rgba(67, 97, 238, 0.08);
-  }
-  /* Mobile Header Icons */
-  .header-icons-mobile {
-    display: flex !important;
-    align-items: center;
-    gap: 0.5rem;
-    order: 2;
-  }
-
-  .header-icons-mobile .profile-modern,
-  .header-icons-mobile .theme-toggle-modern,
-  .header-icons-mobile .notification-bell {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(67, 97, 238, 0.1);
-    border: 1px solid rgba(67, 97, 238, 0.2);
-    color: var(--gray);
-    transition: var(--transition);
-    text-decoration: none;
-  }
-
-  .header-icons-mobile .profile-modern:hover,
-  .header-icons-mobile .theme-toggle-modern:hover,
-  .header-icons-mobile .notification-bell:hover {
-    background: rgba(67, 97, 238, 0.15);
-    color: var(--primary);
-    transform: scale(1.05);
-  }
-
-  /* Mobile Dropdowns */
-  .header-icons-mobile .dropdown-menu {
-    position: fixed !important;
-    top: 70px !important;
-    right: 1rem !important;
-    left: auto !important;
-    width: 280px !important;
-    max-width: 85vw;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--glass-border);
-    z-index: 1060;
-  }
-  /* Mobile Toggle Button */
-  .navbar-toggler-modern {
-    border: none;
-    padding: 0.5rem;
-    border-radius: var(--border-radius-sm);
-    background: rgba(67, 97, 238, 0.1);
-    border: 1px solid rgba(67, 97, 238, 0.2);
-    transition: var(--transition);
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    order: 0;
-    margin-right: 0.5rem;
-  }
-
-  .navbar-toggler-modern:focus {
-    box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.25);
-    outline: none;
-  }
-
-  .navbar-toggler-modern:hover {
-    background: rgba(67, 97, 238, 0.15);
-    transform: scale(1.05);
-  }
-
-  /* Custom hamburger icon that adapts to theme */
-  .navbar-toggler-modern .navbar-toggler-icon {
-    background-image: none !important;
-    width: 20px;
-    height: 2px;
-    background-color: var(--dark);
-    position: relative;
-    transition: var(--transition);
-  }
-
-  .navbar-toggler-modern .navbar-toggler-icon::before,
-  .navbar-toggler-modern .navbar-toggler-icon::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 2px;
-    background-color: var(--dark);
-    left: 0;
-    transition: var(--transition);
-  }
-
-  .navbar-toggler-modern .navbar-toggler-icon::before {
-    top: -6px;
-  }
-
-  .navbar-toggler-modern .navbar-toggler-icon::after {
-    top: 6px;
-  }
-
-  /* Optional: Add animation when menu is open */
-  .navbar-toggler-modern[aria-expanded="true"] .navbar-toggler-icon {
-    background-color: transparent;
-  }
-
-  .navbar-toggler-modern[aria-expanded="true"] .navbar-toggler-icon::before {
-    transform: rotate(45deg);
-    top: 0;
-  }
-
-  .navbar-toggler-modern[aria-expanded="true"] .navbar-toggler-icon::after {
-    transform: rotate(-45deg);
-    top: 0;
-  }
-}
-
-/* ===== DESKTOP STYLES ===== */
-@media (min-width: 992px) {
-  .navbar-modern {
-    padding: 0.8rem 0;
-    position: relative;
-  }
-
-  .navbar-modern .container-fluid {
-    padding: 0 2rem;
-  }
-
-  /* Hide mobile elements */
-  .navbar-toggler-modern,
-  .header-icons-mobile {
-    display: none !important;
-  }
-
-  /* Desktop Navigation */
-  .navbar-collapse-modern {
-    position: static;
-    background: transparent;
-    backdrop-filter: none;
-    border: none;
-    box-shadow: none;
-    transform: none !important;
-    height: auto;
-  }
-
-  .navbar-nav-modern {
-    padding: 0;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .nav-link-modern {
-    padding: 0.7rem 1rem !important;
-    border-radius: var(--border-radius-sm);
-    border: none !important;
-    font-size: 0.95rem;
-    margin: 0 0.1rem;
-    position: relative;
-  }
-
-  .nav-link-modern:hover,
-  .nav-link-modern:focus {
-    background-color: rgba(67, 97, 238, 0.08);
-    transform: translateY(-1px);
-  }
-
-  .nav-link-modern.active {
-    background-color: rgba(67, 97, 238, 0.1);
-    border-left: none !important;
-  }
-
-  .nav-link-modern.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    border-radius: 2px;
-  }
-
-  /* Desktop Dropdown Menus */
-  .navbar-nav-modern .dropdown-menu {
-    position: absolute !important;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    width: 220px;
-  }
-
-  .navbar-nav-modern .dropdown-item {
-    padding: 0.75rem 1rem !important;
-    border-radius: var(--border-radius-sm);
-    border: none;
-    margin: 0.1rem 0;
-    font-size: 0.9rem;
-    color: var(--dark);
-    transition: var(--transition);
-  }
-
-  .navbar-nav-modern .dropdown-item:hover {
-    background-color: rgba(67, 97, 238, 0.1);
-    color: var(--primary);
-  }
-
-  /* Desktop Header Icons */
-  .header-icons-desktop {
-    display: flex !important;
-    align-items: center;
-    gap: 0.75rem;
-    margin-left: auto;
-  }
-
-  .header-icons-desktop .profile-modern {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    background: rgba(67, 97, 238, 0.1);
-    border: 1px solid rgba(67, 97, 238, 0.2);
-    transition: var(--transition);
-    text-decoration: none;
-    color: var(--dark);
-  }
-
-  .header-icons-desktop .profile-modern:hover {
-    background: rgba(67, 97, 238, 0.15);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
-  }
-
-  .header-icons-desktop .theme-toggle-modern,
-  .header-icons-desktop .notification-bell {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(67, 97, 238, 0.1);
-    border: 1px solid rgba(67, 97, 238, 0.2);
-    color: var(--gray);
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .header-icons-desktop .theme-toggle-modern:hover,
-  .header-icons-desktop .notification-bell:hover {
-    background: rgba(67, 97, 238, 0.15);
-    color: var(--primary);
-    transform: scale(1.05);
-  }
-
-  /* Desktop Dropdowns */
-  .header-icons-desktop .dropdown-menu {
-    position: absolute !important;
-    top: 100% !important;
-    right: 0 !important;
-    left: auto !important;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--glass-border);
-    margin-top: 0.75rem;
-    min-width: 250px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-  }
-}
-
-/* ===== USER AVATAR STYLES ===== */
-.user-avatar-modern {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2px solid var(--light);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  object-fit: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  font-size: 1rem;
-  overflow: hidden;
-  transition: var(--transition);
-}
-
-.user-avatar-modern img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.user-avatar-modern i {
-  font-size: 1rem;
-}
-
-/* ===== NOTIFICATION BADGE ===== */
-.notification-bell {
-  position: relative;
-}
-
-.notification-bell .badge {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  font-size: 0.7rem;
-  padding: 0.25rem 0.4rem;
-  min-width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--light);
-  background: linear-gradient(135deg, var(--accent), #ff8e8e);
-}
-
-/* ===== TABLET STYLES ===== */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .navbar-collapse-modern {
-    width: 65%;
-    max-width: 280px;
-  }
-  
-  .navbar-brand-modern {
-    font-size: 1.4rem;
-  }
-}
-
-/* ===== LARGE DESKTOP STYLES ===== */
-@media (min-width: 1200px) {
-  .navbar-modern .container-fluid {
-    padding: 0 3rem;
-  }
-  
-  .nav-link-modern {
-    padding: 0.8rem 1.2rem !important;
-  }
-  
-  .header-icons-desktop {
-    gap: 1rem;
-  }
-}
-
-/* ===== ACCESSIBILITY & ANIMATIONS ===== */
-.navbar-collapse-modern.collapsing {
-  transition: transform 0.3s ease-in-out;
-}
-
-body.mobile-menu-open {
-  overflow: hidden;
-}
-
-/* Focus styles for accessibility */
-.nav-link-modern:focus,
-.dropdown-item:focus,
-.navbar-toggler-modern:focus,
-.theme-toggle-modern:focus,
-.notification-bell:focus {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-/* ===== MOBILE DROPDOWN FIXES FOR ALL SIZES ===== */
-@media (max-width: 991.98px) {
-  /* Mobile Header Layout */
-  .navbar-modern .container-fluid {
-    padding: 0 0.75rem;
-  }
-
-  /* Profile dropdown positioning fix for ALL mobile screens */
-  .header-icons-mobile .profile-modern .dropdown-menu {
-    position: fixed !important;
-    top: 70px !important;
-    right: 1rem !important;
-    left: auto !important;
-    width: 200px !important;
-    max-width: 85vw;
-    transform: none !important;
-    margin: 0 !important;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--glass-border);
-    background: var(--light);
-    z-index: 1070;
-    padding: 0.5rem 0;
-  }
-
-  /* Notification dropdown positioning */
-  .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
-    position: fixed !important;
-    top: 70px !important;
-    right: 1rem !important;
-    left: auto !important;
-    width: 280px !important;
-    max-width: 85vw;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--glass-border);
-    z-index: 1060;
-  }
-
-  /* Profile dropdown items styling */
-  .header-icons-mobile .profile-modern .dropdown-item {
-    padding: 0.75rem 1rem !important;
-    font-size: 0.9rem;
-    border-radius: 0;
-    border-bottom: 1px solid var(--light-gray);
-    display: flex;
-    align-items: center;
-    transition: var(--transition);
-  }
-
-  .header-icons-mobile .profile-modern .dropdown-item:last-child {
-    border-bottom: none;
-  }
-
-  .header-icons-mobile .profile-modern .dropdown-item:hover {
-    background-color: rgba(67, 97, 238, 0.08);
-    color: var(--primary);
-  }
-
-  .header-icons-mobile .profile-modern .dropdown-item i {
-    width: 20px;
-    text-align: center;
-  }
-
-  /* Ensure dropdown is properly positioned and visible */
-  .header-icons-mobile .dropdown-menu[data-bs-popper] {
-    top: 100% !important;
-    left: auto !important;
-    right: 0 !important;
-    margin-top: 0.5rem !important;
-  }
-}
-
-/* ===== EXTRA SMALL MOBILE STYLES ===== */
-@media (max-width: 400px) {
-  /* Mobile Header Layout for very small screens */
-  .navbar-modern .container-fluid {
-    padding: 0 0.5rem;
-  }
-  
-  /* Adjust header icons spacing for very small screens */
-  .header-icons-mobile {
-    gap: 0.25rem;
-  }
-  
-  /* Profile dropdown positioning for very small screens */
-  .header-icons-mobile .profile-modern .dropdown-menu {
-    right: 0.5rem !important;
-    width: 180px !important;
-    max-width: 90vw;
-  }
-  
-  /* Make profile icon slightly smaller on very small screens */
-  .header-icons-mobile .profile-modern,
-  .header-icons-mobile .theme-toggle-modern,
-  .header-icons-mobile .notification-bell {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .user-avatar-modern {
-    width: 32px;
-    height: 32px;
-  }
-  
-  /* Brand logo adjustment */
-  .navbar-brand-modern {
-    font-size: 1.3rem;
-  }
-  
-  .navbar-brand-modern i {
-    font-size: 1.6rem;
-  }
-  
-  /* Notification dropdown also needs adjustment */
-  .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
-    right: 0.5rem !important;
-    width: 260px !important;
-    max-width: 90vw;
-  }
-}
-
-/* ===== SUPER SMALL SCREENS (Below 350px) ===== */
-@media (max-width: 350px) {
-  .navbar-modern .container-fluid {
-    padding: 0 0.25rem;
-  }
-  
-  .header-icons-mobile {
-    gap: 0.15rem;
-  }
-  
-  .header-icons-mobile .profile-modern,
-  .header-icons-mobile .theme-toggle-modern,
-  .header-icons-mobile .notification-bell {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .user-avatar-modern {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .navbar-brand-modern {
-    font-size: 1.2rem;
-  }
-  
-  .navbar-brand-modern i {
-    font-size: 1.5rem;
-  }
-  
-  .navbar-brand-modern span {
-    font-size: 1.1rem;
-  }
-  
-  /* Even smaller dropdowns */
-  .header-icons-mobile .profile-modern .dropdown-menu {
-    width: 170px !important;
-  }
-  
-  .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
-    width: 250px !important;
-  }
-}
-
-
-/* Fix dropdown background in dark mode */
-[data-theme="dark"] .dropdown-menu {
-    background-color: black !important;
-    border-color: var(--light-gray) !important;
-}
-
-[data-theme="dark"] .dropdown-item {
-    background-color: black !important;
-    color: white !important;
-}
-
-
-
-[data-theme="dark"] .dropdown-divider {
-    border-color: var(--light-gray) !important;
-}
-
-
-
-
-
-
-
-
-
-
-
-/* ===== ENHANCED NOTIFICATION BELL VISIBILITY ===== */
-
-/* Notification Bell Base Styles */
-.notification-bell {
-  position: relative;
-  background: rgba(67, 97, 238, 0.15) !important;
-  border: 2px solid rgba(67, 97, 238, 0.3) !important;
-  transition: var(--transition);
-}
-
-.notification-bell:hover {
-  background: rgba(67, 97, 238, 0.25) !important;
-  border-color: rgba(67, 97, 238, 0.5) !important;
-  transform: scale(1.1);
-}
-
-/* Notification Icon - Light Mode */
-.notification-bell i {
-  color: var(--primary) !important;
-  font-size: 1.2rem;
-  font-weight: bold;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Notification Icon - Dark Mode */
-[data-theme="dark"] .notification-bell i {
-  color: #ffffff !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  filter: brightness(1.2);
-}
-
-/* Notification Badge - Enhanced Visibility */
-.notification-bell .badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 0.3rem 0.4rem;
-  min-width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--light);
-  background: linear-gradient(135deg, #ff4757, #ff3742) !important;
-  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-  animation: pulse 2s infinite;
-}
-
-/* Dark mode badge border */
-[data-theme="dark"] .notification-bell .badge {
-  border: 2px solid var(--dark) !important;
-  box-shadow: 0 2px 10px rgba(255, 71, 87, 0.6);
-}
-
-/* Pulsing animation for urgency */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-  }
-  50% {
-    transform: scale(1.1);
-    box-shadow: 0 3px 12px rgba(255, 71, 87, 0.6);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-  }
-}
-
-/* Mobile-specific notification styles */
-@media (max-width: 991.98px) {
-  .header-icons-mobile .notification-bell {
-    background: rgba(67, 97, 238, 0.2) !important;
-    border: 2px solid rgba(67, 97, 238, 0.4) !important;
-  }
-  
-  .header-icons-mobile .notification-bell i {
-    font-size: 1.3rem;
-  }
-  
-  .header-icons-mobile .notification-bell .badge {
-    top: -6px;
-    right: -6px;
-    font-size: 0.75rem;
-    min-width: 22px;
-    height: 22px;
-  }
-}
-
-/* Desktop-specific notification styles */
-@media (min-width: 992px) {
-  .header-icons-desktop .notification-bell {
-    background: rgba(67, 97, 238, 0.12) !important;
-    border: 2px solid rgba(67, 97, 238, 0.25) !important;
-  }
-  
-  .header-icons-desktop .notification-bell:hover {
-    background: rgba(67, 97, 238, 0.2) !important;
-    border-color: rgba(67, 97, 238, 0.4) !important;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .notification-bell {
-    background: var(--primary) !important;
-    border: 3px solid var(--primary-dark) !important;
-  }
-  
-  .notification-bell i {
-    color: white !important;
-    filter: none;
-  }
-  
-  .notification-bell .badge {
-    background: #ff0000 !important;
-    border: 2px solid white !important;
-    color: white !important;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .notification-bell .badge {
-    animation: none;
-  }
-  
-  .notification-bell:hover {
-    transform: none;
-  }
-}
-
-/* Focus states for accessibility */
-.notification-bell:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.3);
-}
-
-/* Active state when dropdown is open */
-.notification-bell.show {
-  background: rgba(67, 97, 238, 0.25) !important;
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-}
-
-/* Ensure badge text is always visible and readable */
-.notification-bell .badge {
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  letter-spacing: -0.5px;
-  font-family: 'Poppins', sans-serif;
-}
-
-/* Hover effect on badge */
-.notification-bell:hover .badge {
-  transform: scale(1.15);
-  transition: transform 0.2s ease;
-}
-
-/* Specific dark mode enhancements */
-[data-theme="dark"] .notification-bell {
-  background: rgba(67, 97, 238, 0.25) !important;
-  border: 2px solid rgba(67, 97, 238, 0.4) !important;
-}
-
-[data-theme="dark"] .notification-bell:hover {
-  background: rgba(67, 97, 238, 0.35) !important;
-  border-color: rgba(67, 97, 238, 0.6) !important;
-  box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
-}
-
-/* Make sure the bell icon stands out in both themes */
-.notification-bell i.bi-bell {
-  font-weight: 900;
-  -webkit-text-stroke: 0.5px transparent;
-}
-
-/* Optional: Add a subtle ring when there are notifications */
-.notification-bell.has-notifications {
-  position: relative;
-}
-
-.notification-bell.has-notifications::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, #ff6b6b, #4361ee, #06d6a0, #ff6b6b);
-  animation: rotate 3s linear infinite;
-  z-index: -1;
-  opacity: 0.7;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-
-
-
-
-
-
-
-
-
-/* ===== FIX FOR MOBILE NOTIFICATION VISIBILITY ===== */
-
-/* Ensure notification bell is always visible on mobile */
-@media (max-width: 1160px) {
-  .header-icons-mobile .notification-bell {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(67, 97, 238, 0.2) !important;
-    border: 2px solid rgba(67, 97, 238, 0.4) !important;
-    color: var(--primary);
-    transition: var(--transition);
-    text-decoration: none;
-    position: relative;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  .header-icons-mobile .notification-bell i {
-    color: var(--primary) !important;
-    font-size: 1.3rem;
-    font-weight: bold;
-  }
-
-  .header-icons-mobile .notification-bell .badge {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    padding: 0.3rem 0.4rem;
-    min-width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--light);
-    background: linear-gradient(135deg, #ff4757, #ff3742) !important;
-    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-    animation: pulse 2s infinite;
-    color: white !important;
-  }
-
-  /* Dark mode for mobile notifications */
-  [data-theme="dark"] .header-icons-mobile .notification-bell {
-    background: rgba(67, 97, 238, 0.25) !important;
-    border: 2px solid rgba(67, 97, 238, 0.5) !important;
-  }
-
-  [data-theme="dark"] .header-icons-mobile .notification-bell i {
-    color: #ffffff !important;
-    filter: brightness(1.2);
-  }
-
-  [data-theme="dark"] .header-icons-mobile .notification-bell .badge {
-    border: 2px solid var(--dark) !important;
-    box-shadow: 0 2px 10px rgba(255, 71, 87, 0.6);
-  }
-}
-
-/* Fix for tablet screens (768px - 1160px) */
-@media (min-width: 768px) and (max-width: 1160px) {
-  .header-icons-mobile .notification-bell {
-    width: 46px;
-    height: 46px;
-  }
-
-  .header-icons-mobile .notification-bell i {
-    font-size: 1.4rem;
-  }
-
-  .header-icons-mobile .notification-bell .badge {
-    top: -5px;
-    right: -5px;
-    min-width: 24px;
-    height: 24px;
-    font-size: 0.8rem;
-  }
-}
-
-/* Fix for very small mobile screens */
-@media (max-width: 400px) {
-  .header-icons-mobile .notification-bell {
-    width: 42px;
-    height: 42px;
-  }
-
-  .header-icons-mobile .notification-bell i {
-    font-size: 1.2rem;
-  }
-
-  .header-icons-mobile .notification-bell .badge {
-    top: -4px;
-    right: -4px;
-    min-width: 20px;
-    height: 20px;
-    font-size: 0.7rem;
-  }
-}
-
-/* Ensure header icons container displays properly */
-@media (max-width: 991.98px) {
-  .header-icons-mobile {
-    display: flex !important;
-    align-items: center;
-    gap: 0.5rem;
-    order: 2;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  .header-icons-mobile .notification-bell {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-}
-
-/* Override any potential hiding styles */
-.header-icons-mobile .notification-bell {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Fix for the mobile header layout */
-.navbar-modern .container-fluid {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-}
-
-/* Ensure the notification bell is in the correct order in mobile header */
-@media (max-width: 991.98px) {
-  .navbar-modern .container-fluid {
-    padding: 0 0.75rem;
-  }
-
-  /* Make sure all header icons are visible */
-  .header-icons-mobile > * {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-}
-
-/* Debug styles - remove if everything works */
-.header-icons-mobile .notification-bell::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-/* Force visibility for any screen size below 1160px */
-@media (max-width: 1160px) {
-  .header-icons-mobile {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
-  .header-icons-mobile .notification-bell {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-}
-
-
-
-/* ===== MOBILE PROFILE AVATAR ENHANCEMENTS ===== */
-@media (max-width: 991.98px) {
-  .header-icons-mobile .profile-modern .user-avatar-modern {
-    width: 42px;
-    height: 42px;
-    border: 3px solid var(--primary);
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-    animation: pulse-mobile 2s infinite;
-  }
-
-  .header-icons-mobile .profile-modern .user-avatar-modern i {
-    font-size: 1.3rem;
-    color: white !important;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  }
-
-  .header-icons-mobile .profile-modern .user-avatar-modern img {
-    border: 2px solid white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Different background color for mobile profile */
-  .header-icons-mobile .profile-modern {
-    background: rgba(255, 107, 107, 0.15) !important;
-    border: 2px solid rgba(255, 107, 107, 0.3) !important;
-  }
-
-  .header-icons-mobile .profile-modern:hover {
-    background: rgba(255, 107, 107, 0.25) !important;
-    border-color: rgba(255, 107, 107, 0.5) !important;
-  }
-}
-
-/* Dark mode adjustments for mobile profile */
-@media (max-width: 991.98px) {
-  [data-theme="dark"] .header-icons-mobile .profile-modern .user-avatar-modern {
-    border-color: var(--secondary);
-    box-shadow: 0 4px 15px rgba(6, 214, 160, 0.4);
-  }
-
-  [data-theme="dark"] .header-icons-mobile .profile-modern {
-    background: rgba(6, 214, 160, 0.15) !important;
-    border: 2px solid rgba(6, 214, 160, 0.3) !important;
-  }
-
-  [data-theme="dark"] .header-icons-mobile .profile-modern:hover {
-    background: rgba(6, 214, 160, 0.25) !important;
-    border-color: rgba(6, 214, 160, 0.5) !important;
-  }
-}
-
-/* Pulsing animation for mobile profile */
-@keyframes pulse-mobile {
-  0% {
-    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-  }
-  50% {
-    box-shadow: 0 4px 20px rgba(67, 97, 238, 0.6);
-  }
-  100% {
-    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-  }
-}
-
-
-
-@media (max-width: 991.98px) {
-  .header-icons-mobile .profile-modern .user-avatar-modern i {
-    content: "\F4E5" !important; 
-  }
-  
-  .header-icons-mobile .profile-modern .user-avatar-modern i::before {
-    content: "\F4E5" !important; 
-  }
-}
-
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .header-icons-mobile .profile-modern .user-avatar-modern {
-    animation: none;
-  }
-}
-
-
-/* ===== FIX FOR 990px - 1490px RANGE ===== */
-@media (min-width: 992px) and (max-width: 1490px) {
-  .navbar-modern .container-fluid {
-    padding: 0 1rem !important;
-    flex-wrap: wrap !important;
-  }
-  
-  /* Ensure the navigation collapse area doesn't overflow */
-  .navbar-collapse-modern {
-    flex-basis: 100% !important;
-    order: 3 !important;
-    margin-top: 0.5rem !important;
-    padding: 0.5rem 0 !important;
-    border-top: 1px solid var(--glass-border);
-  }
-  
-  /* Stack desktop header icons above the nav */
-  .header-icons-desktop {
-    order: 2 !important;
-    margin-left: 0 !important;
-    margin-right: auto !important;
-    width: 100% !important;
-    justify-content: flex-end !important;
-    padding: 0.5rem 0 !important;
-  }
-  
-  /* Adjust navbar nav for medium screens */
-  .navbar-nav-modern {
-    flex-wrap: wrap !important;
-    gap: 0.1rem !important;
-  }
-  
-  .nav-link-modern {
-    padding: 0.5rem 0.75rem !important;
-    font-size: 0.9rem !important;
-  }
-  
-  /* Make dropdown menus fit better on medium screens */
-  .navbar-nav-modern .dropdown-menu {
-    width: 200px !important;
-    min-width: unset !important;
-  }
-}
-
-/* ===== SPECIFIC FIX FOR 1200px - 1490px ===== */
-@media (min-width: 1200px) and (max-width: 1490px) {
-  .navbar-modern .container-fluid {
-    padding: 0 1.5rem !important;
-  }
-  
-  .navbar-nav-modern {
-    gap: 0.25rem !important;
-  }
-  
-  .nav-link-modern {
-    padding: 0.6rem 0.9rem !important;
-    font-size: 0.92rem !important;
-  }
-}
-
-/* ===== FIX FOR 992px - 1199px (TABLET-LIKE DESKTOP) ===== */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .navbar-modern .container-fluid {
-    padding: 0 0.75rem !important;
-  }
-  
-  /* Compact the layout */
-  .navbar-brand-modern {
-    font-size: 1.3rem !important;
-  }
-  
-  .navbar-brand-modern i {
-    font-size: 1.6rem !important;
-  }
-  
-  /* Reduce spacing between nav items */
-  .nav-link-modern {
-    padding: 0.4rem 0.6rem !important;
-    margin: 0 0.05rem !important;
-    font-size: 0.85rem !important;
-  }
-  
-  /* Adjust profile section */
-  .header-icons-desktop .profile-modern {
-    padding: 0.4rem 0.8rem !important;
-    font-size: 0.9rem !important;
-  }
-  
-  .header-icons-desktop .profile-modern span {
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  /* Make icon buttons slightly smaller */
-  .header-icons-desktop .theme-toggle-modern,
-  .header-icons-desktop .notification-bell {
-    width: 40px !important;
-    height: 40px !important;
-  }
-  
-  .user-avatar-modern {
-    width: 32px !important;
-    height: 32px !important;
-  }
-}
-
-/* ===== ENSURE PROPER LAYOUT AT 992px BREAKPOINT ===== */
-@media (min-width: 992px) {
-  /* Make sure mobile elements are hidden */
-  .navbar-toggler-modern,
-  .header-icons-mobile {
-    display: none !important;
-  }
-  
-  /* Ensure desktop elements are visible */
-  .header-icons-desktop {
-    display: flex !important;
-  }
-  
-  /* Reset the mobile menu styles that might be interfering */
-  .navbar-collapse-modern {
-    position: static !important;
-    transform: none !important;
-    height: auto !important;
-    width: auto !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    max-width: none !important;
-  }
-  
-  .navbar-nav-modern {
-    padding: 0 !important;
-    margin: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-    background: transparent !important;
-  }
-  
-  .nav-item-modern {
-    margin: 0 !important;
-  }
-  
-  .nav-link-modern {
-    border-bottom: none !important;
-    border-radius: var(--border-radius-sm) !important;
-    padding: 0.7rem 1rem !important;
-    background: transparent !important;
-  }
-  
-  .nav-link-modern.active {
-    border-left: none !important;
-  }
-  
-  .nav-link-modern.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    border-radius: 2px;
-  }
-}
-
-/* ===== CRITICAL FIX FOR CONTAINER LAYOUT ===== */
-@media (min-width: 992px) {
-  .navbar-modern .container-fluid {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: nowrap !important;
-  }
-  
-  /* Main navigation should take available space */
-  .navbar-collapse-modern {
-    flex: 1 1 auto !important;
-    order: 1 !important;
-    margin-top: 0 !important;
-    border-top: none !important;
-  }
-  
-  /* Desktop icons should be at the end */
-  .header-icons-desktop {
-    order: 2 !important;
-    margin-left: auto !important;
-    flex-shrink: 0 !important;
-    width: auto !important;
-    padding: 0 !important;
-  }
-  
-  /* Brand should be at the start */
-  .navbar-brand-modern {
-    order: 0 !important;
-    flex-shrink: 0 !important;
-  }
-}
-
-/* ===== OVERRIDE CONFLICTING STYLES ===== */
-/* Remove any conflicting styles from other media queries */
-@media (min-width: 992px) {
-  body.mobile-menu-open {
-    overflow: visible !important;
-  }
-  
-  .navbar-modern .navbar-collapse-modern:not(.show) {
-    display: flex !important;
-  }
-}
-
-/* ===== ADDITIONAL RESPONSIVE FIXES ===== */
-@media (max-width: 1400px) and (min-width: 992px) {
-  /* Adjust container padding */
-  .navbar-modern .container-fluid {
-    padding: 0 1rem !important;
-  }
-  
-  /* Reduce spacing in navigation */
-  .navbar-nav-modern {
-    gap: 0.1rem !important;
-  }
-  
-  .nav-link-modern {
-    padding: 0.6rem 0.8rem !important;
-  }
-  
-  /* Compact dropdowns */
-  .navbar-nav-modern .dropdown-menu {
-    width: 180px !important;
-  }
-  
-  /* Compact profile section */
-  .header-icons-desktop .profile-modern span {
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-/* ===== FALLBACK FOR EXTREMELY NARROW DESKTOP ===== */
-@media (min-width: 992px) and (max-width: 1100px) {
-  /* Hide some less important text on very narrow desktop */
-  .header-icons-desktop .profile-modern span {
-    display: none;
-  }
-  
-  .header-icons-desktop .profile-modern {
-    padding: 0.5rem !important;
-    justify-content: center !important;
-  }
-  
-  /* Reduce nav item padding */
-  .nav-link-modern {
-    padding: 0.5rem 0.6rem !important;
-  }
-  
-  /* Hide text in nav items, show only icons */
-  .nav-link-modern span:not(.bi) {
-    font-size: 0 !important;
-    width: 0 !important;
-    overflow: hidden !important;
-  }
-  
-  .nav-link-modern .bi {
-    margin-right: 0 !important;
-    font-size: 1.1rem !important;
-  }
-  
-  .nav-link-modern.dropdown-toggle::after {
-    margin-left: 0 !important;
-  }
-}
-
-/* ===== PRINT MEDIA FIX (optional) ===== */
-@media print {
-  .navbar-modern {
-    position: static !important;
-    box-shadow: none !important;
-  }
-}
-
-</style>
+
+  <style>
+    /* ===== MODERN HEADER VARIABLES ===== */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --primary-light: #eef2ff;
+      --secondary: #06d6a0;
+      --accent: #ff6b6b;
+      --light: #f8f9fa;
+      --dark: #1a1d21;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --border-radius: 12px;
+      --border-radius-sm: 8px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    [data-theme="dark"] {
+      --light: #1a1d21;
+      --dark: #f8f9fa;
+      --gray: #a0a0a0;
+      --light-gray: #2d3239;
+      --glass-bg: rgba(26, 29, 33, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    /* ===== BASE STYLES ===== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      transition: var(--transition);
+    }
+
+    /* ===== MODERN NAVBAR STYLES ===== */
+    .navbar-modern {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0.75rem 0;
+      box-shadow: var(--shadow);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 1030;
+      transition: var(--transition);
+    }
+
+    /* Brand Logo */
+    .navbar-brand-modern {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      color: var(--primary) !important;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+      font-size: 1.5rem;
+      text-decoration: none;
+      gap: 0.5rem;
+    }
+
+    .navbar-brand-modern i {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Container Layout */
+    .navbar-modern .container-fluid {
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+    }
+
+    /* ===== MOBILE STYLES ===== */
+    @media (max-width: 991.98px) {
+
+      /* Mobile Header Layout */
+      .navbar-modern .container-fluid {
+        padding: 0 0.75rem;
+      }
+
+      /* Mobile Navigation Menu - Opens from left */
+      .navbar-collapse-modern {
+        position: fixed;
+        top: 100%;
+        left: 0;
+        width: 85%;
+        max-width: 320px;
+        height: calc(100vh - 70px);
+        background: var(--light);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border-right: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-lg);
+        z-index: 1020;
+        margin-top: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .navbar-collapse-modern.show {
+        transform: translateX(0);
+      }
+
+      /* Mobile Navigation Items */
+      .navbar-nav-modern {
+        padding: 1rem 0;
+        margin: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: var(--light);
+        /* Ensure solid background */
+      }
+
+      .nav-item-modern {
+        margin: 0;
+      }
+
+      .nav-link-modern {
+        font-weight: 500;
+        color: var(--dark) !important;
+        transition: var(--transition);
+        border-radius: 0;
+        padding: 1rem 1.5rem !important;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--light-gray);
+        /* Use light-gray for better contrast */
+        font-size: 1rem;
+        text-decoration: none;
+        background: var(--light);
+        /* Solid background for links */
+      }
+
+      .nav-link-modern:hover,
+      .nav-link-modern:focus {
+        color: var(--primary) !important;
+        background-color: rgba(67, 97, 238, 0.08);
+      }
+
+      .nav-link-modern.active {
+        color: var(--primary) !important;
+        font-weight: 600;
+        background-color: rgba(67, 97, 238, 0.05);
+        border-left: 4px solid var(--primary);
+      }
+
+      /* Mobile Dropdown Menus */
+      .navbar-collapse-modern .dropdown-menu {
+        position: static !important;
+        float: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: var(--light);
+        /* Solid background for dropdowns */
+        padding: 0;
+      }
+
+      .navbar-collapse-modern .dropdown-item {
+        padding: 0.9rem 2rem !important;
+        border-radius: 0 !important;
+        border-bottom: 1px solid var(--light-gray);
+        /* Use light-gray for better contrast */
+        font-size: 0.95rem;
+        color: var(--dark);
+        background: var(--light);
+        /* Solid background for dropdown items */
+      }
+
+      .navbar-collapse-modern .dropdown-item:hover {
+        background-color: rgba(67, 97, 238, 0.08);
+      }
+
+      /* Mobile Header Icons */
+      .header-icons-mobile {
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+        order: 2;
+      }
+
+      .header-icons-mobile .profile-modern,
+      .header-icons-mobile .theme-toggle-modern,
+      .header-icons-mobile .notification-bell {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(67, 97, 238, 0.1);
+        border: 1px solid rgba(67, 97, 238, 0.2);
+        color: var(--gray);
+        transition: var(--transition);
+        text-decoration: none;
+      }
+
+      .header-icons-mobile .profile-modern:hover,
+      .header-icons-mobile .theme-toggle-modern:hover,
+      .header-icons-mobile .notification-bell:hover {
+        background: rgba(67, 97, 238, 0.15);
+        color: var(--primary);
+        transform: scale(1.05);
+      }
+
+      /* Mobile Dropdowns */
+      .header-icons-mobile .dropdown-menu {
+        position: fixed !important;
+        top: 70px !important;
+        right: 1rem !important;
+        left: auto !important;
+        width: 280px !important;
+        max-width: 85vw;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--glass-border);
+        z-index: 1060;
+      }
+
+      /* Mobile Toggle Button */
+      .navbar-toggler-modern {
+        border: none;
+        padding: 0.5rem;
+        border-radius: var(--border-radius-sm);
+        background: rgba(67, 97, 238, 0.1);
+        border: 1px solid rgba(67, 97, 238, 0.2);
+        transition: var(--transition);
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        order: 0;
+        margin-right: 0.5rem;
+      }
+
+      .navbar-toggler-modern:focus {
+        box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.25);
+        outline: none;
+      }
+
+      .navbar-toggler-modern:hover {
+        background: rgba(67, 97, 238, 0.15);
+        transform: scale(1.05);
+      }
+
+      /* Custom hamburger icon that adapts to theme */
+      .navbar-toggler-modern .navbar-toggler-icon {
+        background-image: none !important;
+        width: 20px;
+        height: 2px;
+        background-color: var(--dark);
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .navbar-toggler-modern .navbar-toggler-icon::before,
+      .navbar-toggler-modern .navbar-toggler-icon::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 2px;
+        background-color: var(--dark);
+        left: 0;
+        transition: var(--transition);
+      }
+
+      .navbar-toggler-modern .navbar-toggler-icon::before {
+        top: -6px;
+      }
+
+      .navbar-toggler-modern .navbar-toggler-icon::after {
+        top: 6px;
+      }
+
+      .navbar-toggler-modern[aria-expanded="true"] .navbar-toggler-icon {
+        background-color: transparent;
+      }
+
+      .navbar-toggler-modern[aria-expanded="true"] .navbar-toggler-icon::before {
+        transform: rotate(45deg);
+        top: 0;
+      }
+
+      .navbar-toggler-modern[aria-expanded="true"] .navbar-toggler-icon::after {
+        transform: rotate(-45deg);
+        top: 0;
+      }
+    }
+
+    /* ===== DESKTOP STYLES ===== */
+    @media (min-width: 992px) {
+      .navbar-modern {
+        padding: 0.8rem 0;
+        position: relative;
+      }
+
+      .navbar-modern .container-fluid {
+        padding: 0 2rem;
+      }
+
+      /* Hide mobile elements */
+      .navbar-toggler-modern,
+      .header-icons-mobile {
+        display: none !important;
+      }
+
+      /* Desktop Navigation */
+      .navbar-collapse-modern {
+        position: static;
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+        transform: none !important;
+        height: auto;
+      }
+
+      .navbar-nav-modern {
+        padding: 0;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .nav-link-modern {
+        padding: 0.7rem 1rem !important;
+        border-radius: var(--border-radius-sm);
+        border: none !important;
+        font-size: 0.95rem;
+        margin: 0 0.1rem;
+        position: relative;
+      }
+
+      .nav-link-modern:hover,
+      .nav-link-modern:focus {
+        background-color: rgba(67, 97, 238, 0.08);
+        transform: translateY(-1px);
+      }
+
+      .nav-link-modern.active {
+        background-color: rgba(67, 97, 238, 0.1);
+        border-left: none !important;
+      }
+
+      .nav-link-modern.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        border-radius: 2px;
+      }
+
+      /* Desktop Dropdown Menus */
+      .navbar-nav-modern .dropdown-menu {
+        position: absolute !important;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        width: 220px;
+      }
+
+      .navbar-nav-modern .dropdown-item {
+        padding: 0.75rem 1rem !important;
+        border-radius: var(--border-radius-sm);
+        border: none;
+        margin: 0.1rem 0;
+        font-size: 0.9rem;
+        color: var(--dark);
+        transition: var(--transition);
+      }
+
+      .navbar-nav-modern .dropdown-item:hover {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+      }
+
+      /* Desktop Header Icons */
+      .header-icons-desktop {
+        display: flex !important;
+        align-items: center;
+        gap: 0.75rem;
+        margin-left: auto;
+      }
+
+      .header-icons-desktop .profile-modern {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        background: rgba(67, 97, 238, 0.1);
+        border: 1px solid rgba(67, 97, 238, 0.2);
+        transition: var(--transition);
+        text-decoration: none;
+        color: var(--dark);
+      }
+
+      .header-icons-desktop .profile-modern:hover {
+        background: rgba(67, 97, 238, 0.15);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+      }
+
+      .header-icons-desktop .theme-toggle-modern,
+      .header-icons-desktop .notification-bell {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(67, 97, 238, 0.1);
+        border: 1px solid rgba(67, 97, 238, 0.2);
+        color: var(--gray);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .header-icons-desktop .theme-toggle-modern:hover,
+      .header-icons-desktop .notification-bell:hover {
+        background: rgba(67, 97, 238, 0.15);
+        color: var(--primary);
+        transform: scale(1.05);
+      }
+
+      /* Desktop Dropdowns */
+      .header-icons-desktop .dropdown-menu {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--glass-border);
+        margin-top: 0.75rem;
+        min-width: 250px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+      }
+    }
+
+    /* ===== USER AVATAR STYLES ===== */
+    .user-avatar-modern {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--light);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-size: 1rem;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .user-avatar-modern img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-avatar-modern i {
+      font-size: 1rem;
+    }
+
+    /* ===== NOTIFICATION BADGE ===== */
+    .notification-bell {
+      position: relative;
+    }
+
+    .notification-bell .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.4rem;
+      min-width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--light);
+      background: linear-gradient(135deg, var(--accent), #ff8e8e);
+    }
+
+    /* ===== TABLET STYLES ===== */
+    @media (min-width: 768px) and (max-width: 991.98px) {
+      .navbar-collapse-modern {
+        width: 65%;
+        max-width: 280px;
+      }
+
+      .navbar-brand-modern {
+        font-size: 1.4rem;
+      }
+    }
+
+    /* ===== LARGE DESKTOP STYLES ===== */
+    @media (min-width: 1200px) {
+      .navbar-modern .container-fluid {
+        padding: 0 3rem;
+      }
+
+      .nav-link-modern {
+        padding: 0.8rem 1.2rem !important;
+      }
+
+      .header-icons-desktop {
+        gap: 1rem;
+      }
+    }
+
+    /* ===== ACCESSIBILITY & ANIMATIONS ===== */
+    .navbar-collapse-modern.collapsing {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    body.mobile-menu-open {
+      overflow: hidden;
+    }
+
+    /* Focus styles for accessibility */
+    .nav-link-modern:focus,
+    .dropdown-item:focus,
+    .navbar-toggler-modern:focus,
+    .theme-toggle-modern:focus,
+    .notification-bell:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    @media (max-width: 991.98px) {
+
+      /* Mobile Header Layout */
+      .navbar-modern .container-fluid {
+        padding: 0 0.75rem;
+      }
+
+      /* Profile dropdown positioning fix for ALL mobile screens */
+      .header-icons-mobile .profile-modern .dropdown-menu {
+        position: fixed !important;
+        top: 70px !important;
+        right: 1rem !important;
+        left: auto !important;
+        width: 200px !important;
+        max-width: 85vw;
+        transform: none !important;
+        margin: 0 !important;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--glass-border);
+        background: var(--light);
+        z-index: 1070;
+        padding: 0.5rem 0;
+      }
+
+      /* Notification dropdown positioning */
+      .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
+        position: fixed !important;
+        top: 70px !important;
+        right: 1rem !important;
+        left: auto !important;
+        width: 280px !important;
+        max-width: 85vw;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--glass-border);
+        z-index: 1060;
+      }
+
+      /* Profile dropdown items styling */
+      .header-icons-mobile .profile-modern .dropdown-item {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.9rem;
+        border-radius: 0;
+        border-bottom: 1px solid var(--light-gray);
+        display: flex;
+        align-items: center;
+        transition: var(--transition);
+      }
+
+      .header-icons-mobile .profile-modern .dropdown-item:last-child {
+        border-bottom: none;
+      }
+
+      .header-icons-mobile .profile-modern .dropdown-item:hover {
+        background-color: rgba(67, 97, 238, 0.08);
+        color: var(--primary);
+      }
+
+      .header-icons-mobile .profile-modern .dropdown-item i {
+        width: 20px;
+        text-align: center;
+      }
+
+      /* Ensure dropdown is properly positioned and visible */
+      .header-icons-mobile .dropdown-menu[data-bs-popper] {
+        top: 100% !important;
+        left: auto !important;
+        right: 0 !important;
+        margin-top: 0.5rem !important;
+      }
+    }
+
+    /* ===== EXTRA SMALL MOBILE STYLES ===== */
+    @media (max-width: 400px) {
+
+      /* Mobile Header Layout for very small screens */
+      .navbar-modern .container-fluid {
+        padding: 0 0.5rem;
+      }
+
+      /* Adjust header icons spacing for very small screens */
+      .header-icons-mobile {
+        gap: 0.25rem;
+      }
+
+      /* Profile dropdown positioning for very small screens */
+      .header-icons-mobile .profile-modern .dropdown-menu {
+        right: 0.5rem !important;
+        width: 180px !important;
+        max-width: 90vw;
+      }
+
+      /* Make profile icon slightly smaller on very small screens */
+      .header-icons-mobile .profile-modern,
+      .header-icons-mobile .theme-toggle-modern,
+      .header-icons-mobile .notification-bell {
+        width: 40px;
+        height: 40px;
+      }
+
+      .user-avatar-modern {
+        width: 32px;
+        height: 32px;
+      }
+
+      /* Brand logo adjustment */
+      .navbar-brand-modern {
+        font-size: 1.3rem;
+      }
+
+      .navbar-brand-modern i {
+        font-size: 1.6rem;
+      }
+
+      /* Notification dropdown also needs adjustment */
+      .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
+        right: 0.5rem !important;
+        width: 260px !important;
+        max-width: 90vw;
+      }
+    }
+
+    /* ===== SUPER SMALL SCREENS (Below 350px) ===== */
+    @media (max-width: 350px) {
+      .navbar-modern .container-fluid {
+        padding: 0 0.25rem;
+      }
+
+      .header-icons-mobile {
+        gap: 0.15rem;
+      }
+
+      .header-icons-mobile .profile-modern,
+      .header-icons-mobile .theme-toggle-modern,
+      .header-icons-mobile .notification-bell {
+        width: 38px;
+        height: 38px;
+      }
+
+      .user-avatar-modern {
+        width: 30px;
+        height: 30px;
+      }
+
+      .navbar-brand-modern {
+        font-size: 1.2rem;
+      }
+
+      .navbar-brand-modern i {
+        font-size: 1.5rem;
+      }
+
+      .navbar-brand-modern span {
+        font-size: 1.1rem;
+      }
+
+      /* Even smaller dropdowns */
+      .header-icons-mobile .profile-modern .dropdown-menu {
+        width: 170px !important;
+      }
+
+      .header-icons-mobile .dropdown:not(.profile-modern) .dropdown-menu {
+        width: 250px !important;
+      }
+    }
+
+    [data-theme="dark"] .dropdown-menu {
+      background-color: black !important;
+      border-color: var(--light-gray) !important;
+    }
+
+    [data-theme="dark"] .dropdown-item {
+      background-color: black !important;
+      color: white !important;
+    }
+
+
+
+    [data-theme="dark"] .dropdown-divider {
+      border-color: var(--light-gray) !important;
+    }
+
+    /* ===== ENHANCED NOTIFICATION BELL VISIBILITY ===== */
+    /* Notification Bell Base Styles */
+    .notification-bell {
+      position: relative;
+      background: rgba(67, 97, 238, 0.15) !important;
+      border: 2px solid rgba(67, 97, 238, 0.3) !important;
+      transition: var(--transition);
+    }
+
+    .notification-bell:hover {
+      background: rgba(67, 97, 238, 0.25) !important;
+      border-color: rgba(67, 97, 238, 0.5) !important;
+      transform: scale(1.1);
+    }
+
+    /* Notification Icon - Light Mode */
+    .notification-bell i {
+      color: var(--primary) !important;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Notification Icon - Dark Mode */
+    [data-theme="dark"] .notification-bell i {
+      color: #ffffff !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      filter: brightness(1.2);
+    }
+
+    /* Notification Badge - Enhanced Visibility */
+    .notification-bell .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.3rem 0.4rem;
+      min-width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--light);
+      background: linear-gradient(135deg, #ff4757, #ff3742) !important;
+      box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+      animation: pulse 2s infinite;
+    }
+
+    /* Dark mode badge border */
+    [data-theme="dark"] .notification-bell .badge {
+      border: 2px solid var(--dark) !important;
+      box-shadow: 0 2px 10px rgba(255, 71, 87, 0.6);
+    }
+
+    /* Pulsing animation for urgency */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+      }
+
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 3px 12px rgba(255, 71, 87, 0.6);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+      }
+    }
+
+    /* Mobile-specific notification styles */
+    @media (max-width: 991.98px) {
+      .header-icons-mobile .notification-bell {
+        background: rgba(67, 97, 238, 0.2) !important;
+        border: 2px solid rgba(67, 97, 238, 0.4) !important;
+      }
+
+      .header-icons-mobile .notification-bell i {
+        font-size: 1.3rem;
+      }
+
+      .header-icons-mobile .notification-bell .badge {
+        top: -6px;
+        right: -6px;
+        font-size: 0.75rem;
+        min-width: 22px;
+        height: 22px;
+      }
+    }
+
+    /* Desktop-specific notification styles */
+    @media (min-width: 992px) {
+      .header-icons-desktop .notification-bell {
+        background: rgba(67, 97, 238, 0.12) !important;
+        border: 2px solid rgba(67, 97, 238, 0.25) !important;
+      }
+
+      .header-icons-desktop .notification-bell:hover {
+        background: rgba(67, 97, 238, 0.2) !important;
+        border-color: rgba(67, 97, 238, 0.4) !important;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      .notification-bell {
+        background: var(--primary) !important;
+        border: 3px solid var(--primary-dark) !important;
+      }
+
+      .notification-bell i {
+        color: white !important;
+        filter: none;
+      }
+
+      .notification-bell .badge {
+        background: #ff0000 !important;
+        border: 2px solid white !important;
+        color: white !important;
+      }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      .notification-bell .badge {
+        animation: none;
+      }
+
+      .notification-bell:hover {
+        transform: none;
+      }
+    }
+
+    /* Focus states for accessibility */
+    .notification-bell:focus {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.3);
+    }
+
+    /* Active state when dropdown is open */
+    .notification-bell.show {
+      background: rgba(67, 97, 238, 0.25) !important;
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    /* Ensure badge text is always visible and readable */
+    .notification-bell .badge {
+      color: white !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      letter-spacing: -0.5px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Hover effect on badge */
+    .notification-bell:hover .badge {
+      transform: scale(1.15);
+      transition: transform 0.2s ease;
+    }
+
+    /* Specific dark mode enhancements */
+    [data-theme="dark"] .notification-bell {
+      background: rgba(67, 97, 238, 0.25) !important;
+      border: 2px solid rgba(67, 97, 238, 0.4) !important;
+    }
+
+    [data-theme="dark"] .notification-bell:hover {
+      background: rgba(67, 97, 238, 0.35) !important;
+      border-color: rgba(67, 97, 238, 0.6) !important;
+      box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+    }
+
+    /* Make sure the bell icon stands out in both themes */
+    .notification-bell i.bi-bell {
+      font-weight: 900;
+      -webkit-text-stroke: 0.5px transparent;
+    }
+
+    /* Optional: Add a subtle ring when there are notifications */
+    .notification-bell.has-notifications {
+      position: relative;
+    }
+
+    .notification-bell.has-notifications::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #ff6b6b, #4361ee, #06d6a0, #ff6b6b);
+      animation: rotate 3s linear infinite;
+      z-index: -1;
+      opacity: 0.7;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Ensure notification bell is always visible on mobile */
+    @media (max-width: 1160px) {
+      .header-icons-mobile .notification-bell {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(67, 97, 238, 0.2) !important;
+        border: 2px solid rgba(67, 97, 238, 0.4) !important;
+        color: var(--primary);
+        transition: var(--transition);
+        text-decoration: none;
+        position: relative;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      .header-icons-mobile .notification-bell i {
+        color: var(--primary) !important;
+        font-size: 1.3rem;
+        font-weight: bold;
+      }
+
+      .header-icons-mobile .notification-bell .badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 0.3rem 0.4rem;
+        min-width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--light);
+        background: linear-gradient(135deg, #ff4757, #ff3742) !important;
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+        animation: pulse 2s infinite;
+        color: white !important;
+      }
+
+      /* Dark mode for mobile notifications */
+      [data-theme="dark"] .header-icons-mobile .notification-bell {
+        background: rgba(67, 97, 238, 0.25) !important;
+        border: 2px solid rgba(67, 97, 238, 0.5) !important;
+      }
+
+      [data-theme="dark"] .header-icons-mobile .notification-bell i {
+        color: #ffffff !important;
+        filter: brightness(1.2);
+      }
+
+      [data-theme="dark"] .header-icons-mobile .notification-bell .badge {
+        border: 2px solid var(--dark) !important;
+        box-shadow: 0 2px 10px rgba(255, 71, 87, 0.6);
+      }
+    }
+
+    /*tablet screens (768px - 1160px) */
+    @media (min-width: 768px) and (max-width: 1160px) {
+      .header-icons-mobile .notification-bell {
+        width: 46px;
+        height: 46px;
+      }
+
+      .header-icons-mobile .notification-bell i {
+        font-size: 1.4rem;
+      }
+
+      .header-icons-mobile .notification-bell .badge {
+        top: -5px;
+        right: -5px;
+        min-width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Fix for very small mobile screens */
+    @media (max-width: 400px) {
+      .header-icons-mobile .notification-bell {
+        width: 42px;
+        height: 42px;
+      }
+
+      .header-icons-mobile .notification-bell i {
+        font-size: 1.2rem;
+      }
+
+      .header-icons-mobile .notification-bell .badge {
+        top: -4px;
+        right: -4px;
+        min-width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+      }
+    }
+
+    /* Ensure header icons container displays properly */
+    @media (max-width: 991.98px) {
+      .header-icons-mobile {
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+        order: 2;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      .header-icons-mobile .notification-bell {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* Override any potential hiding styles */
+    .header-icons-mobile .notification-bell {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    /* Fix for the mobile header layout */
+    .navbar-modern .container-fluid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+    }
+
+    /* Ensure the notification bell is in the correct order in mobile header */
+    @media (max-width: 991.98px) {
+      .navbar-modern .container-fluid {
+        padding: 0 0.75rem;
+      }
+
+      /* Make sure all header icons are visible */
+      .header-icons-mobile>* {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* Debug styles - remove if everything works */
+    .header-icons-mobile .notification-bell::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Force visibility for any screen size below 1160px */
+    @media (max-width: 1160px) {
+      .header-icons-mobile {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      .header-icons-mobile .notification-bell {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
+
+
+
+    /* ===== MOBILE PROFILE AVATAR ENHANCEMENTS ===== */
+    @media (max-width: 991.98px) {
+      .header-icons-mobile .profile-modern .user-avatar-modern {
+        width: 42px;
+        height: 42px;
+        border: 3px solid var(--primary);
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        animation: pulse-mobile 2s infinite;
+      }
+
+      .header-icons-mobile .profile-modern .user-avatar-modern i {
+        font-size: 1.3rem;
+        color: white !important;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      .header-icons-mobile .profile-modern .user-avatar-modern img {
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Different background color for mobile profile */
+      .header-icons-mobile .profile-modern {
+        background: rgba(255, 107, 107, 0.15) !important;
+        border: 2px solid rgba(255, 107, 107, 0.3) !important;
+      }
+
+      .header-icons-mobile .profile-modern:hover {
+        background: rgba(255, 107, 107, 0.25) !important;
+        border-color: rgba(255, 107, 107, 0.5) !important;
+      }
+    }
+
+    /* Dark mode adjustments for mobile profile */
+    @media (max-width: 991.98px) {
+      [data-theme="dark"] .header-icons-mobile .profile-modern .user-avatar-modern {
+        border-color: var(--secondary);
+        box-shadow: 0 4px 15px rgba(6, 214, 160, 0.4);
+      }
+
+      [data-theme="dark"] .header-icons-mobile .profile-modern {
+        background: rgba(6, 214, 160, 0.15) !important;
+        border: 2px solid rgba(6, 214, 160, 0.3) !important;
+      }
+
+      [data-theme="dark"] .header-icons-mobile .profile-modern:hover {
+        background: rgba(6, 214, 160, 0.25) !important;
+        border-color: rgba(6, 214, 160, 0.5) !important;
+      }
+    }
+
+    /* Pulsing animation for mobile profile */
+    @keyframes pulse-mobile {
+      0% {
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 4px 20px rgba(67, 97, 238, 0.6);
+      }
+
+      100% {
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+      }
+    }
+
+
+
+    @media (max-width: 991.98px) {
+      .header-icons-mobile .profile-modern .user-avatar-modern i {
+        content: "\F4E5" !important;
+      }
+
+      .header-icons-mobile .profile-modern .user-avatar-modern i::before {
+        content: "\F4E5" !important;
+      }
+    }
+
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      .header-icons-mobile .profile-modern .user-avatar-modern {
+        animation: none;
+      }
+    }
+
+    @media (min-width: 992px) and (max-width: 1490px) {
+      .navbar-modern .container-fluid {
+        padding: 0 1rem !important;
+        flex-wrap: wrap !important;
+      }
+
+      /* Ensure the navigation collapse area doesn't overflow */
+      .navbar-collapse-modern {
+        flex-basis: 100% !important;
+        order: 3 !important;
+        margin-top: 0.5rem !important;
+        padding: 0.5rem 0 !important;
+        border-top: 1px solid var(--glass-border);
+      }
+
+      /* Stack desktop header icons above the nav */
+      .header-icons-desktop {
+        order: 2 !important;
+        margin-left: 0 !important;
+        margin-right: auto !important;
+        width: 100% !important;
+        justify-content: flex-end !important;
+        padding: 0.5rem 0 !important;
+      }
+
+      /* Adjust navbar nav for medium screens */
+      .navbar-nav-modern {
+        flex-wrap: wrap !important;
+        gap: 0.1rem !important;
+      }
+
+      .nav-link-modern {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem !important;
+      }
+
+      /* Make dropdown menus fit better on medium screens */
+      .navbar-nav-modern .dropdown-menu {
+        width: 200px !important;
+        min-width: unset !important;
+      }
+    }
+
+    /* ===== SPECIFIC FIX FOR 1200px - 1490px ===== */
+    @media (min-width: 1200px) and (max-width: 1490px) {
+      .navbar-modern .container-fluid {
+        padding: 0 1.5rem !important;
+      }
+
+      .navbar-nav-modern {
+        gap: 0.25rem !important;
+      }
+
+      .nav-link-modern {
+        padding: 0.6rem 0.9rem !important;
+        font-size: 0.92rem !important;
+      }
+    }
+
+    /* ===== FIX FOR 992px - 1199px (TABLET-LIKE DESKTOP) ===== */
+    @media (min-width: 992px) and (max-width: 1199px) {
+      .navbar-modern .container-fluid {
+        padding: 0 0.75rem !important;
+      }
+
+      /* Compact the layout */
+      .navbar-brand-modern {
+        font-size: 1.3rem !important;
+      }
+
+      .navbar-brand-modern i {
+        font-size: 1.6rem !important;
+      }
+
+      /* Reduce spacing between nav items */
+      .nav-link-modern {
+        padding: 0.4rem 0.6rem !important;
+        margin: 0 0.05rem !important;
+        font-size: 0.85rem !important;
+      }
+
+      /* Adjust profile section */
+      .header-icons-desktop .profile-modern {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.9rem !important;
+      }
+
+      .header-icons-desktop .profile-modern span {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Make icon buttons slightly smaller */
+      .header-icons-desktop .theme-toggle-modern,
+      .header-icons-desktop .notification-bell {
+        width: 40px !important;
+        height: 40px !important;
+      }
+
+      .user-avatar-modern {
+        width: 32px !important;
+        height: 32px !important;
+      }
+    }
+
+    @media (min-width: 992px) {
+
+      /* Make sure mobile elements are hidden */
+      .navbar-toggler-modern,
+      .header-icons-mobile {
+        display: none !important;
+      }
+
+      /* Ensure desktop elements are visible */
+      .header-icons-desktop {
+        display: flex !important;
+      }
+
+      /* Reset the mobile menu styles that might be interfering */
+      .navbar-collapse-modern {
+        position: static !important;
+        transform: none !important;
+        height: auto !important;
+        width: auto !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: none !important;
+      }
+
+      .navbar-nav-modern {
+        padding: 0 !important;
+        margin: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
+        background: transparent !important;
+      }
+
+      .nav-item-modern {
+        margin: 0 !important;
+      }
+
+      .nav-link-modern {
+        border-bottom: none !important;
+        border-radius: var(--border-radius-sm) !important;
+        padding: 0.7rem 1rem !important;
+        background: transparent !important;
+      }
+
+      .nav-link-modern.active {
+        border-left: none !important;
+      }
+
+      .nav-link-modern.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        border-radius: 2px;
+      }
+    }
+
+    /* ===== CRITICAL FIX FOR CONTAINER LAYOUT ===== */
+    @media (min-width: 992px) {
+      .navbar-modern .container-fluid {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+      }
+
+      /* Main navigation should take available space */
+      .navbar-collapse-modern {
+        flex: 1 1 auto !important;
+        order: 1 !important;
+        margin-top: 0 !important;
+        border-top: none !important;
+      }
+
+      /* Desktop icons should be at the end */
+      .header-icons-desktop {
+        order: 2 !important;
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
+        width: auto !important;
+        padding: 0 !important;
+      }
+
+      /* Brand should be at the start */
+      .navbar-brand-modern {
+        order: 0 !important;
+        flex-shrink: 0 !important;
+      }
+    }
+
+    /* ===== OVERRIDE CONFLICTING STYLES ===== */
+    /* Remove any conflicting styles from other media queries */
+    @media (min-width: 992px) {
+      body.mobile-menu-open {
+        overflow: visible !important;
+      }
+
+      .navbar-modern .navbar-collapse-modern:not(.show) {
+        display: flex !important;
+      }
+    }
+
+    /* ===== ADDITIONAL RESPONSIVE FIXES ===== */
+    @media (max-width: 1400px) and (min-width: 992px) {
+
+      /* Adjust container padding */
+      .navbar-modern .container-fluid {
+        padding: 0 1rem !important;
+      }
+
+      /* Reduce spacing in navigation */
+      .navbar-nav-modern {
+        gap: 0.1rem !important;
+      }
+
+      .nav-link-modern {
+        padding: 0.6rem 0.8rem !important;
+      }
+
+      /* Compact dropdowns */
+      .navbar-nav-modern .dropdown-menu {
+        width: 180px !important;
+      }
+
+      /* Compact profile section */
+      .header-icons-desktop .profile-modern span {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    /* ===== FALLBACK FOR EXTREMELY NARROW DESKTOP ===== */
+    @media (min-width: 992px) and (max-width: 1100px) {
+
+      /* Hide some less important text on very narrow desktop */
+      .header-icons-desktop .profile-modern span {
+        display: none;
+      }
+
+      .header-icons-desktop .profile-modern {
+        padding: 0.5rem !important;
+        justify-content: center !important;
+      }
+
+      /* Reduce nav item padding */
+      .nav-link-modern {
+        padding: 0.5rem 0.6rem !important;
+      }
+
+      /* Hide text in nav items, show only icons */
+      .nav-link-modern span:not(.bi) {
+        font-size: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+      }
+
+      .nav-link-modern .bi {
+        margin-right: 0 !important;
+        font-size: 1.1rem !important;
+      }
+
+      .nav-link-modern.dropdown-toggle::after {
+        margin-left: 0 !important;
+      }
+    }
+
+    /* ===== PRINT MEDIA FIX (optional) ===== */
+    @media print {
+      .navbar-modern {
+        position: static !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<!-- Modern Glassmorphism Navbar -->
-<nav class="navbar navbar-expand-lg navbar-modern">
-  <div class="container-fluid">
-    <!-- Mobile Toggle Button -->
-    <button class="navbar-toggler-modern d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Brand Logo -->
-    <a class="navbar-brand navbar-brand-modern" href="/landing">
-      <i class="bi bi-heart-pulse-fill"></i>
-      <span>Pet Care</span>
-    </a>
-
-
-
-
-    <!-- Mobile Header Icons -->
-    <div class="header-icons-mobile d-lg-none">
-      <!-- Mobile Profile -->
-      <div class="profile-modern dropdown">
-        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-label="User profile">
-
-
-
-
-
-
-
-<% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
-  <div class="user-avatar-modern">
-    <img src="<%= profilePicture %>" 
-         alt="Profile" 
-         loading="eager"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-         onload="this.style.display='block'; this.nextElementSibling.style.display='none';">
-    <i class="bi bi-person-fill" style="display: none;"></i>
-  </div>
-<% } else { %>
-  <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
-<% } %>
-
-
-
-
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</button></form></li>
-        </ul>
-      </div>
-
-      <!-- Mobile Theme Toggle -->
-      <button id="themeToggleMobile" class="theme-toggle-modern" title="Toggle theme">
-        <i class="bi bi-moon-fill"></i>
+  <!-- Modern Glassmorphism Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-modern">
+    <div class="container-fluid">
+      <!-- Mobile Toggle Button -->
+      <button class="navbar-toggler-modern d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Mobile Notifications -->
-      <div class="dropdown">
-        <button class="notification-bell" id="notificationDropdownMobile" data-bs-toggle="dropdown" aria-label="Notifications">
-          <i class="bi bi-bell"></i>
-          <span class="badge bg-danger rounded-pill" id="notificationBadgeMobile" style="display:none;">0</span>
-        </button>
-        <div class="dropdown-menu dropdown-menu-end p-3">
-          <div class="fw-bold mb-2">Upcoming Tasks</div>
-          <div id="notificationsListMobile">No upcoming tasks</div>
-          <div class="text-end mt-2">
-            <a href="/upcoming-tasks" class="small text-primary">View All</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Navigation Menu -->
-    <div class="collapse navbar-collapse navbar-collapse-modern" id="mainNav">
-      <ul class="navbar-nav navbar-nav-modern me-auto mb-2 mb-lg-0">
-        <!-- Dashboard -->
-        <li class="nav-item nav-item-modern">
-          <a class="nav-link nav-link-modern" href="/dashboard">
-            <i class="bi bi-speedometer2 me-2"></i>Dashboard
-          </a>
-        </li>
-
-        <!-- Quick Actions Dropdown -->
-        <li class="nav-item dropdown nav-item-modern">
-          <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="quickActionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-lightning me-2"></i>Quick Actions
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="quickActionsDropdown">
-            <li><a class="dropdown-item" href="/pets/add"><i class="bi bi-heart me-2 text-success"></i>Add Pet</a></li>
-            <li><a class="dropdown-item" href="/schedule-task"><i class="bi bi-calendar-plus me-2 text-primary"></i>Add Task</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/health-tracker/add"><i class="bi bi-clipboard-plus me-2 text-info"></i>Add Health</a></li>
-            <li><a class="dropdown-item" href="/gallery/upload"><i class="bi bi-cloud-upload me-2 text-warning"></i>Upload Photo</a></li>
-          </ul>
-        </li>
-
-        <!-- Community -->
-        <li class="nav-item nav-item-modern">
-          <a class="nav-link nav-link-modern" href="/community">
-            <i class="bi bi-people me-2"></i>Community
-          </a>
-        </li>
-
-        <!-- Gallery Dropdown -->
-        <li class="nav-item dropdown nav-item-modern">
-          <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="galleryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-images me-2"></i>Gallery
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="galleryDropdown">
-            <li><a class="dropdown-item" href="/gallery"><i class="bi bi-grid-3x3 me-2"></i>All Photos</a></li>
-            <li><a class="dropdown-item" href="/gallery/my-photos"><i class="bi bi-person-circle me-2"></i>My Photos</a></li>
-            <li><a class="dropdown-item" href="/gallery/upload"><i class="bi bi-cloud-upload me-2"></i>Upload Photo</a></li>
-          </ul>
-        </li>
-
-        <!-- Health Dropdown -->
-        <li class="nav-item dropdown nav-item-modern">
-          <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="healthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-clipboard-heart me-2"></i>Health
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="healthDropdown">
-
-
-
-            <li><a class="dropdown-item" href="/health-tracker/add"><i class="bi bi-plus-circle me-2"></i>Add Health Record</a></li>
-
-
-
-
-
-            <li><a class="dropdown-item" href="/health-tracker-history"><i class="bi bi-clock-history me-2"></i>Health History</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/gallery/health-overview"><i class="bi bi-heart-pulse me-2 text-danger"></i>Health Overview</a></li>
-          </ul>
-        </li>
-
-        <!-- Calendar -->
-        <li class="nav-item nav-item-modern">
-          <a class="nav-link nav-link-modern" href="/calendar">
-            <i class="bi bi-calendar3 me-2"></i>Calendar
-          </a>
-        </li>
-      </ul>
-
-      <!-- Desktop Header Icons -->
-      <div class="header-icons-desktop d-none d-lg-flex">
-        <!-- Desktop Profile -->
+      <!-- Brand Logo -->
+      <a class="navbar-brand navbar-brand-modern" href="/landing">
+        <i class="bi bi-heart-pulse-fill"></i>
+        <span>Pet Care</span>
+      </a>
+      <!-- Mobile Header Icons -->
+      <div class="header-icons-mobile d-lg-none">
+        <!-- Mobile Profile -->
         <div class="profile-modern dropdown">
-          <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="me-2 fw-semibold"><%= typeof username !== 'undefined' ? username : 'User' %></span>
-           
-           
-           
-           
-           
-
-
-<% if (typeof profilePicture !== 'undefined' && profilePicture) { %>
-  <div class="user-avatar-modern">
-    <img src="<%= profilePicture %>" 
-         alt="Profile" 
-         loading="eager"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-         onload="this.style.display='block'; this.nextElementSibling.style.display='none';">
-    <i class="bi bi-person-fill" style="display: none;"></i>
-  </div>
-<% } else { %>
-  <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
-<% } %>
-
-
-
+          <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown"
+            aria-label="User profile">
+            <% if (typeof profilePicture !=='undefined' && profilePicture) { %>
+              <div class="user-avatar-modern">
+                <img src="<%= profilePicture %>" alt="Profile" loading="eager"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                  onload="this.style.display='block'; this.nextElementSibling.style.display='none';">
+                <i class="bi bi-person-fill" style="display: none;"></i>
+              </div>
+              <% } else { %>
+                <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+                <% } %>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</button></form></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i
+                    class="bi bi-box-arrow-right me-2"></i>Logout</button></form>
+            </li>
           </ul>
         </div>
 
-        <!-- Desktop Theme Toggle -->
-        <button id="themeToggleDesktop" class="theme-toggle-modern" title="Toggle theme">
+        <!-- Mobile Theme Toggle -->
+        <button id="themeToggleMobile" class="theme-toggle-modern" title="Toggle theme">
           <i class="bi bi-moon-fill"></i>
         </button>
 
-        <!-- Desktop Notifications -->
+        <!-- Mobile Notifications -->
         <div class="dropdown">
-          <button class="notification-bell" id="notificationDropdownDesktop" data-bs-toggle="dropdown" aria-label="Notifications">
+          <button class="notification-bell" id="notificationDropdownMobile" data-bs-toggle="dropdown"
+            aria-label="Notifications">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-danger rounded-pill" id="notificationBadgeDesktop" style="display:none;">0</span>
+            <span class="badge bg-danger rounded-pill" id="notificationBadgeMobile" style="display:none;">0</span>
           </button>
           <div class="dropdown-menu dropdown-menu-end p-3">
             <div class="fw-bold mb-2">Upcoming Tasks</div>
-            <div id="notificationsListDesktop">No upcoming tasks</div>
+            <div id="notificationsListMobile">No upcoming tasks</div>
             <div class="text-end mt-2">
               <a href="/upcoming-tasks" class="small text-primary">View All</a>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Main Navigation Menu -->
+      <div class="collapse navbar-collapse navbar-collapse-modern" id="mainNav">
+        <ul class="navbar-nav navbar-nav-modern me-auto mb-2 mb-lg-0">
+          <!-- Dashboard -->
+          <li class="nav-item nav-item-modern">
+            <a class="nav-link nav-link-modern" href="/dashboard">
+              <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+          </li>
+
+          <!-- Quick Actions Dropdown -->
+          <li class="nav-item dropdown nav-item-modern">
+            <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="quickActionsDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-lightning me-2"></i>Quick Actions
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="quickActionsDropdown">
+              <li><a class="dropdown-item" href="/pets/add"><i class="bi bi-heart me-2 text-success"></i>Add Pet</a>
+              </li>
+              <li><a class="dropdown-item" href="/schedule-task"><i
+                    class="bi bi-calendar-plus me-2 text-primary"></i>Add Task</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="/health-tracker/add"><i
+                    class="bi bi-clipboard-plus me-2 text-info"></i>Add Health</a></li>
+              <li><a class="dropdown-item" href="/gallery/upload"><i
+                    class="bi bi-cloud-upload me-2 text-warning"></i>Upload Photo</a></li>
+            </ul>
+          </li>
+
+          <!-- Community -->
+          <li class="nav-item nav-item-modern">
+            <a class="nav-link nav-link-modern" href="/community">
+              <i class="bi bi-people me-2"></i>Community
+            </a>
+          </li>
+
+          <!-- Gallery Dropdown -->
+          <li class="nav-item dropdown nav-item-modern">
+            <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="galleryDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-images me-2"></i>Gallery
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="galleryDropdown">
+              <li><a class="dropdown-item" href="/gallery"><i class="bi bi-grid-3x3 me-2"></i>All Photos</a></li>
+              <li><a class="dropdown-item" href="/gallery/my-photos"><i class="bi bi-person-circle me-2"></i>My
+                  Photos</a></li>
+              <li><a class="dropdown-item" href="/gallery/upload"><i class="bi bi-cloud-upload me-2"></i>Upload
+                  Photo</a></li>
+            </ul>
+          </li>
+
+          <!-- Health Dropdown -->
+          <li class="nav-item dropdown nav-item-modern">
+            <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="healthDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-clipboard-heart me-2"></i>Health
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="healthDropdown">
+              <li><a class="dropdown-item" href="/health-tracker/add"><i class="bi bi-plus-circle me-2"></i>Add Health
+                  Record</a></li>
+              <li><a class="dropdown-item" href="/health-tracker-history"><i class="bi bi-clock-history me-2"></i>Health
+                  History</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="/gallery/health-overview"><i
+                    class="bi bi-heart-pulse me-2 text-danger"></i>Health Overview</a></li>
+            </ul>
+          </li>
+
+          <!-- Calendar -->
+          <li class="nav-item nav-item-modern">
+            <a class="nav-link nav-link-modern" href="/calendar">
+              <i class="bi bi-calendar3 me-2"></i>Calendar
+            </a>
+          </li>
+        </ul>
+
+        <!-- Desktop Header Icons -->
+        <div class="header-icons-desktop d-none d-lg-flex">
+          <!-- Desktop Profile -->
+          <div class="profile-modern dropdown">
+            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <span class="me-2 fw-semibold">
+                <%= typeof username !=='undefined' ? username : 'User' %>
+              </span>
+              <% if (typeof profilePicture !=='undefined' && profilePicture) { %>
+                <div class="user-avatar-modern">
+                  <img src="<%= profilePicture %>" alt="Profile" loading="eager"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    onload="this.style.display='block'; this.nextElementSibling.style.display='none';">
+                  <i class="bi bi-person-fill" style="display: none;"></i>
+                </div>
+                <% } else { %>
+                  <div class="user-avatar-modern"><i class="bi bi-person-fill"></i></div>
+                  <% } %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>Profile</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <form action="/auth/logout" method="POST"><button class="dropdown-item text-danger"><i
+                      class="bi bi-box-arrow-right me-2"></i>Logout</button></form>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Desktop Theme Toggle -->
+          <button id="themeToggleDesktop" class="theme-toggle-modern" title="Toggle theme">
+            <i class="bi bi-moon-fill"></i>
+          </button>
+
+          <!-- Desktop Notifications -->
+          <div class="dropdown">
+            <button class="notification-bell" id="notificationDropdownDesktop" data-bs-toggle="dropdown"
+              aria-label="Notifications">
+              <i class="bi bi-bell"></i>
+              <span class="badge bg-danger rounded-pill" id="notificationBadgeDesktop" style="display:none;">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end p-3">
+              <div class="fw-bold mb-2">Upcoming Tasks</div>
+              <div id="notificationsListDesktop">No upcoming tasks</div>
+              <div class="text-end mt-2">
+                <a href="/upcoming-tasks" class="small text-primary">View All</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<!-- Your existing JavaScript code remains the same -->
-<script>
-// Theme toggle functionality for both mobile and desktop
-function setupThemeToggle() {
-  // Get both theme toggles
-  const themeToggleMobile = document.getElementById('themeToggleMobile');
-  const themeToggleDesktop = document.getElementById('themeToggleDesktop');
-  
-  // Function to toggle theme
-  function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    // Update all theme icons on the page
-    updateThemeIcons(newTheme);
-  }
-  
-  // Function to update all theme icons
-  function updateThemeIcons(theme) {
-    const allThemeIcons = document.querySelectorAll('#themeToggleMobile i, #themeToggleDesktop i');
-    
-    allThemeIcons.forEach(icon => {
-      if (theme === 'dark') {
-        icon.classList.remove('bi-moon-fill');
-        icon.classList.add('bi-sun-fill');
-      } else {
-        icon.classList.remove('bi-sun-fill');
-        icon.classList.add('bi-moon-fill');
+  <script>
+    // Theme toggle functionality for both mobile and desktop
+    function setupThemeToggle() {
+      // Get both theme toggles
+      const themeToggleMobile = document.getElementById('themeToggleMobile');
+      const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+
+      // Function to toggle theme
+      function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        // Update all theme icons on the page
+        updateThemeIcons(newTheme);
       }
-    });
-  }
-  
-  // Add event listeners to both toggles
-  if (themeToggleMobile) {
-    themeToggleMobile.addEventListener('click', toggleTheme);
-  }
-  
-  if (themeToggleDesktop) {
-    themeToggleDesktop.addEventListener('click', toggleTheme);
-  }
-  
-  // Initialize theme from localStorage
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeIcons(savedTheme);
-}
 
-// Mobile menu handling
-// Mobile menu handling - FIXED VERSION
-function setupMobileMenu() {
-  const navbarToggler = document.querySelector('.navbar-toggler-modern');
-  const navbarCollapse = document.querySelector('.navbar-collapse-modern');
-  
-  if (navbarToggler && navbarCollapse) {
-    // Use Bootstrap's built-in events instead of click event
-    navbarCollapse.addEventListener('show.bs.collapse', function() {
-      document.body.classList.add('mobile-menu-open');
+      // Function to update all theme icons
+      function updateThemeIcons(theme) {
+        const allThemeIcons = document.querySelectorAll('#themeToggleMobile i, #themeToggleDesktop i');
+
+        allThemeIcons.forEach(icon => {
+          if (theme === 'dark') {
+            icon.classList.remove('bi-moon-fill');
+            icon.classList.add('bi-sun-fill');
+          } else {
+            icon.classList.remove('bi-sun-fill');
+            icon.classList.add('bi-moon-fill');
+          }
+        });
+      }
+      if (themeToggleMobile) {
+        themeToggleMobile.addEventListener('click', toggleTheme);
+      }
+
+      if (themeToggleDesktop) {
+        themeToggleDesktop.addEventListener('click', toggleTheme);
+      }
+
+      // Initialize theme from localStorage
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcons(savedTheme);
+    }
+
+    // Mobile menu handling
+    function setupMobileMenu() {
+      const navbarToggler = document.querySelector('.navbar-toggler-modern');
+      const navbarCollapse = document.querySelector('.navbar-collapse-modern');
+
+      if (navbarToggler && navbarCollapse) {
+        navbarCollapse.addEventListener('show.bs.collapse', function () {
+          document.body.classList.add('mobile-menu-open');
+        });
+
+        navbarCollapse.addEventListener('hide.bs.collapse', function () {
+          document.body.classList.remove('mobile-menu-open');
+        });
+
+        // Close mobile menu when clicking on regular nav links
+        const navLinks = document.querySelectorAll('.nav-link-modern:not(.dropdown-toggle)');
+        navLinks.forEach(link => {
+          link.addEventListener('click', function () {
+            if (window.innerWidth < 992) {
+              // Use Bootstrap's collapse method to properly close the menu
+              const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+              bsCollapse.hide();
+            }
+          });
+        });
+
+        // Close mobile menu when window is resized to desktop
+        window.addEventListener('resize', function () {
+          if (window.innerWidth >= 992) {
+            document.body.classList.remove('mobile-menu-open');
+            // Ensure the collapse state is reset for desktop
+            navbarCollapse.classList.remove('show');
+            navbarToggler.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // Additional safety: remove the class when clicking outside the menu
+        document.addEventListener('click', function (event) {
+          if (window.innerWidth < 992 &&
+            !navbarCollapse.contains(event.target) &&
+            !navbarToggler.contains(event.target) &&
+            navbarCollapse.classList.contains('show')) {
+            document.body.classList.remove('mobile-menu-open');
+          }
+        });
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      // Only initialize notification system if user is logged in
+      const isLoginPage = window.location.pathname === '/login' ||
+        window.location.pathname === '/register' ||
+        window.location.pathname === '/forgot-password';
+
+      if (!isLoginPage) {
+        window.notificationSystem = new NotificationSystem();
+      }
+
+      // Initialize theme toggles
+      setupThemeToggle();
+
+      // Initialize mobile menu
+      setupMobileMenu();
     });
-    
-    navbarCollapse.addEventListener('hide.bs.collapse', function() {
-      document.body.classList.remove('mobile-menu-open');
-    });
-    
-    // Close mobile menu when clicking on regular nav links
-    const navLinks = document.querySelectorAll('.nav-link-modern:not(.dropdown-toggle)');
-    navLinks.forEach(link => {
-      link.addEventListener('click', function() {
-        if (window.innerWidth < 992) {
-          // Use Bootstrap's collapse method to properly close the menu
-          const bsCollapse = new bootstrap.Collapse(navbarCollapse);
-          bsCollapse.hide();
+  </script>
+
+  <script>
+    class NotificationSystem {
+      constructor() {
+        this.checkInterval = null;
+        this.isDropdownOpen = false;
+        this.init();
+      }
+
+      init() {
+        this.loadUpcomingTasks();
+        this.setupEventListeners();
+
+        this.checkInterval = setInterval(() => {
+          this.loadUpcomingTasks();
+        }, 30000); // Check every 30 seconds
+      }
+
+      async loadUpcomingTasks() {
+        try {
+          const upcomingTasks = await this.fetchUpcomingTasks();
+          this.updateNotificationBadge(upcomingTasks);
+
+          if (this.isDropdownOpen) {
+            this.renderUpcomingTasks(upcomingTasks);
+          }
+        } catch (error) {
+          // console.error('Error loading upcoming tasks:', error);
         }
-      });
-    });
-    
-    // Close mobile menu when window is resized to desktop
-    window.addEventListener('resize', function() {
-      if (window.innerWidth >= 992) {
-        document.body.classList.remove('mobile-menu-open');
-        // Ensure the collapse state is reset for desktop
-        navbarCollapse.classList.remove('show');
-        navbarToggler.setAttribute('aria-expanded', 'false');
       }
-    });
-    
-    // Additional safety: remove the class when clicking outside the menu
-    document.addEventListener('click', function(event) {
-      if (window.innerWidth < 992 && 
-          !navbarCollapse.contains(event.target) && 
-          !navbarToggler.contains(event.target) &&
-          navbarCollapse.classList.contains('show')) {
-        document.body.classList.remove('mobile-menu-open');
+
+      async fetchUpcomingTasks() {
+        try {
+          // Use relative path instead of absolute URL
+          const response = await fetch('/tasks/upcoming?days=3&limit=5', {
+            credentials: 'same-origin' // Important for session cookies
+          });
+
+          if (response.ok) {
+            return await response.json();
+          }
+          return [];
+        } catch (error) {
+          return [];
+        }
       }
-    });
-  }
-}
 
-// Update the existing DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', function() {
-  // Only initialize notification system if user is logged in
-  const isLoginPage = window.location.pathname === '/login' || 
-                      window.location.pathname === '/register' || 
-                      window.location.pathname === '/forgot-password';
-  
-  if (!isLoginPage) {
-    window.notificationSystem = new NotificationSystem();
-  }
-  
-  // Initialize theme toggles
-  setupThemeToggle();
-  
-  // Initialize mobile menu
-  setupMobileMenu();
-});
-</script>
+      updateNotificationBadge(upcomingTasks) {
+        // Update both mobile and desktop badges
+        const badgeMobile = document.getElementById('notificationBadgeMobile');
+        const badgeDesktop = document.getElementById('notificationBadgeDesktop');
+        const bellMobile = document.querySelector('.header-icons-mobile .notification-bell');
+        const bellDesktop = document.querySelector('.header-icons-desktop .notification-bell');
 
-<script>
-// Simplified Notification System for Upcoming Tasks
-class NotificationSystem {
-  constructor() {
-    this.checkInterval = null;
-    this.isDropdownOpen = false;
-    this.init();
-  }
+        const urgentTasks = upcomingTasks.filter(task => {
+          const dueDate = new Date(task.due_date);
+          const now = new Date();
+          const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+          return daysUntilDue <= 1; // Only count urgent tasks (today/tomorrow)
+        });
 
-  init() {
-    this.loadUpcomingTasks();
-    this.setupEventListeners();
-    
-    this.checkInterval = setInterval(() => {
-      this.loadUpcomingTasks();
-    }, 30000); // Check every 30 seconds
-  }
+        if (urgentTasks.length > 0) {
+          if (badgeMobile) {
+            badgeMobile.textContent = urgentTasks.length;
+            badgeMobile.style.display = 'flex'; // Changed to flex for better centering
+          }
+          if (badgeDesktop) {
+            badgeDesktop.textContent = urgentTasks.length;
+            badgeDesktop.style.display = 'flex'; // Changed to flex for better centering
+          }
 
-  async loadUpcomingTasks() {
-    try {
-      const upcomingTasks = await this.fetchUpcomingTasks();
-      this.updateNotificationBadge(upcomingTasks);
-      
-      if (this.isDropdownOpen) {
-        this.renderUpcomingTasks(upcomingTasks);
+          // Add has-notifications class for visual enhancement
+          if (bellMobile) bellMobile.classList.add('has-notifications');
+          if (bellDesktop) bellDesktop.classList.add('has-notifications');
+        } else {
+          if (badgeMobile) badgeMobile.style.display = 'none';
+          if (badgeDesktop) badgeDesktop.style.display = 'none';
+
+          // Remove has-notifications class
+          if (bellMobile) bellMobile.classList.remove('has-notifications');
+          if (bellDesktop) bellDesktop.classList.remove('has-notifications');
+        }
       }
-    } catch (error) {
-      // console.error('Error loading upcoming tasks:', error);
-    }
-  }
 
-async fetchUpcomingTasks() {
-  try {
-    // Use relative path instead of absolute URL
-    const response = await fetch('/tasks/upcoming?days=3&limit=5', {
-      credentials: 'same-origin' // Important for session cookies
-    });
-    
-    if (response.ok) {
-      return await response.json();
-    }
-    return [];
-  } catch (error) {
-    return [];
-  }
-}
+      renderUpcomingTasks(tasks) {
+        // Update both mobile and desktop notification lists
+        const containerMobile = document.getElementById('notificationsListMobile');
+        const containerDesktop = document.getElementById('notificationsListDesktop');
 
- updateNotificationBadge(upcomingTasks) {
-  // Update both mobile and desktop badges
-  const badgeMobile = document.getElementById('notificationBadgeMobile');
-  const badgeDesktop = document.getElementById('notificationBadgeDesktop');
-  const bellMobile = document.querySelector('.header-icons-mobile .notification-bell');
-  const bellDesktop = document.querySelector('.header-icons-desktop .notification-bell');
-  
-  const urgentTasks = upcomingTasks.filter(task => {
-    const dueDate = new Date(task.due_date);
-    const now = new Date();
-    const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-    return daysUntilDue <= 1; // Only count urgent tasks (today/tomorrow)
-  });
-  
-  if (urgentTasks.length > 0) {
-    if (badgeMobile) {
-      badgeMobile.textContent = urgentTasks.length;
-      badgeMobile.style.display = 'flex'; // Changed to flex for better centering
-    }
-    if (badgeDesktop) {
-      badgeDesktop.textContent = urgentTasks.length;
-      badgeDesktop.style.display = 'flex'; // Changed to flex for better centering
-    }
-    
-    // Add has-notifications class for visual enhancement
-    if (bellMobile) bellMobile.classList.add('has-notifications');
-    if (bellDesktop) bellDesktop.classList.add('has-notifications');
-  } else {
-    if (badgeMobile) badgeMobile.style.display = 'none';
-    if (badgeDesktop) badgeDesktop.style.display = 'none';
-    
-    // Remove has-notifications class
-    if (bellMobile) bellMobile.classList.remove('has-notifications');
-    if (bellDesktop) bellDesktop.classList.remove('has-notifications');
-  }
-}
+        const renderToContainer = (container) => {
+          if (!container) return;
 
-  renderUpcomingTasks(tasks) {
-    // Update both mobile and desktop notification lists
-    const containerMobile = document.getElementById('notificationsListMobile');
-    const containerDesktop = document.getElementById('notificationsListDesktop');
-    
-    const renderToContainer = (container) => {
-      if (!container) return;
-      
-      if (tasks.length === 0) {
-        container.innerHTML = `
+          if (tasks.length === 0) {
+            container.innerHTML = `
           <div class="px-3 py-4 text-center text-muted">
             <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
             <div class="mt-2">No upcoming tasks</div>
             <small>You're all caught up!</small>
           </div>
         `;
-        return;
-      }
+            return;
+          }
 
-      let html = tasks.map((task, index) => {
-        const dueDate = new Date(task.due_date);
-        const now = new Date();
-        const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-        
-        let urgencyClass = '';
-        let urgencyIcon = '';
-        
-        if (daysUntilDue <= 0) {
-          urgencyClass = 'text-danger';
-          urgencyIcon = 'bi-exclamation-triangle-fill';
-        } else if (daysUntilDue === 1) {
-          urgencyClass = 'text-warning';
-          urgencyIcon = 'bi-exclamation-circle';
-        } else {
-          urgencyClass = 'text-info';
-          urgencyIcon = 'bi-calendar-event';
-        }
-        
-        return `
+          let html = tasks.map((task, index) => {
+            const dueDate = new Date(task.due_date);
+            const now = new Date();
+            const daysUntilDue = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+
+            let urgencyClass = '';
+            let urgencyIcon = '';
+
+            if (daysUntilDue <= 0) {
+              urgencyClass = 'text-danger';
+              urgencyIcon = 'bi-exclamation-triangle-fill';
+            } else if (daysUntilDue === 1) {
+              urgencyClass = 'text-warning';
+              urgencyIcon = 'bi-exclamation-circle';
+            } else {
+              urgencyClass = 'text-info';
+              urgencyIcon = 'bi-calendar-event';
+            }
+
+            return `
           <div class="notification-item p-3 border-bottom" style="${index === tasks.length - 1 ? 'border-bottom: none !important;' : ''}">
             <div class="d-flex align-items-start">
               <i class="bi ${urgencyIcon} ${urgencyClass} me-2 fs-5"></i>
@@ -2012,57 +1997,54 @@ async fetchUpcomingTasks() {
             </div>
           </div>
         `;
-      }).join('');
+          }).join('');
 
-      container.innerHTML = html;
-    };
+          container.innerHTML = html;
+        };
 
-    renderToContainer(containerMobile);
-    renderToContainer(containerDesktop);
-  }
-
-  getPriorityBadgeClass(priority) {
-    const classes = {
-      'high': 'bg-danger',
-      'medium': 'bg-warning',
-      'low': 'bg-success'
-    };
-    return classes[priority] || 'bg-secondary';
-  }
-
-  setupEventListeners() {
-    // Dropdown open/close events for both mobile and desktop
-    const dropdownMobile = document.getElementById('notificationDropdownMobile');
-    const dropdownDesktop = document.getElementById('notificationDropdownDesktop');
-    
-    const setupDropdown = (dropdownElement) => {
-      if (dropdownElement) {
-        dropdownElement.addEventListener('show.bs.dropdown', () => {
-          this.isDropdownOpen = true;
-          this.loadUpcomingTasks();
-        });
-
-        dropdownElement.addEventListener('hide.bs.dropdown', () => {
-          this.isDropdownOpen = false;
-        });
+        renderToContainer(containerMobile);
+        renderToContainer(containerDesktop);
       }
-    };
 
-    setupDropdown(dropdownMobile);
-    setupDropdown(dropdownDesktop);
-  }
+      getPriorityBadgeClass(priority) {
+        const classes = {
+          'high': 'bg-danger',
+          'medium': 'bg-warning',
+          'low': 'bg-success'
+        };
+        return classes[priority] || 'bg-secondary';
+      }
 
-  destroy() {
-    if (this.checkInterval) {
-      clearInterval(this.checkInterval);
+      setupEventListeners() {
+        // Dropdown open/close events for both mobile and desktop
+        const dropdownMobile = document.getElementById('notificationDropdownMobile');
+        const dropdownDesktop = document.getElementById('notificationDropdownDesktop');
+
+        const setupDropdown = (dropdownElement) => {
+          if (dropdownElement) {
+            dropdownElement.addEventListener('show.bs.dropdown', () => {
+              this.isDropdownOpen = true;
+              this.loadUpcomingTasks();
+            });
+
+            dropdownElement.addEventListener('hide.bs.dropdown', () => {
+              this.isDropdownOpen = false;
+            });
+          }
+        };
+
+        setupDropdown(dropdownMobile);
+        setupDropdown(dropdownDesktop);
+      }
+
+      destroy() {
+        if (this.checkInterval) {
+          clearInterval(this.checkInterval);
+        }
+      }
     }
-  }
-}
-</script>
-
-
-
-
+  </script>
 
 </body>
+
 </html>

@@ -1,13 +1,12 @@
 const multer = require('multer');
 const { uploadToCloudinary, uploadProfileToCloudinary } = require('./cloudinary');
 
-// Simple memory storage
 const memoryStorage = multer.memoryStorage();
 
 const upload = multer({
   storage: memoryStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
+    fileSize: 5 * 1024 * 1024
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -18,40 +17,53 @@ const upload = multer({
   }
 });
 
-// Single upload middleware that handles both single and multiple based on user role
+/**
+ * Uploads gallery images to Cloudinary with role-based handling.
+ * Admins can upload multiple files (up to 10), while regular users can upload single files.
+ * All images are uploaded to the 'gallery' folder with appropriate naming conventions.
+ * Upload results are attached to the request object for downstream processing.
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 const uploadGallery = (req, res, next) => {
   const isAdmin = req.session?.role === 'admin';
   
   if (isAdmin) {
-    // Admin: multiple files - use 'photos'
     upload.array('photos', 10)(req, res, (err) => {
       if (err) return next(err);
       handleCloudinaryUpload(req, res, next, true);
     });
   } else {
-    // Regular user: single file - ALSO use 'photos' but as single
-    upload.single('photos')(req, res, (err) => {  // Changed from 'photo' to 'photos'
+    upload.single('photos')(req, res, (err) => {
       if (err) return next(err);
       handleCloudinaryUpload(req, res, next, false);
     });
   }
 };
 
-// Handle Cloudinary upload
+/**
+ * Handles the actual Cloudinary upload process for gallery images.
+ * Processes either single or multiple files based on the isMultiple flag.
+ * Attaches results to request object: req.cloudinaryResult (single) or req.cloudinaryResults (multiple).
+ * 
+ * @param {Object} req - Express request object containing uploaded files
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @param {boolean} isMultiple - Whether multiple files are being processed (admin mode)
+ */
 async function handleCloudinaryUpload(req, res, next, isMultiple) {
   try {
-    // For single file uploads
     if (!isMultiple && !req.file) {
       return next();
     }
     
-    // For multiple file uploads
     if (isMultiple && (!req.files || req.files.length === 0)) {
       return next();
     }
 
     if (isMultiple && req.files) {
-      // Handle multiple files for admins
       req.cloudinaryResults = [];
       
       for (const file of req.files) {
@@ -62,7 +74,6 @@ async function handleCloudinaryUpload(req, res, next, isMultiple) {
         req.cloudinaryResults.push(result);
       }
     } else if (req.file) {
-      // Handle single file for regular users
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       const filename = 'gallery-user-' + req.session.userId + '-' + uniqueSuffix;
       
@@ -77,7 +88,14 @@ async function handleCloudinaryUpload(req, res, next, isMultiple) {
   }
 }
 
-// Profile upload middleware
+/**
+ * Middleware for uploading profile pictures to Cloudinary.
+ * Expects a single file with the field name 'profilePicture'.
+ * Uploads to the 'profile' folder with user-specific naming.
+ * Attaches result to request object: req.cloudinaryResult.
+ * 
+ * @type {Array} Express middleware array combining multer and upload handler
+ */
 const uploadProfile = [upload.single('profilePicture'), async (req, res, next) => {
   try {
     if (!req.file) return next();
